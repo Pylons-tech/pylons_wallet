@@ -1,4 +1,4 @@
-package com.company.product.myapplication
+package com.pylons.wallet
 
 import android.app.Activity
 import android.content.Intent
