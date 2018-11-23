@@ -37,9 +37,8 @@ class WalletService : IntentService("WalletService") {
             "WALLET_SERVICE_TEST" -> {
                 Log.i("info", "Returning data to client (no UI transfer needed)")
                 val successIntent = Intent(ACTION_RETURN_TO_CLIENT)
-                val arr = arrayOf("info")
-                successIntent.putExtra("info", "it works i guess")
-                successIntent.putExtra("_@PKEYS_STRING", arr)
+                successIntent.putDeclaredExtra("info", "it works i guess")
+                successIntent.commitDeclaredExtras()
                 val innerIntent = Intent(ACTION_PASS_DATA_TO_SHIM)
                 innerIntent.putExtra("_@PINNER", successIntent)
                 val pending = intent.getParcelableExtra<PendingIntent>("_@PPENDING");

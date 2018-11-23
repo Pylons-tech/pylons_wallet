@@ -33,9 +33,8 @@ class MainActivity : AppCompatActivity() {
 
         var d = Intent()
         setResult(Activity.RESULT_OK, d)
-        val arr = arrayOf("info")
-        d.putExtra("_@PKEYS_STRING", arr)
-        d.putExtra("info", "it works i guess and also this is from the ui")
+        d.putDeclaredExtra("info", "it works i guess and also this is from the ui")
+        d.commitDeclaredExtras()
         super.finish()
     }
 
