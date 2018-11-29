@@ -24,10 +24,15 @@ namespace DevWallet
 
         private static TcpListener tcpListener = new TcpListener(IPAddress.Loopback, 50001);
         private static State state = State.WaitForHandshake;
-        private static event EventHandler onReady;
         private static TcpClient client;
         static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Don't start the dev wallet directly. Pylons clients will start and stop this process automatically. Press Enter to close the application.");
+                Console.ReadLine();
+                state = State.Dead;
+            }
             while (true)
             {
                 switch (state)
