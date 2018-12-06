@@ -25,13 +25,9 @@
                 android:name=".WalletService"
                 android:enabled="true"
                 android:exported="true">
-        </service>
-        <receiver
-                android:name=".WalletServiceDispatcher"
-                android:exported="true">
             <intent-filter>
                 <action android:name="com.pylons.action.INVOKE_WALLET"/>
             </intent-filter>
-        </receiver>
+        </service>
     </application>
 </manifest>

@@ -15,9 +15,9 @@ data class Result (val msg : MessageData?, val status : Status)
  */
 data class MessageData (
 	val booleans : MutableMap<String, Boolean> = mutableMapOf(),
-	val booleanArrays : MutableMap<Array<String>, Boolean> = mutableMapOf(),
+	val booleanArrays : MutableMap<String, BooleanArray> = mutableMapOf(),
 	val bytes : MutableMap<String, Byte> = mutableMapOf(),
-	val byteArrays : MutableMap<Array<String>, ByteArray> = mutableMapOf(),
+	val byteArrays : MutableMap<String, ByteArray> = mutableMapOf(),
 	val chars : MutableMap<String, Char> = mutableMapOf(),
 	val charArrays : MutableMap<String, CharArray> = mutableMapOf(),
 	val doubles : MutableMap<String, Double> = mutableMapOf(),
