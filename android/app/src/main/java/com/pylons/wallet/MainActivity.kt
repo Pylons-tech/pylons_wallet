@@ -10,6 +10,9 @@ import android.view.MenuItem
 import android.view.View
 
 import kotlinx.android.synthetic.main.activity_main.*
+import walletCore.MessageData
+import walletCore.Status
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,10 +34,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun finish() {
 
+        val args = MessageData()
+        val msg = messageDataFromIntent(intent)
+        val result = walletCore.resolveMessage(msg, args)
         var d = Intent()
+        when (result!!.status) {
+            Status.OK_TO_RETURN_TO_CLIENT -> {
+                CoreUtil.copyMessageDataToIntent(result.msg!!, d)
+            }
+            Status.REQUIRE_UI_ELEVATION -> throw Exception("Already elevated to UI - are the args wrong?")
+            Status.INCOMING_MESSAGE_MALFORMED -> {
+                CoreUtil.copyMessageDataToIntent(msg, d)
+            }
+        }
         setResult(Activity.RESULT_OK, d)
-        d.putDeclaredExtra("info", "it works i guess and also this is from the ui")
-        d.commitDeclaredExtras()
         super.finish()
     }
 
