@@ -1,4 +1,4 @@
-package com.pylons.wallet.pylons_wallet_android
+package com.pylons.wallet.app
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

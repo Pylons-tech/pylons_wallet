@@ -1,4 +1,4 @@
-package com.pylons.wallet
+package com.pylons.wallet.app
 
 const val ACTION_INVOKE_WALLET_SERVICE = "com.pylons.action.INVOKE_WALLET"
 const val ACTION_INVOKE_WALLET_UI = "com.pylons.action.INVOKE_WALLET_UI"

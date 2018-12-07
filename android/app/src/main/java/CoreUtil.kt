@@ -1,4 +1,4 @@
-package com.pylons.wallet
+package com.pylons.wallet.app
 
 import android.app.PendingIntent
 import android.content.Context
@@ -27,7 +27,7 @@ class CoreUtil {
             for (k in msg.intArrays.keys) intent.putDeclaredExtra(k, msg.intArrays[k]!!)
             for (k in msg.longs.keys) intent.putDeclaredExtra(k, msg.longs[k]!!)
             for (k in msg.longArrays.keys) intent.putDeclaredExtra(k, msg.longArrays[k]!!)
-            for (k in msg.shorts.keys) intent.putDeclaredExtra(k, msg.doubles[k]!!)
+            for (k in msg.shorts.keys) intent.putDeclaredExtra(k, msg.shorts[k]!!)
             for (k in msg.shortArrays.keys) intent.putDeclaredExtra(k, msg.shortArrays[k]!!)
             for (k in msg.strings.keys) intent.putDeclaredExtra(k, msg.strings[k]!!)
             for (k in msg.stringArrays.keys) intent.putDeclaredExtra(k, msg.stringArrays[k]!!.toTypedArray())
