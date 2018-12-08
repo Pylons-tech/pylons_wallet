@@ -1,0 +1,54 @@
+plugins {
+    id 'kotlin-multiplatform' version '1.3.11'
+}
+repositories {
+    mavenCentral()
+}
+group 'com.example'
+version '0.0.1'
+
+apply plugin: 'maven-publish'
+
+kotlin {
+    targets {
+        fromPreset(presets.jvm, 'lib_jvm')
+        fromPreset(presets.mingwX64, 'lib_mingw')
+        fromPreset(presets.mingwX64, 'app_mingw')
+
+        configure([lib_mingw]) {
+            compilations.main.outputKinds('STATIC', 'DYNAMIC')
+        }
+    }
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-test-common'
+                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+            }
+        }
+        lib_jvmMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+            }
+        }
+        lib_jvmTest {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-test'
+                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+            }
+        }
+        lib_mingwMain {
+        }
+        lib_mingwTest {
+        }
+        app_mingwMain {
+        }
+        app_mingwTest {
+        }
+    }
+}

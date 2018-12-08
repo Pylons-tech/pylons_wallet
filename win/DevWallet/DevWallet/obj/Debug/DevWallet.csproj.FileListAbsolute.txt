@@ -1,7 +1,0 @@
-C:\contracting\pylons_wallet\win\DevWallet\DevWallet\bin\Debug\DevWallet.exe.config
-C:\contracting\pylons_wallet\win\DevWallet\DevWallet\bin\Debug\DevWallet.exe
-C:\contracting\pylons_wallet\win\DevWallet\DevWallet\bin\Debug\DevWallet.pdb
-C:\contracting\pylons_wallet\win\DevWallet\DevWallet\obj\Debug\DevWallet.csprojAssemblyReference.cache
-C:\contracting\pylons_wallet\win\DevWallet\DevWallet\obj\Debug\DevWallet.csproj.CoreCompileInputs.cache
-C:\contracting\pylons_wallet\win\DevWallet\DevWallet\obj\Debug\DevWallet.exe
-C:\contracting\pylons_wallet\win\DevWallet\DevWallet\obj\Debug\DevWallet.pdb

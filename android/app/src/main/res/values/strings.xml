@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">Pylons Wallet Testapp</string>
-    <string name="action_settings">Settings</string>
-    <string name="is_a_message">This is a message</string>
-    <string name="not_a_message">This… isn\'t a message???</string>
-</resources>
