@@ -4,7 +4,12 @@ import walletcore.types.Callback
 import walletcore.types.Coin
 import walletcore.types.Item
 
+
+/**
+ * Models a transaction. Internally, transactions are just sets of inputs and outputs
+ */
 data class Transaction(
+    val id: String = "",
     val coinsIn: List<Coin> = listOf(),
     val coinsOut: List<Coin> = listOf(),
     val itemsIn: List<Item> = listOf(),

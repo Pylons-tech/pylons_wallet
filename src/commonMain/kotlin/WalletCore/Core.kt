@@ -1,12 +1,36 @@
 package walletcore
 
+import walletcore.crypto.*
 import walletcore.ops.*
 import walletcore.tx.*
 import walletcore.types.*
 
 object Core {
-    private var profile : Profile? = null
-    private var wallet : Wallet? = null
+    /**
+     * Compartmentalizes the stateful parts of walletcore.
+     * Supports backup and loading of persistent data - keys, friends, etc.
+     * Must be set up before core can perform useful work, either by calling
+     * load() or by calling firstTimeSetup().
+     */
+    internal object Live {
+        val txHandlerType = TxDummy::class
+        var cryptoHandler : CryptoHandler? = null
+        var profile : Profile? = null
+        var txHandler : TxHandler? = null
+
+        fun backup () : String {
+            return "?"
+        }
+
+        fun firstTimeSetup () {
+
+        }
+
+        fun load (serialized : String?) {
+
+        }
+
+    }
 
     /**
      * resolveMessage is the main entry point which platform-specific wallet apps should use

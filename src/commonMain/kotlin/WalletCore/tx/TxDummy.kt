@@ -1,21 +1,26 @@
 package walletcore.tx
 
-import walletcore.types.Callback
-import walletcore.types.Profile
+import walletcore.constants.*
+import walletcore.crypto.*
+import walletcore.types.*
+
 
 /***
  * The dummy TxHandler implementation. This "fakes" all network/blockchain actions and just
  * lets all transactions succeed by default, so long as locally-verifiable conditions are met.
  * (For instance, you still can't use an item you don't actually have.)
  */
-class Dummy : TxHandler() {
+class TxDummy : TxHandler() {
 
     override fun commitTx(tx: Transaction) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getBalances(profile: Profile, callback: Callback<Wallet?>) {
+    override fun getBalances(profile: Profile, callback: Callback<Profile?>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun getNewCryptoHandler(): CryptoHandler {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
