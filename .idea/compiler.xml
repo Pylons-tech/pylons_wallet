@@ -6,6 +6,8 @@
       <module name="com.example.pylons_wallet.jvmTest" target="1.6" />
       <module name="com.example.pylons_wallet.lib_jvmMain" target="1.6" />
       <module name="com.example.pylons_wallet.lib_jvmTest" target="1.6" />
+      <module name="com.pylons.pylons_wallet.lib_jvmMain" target="1.6" />
+      <module name="com.pylons.pylons_wallet.lib_jvmTest" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

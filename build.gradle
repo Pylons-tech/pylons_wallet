@@ -3,8 +3,9 @@ plugins {
 }
 repositories {
     mavenCentral()
+    //maven { url 'https://jitpack.io' }
 }
-group 'com.example'
+group 'com.pylons'
 version '0.0.1'
 
 apply plugin: 'maven-publish'
@@ -12,16 +13,18 @@ apply plugin: 'maven-publish'
 kotlin {
     targets {
         fromPreset(presets.jvm, 'lib_jvm')
-        fromPreset(presets.mingwX64, 'lib_mingw')
-        fromPreset(presets.mingwX64, 'app_mingw')
-
-        configure([lib_mingw]) {
+        fromPreset(presets.mingwX64, 'lib_mingw') {
             compilations.main.outputKinds('STATIC', 'DYNAMIC')
+        }
+        fromPreset(presets.mingwX64, 'app_mingw') {
+            compilations.main.outputKinds('EXECUTABLE')
         }
     }
     sourceSets {
         commonMain {
             dependencies {
+                // khttp should be a dependency but lol
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
             }
         }

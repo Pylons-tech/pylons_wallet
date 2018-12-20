@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="pylons_wallet-jvm-0.0.1">
-    <output-path>C:\contracting\x\pylons_wallet\pylons_wallet\build\libs</output-path>
+    <output-path>$PROJECT_DIR$/build/libs</output-path>
     <root id="archive" name="pylons_wallet-jvm-0.0.1.jar" />
   </artifact>
 </component>
