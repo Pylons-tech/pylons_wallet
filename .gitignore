@@ -6,6 +6,6 @@ local.properties
 .idea/modules.xml
 .idea/workspace.xml
 .DS_Store
-/build
+/out
 /captures
 .externalNativeBuild
