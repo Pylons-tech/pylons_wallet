@@ -8,6 +8,6 @@ import walletcore.types.*
  * an unrecognized action.
  */
 internal fun unrecognizedAction(action : String): Response {
-    return generateErrorMessageData("UNREGOGNIZED_ACTION_FIELD", "The sent message contained an unrecognized action ($action)," +
+    return generateErrorMessageData(Error.UNRECOGNIZED_ACTION_FIELD, "The sent message contained an unrecognized action ($action)," +
             " so the wallet was unable to resolve it.")
 }

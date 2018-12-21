@@ -10,9 +10,10 @@ import walletcore.types.*
  * to correct its own state and resubmit the original message, or it
  * may simply wind up giving an error message to end users.
  */
-internal fun generateErrorMessageData(error: String, info: String): Response {
+internal fun generateErrorMessageData(error: Error, info: String): Response {
     val msg = MessageData()
-    msg.strings["error"] = error
+    msg.ints["errorCode"] = error.value
+    msg.strings["error"] = error.name
     msg.strings["info"] = info
     return Response(msg, Status.INCOMING_MESSAGE_MALFORMED)
 }

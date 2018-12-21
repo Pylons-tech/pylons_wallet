@@ -20,7 +20,11 @@ class TxDummy : TxHandler() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getNewCryptoHandler(): CryptoHandler {
+    override fun getNewCryptoHandler(userData: UserData): CryptoHandler {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getNewUserId(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

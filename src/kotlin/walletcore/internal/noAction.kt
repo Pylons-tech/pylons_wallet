@@ -8,5 +8,5 @@ import walletcore.types.*
  * providing an action.
  */
 internal fun noAction(): Response {
-    return generateErrorMessageData("NO_ACTION_FIELD", "The sent message didn't contain an action field, so the wallet was unable to resolve it.")
+    return generateErrorMessageData(Error.NO_ACTION_FIELD, "The sent message didn't contain an action field, so the wallet was unable to resolve it.")
 }

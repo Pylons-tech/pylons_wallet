@@ -1,5 +1,7 @@
 package walletcore.types
 
+import walletcore.constants.ReservedKeys
+
 /**
  * Internal state representation of the user's own profile.
  */
@@ -21,5 +23,18 @@ data class Profile (
         fun generate (_id : String, _s : Map<String, String>): Profile {
             return Profile(id = _id, strings = _s)
         }
+
+        fun fromUserData (userData: UserData) : Profile {
+            val name = userData.name
+            val id = userData.id
+            return when (name) {
+                null -> Profile(id = id)
+                else -> Profile(id = id, strings = mapOf(ReservedKeys.profileName to name))
+            }
+        }
+    }
+
+    fun getName () : String? {
+        return strings[ReservedKeys.profileName]
     }
 }

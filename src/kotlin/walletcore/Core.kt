@@ -1,38 +1,35 @@
 package walletcore
 
-import walletcore.constants.ReservedKeys
+import walletcore.constants.*
 import walletcore.crypto.*
-import walletcore.internal.actionResolutionTable
-import walletcore.ops.*
+import walletcore.internal.*
 import walletcore.tx.*
 import walletcore.types.*
 
 object Core {
+    val txHandler: TxHandler = TxDummy()
+    var cryptoHandler: CryptoHandler? = null
+    var profile: Profile? = null
+
     /**
-     * Compartmentalizes the stateful parts of walletcore.
-     * Supports backup and loading of persistent data - keys, friends, etc.
-     * Must be set up before internal can perform useful work, either by calling
-     * load() or by calling firstTimeSetup().
+     * Serializes persistent user data as a JSON string. All wallet apps will need to take care of calling
+     * backupUserData() and storing the results in local storage on their own.
      */
-    internal object Live {
-        val txHandlerType = TxDummy::class
-        var cryptoHandler : CryptoHandler? = null
-        var profile : Profile? = null
-        var txHandler : TxHandler? = null
-
-        fun backup () : String {
-            return  "?"
-
+    fun backupUserData () : String? {
+        return when (profile) {
+            null -> null
+            else -> UserData(name = profile!!.getName(), id = profile!!.id).exportAsJson()
         }
+    }
 
-        fun firstTimeSetup () {
 
+    fun start (json : String? = null) {
+        val userData = when (json) {
+            null -> throw NotImplementedError()
+            else -> UserData.parseFromJson(json)
         }
-
-        fun load (serialized : String?) {
-
-        }
-
+        profile = Profile.fromUserData(userData!!)
+        cryptoHandler = txHandler.getNewCryptoHandler(userData)
     }
 
     /**
