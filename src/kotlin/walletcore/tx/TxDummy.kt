@@ -13,7 +13,8 @@ import walletcore.types.*
 class TxDummy : TxHandler() {
 
     override fun commitTx(tx: Transaction) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        tx.submit()
+        tx.finish(Transaction.State.TX_ACCEPTED)
     }
 
     override fun getBalances(profile: Profile, callback: Callback<Profile?>) {
@@ -21,10 +22,10 @@ class TxDummy : TxHandler() {
     }
 
     override fun getNewCryptoHandler(userData: UserData): CryptoHandler {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return CryptoDummy(userData)
     }
 
     override fun getNewUserId(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return "DUMMY"
     }
 }
