@@ -27,3 +27,17 @@ data class Item(
         }
     }
 }
+
+fun Set<Item>.exclude (other : Set<Item>) : Set<Item> {
+    val mutable = this.toMutableSet()
+    mutable.forEach {
+        other.forEach {it2 ->
+            if (it2.id == it.id) mutable.remove(it)
+        }
+    }
+    return mutable.toSet()
+}
+
+fun Set<Item>.serialize () : String {
+    TODO("Still need to decide how I wanna do this")
+}

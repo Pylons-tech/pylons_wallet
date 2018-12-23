@@ -1,9 +1,9 @@
 package walletcore.types
 
 /**
- * Internal state representation of a profile other than the user's own.
+ * Internal state representation of a userProfile other than the user's own.
  */
-data class RemoteProfile (
+data class ForeignProfile (
     val id : String = "",
     val strings : Map<String, String> = mapOf(),
     val knownCoins : Set<Coin> = setOf(),

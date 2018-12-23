@@ -9,10 +9,10 @@ import walletcore.types.Item
  */
 data class Transaction(
         val id: String = "",
-        val coinsIn: List<Coin> = listOf(),
-        val coinsOut: List<Coin> = listOf(),
-        val itemsIn: List<Item> = listOf(),
-        val itemsOut: List<Item> = listOf(),
+        val coinsIn: Set<Coin> = setOf(),
+        val coinsOut: Set<Coin> = setOf(),
+        val itemsIn: Set<Item> = setOf(),
+        val itemsOut: Set<Item> = setOf(),
         var state: State = State.TX_NOT_YET_SENT
 ) {
     val onResolved = Event<Transaction>()

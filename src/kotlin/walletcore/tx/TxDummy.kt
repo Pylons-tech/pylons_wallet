@@ -1,6 +1,6 @@
 package walletcore.tx
 
-import walletcore.constants.*
+import walletcore.Core
 import walletcore.crypto.*
 import walletcore.types.*
 
@@ -14,11 +14,18 @@ class TxDummy : TxHandler() {
 
     override fun commitTx(tx: Transaction) {
         tx.submit()
+        // Since there's no blockchain, we need to apply the transaction by hand
+        Core.userProfile = Core.userProfile!!.addCoins(tx.coinsOut).removeCoins(tx.coinsIn).addItems(tx.itemsOut).removeItems(tx.itemsIn)
         tx.finish(Transaction.State.TX_ACCEPTED)
+
     }
 
-    override fun getBalances(profile: Profile, callback: Callback<Profile?>) {
+    override fun getForeignBalances(foreignProfile: ForeignProfile, callback: Callback<ForeignProfile>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getOwnBalances(callback: Callback<Profile?>) {
+        callback.onSuccess(Core.userProfile)
     }
 
     override fun getNewCryptoHandler(userData: UserData): CryptoHandler {

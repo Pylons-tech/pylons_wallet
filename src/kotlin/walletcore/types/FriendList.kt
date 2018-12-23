@@ -1,5 +1,5 @@
 package walletcore.types
 
 data class FriendList (
-    val friends : Set<RemoteProfile> = setOf()
+    val friends : Set<ForeignProfile> = setOf()
 )

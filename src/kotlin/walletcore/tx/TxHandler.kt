@@ -2,6 +2,7 @@ package walletcore.tx
 
 import walletcore.crypto.CryptoHandler
 import walletcore.types.Callback
+import walletcore.types.ForeignProfile
 import walletcore.types.Profile
 import walletcore.types.UserData
 
@@ -15,7 +16,9 @@ import walletcore.types.UserData
 abstract class TxHandler {
     abstract fun commitTx(tx: Transaction)
 
-    abstract fun getBalances(profile: Profile, callback: Callback<Profile?>)
+    abstract fun getForeignBalances(foreignProfile: ForeignProfile, callback: Callback<ForeignProfile>)
+
+    abstract fun getOwnBalances (callback: Callback<Profile?>)
 
     abstract fun getNewCryptoHandler(userData: UserData) : CryptoHandler
 
