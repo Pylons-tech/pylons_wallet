@@ -1,2 +1,2 @@
-package kotlin.walletcore.tx
+package walletcore.tx
 

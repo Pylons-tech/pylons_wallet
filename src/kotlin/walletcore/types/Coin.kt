@@ -26,5 +26,8 @@ fun Map<String, Int>.serializeCoins () : String {
     forEach{
         sb.append("${it.key},${it.value},")
     }
-    return sb.delete(sb.lastIndex, sb.length).toString()
+    return when (sb.isNotEmpty()) {
+        true -> sb.delete(sb.lastIndex, sb.length).toString()
+        false -> ""
+    }
 }

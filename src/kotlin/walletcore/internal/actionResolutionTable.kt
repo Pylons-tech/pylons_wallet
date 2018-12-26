@@ -1,14 +1,18 @@
 package walletcore.internal
 
+import walletcore.constants.*
 import walletcore.ops.*
 import walletcore.types.*
 
 internal fun actionResolutionTable (action : String, args: MessageData? = null) : Response {
-    val out = when (action) {
+    return when (action) {
         "" -> noAction()
-        "WALLET_SERVICE_TEST" -> walletServiceTest()
-        "WALLET_UI_TEST" -> requiresArgs(args) { m -> walletUiTest(m) }
+        Actions.walletServiceTest -> walletServiceTest()
+        Actions.walletUiTest -> requiresArgs(args) { m -> walletUiTest(m) }
+        Actions.getUserDetails -> getUserDetails()
+        Actions.getWalletCoreDetails -> getWalletCoreDetails()
+        Actions.getOtherUserDetails -> TODO()
+        Actions.submitTx -> TODO()
         else -> unrecognizedAction(action)
     }
-    return out
 }

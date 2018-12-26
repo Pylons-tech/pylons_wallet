@@ -1,5 +1,6 @@
 package walletcore.internal
 
+import walletcore.constants.*
 import walletcore.types.*
 
 /**
@@ -12,8 +13,8 @@ import walletcore.types.*
  */
 internal fun generateErrorMessageData(error: Error, info: String): Response {
     val msg = MessageData()
-    msg.ints["errorCode"] = error.value
-    msg.strings["error"] = error.name
-    msg.strings["info"] = info
+    msg.ints[Keys.errorCode] = error.value
+    msg.strings[Keys.error] = error.name
+    msg.strings[Keys.info] = info
     return Response(msg, Status.INCOMING_MESSAGE_MALFORMED)
 }

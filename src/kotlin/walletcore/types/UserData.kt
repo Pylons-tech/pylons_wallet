@@ -1,6 +1,7 @@
 package walletcore.types
 
 import com.squareup.moshi.Moshi
+import walletcore.Core
 
 /**
  * Object representing persistent data stored on local storage.
@@ -8,7 +9,7 @@ import com.squareup.moshi.Moshi
  */
 data class UserData (
     val name : String? = "",
-    val id : String = "",
+    val id : String? = "",
     val cryptoKeys : Map<String, ByteArray> = mapOf(),
     val extras : Map<String, String> = mapOf(),
     /**

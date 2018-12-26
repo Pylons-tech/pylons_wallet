@@ -1,5 +1,7 @@
 package walletcore
 
+import kotlinx.coroutines.*
+
 import walletcore.constants.*
 import walletcore.crypto.*
 import walletcore.internal.*
@@ -7,9 +9,12 @@ import walletcore.tx.*
 import walletcore.types.*
 
 object Core {
-    val txHandler: TxHandler = TxDummy()
-    var cryptoHandler: CryptoHandler? = null
-    var userProfile: Profile? = null
+    internal val txHandler: TxHandler = TxDummy()
+    internal var cryptoHandler: CryptoHandler? = null
+    internal var userProfile: Profile? = null
+    var uiInterrupts : UiInterrupts? = null
+    var sane : Boolean = false
+        private set
 
     /**
      * Serializes persistent user data as a JSON string. All wallet apps will need to take care of calling
@@ -24,12 +29,15 @@ object Core {
 
 
     fun start (json : String? = null) {
-        val userData = when (json) {
-            null -> throw NotImplementedError()
-            else -> UserData.parseFromJson(json)
+        runBlocking {
+            val userData = when (json) {
+                null -> uiInterrupts!!.produceUserDataForFirstRun().await()
+                else -> UserData.parseFromJson(json)
+            }
+            userProfile = Profile.fromUserData(userData!!)
+            cryptoHandler = txHandler.getNewCryptoHandler(userData)
+            sane = true
         }
-        userProfile = Profile.fromUserData(userData!!)
-        cryptoHandler = txHandler.getNewCryptoHandler(userData)
     }
 
     /**
@@ -51,6 +59,7 @@ object Core {
      * behavior - resolveMessage should not be called from the main thread of any wallet app.
      */
     fun resolveMessage(msg: MessageData, args: MessageData? = null): Response? {
+        if (!sane) throw Exception("Core state is not sane. Call Core.start() before attempting to resolve messages.")
         val action = msg.strings[ReservedKeys.wcAction].orEmpty()
         return actionResolutionTable(action, args)
     }
