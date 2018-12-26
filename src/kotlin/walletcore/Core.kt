@@ -16,6 +16,13 @@ object Core {
     var sane : Boolean = false
         private set
 
+    internal fun tearDown () {
+        cryptoHandler = null
+        userProfile = null
+        uiInterrupts = null
+        sane = false
+    }
+
     /**
      * Serializes persistent user data as a JSON string. All wallet apps will need to take care of calling
      * backupUserData() and storing the results in local storage on their own.
@@ -31,11 +38,11 @@ object Core {
     fun start (json : String? = null) {
         runBlocking {
             val userData = when (json) {
-                null -> uiInterrupts!!.produceUserDataForFirstRun().await()
+                null -> null
                 else -> UserData.parseFromJson(json)
             }
-            userProfile = Profile.fromUserData(userData!!)
-            cryptoHandler = txHandler.getNewCryptoHandler(userData)
+            userProfile = Profile.fromUserData(userData)
+            if (userData != null) cryptoHandler = txHandler.getNewCryptoHandler(userData)
             sane = true
         }
     }

@@ -18,15 +18,20 @@ data class Profile (
     val provisional : Boolean = false
 ) {
     companion object {
-        fun fromUserData (userData: UserData) : Profile {
-            val name = userData.name
-            val id = when (userData.id) {
-                null -> Core.txHandler.getNewUserId()
-                else -> userData.id
-            }
-            return when (name) {
-                null -> Profile(id = id, provisional = true)
-                else -> Profile(id = id, strings = mapOf(ReservedKeys.profileName to name), provisional = true)
+        fun fromUserData (userData: UserData?) : Profile? {
+            return when (userData) {
+                null -> null
+                else -> {
+                    val name = userData.name
+                    val id = when (userData.id) {
+                        null -> Core.txHandler.getNewUserId()
+                        else -> userData.id
+                    }
+                    return when (name) {
+                        null -> Profile(id = id, provisional = true)
+                        else -> Profile(id = id, strings = mapOf(ReservedKeys.profileName to name), provisional = true)
+                    }
+                }
             }
         }
     }

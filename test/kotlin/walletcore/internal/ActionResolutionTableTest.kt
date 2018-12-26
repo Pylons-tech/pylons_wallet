@@ -1,6 +1,7 @@
 package walletcore.internal
 
 
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -10,6 +11,11 @@ import walletcore.ops.*
 import walletcore.types.*
 
 internal class ActionResolutionTableTest {
+    @AfterEach
+    internal fun tearDown() {
+        Core.tearDown()
+    }
+
     @Test
     fun case_noAction () {
         val noActionError = noAction()
@@ -47,20 +53,36 @@ internal class ActionResolutionTableTest {
     }
 
     @Test
-    fun case_getUserDetails() {
+    fun case_getUserDetailsNoProfile() {
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start()
         val noProfileResponse = Response(MessageData(booleans = mutableMapOf(Keys.profileExists to false)), Status.OK_TO_RETURN_TO_CLIENT)
-        var actualResponse = actionResolutionTable(Actions.getUserDetails)
+        val actualResponse = actionResolutionTable(Actions.getUserDetails)
         assertEquals(noProfileResponse.status, actualResponse.status)
         assertEquals(noProfileResponse.msg!!.booleans[Keys.profileExists], actualResponse.msg!!.booleans[Keys.profileExists])
-        Core.userProfile = Profile("fooBar", mapOf(Keys.name to "user"), mapOf(Keys.pylons to 99, "gold" to 42))
+    }
+
+    @Test
+    fun case_getUserDetailsProfileExists() {
+        val json = UserData("fooBar", "12345").exportAsJson()
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start(json)
         val profileResponse = Response(Core.userProfile!!.detailsToMessageData(), Status.OK_TO_RETURN_TO_CLIENT)
-        actualResponse = actionResolutionTable(Actions.getUserDetails)
+        val actualResponse = actionResolutionTable(Actions.getUserDetails)
         assertEquals(profileResponse.status, actualResponse.status)
         assertEquals(profileResponse.msg!!.booleans[Keys.profileExists], actualResponse.msg!!.booleans[Keys.profileExists])
         assertEquals(profileResponse.msg!!.strings[Keys.id], actualResponse.msg!!.strings[Keys.id])
         assertEquals(profileResponse.msg!!.strings[Keys.name], actualResponse.msg!!.strings[Keys.name])
         assertEquals(profileResponse.msg!!.strings[Keys.coins], actualResponse.msg!!.strings[Keys.coins])
+    }
+
+    @Test
+    fun case_wipeUserData () {
+        val json = UserData("fooBar", "12345").exportAsJson()
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start(json)
+        assertNotNull(Core.userProfile)
+        actionResolutionTable(Actions.wipeUserData)
+        assertNull(Core.userProfile)
     }
 }

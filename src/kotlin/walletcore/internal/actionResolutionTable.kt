@@ -13,6 +13,8 @@ internal fun actionResolutionTable (action : String, args: MessageData? = null) 
         Actions.getWalletCoreDetails -> getWalletCoreDetails()
         Actions.getOtherUserDetails -> TODO()
         Actions.submitTx -> TODO()
+        Actions.newProfile -> TODO()
+        Actions.wipeUserData -> wipeUserData()
         else -> unrecognizedAction(action)
     }
 }

@@ -1,5 +1,6 @@
 package walletcore.types
 
+import com.squareup.moshi.Moshi
 import walletcore.constants.ReservedKeys
 
 /**
@@ -39,5 +40,14 @@ fun Set<Item>.exclude (other : Set<Item>) : Set<Item> {
 }
 
 fun Set<Item>.serialize () : String {
-    TODO("Still need to decide how I wanna do this")
+    val moshi = Moshi.Builder().build()
+    val jsonAdapter = moshi.adapter<Item>(Item::class.java)
+    val sb = StringBuilder()
+    forEach{
+        sb.append("${jsonAdapter.toJson(it)},")
+    }
+    return when (sb.isNotEmpty()) {
+        true -> sb.delete(sb.lastIndex, sb.length).toString()
+        false -> ""
+    }
 }

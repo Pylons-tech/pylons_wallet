@@ -8,5 +8,7 @@ internal class Actions {
         const val getWalletCoreDetails = "GET_WALLET_CORE_DETAILS"
         const val getOtherUserDetails = "GET_OTHER_USER_DETAILS"
         const val submitTx = "SUBMIT_TX"
+        const val newProfile = "NEW_PROFILE"
+        const val wipeUserData = "WIPE_USER_DATA"
     }
 }
