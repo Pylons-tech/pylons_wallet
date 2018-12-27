@@ -6,7 +6,11 @@ import walletcore.types.UserData
  * Dummy CryptoHandler implementation.
  * Performs exactly no cryptography, but does so through the appropriate APIs.
  */
-class CryptoDummy (userData: UserData) : CryptoHandler (userData.cryptoKeys) {
+class CryptoDummy (userData: UserData?) : CryptoHandler () {
+    init {
+        keys = userData?.cryptoKeys
+    }
+
     override fun generateNewKeys(): Map<String, ByteArray> {
         return mapOf()
     }

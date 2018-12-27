@@ -20,7 +20,9 @@ abstract class TxHandler {
 
     abstract fun getOwnBalances (callback: Callback<Profile?>)
 
-    abstract fun getNewCryptoHandler(userData: UserData) : CryptoHandler
+    abstract fun getNewCryptoHandler(userData: UserData? = null) : CryptoHandler
 
     abstract fun getNewUserId() : String
+
+    abstract fun registerNewProfile (callback: Callback<Profile?>)
 }

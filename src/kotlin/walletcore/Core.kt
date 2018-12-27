@@ -47,6 +47,10 @@ object Core {
         }
     }
 
+    fun newProfile () {
+        
+    }
+
     /**
      * resolveMessage is the main entry point which platform-specific wallet apps should use
      * in order to call into WalletCore. It takes two arguments:
@@ -69,5 +73,12 @@ object Core {
         if (!sane) throw Exception("Core state is not sane. Call Core.start() before attempting to resolve messages.")
         val action = msg.strings[ReservedKeys.wcAction].orEmpty()
         return actionResolutionTable(action, args)
+    }
+
+    /**
+     * Wipe user data without going through action resolution table. Provided for wallet app UI wiring.
+     */
+    fun wipeUserData () {
+        wipeUserData()
     }
 }
