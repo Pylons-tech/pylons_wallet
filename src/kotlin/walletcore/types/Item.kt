@@ -1,6 +1,7 @@
 package walletcore.types
 
 import com.squareup.moshi.Moshi
+import walletcore.Core
 import walletcore.constants.ReservedKeys
 
 /**
@@ -14,6 +15,29 @@ data class Item(
     val long: Map<String, Long> = mapOf(),
     val doubles: Map<String, Double> = mapOf()
 ) {
+    companion object {
+        fun findInBufferedForeignProfile (profileId : String, itemId : String) : Item? {
+            var prf : ForeignProfile? = null
+            Core.foreignProfilesBuffer.forEach {
+                if (it.id == profileId) prf = it
+            }
+            var item : Item? = null
+            prf?.knownItems!!.forEach {
+                if (it.id == itemId) item = it
+            }
+            return item
+        }
+
+        fun findInLocalProfile (itemId: String) : Item? {
+            val prf = Core.userProfile
+            var item : Item? = null
+            prf?.items!!.forEach {
+                if (it.id == itemId) item = it
+            }
+            return item
+        }
+    }
+
     /**
      * If the item has an entry in Item.strings for reserved key
      * itemName, return that. (This may be a literal name, or may

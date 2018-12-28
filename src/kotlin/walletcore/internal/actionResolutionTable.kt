@@ -4,16 +4,17 @@ import walletcore.constants.*
 import walletcore.ops.*
 import walletcore.types.*
 
-internal fun actionResolutionTable (action : String, args: MessageData? = null) : Response {
+internal fun actionResolutionTable (action : String, msg : MessageData, args: MessageData? = null) : Response {
     return when (action) {
         "" -> noAction()
         Actions.walletServiceTest -> walletServiceTest()
-        Actions.walletUiTest -> requiresArgs(args) { m -> walletUiTest(m) }
+        Actions.walletUiTest -> requiresArgs(args, ::walletUiTest)
         Actions.getUserDetails -> getUserDetails()
         Actions.getWalletCoreDetails -> getWalletCoreDetails()
         Actions.getOtherUserDetails -> TODO()
-        Actions.submitTx -> TODO()
-        Actions.newProfile -> requiresArgs(args) {m -> newProfile(m)}
+        Actions.applyRecipe -> applyRecipe(msg)
+        Actions.performTransaction -> performTransaction(msg)
+        Actions.newProfile -> requiresArgs(args, ::newProfile)
         Actions.wipeUserData -> wipeUserData()
         else -> unrecognizedAction(action)
     }

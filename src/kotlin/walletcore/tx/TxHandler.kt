@@ -1,10 +1,7 @@
 package walletcore.tx
 
 import walletcore.crypto.CryptoHandler
-import walletcore.types.Callback
-import walletcore.types.ForeignProfile
-import walletcore.types.Profile
-import walletcore.types.UserData
+import walletcore.types.*
 
 /***
  * Generic interface for transaction-handling layers.
@@ -14,13 +11,15 @@ import walletcore.types.UserData
  * systems, in effect acting as "drivers."
  */
 abstract class TxHandler {
-    abstract fun commitTx(tx: Transaction)
+    abstract fun commitTx(tx: Transaction, callback: Callback<Profile?>?)
 
     abstract fun getForeignBalances(foreignProfile: ForeignProfile, callback: Callback<ForeignProfile>)
 
     abstract fun getOwnBalances (callback: Callback<Profile?>)
 
     abstract fun getNewCryptoHandler(userData: UserData? = null) : CryptoHandler
+
+    abstract fun getNewTransactionId() : String
 
     abstract fun getNewUserId() : String
 

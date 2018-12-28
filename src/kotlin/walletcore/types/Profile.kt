@@ -57,4 +57,19 @@ data class Profile (
         // and extras!
         return msg
     }
+
+    fun countOfCoin (id : String) : Int {
+        return when (coins[id]) {
+            null -> 0
+            else -> coins[id]!!
+        }
+    }
+
+    fun canPayCoins (coinsOut : Set<Coin>) : Boolean {
+        var ok = true
+        coinsOut.forEach{
+            if (countOfCoin(it.id) < it.count) ok = false
+        }
+        return ok
+    }
 }

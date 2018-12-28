@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import walletcore.crypto.CryptoDummy
-import walletcore.types.Callback
-import walletcore.types.UserData
+import walletcore.types.*
 
 internal class TxDummyTest {
 
@@ -34,7 +33,7 @@ internal class TxDummyTest {
         val tx = Transaction()
         val cb = TestCallback()
         tx.onResolved.register(cb)
-        txDummy.commitTx(tx)
+        txDummy.commitTx(tx, null)
         assertTrue(cb.fired)
     }
 

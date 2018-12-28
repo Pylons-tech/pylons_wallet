@@ -18,13 +18,13 @@ import walletcore.types.*
  * system, which will have to wait on network operations.
  */
 class TxDummy : TxHandler() {
-    override fun commitTx(tx: Transaction) {
+    override fun commitTx(tx: Transaction, callback: Callback<Profile?>?) {
         tx.submit()
         runBlocking { delay(500) }
         // Since there's no blockchain, we need to apply the transaction by hand
         Core.userProfile = Core.userProfile!!.addCoins(tx.coinsOut).removeCoins(tx.coinsIn).addItems(tx.itemsOut).removeItems(tx.itemsIn)
         tx.finish(Transaction.State.TX_ACCEPTED)
-
+        callback?.onSuccess(Core.userProfile)
     }
 
     override fun getForeignBalances(foreignProfile: ForeignProfile, callback: Callback<ForeignProfile>) {
@@ -38,6 +38,10 @@ class TxDummy : TxHandler() {
 
     override fun getNewCryptoHandler(userData: UserData?): CryptoHandler {
         return CryptoDummy(userData)
+    }
+
+    override fun getNewTransactionId(): String {
+        return "DUMMY"
     }
 
     override fun getNewUserId(): String {

@@ -1,14 +1,17 @@
-package walletcore.tx
+package walletcore.types
 
+import walletcore.Core
 import walletcore.types.Coin
 import walletcore.types.Event
 import walletcore.types.Item
+import java.lang.NullPointerException
 
 /**
  * Models a transaction. Internally, transactions are just sets of inputs and outputs
  */
 data class Transaction(
-        val id: String = "",
+        val txId: String = "",
+        val otherProfileId: String = "",
         val coinsIn: Set<Coin> = setOf(),
         val coinsOut: Set<Coin> = setOf(),
         val itemsIn: Set<Item> = setOf(),
@@ -23,6 +26,25 @@ data class Transaction(
         TX_NOT_YET_SENT(0),
         TX_NOT_YET_COMMITTED(1),
         TX_ACCEPTED(2),
+    }
+
+    companion object {
+        fun build (txDescription: TransactionDescription) : Transaction? {
+            return try {
+                val itemsIn = mutableSetOf<Item>()
+                val itemsOut = mutableSetOf<Item>()
+                txDescription.itemsInIds.forEach {
+                    itemsIn.add(Item.findInLocalProfile(it)!!)
+                }
+                txDescription.itemsOutIds.forEach {
+                    itemsOut.add(Item.findInBufferedForeignProfile(txDescription.otherProfileId, it)!!)
+                }
+                Transaction(Core.txHandler.getNewTransactionId(), txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
+                        itemsIn.toSet(), itemsOut.toSet())
+            } catch (e : NullPointerException) {
+                return null
+            }
+        }
     }
 
     fun finish(newState: State) {

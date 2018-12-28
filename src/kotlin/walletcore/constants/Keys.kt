@@ -11,5 +11,11 @@ internal class Keys {
         const val name = "name"
         const val profileExists = "profileExists"
         const val pylons = "pylons"
+        const val success = "success"
+        const val otherProfileId = "otherProfileId"
+        const val coinsIn = "coinsIn"
+        const val coinsOut = "coinsOut"
+        const val itemsIn = "itemsIn"
+        const val itemsOut = "itemsOut"
     }
 }

@@ -12,6 +12,7 @@ object Core {
     internal val txHandler: TxHandler = TxDummy()
     internal var cryptoHandler: CryptoHandler? = null
     internal var userProfile: Profile? = null
+    internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
     var uiInterrupts : UiInterrupts? = null
     var sane : Boolean = false
         private set
@@ -72,7 +73,7 @@ object Core {
     fun resolveMessage(msg: MessageData, args: MessageData? = null): Response? {
         if (!sane) throw Exception("Core state is not sane. Call Core.start() before attempting to resolve messages.")
         val action = msg.strings[ReservedKeys.wcAction].orEmpty()
-        return actionResolutionTable(action, args)
+        return actionResolutionTable(action, msg, args)
     }
 
     /**

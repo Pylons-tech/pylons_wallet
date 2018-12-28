@@ -11,7 +11,7 @@ data class Coin(
 fun Map<String, Int>.addCoins (other : Set<Coin>, subtractValues : Boolean) : Map<String, Int> {
     val multi = when (subtractValues) {
         true -> -1
-        false -> -1
+        false -> 1
     }
     val mutable = this.toMutableMap()
     other.forEach {
