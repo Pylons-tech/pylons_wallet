@@ -1,5 +1,6 @@
 package walletcore.tx
 
+import walletcore.Core
 import walletcore.crypto.CryptoHandler
 import walletcore.types.*
 
@@ -11,6 +12,26 @@ import walletcore.types.*
  * systems, in effect acting as "drivers."
  */
 abstract class TxHandler {
+    abstract fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>) : Profile?
+
+    fun bindItemCatalystsForRecipe (recipe: Recipe) : Set<Item>? {
+        val set = mutableSetOf<Item>()
+        recipe.itemCatalysts.forEach {
+            val item = Core.userProfile!!.findItemForPrototype(it, emptySet()) ?: return null
+            set.add(item)
+        }
+        return set.toSet()
+    }
+
+    fun bindItemInputsForRecipe (recipe: Recipe, preferredItemIds : Set<String>) : Set<Item>? {
+        val set = mutableSetOf<Item>()
+        recipe.itemsIn.forEach {
+            val item = Core.userProfile!!.findItemForPrototype(it, preferredItemIds) ?: return null
+            set.add(item)
+        }
+        return set.toSet()
+    }
+
     abstract fun commitTx(tx: Transaction) : Profile?
 
     abstract fun getForeignBalances(id : String) : ForeignProfile?

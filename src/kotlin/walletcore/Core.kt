@@ -13,6 +13,7 @@ object Core {
     internal var cryptoHandler: CryptoHandler? = null
     internal var userProfile: Profile? = null
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
+    internal var loadedCookbooks : Map<String, Cookbook> = mapOf()
     var uiInterrupts : UiInterrupts? = null
     var sane : Boolean = false
         private set

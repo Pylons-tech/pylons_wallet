@@ -119,4 +119,20 @@ internal class ActionResolutionTableTest {
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.booleans[Keys.profileExists], actualResponse.msg!!.booleans[Keys.profileExists])
     }
+
+    @Test
+    fun case_applyRecipe () {
+        val json = UserData("fooBar", "12345").exportAsJson()
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start(json)
+        Core.userProfile = Core.userProfile!!.addCoins(setOf(Coin(Keys.pylons, 99)))
+        val prototype = ItemPrototype(stringConstraints = mapOf("type" to setOf(StringConstraint(value = "thingy", mode = ConstraintMode.EXACT_MATCH))))
+        val recipe = Recipe(id ="Bar", coinsIn =  setOf(Coin(Keys.pylons, 1)), itemsOut = setOf(prototype))
+        val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
+        val actualResponse = actionResolutionTable(Actions.applyRecipe,
+                MessageData(strings = mutableMapOf(Keys.cookbook to "foo", Keys.recipe to "bar")))
+        assertEquals(successResponse.status, actualResponse.status)
+        assertEquals(successResponse.msg!!.booleans[Keys.success], actualResponse.msg!!.booleans[Keys.success])
+        assertEquals("thingy", Core.userProfile!!.items.toList().first().strings["type"])
+    }
 }

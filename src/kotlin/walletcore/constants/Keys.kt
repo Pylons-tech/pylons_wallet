@@ -17,5 +17,8 @@ internal class Keys {
         const val coinsOut = "coinsOut"
         const val itemsIn = "itemsIn"
         const val itemsOut = "itemsOut"
+        const val recipe = "recipe"
+        const val cookbook = "cookbook"
+        const val preferredItemIds = "preferredItemIds"
     }
 }

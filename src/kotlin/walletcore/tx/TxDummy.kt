@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.runBlocking
 import walletcore.Core
 import walletcore.crypto.*
+import walletcore.internal.newItemFromPrototype
 import walletcore.types.*
 
 
@@ -18,6 +19,26 @@ import walletcore.types.*
  * system, which will have to wait on network operations.
  */
 class TxDummy : TxHandler() {
+    override fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>): Profile? {
+        // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
+        val boundItemInputs = bindItemInputsForRecipe(recipe, preferredItemIds) ?: return null
+        bindItemCatalystsForRecipe(recipe) ?: return null
+        if (!Core.userProfile!!.canPayCoins(recipe.coinsIn)) return null
+        if (!Core.userProfile!!.canPayCoins(recipe.coinCatalysts)) return null
+        recipe.coinsIn.forEach {
+            Core.userProfile = Core.userProfile!!.removeCoins(setOf(it))
+        }
+        val coins = Core.userProfile!!.coins.addCoins(recipe.coinsOut, false)
+        val outItems = mutableSetOf<Item>()
+        recipe.itemsOut.forEach {
+            outItems.add(newItemFromPrototype(it))
+        }
+        val items = Core.userProfile!!.items.exclude(boundItemInputs) + outItems
+        Core.userProfile = Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings,
+                coins = coins, items = items)
+        return Core.userProfile
+    }
+
     override fun commitTx(tx: Transaction) : Profile? {
         tx.submit()
         runBlocking { delay(500) }
@@ -50,7 +71,13 @@ class TxDummy : TxHandler() {
     }
 
     override fun loadCookbook(id: String): Cookbook? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val cbk = OutsideWorldDummy.cookbooks[id]
+        if (cbk != null) {
+            val map = Core.loadedCookbooks.toMutableMap()
+            map[id] = cbk
+            Core.loadedCookbooks = map.toMap()
+        }
+        return cbk
     }
 
     override fun registerNewProfile() : Profile? {

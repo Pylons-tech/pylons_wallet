@@ -72,4 +72,19 @@ data class Profile (
         }
         return ok
     }
+
+    fun findItemForPrototype (prototype: ItemPrototype, prefs : Set<String>) : Item? {
+        val foundItems = mutableSetOf<Item>()
+        items.forEach {
+            if (it.matchesPrototype(prototype)) foundItems.add(it)
+        }
+        if (foundItems.count() == 0) return null
+        var selectedItem = foundItems.elementAt(0)
+        prefs.forEach {
+            foundItems.forEach {it2 ->
+                if (it == it2.id) selectedItem = it2
+            }
+        }
+        return selectedItem
+    }
 }
