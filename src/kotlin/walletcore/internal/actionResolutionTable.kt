@@ -11,7 +11,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         Actions.walletUiTest -> requiresArgs(extraArgs, ::walletUiTest)
         Actions.getUserDetails -> getUserDetails()
         Actions.getWalletCoreDetails -> getWalletCoreDetails()
-        Actions.getOtherUserDetails -> TODO()
+        Actions.getOtherUserDetails -> getOtherUserDetails(msg)
         Actions.applyRecipe -> applyRecipe(msg)
         Actions.performTransaction -> performTransaction(msg)
         Actions.newProfile -> requiresArgs(extraArgs, ::newProfile)

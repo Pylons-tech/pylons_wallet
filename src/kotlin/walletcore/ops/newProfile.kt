@@ -5,11 +5,11 @@ import walletcore.constants.Keys
 import walletcore.constants.ReservedKeys
 import walletcore.internal.*
 import walletcore.types.*
-import java.lang.NullPointerException
+import kotlin.NullPointerException
 
-internal fun newProfile (args : MessageData) : Response {
+internal fun newProfile (extraArgs : MessageData) : Response {
     val name = try {
-        args.strings[Keys.name]
+        extraArgs.strings[Keys.name]
     }
     catch (e : NullPointerException) {
         return badArgs()
@@ -17,23 +17,11 @@ internal fun newProfile (args : MessageData) : Response {
     Core.cryptoHandler = Core.txHandler.getNewCryptoHandler()
     Core.cryptoHandler!!.newKeys()
     val id = Core.txHandler.getNewUserId()
-    var msg : MessageData? = null
     Core.userProfile = Profile(id = id, strings = mapOf(ReservedKeys.profileName to name!!), provisional = true)
-    Core.txHandler.registerNewProfile(ProfileRegisteredCallback{m -> msg = m})
+    val prf = Core.txHandler.registerNewProfile()
+    val msg = when (prf) {
+        null -> MessageData(booleans = mutableMapOf(Keys.profileExists to false))
+        else -> MessageData(booleans = mutableMapOf(Keys.profileExists to true))
+    }
     return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
-}
-
-private class ProfileRegisteredCallback (val profileRetrieved : (MessageData) -> Unit) : Callback<Profile?> {
-    override fun onSuccess(result: Profile?) {
-        profileRetrieved(MessageData(booleans = mutableMapOf(Keys.profileExists to true)))
-    }
-
-    override fun onFailure(result: Profile?) {
-        profileRetrieved(MessageData(booleans = mutableMapOf(Keys.profileExists to false)))
-    }
-
-    override fun onException(e: Exception?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 }

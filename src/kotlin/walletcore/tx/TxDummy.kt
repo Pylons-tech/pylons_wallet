@@ -18,22 +18,23 @@ import walletcore.types.*
  * system, which will have to wait on network operations.
  */
 class TxDummy : TxHandler() {
-    override fun commitTx(tx: Transaction, callback: Callback<Profile?>?) {
+    override fun commitTx(tx: Transaction) : Profile? {
         tx.submit()
         runBlocking { delay(500) }
         // Since there's no blockchain, we need to apply the transaction by hand
         Core.userProfile = Core.userProfile!!.addCoins(tx.coinsOut).removeCoins(tx.coinsIn).addItems(tx.itemsOut).removeItems(tx.itemsIn)
         tx.finish(Transaction.State.TX_ACCEPTED)
-        callback?.onSuccess(Core.userProfile)
+        return Core.userProfile
     }
 
-    override fun getForeignBalances(foreignProfile: ForeignProfile, callback: Callback<ForeignProfile>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getOwnBalances(callback: Callback<Profile?>) {
+    override fun getForeignBalances(id : String) : ForeignProfile?{
         runBlocking { delay(500) }
-        callback.onSuccess(Core.userProfile)
+        return ForeignProfile(id = id)
+    }
+
+    override fun getOwnBalances () : Profile? {
+        runBlocking { delay(500) }
+        return Core.userProfile
     }
 
     override fun getNewCryptoHandler(userData: UserData?): CryptoHandler {
@@ -48,9 +49,13 @@ class TxDummy : TxHandler() {
         return "DUMMY"
     }
 
-    override fun registerNewProfile(callback: Callback<Profile?>) {
+    override fun loadCookbook(id: String): Cookbook? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun registerNewProfile() : Profile? {
         runBlocking { delay(500) }
         Core.userProfile = Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings, provisional = false)
-        callback.onSuccess(Core.userProfile)
+        return Core.userProfile
     }
 }

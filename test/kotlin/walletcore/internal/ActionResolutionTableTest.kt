@@ -96,7 +96,7 @@ internal class ActionResolutionTableTest {
     }
 
     @Test
-    fun cast_submitTx () {
+    fun case_submitTx () {
         val json = UserData("fooBar", "12345").exportAsJson()
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start(json)
@@ -108,5 +108,15 @@ internal class ActionResolutionTableTest {
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.booleans[Keys.success], actualResponse.msg!!.booleans[Keys.success])
         assertEquals(2, Core.userProfile!!.countOfCoin(Keys.pylons))
+    }
+
+    @Test
+    fun case_getOtherUserDetails () {
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start()
+        val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.profileExists to true)), Status.OK_TO_RETURN_TO_CLIENT)
+        val actualResponse = actionResolutionTable(Actions.getOtherUserDetails, MessageData(strings = mutableMapOf(Keys.otherProfileId to "012345678910")))
+        assertEquals(successResponse.status, actualResponse.status)
+        assertEquals(successResponse.msg!!.booleans[Keys.profileExists], actualResponse.msg!!.booleans[Keys.profileExists])
     }
 }

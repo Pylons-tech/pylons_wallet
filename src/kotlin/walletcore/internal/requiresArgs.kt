@@ -12,7 +12,7 @@ import walletcore.types.*
  * and if you try to go back to the client with that it'll crash, so
  * don't do that.
  */
-internal fun requiresArgs(args: MessageData?, func: (MessageData) -> Response): Response {
-    return if (args != null) func(args)
+internal fun requiresArgs(extraArgs: MessageData?, func: (MessageData) -> Response): Response {
+    return if (extraArgs != null) func(extraArgs)
     else Response(null, Status.REQUIRE_UI_ELEVATION)
 }

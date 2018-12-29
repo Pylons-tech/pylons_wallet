@@ -11,11 +11,11 @@ import walletcore.types.*
  * systems, in effect acting as "drivers."
  */
 abstract class TxHandler {
-    abstract fun commitTx(tx: Transaction, callback: Callback<Profile?>?)
+    abstract fun commitTx(tx: Transaction) : Profile?
 
-    abstract fun getForeignBalances(foreignProfile: ForeignProfile, callback: Callback<ForeignProfile>)
+    abstract fun getForeignBalances(id : String) : ForeignProfile?
 
-    abstract fun getOwnBalances (callback: Callback<Profile?>)
+    abstract fun getOwnBalances () : Profile?
 
     abstract fun getNewCryptoHandler(userData: UserData? = null) : CryptoHandler
 
@@ -23,5 +23,7 @@ abstract class TxHandler {
 
     abstract fun getNewUserId() : String
 
-    abstract fun registerNewProfile (callback: Callback<Profile?>)
+    abstract fun loadCookbook(id : String) : Cookbook?
+
+    abstract fun registerNewProfile () : Profile?
 }

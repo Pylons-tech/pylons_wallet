@@ -12,7 +12,7 @@ import walletcore.constants.ReservedKeys
 data class Item(
     val id: String = "",
     val strings: Map<String, String> = mapOf(),
-    val long: Map<String, Long> = mapOf(),
+    val longs: Map<String, Long> = mapOf(),
     val doubles: Map<String, Double> = mapOf()
 ) {
     companion object {

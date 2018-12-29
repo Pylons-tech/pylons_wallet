@@ -7,23 +7,6 @@ import walletcore.crypto.CryptoDummy
 import walletcore.types.*
 
 internal class TxDummyTest {
-
-    class TestCallback : Callback<Transaction> {
-        var fired = false
-
-        override fun onSuccess(result: Transaction) {
-            fired = true
-        }
-
-        override fun onFailure(result: Transaction) {
-            assertTrue(false)
-        }
-
-        override fun onException(e: Exception?) {
-            assertTrue(false)
-        }
-    }
-
     /**
      * TxDummy always commits transactions instantly.
      */
@@ -31,10 +14,8 @@ internal class TxDummyTest {
     fun commitTx() {
         val txDummy = TxDummy()
         val tx = Transaction()
-        val cb = TestCallback()
-        tx.onResolved.register(cb)
-        txDummy.commitTx(tx, null)
-        assertTrue(cb.fired)
+        txDummy.commitTx(tx)
+        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }
 
     /**
