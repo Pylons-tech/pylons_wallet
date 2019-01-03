@@ -9,6 +9,15 @@ import walletcore.tx.*
 import walletcore.types.*
 
 object Core {
+    /**
+     * The number of times the core will retry valid-but-rejected transactions.
+     * (For instance: if the remote profile doesn't have the resources to apply a recipe.)
+     */
+    internal const val rejectedTxRetryTimes = 3
+    /**
+     * The amount of time (in milliseconds) to wait before retrying such operations.
+     */
+    internal const val retryDelay : Long = 500 // milliseconds
     internal val txHandler: TxHandler = TxDummy()
     internal var cryptoHandler: CryptoHandler? = null
     internal var userProfile: Profile? = null
@@ -36,6 +45,9 @@ object Core {
         }
     }
 
+    fun config () {
+
+    }
 
     fun start (json : String? = null) {
         runBlocking {

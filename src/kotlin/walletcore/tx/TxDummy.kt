@@ -50,7 +50,8 @@ class TxDummy : TxHandler() {
 
     override fun getForeignBalances(id : String) : ForeignProfile?{
         runBlocking { delay(500) }
-        return ForeignProfile(id = id)
+        System.out.println(OutsideWorldDummy.profiles.containsKey(id).toString() + " $id")
+        return OutsideWorldDummy.profiles[id]
     }
 
     override fun getOwnBalances () : Profile? {

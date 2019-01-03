@@ -12,8 +12,8 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         Actions.getUserDetails -> getUserDetails()
         Actions.getWalletCoreDetails -> getWalletCoreDetails()
         Actions.getOtherUserDetails -> getOtherUserDetails(msg)
-        Actions.applyRecipe -> applyRecipe(msg)
-        Actions.performTransaction -> performTransaction(msg)
+        Actions.applyRecipe -> retryOnError { applyRecipe(msg) }
+        Actions.performTransaction -> retryOnError { performTransaction(msg) }
         Actions.newProfile -> requiresArgs(extraArgs, ::newProfile)
         Actions.wipeUserData -> wipeUserData()
         else -> unrecognizedAction(action)

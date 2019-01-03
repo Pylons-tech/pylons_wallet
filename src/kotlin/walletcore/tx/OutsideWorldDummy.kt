@@ -1,5 +1,6 @@
 package walletcore.tx
 
+import walletcore.constants.*
 import walletcore.types.*
 
 internal object OutsideWorldDummy {
@@ -11,5 +12,9 @@ internal object OutsideWorldDummy {
                                     "type" to setOf(StringConstraint("thingy"))
                             ))))
             ))
+    )
+    val profiles : Map<String, ForeignProfile> = mapOf(
+            "012345678910" to ForeignProfile("012345678910", mapOf(
+            ReservedKeys.profileName to "fooBar"))
     )
 }

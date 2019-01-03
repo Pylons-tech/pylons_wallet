@@ -1,5 +1,6 @@
 package walletcore.types
 
+import walletcore.constants.Keys
 import kotlin.jvm.JvmStatic
 
 /**
@@ -29,4 +30,6 @@ data class MessageData(
         @JvmStatic
         fun empty() = MessageData()
     }
+
+    fun isError () : Boolean = strings.containsKey(Keys.error)
 }

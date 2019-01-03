@@ -102,9 +102,10 @@ internal class ActionResolutionTableTest {
         Core.start(json)
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val txMessage = MessageData()
-        txMessage.strings[Keys.otherProfileId] = "012345678"
+        txMessage.strings[Keys.otherProfileId] = "012345678910"
         txMessage.strings[Keys.coinsOut] = "pylons,2"
         val actualResponse = actionResolutionTable(Actions.performTransaction, txMessage)
+        System.out.println(actualResponse.msg?.strings?.get("info"))
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.booleans[Keys.success], actualResponse.msg!!.booleans[Keys.success])
         assertEquals(2, Core.userProfile!!.countOfCoin(Keys.pylons))
@@ -126,8 +127,6 @@ internal class ActionResolutionTableTest {
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start(json)
         Core.userProfile = Core.userProfile!!.addCoins(setOf(Coin(Keys.pylons, 99)))
-        val prototype = ItemPrototype(stringConstraints = mapOf("type" to setOf(StringConstraint(value = "thingy", mode = ConstraintMode.EXACT_MATCH))))
-        val recipe = Recipe(id ="Bar", coinsIn =  setOf(Coin(Keys.pylons, 1)), itemsOut = setOf(prototype))
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.applyRecipe,
                 MessageData(strings = mutableMapOf(Keys.cookbook to "foo", Keys.recipe to "bar")))

@@ -73,6 +73,13 @@ data class Profile (
         return ok
     }
 
+    fun canPayItems(itemProtos : Set<ItemPrototype>) : Boolean {
+        itemProtos.forEach {
+            if (findItemForPrototype(it, emptySet()) == null) return false
+        }
+        return true
+    }
+
     fun findItemForPrototype (prototype: ItemPrototype, prefs : Set<String>) : Item? {
         val foundItems = mutableSetOf<Item>()
         items.forEach {
