@@ -1,6 +1,9 @@
 package walletcore.types
 
+import com.squareup.moshi.Moshi
+import walletcore.constants.Actions
 import walletcore.constants.Keys
+import walletcore.constants.ReservedKeys
 import kotlin.jvm.JvmStatic
 
 /**
@@ -28,8 +31,23 @@ data class MessageData(
 ) {
     companion object {
         @JvmStatic
+        fun deleteProfile() = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.wipeUserData))
+
+        @JvmStatic
         fun empty() = MessageData()
+
+        @JvmStatic
+        fun getUserDetails () = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.getUserDetails))
     }
 
     fun isError () : Boolean = strings.containsKey(Keys.error)
+
+    fun errorToString () : String = "ERROR | ${ints[Keys.errorCode]} | ${strings[Keys.error]} | ${strings[Keys.info]}"
+
+    fun getAction () : String? = strings[ReservedKeys.wcAction]
+
+    override fun toString(): String {
+        val moshi = Moshi.Builder().build()
+        return moshi.adapter<MessageData>(MessageData::class.java).toJson(this)
+    }
 }

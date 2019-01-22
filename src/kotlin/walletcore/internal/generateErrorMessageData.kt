@@ -2,6 +2,7 @@ package walletcore.internal
 
 import walletcore.constants.*
 import walletcore.types.*
+import walletcore.Logger
 
 /**
  * If an operation produces a (recoverable) error when we attempt to execute
@@ -16,5 +17,6 @@ internal fun generateErrorMessageData(error: Error, info: String): Response {
     msg.ints[Keys.errorCode] = error.value
     msg.strings[Keys.error] = error.name
     msg.strings[Keys.info] = info
+    Logger.implementation.log(msg.errorToString(), LogTag.coreError)
     return Response(msg, Status.INCOMING_MESSAGE_MALFORMED)
 }

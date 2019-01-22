@@ -1,6 +1,6 @@
 package walletcore.constants
 
-internal class Keys {
+class Keys {
     companion object {
         const val coins = "coins"
         const val error = "error"

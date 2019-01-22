@@ -1,5 +1,6 @@
 package walletcore.crypto
 
+import walletcore.Core
 import walletcore.types.UserData
 
 /**
@@ -8,7 +9,7 @@ import walletcore.types.UserData
  */
 class CryptoDummy (userData: UserData?) : CryptoHandler () {
     init {
-        keys = userData?.cryptoKeys
+        keys = userData?.cryptoKeys ?: generateNewKeys()
     }
 
     override fun generateNewKeys(): Map<String, ByteArray> {

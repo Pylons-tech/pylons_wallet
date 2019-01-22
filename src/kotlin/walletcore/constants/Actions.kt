@@ -1,6 +1,6 @@
 package walletcore.constants
 
-internal class Actions {
+class Actions {
     companion object {
         const val walletServiceTest = "WALLET_SERVICE_TEST"
         const val walletUiTest = "WALLET_UI_TEST"

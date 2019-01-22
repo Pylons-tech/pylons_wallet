@@ -26,6 +26,9 @@ object Core {
     var uiInterrupts : UiInterrupts? = null
     var sane : Boolean = false
         private set
+    var suspendedAction : String? = null
+        internal set
+    internal var suspendedMsg : MessageData? = null
 
     internal fun tearDown () {
         cryptoHandler = null
@@ -45,24 +48,29 @@ object Core {
         }
     }
 
-    fun config () {
-
-    }
-
     fun start (json : String? = null) {
         runBlocking {
             val userData = when (json) {
                 null -> null
                 else -> UserData.parseFromJson(json)
             }
-            userProfile = Profile.fromUserData(userData)
-            if (userData != null) cryptoHandler = txHandler.getNewCryptoHandler(userData)
+            if (userData != null) {
+                userProfile = Profile.fromUserData(userData)
+                cryptoHandler = txHandler.getNewCryptoHandler(userData)
+            } else {
+                userProfile = Profile()
+                cryptoHandler = txHandler.getNewCryptoHandler()
+            }
+
+
             sane = true
         }
     }
 
-    fun newProfile () {
-        
+    fun finishSuspendedActionWithArgs(args : MessageData) : Response? {
+        val action = suspendedAction!!; suspendedAction = null
+        val msg = suspendedMsg!!; suspendedMsg = null
+        return actionResolutionTable(action, msg, args)
     }
 
     /**
@@ -83,10 +91,13 @@ object Core {
      * the core to a single thread of execution ensures consistent state and deterministic
      * behavior - resolveMessage should not be called from the main thread of any wallet app.
      */
-    fun resolveMessage(msg: MessageData, args: MessageData? = null): Response? {
-        if (!sane) throw Exception("Core state is not sane. Call Core.start() before attempting to resolve messages.")
+    fun resolveMessage(msg: MessageData): Response? {
+        if (!sane) {
+            var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
+            throw Exception(msg.msg!!.strings[Keys.info])
+        }
         val action = msg.strings[ReservedKeys.wcAction].orEmpty()
-        return actionResolutionTable(action, msg, args)
+        return actionResolutionTable(action, msg)
     }
 
     /**

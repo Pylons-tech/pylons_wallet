@@ -9,7 +9,8 @@ internal object OutsideWorldDummy {
                     "bar" to Recipe(id = "bar",
                             coinsIn = setOf(Coin("pylons", 1)),
                             itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
-                                    "type" to setOf(StringConstraint("thingy"))
+                                    "type" to setOf(StringConstraint("thingy")),
+                                    "foo" to setOf(StringConstraint("bar"))
                             ))))
             ))
     )

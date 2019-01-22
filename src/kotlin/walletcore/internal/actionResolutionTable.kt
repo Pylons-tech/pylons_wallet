@@ -8,13 +8,13 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
     return when (action) {
         "" -> noAction()
         Actions.walletServiceTest -> walletServiceTest()
-        Actions.walletUiTest -> requiresArgs(extraArgs, ::walletUiTest)
+        Actions.walletUiTest -> requiresArgs(action, msg, extraArgs, ::walletUiTest)
         Actions.getUserDetails -> getUserDetails()
         Actions.getWalletCoreDetails -> getWalletCoreDetails()
         Actions.getOtherUserDetails -> getOtherUserDetails(msg)
         Actions.applyRecipe -> retryOnError { applyRecipe(msg) }
         Actions.performTransaction -> retryOnError { performTransaction(msg) }
-        Actions.newProfile -> requiresArgs(extraArgs, ::newProfile)
+        Actions.newProfile -> requiresArgs(action, msg, extraArgs, ::newProfile)
         Actions.wipeUserData -> wipeUserData()
         else -> unrecognizedAction(action)
     }

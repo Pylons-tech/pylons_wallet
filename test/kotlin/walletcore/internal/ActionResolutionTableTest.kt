@@ -43,7 +43,7 @@ internal class ActionResolutionTableTest {
     @Test
     fun case_walletUiTest() {
         val uiTestResponse = walletUiTest(MessageData.empty()) // ui test only checks that it _has_ args
-        val noArgsResponse = requiresArgs(null) { m -> walletUiTest(m) }
+        val noArgsResponse = requiresArgs(Actions.walletUiTest, MessageData.empty(), null) { m -> walletUiTest(m) }
         val actualNoArgsResponse = actionResolutionTable(Actions.walletUiTest, MessageData.empty())
         val actualResponse = actionResolutionTable(Actions.walletUiTest, MessageData.empty(), MessageData.empty())
         assertEquals(noArgsResponse.status, actualNoArgsResponse.status)
@@ -133,5 +133,6 @@ internal class ActionResolutionTableTest {
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.booleans[Keys.success], actualResponse.msg!!.booleans[Keys.success])
         assertEquals("thingy", Core.userProfile!!.items.toList().first().strings["type"])
+        System.out.println(Core.userProfile!!.items.serialize())
     }
 }

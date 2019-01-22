@@ -1,5 +1,8 @@
 package walletcore.internal
 
+import walletcore.Core
+import walletcore.Logger
+import walletcore.constants.LogTag
 import walletcore.types.*
 
 /**
@@ -12,7 +15,12 @@ import walletcore.types.*
  * and if you try to go back to the client with that it'll crash, so
  * don't do that.
  */
-internal fun requiresArgs(extraArgs: MessageData?, func: (MessageData) -> Response): Response {
+internal fun requiresArgs(action : String, msg : MessageData, extraArgs: MessageData?, func: (MessageData) -> Response): Response {
     return if (extraArgs != null) func(extraArgs)
-    else Response(null, Status.REQUIRE_UI_ELEVATION)
+    else {
+        Core.suspendedAction = action
+        Core.suspendedMsg = msg
+        Logger.implementation.log("Set suspended action", LogTag.info)
+        Response(null, Status.REQUIRE_UI_ELEVATION)
+    }
 }
