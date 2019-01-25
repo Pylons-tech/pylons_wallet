@@ -28,8 +28,7 @@ data class MessageData(
     val shortArrays: MutableMap<String, ShortArray> = mutableMapOf(),
     val strings: MutableMap<String, String> = mutableMapOf(),
     val stringArrays: MutableMap<String, MutableList<String>> = mutableMapOf()
-) {
-    companion object {
+) { companion object {
         @JvmStatic
         fun deleteProfile() = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.wipeUserData))
 
@@ -45,6 +44,28 @@ data class MessageData(
     fun errorToString () : String = "ERROR | ${ints[Keys.errorCode]} | ${strings[Keys.error]} | ${strings[Keys.info]}"
 
     fun getAction () : String? = strings[ReservedKeys.wcAction]
+
+    fun merge (other : MessageData) : MessageData {
+        booleans.putAll(other.booleans)
+        booleanArrays.putAll(other.booleanArrays)
+        bytes.putAll(other.bytes)
+        byteArrays.putAll(other.byteArrays)
+        chars.putAll(other.chars)
+        charArrays.putAll(other.charArrays)
+        doubles.putAll(other.doubles)
+        doubleArrays.putAll(other.doubleArrays)
+        floats.putAll(other.floats)
+        floatArrays.putAll(other.floatArrays)
+        ints.putAll(other.ints)
+        intArrays.putAll(other.intArrays)
+        longs.putAll(other.longs)
+        longArrays.putAll(other.longArrays)
+        shorts.putAll(other.shorts)
+        shortArrays.putAll(other.shortArrays)
+        strings.putAll(other.strings)
+        stringArrays.putAll(other.stringArrays)
+        return this
+    }
 
     override fun toString(): String {
         val moshi = Moshi.Builder().build()

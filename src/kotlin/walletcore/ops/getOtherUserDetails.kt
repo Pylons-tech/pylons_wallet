@@ -10,7 +10,7 @@ internal fun getOtherUserDetails (msg : MessageData) : Response {
     val prf = Core.txHandler.getForeignBalances(msg.strings[Keys.otherProfileId]!!)
     val msgOut = when (prf) {
         null -> MessageData(booleans = mutableMapOf(Keys.profileExists to false))
-        else -> MessageData(booleans = mutableMapOf(Keys.profileExists to true))
+        else -> MessageData(booleans = mutableMapOf(Keys.profileExists to true)).merge(prf.detailsToMessageData())
     }
     return Response(msgOut, Status.OK_TO_RETURN_TO_CLIENT)
 }

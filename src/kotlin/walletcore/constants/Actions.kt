@@ -11,5 +11,6 @@ class Actions {
         const val applyRecipe = "APPLY_RECIPE"
         const val newProfile = "NEW_PROFILE"
         const val wipeUserData = "WIPE_USER_DATA"
+        const val setUserProfileState = "SET_USER_PROFILE_STATE"
     }
 }

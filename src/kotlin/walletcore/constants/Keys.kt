@@ -20,5 +20,6 @@ class Keys {
         const val recipe = "recipe"
         const val cookbook = "cookbook"
         const val preferredItemIds = "preferredItemIds"
+        const val strings = "strings"
     }
 }

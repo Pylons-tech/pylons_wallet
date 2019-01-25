@@ -16,6 +16,12 @@ data class Item(
         val doubles: Map<String, Double> = mapOf()
 ) {
     companion object {
+        fun fromJson (json : String) : Item {
+            val moshi = Moshi.Builder().build()
+            val jsonAdapter = moshi.adapter<Item>(Item::class.java)
+            return jsonAdapter.fromJson(json)!!
+        }
+
         fun findInBufferedForeignProfile (profileId : String, itemId : String) : Item? {
             var prf : ForeignProfile? = null
             Core.foreignProfilesBuffer.forEach {
@@ -104,6 +110,12 @@ fun Set<Item>.exclude (other : Set<Item>) : Set<Item> {
         }
     }
     return mutable.toSet()
+}
+
+fun Item.toJson () : String {
+    val moshi = Moshi.Builder().build()
+    val jsonAdapter = moshi.adapter<Item>(Item::class.java)
+    return jsonAdapter.toJson(this)
 }
 
 fun Set<Item>.serialize () : String {

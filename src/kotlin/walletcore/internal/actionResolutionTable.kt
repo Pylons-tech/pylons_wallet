@@ -7,8 +7,8 @@ import walletcore.types.*
 internal fun actionResolutionTable (action : String, msg : MessageData, extraArgs: MessageData? = null) : Response {
     return when (action) {
         "" -> noAction()
-        Actions.walletServiceTest -> walletServiceTest()
-        Actions.walletUiTest -> requiresArgs(action, msg, extraArgs, ::walletUiTest)
+        Actions.walletServiceTest -> devOnly(::walletServiceTest)
+        Actions.walletUiTest -> devOnly{ requiresArgs(action, msg, extraArgs, ::walletUiTest) }
         Actions.getUserDetails -> getUserDetails()
         Actions.getWalletCoreDetails -> getWalletCoreDetails()
         Actions.getOtherUserDetails -> getOtherUserDetails(msg)
@@ -16,6 +16,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         Actions.performTransaction -> retryOnError { performTransaction(msg) }
         Actions.newProfile -> requiresArgs(action, msg, extraArgs, ::newProfile)
         Actions.wipeUserData -> wipeUserData()
+        Actions.setUserProfileState -> devOnly { setUserProfileState(msg) }
         else -> unrecognizedAction(action)
     }
 }

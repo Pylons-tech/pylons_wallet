@@ -119,6 +119,7 @@ internal class ActionResolutionTableTest {
         val actualResponse = actionResolutionTable(Actions.getOtherUserDetails, MessageData(strings = mutableMapOf(Keys.otherProfileId to "012345678910")))
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.booleans[Keys.profileExists], actualResponse.msg!!.booleans[Keys.profileExists])
+        assertEquals("fooBar", actualResponse.msg!!.strings[Keys.name])
     }
 
     @Test
@@ -134,5 +135,18 @@ internal class ActionResolutionTableTest {
         assertEquals(successResponse.msg!!.booleans[Keys.success], actualResponse.msg!!.booleans[Keys.success])
         assertEquals("thingy", Core.userProfile!!.items.toList().first().strings["type"])
         System.out.println(Core.userProfile!!.items.serialize())
+    }
+
+    @Test
+    fun case_setUserProfileState () {
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start()
+        val item = Item("ITEM???")
+        val incomingMsg = MessageData(stringArrays = mutableMapOf(Keys.strings to arrayListOf("NAMA", ReservedKeys.profileName),
+                Keys.coins to arrayListOf("3", "pylons"), Keys.items to arrayListOf(item.toJson())), strings =
+                mutableMapOf(ReservedKeys.wcAction to Actions.setUserProfileState))
+        val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
+        val actualResponse = actionResolutionTable(Actions.setUserProfileState, incomingMsg)
+        assertEquals("NAMA", Core.userProfile!!.getName())
     }
 }

@@ -12,6 +12,8 @@ import walletcore.types.*
  * systems, in effect acting as "drivers."
  */
 abstract class TxHandler {
+    abstract val isDevTxLayer : Boolean
+
     abstract fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>) : Profile?
 
     fun bindItemCatalystsForRecipe (recipe: Recipe) : Set<Item>? {

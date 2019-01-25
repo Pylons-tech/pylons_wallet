@@ -1,5 +1,7 @@
 package walletcore.types
 
+import com.squareup.moshi.Moshi
+
 /**
  * Local representation of a coin-type resource.
  */
@@ -25,6 +27,19 @@ fun Map<String, Int>.serializeCoins () : String {
     val sb = StringBuilder()
     forEach{
         sb.append("${it.key},${it.value},")
+    }
+    return when (sb.isNotEmpty()) {
+        true -> sb.delete(sb.lastIndex, sb.length).toString()
+        false -> ""
+    }
+}
+
+fun Set<Coin>.serialize () : String {
+    val moshi = Moshi.Builder().build()
+    val jsonAdapter = moshi.adapter<Coin>(Item::class.java)
+    val sb = StringBuilder()
+    forEach{
+        sb.append("${jsonAdapter.toJson(it)},")
     }
     return when (sb.isNotEmpty()) {
         true -> sb.delete(sb.lastIndex, sb.length).toString()
