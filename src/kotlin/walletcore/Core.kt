@@ -21,6 +21,7 @@ object Core {
     internal val txHandler: TxHandler = TxDummy()
     internal var cryptoHandler: CryptoHandler? = null
     internal var userProfile: Profile? = null
+    internal var friends: List<Friend> = listOf()
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
     internal var loadedCookbooks : Map<String, Cookbook> = mapOf()
     var uiInterrupts : UiInterrupts? = null
@@ -34,6 +35,7 @@ object Core {
         cryptoHandler = null
         userProfile = null
         uiInterrupts = null
+        friends = listOf()
         sane = false
     }
 
@@ -44,7 +46,7 @@ object Core {
     fun backupUserData () : String? {
         return when (userProfile) {
             null -> null
-            else -> UserData(name = userProfile!!.getName(), id = userProfile!!.id).exportAsJson()
+            else -> UserData(name = userProfile!!.getName(), id = userProfile!!.id, friends = friends).exportAsJson()
         }
     }
 
@@ -57,6 +59,7 @@ object Core {
             if (userData != null) {
                 userProfile = Profile.fromUserData(userData)
                 cryptoHandler = txHandler.getNewCryptoHandler(userData)
+                if (userData.friends != null) friends = userData.friends
             } else {
                 userProfile = Profile()
                 cryptoHandler = txHandler.getNewCryptoHandler()
@@ -104,6 +107,6 @@ object Core {
      * Wipe user data without going through action resolution table. Provided for wallet app UI wiring.
      */
     fun wipeUserData () {
-        wipeUserData()
+        walletcore.ops.wipeUserData()
     }
 }

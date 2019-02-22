@@ -12,6 +12,7 @@ data class UserData (
     val id : String? = "",
     val cryptoKeys : Map<String, ByteArray> = mapOf(),
     val extras : Map<String, String> = mapOf(),
+    val friends : List<Friend>? = listOf(),
     /**
      * UserData.version exists for forwards compatibility reasons.
      * Since we just serialize the object directly as JSON, it'd be easy

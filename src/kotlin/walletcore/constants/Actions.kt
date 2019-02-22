@@ -12,5 +12,9 @@ class Actions {
         const val newProfile = "NEW_PROFILE"
         const val wipeUserData = "WIPE_USER_DATA"
         const val setUserProfileState = "SET_USER_PROFILE_STATE"
+        const val setOtherUserProfileState = "SET_OTHER_USER_PROFILE_STATE"
+        const val dumpUserProfileState = "DUMP_USER_PROFILE_STATE"
+        const val getFriends = "GET_FRIENDS"
+        const val setFriends = "SET_FRIENDS"
     }
 }

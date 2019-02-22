@@ -1,11 +1,15 @@
 package walletcore.ops
 
 import walletcore.Core
+import walletcore.Logger
 import walletcore.constants.Keys
+import walletcore.constants.LogTag
 import walletcore.internal.*
 import walletcore.types.*
 
 internal fun applyRecipe (msg: MessageData) : Response {
+    Logger.implementation.log(msg.strings[Keys.recipe].orEmpty(), LogTag.info)
+    Logger.implementation.log(msg.strings[Keys.cookbook].orEmpty(), LogTag.info)
     var error : Response? = null
     if (!isValid(msg){error = it}) return error!!
     val preferredItemIds = msg.stringArrays[Keys.preferredItemIds] ?: mutableListOf()

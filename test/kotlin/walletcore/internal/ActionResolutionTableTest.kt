@@ -139,6 +139,8 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_setUserProfileState () {
+        // This will fail right now.
+        // TODO: fix it
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start()
         val item = Item("ITEM???")

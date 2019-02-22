@@ -17,6 +17,10 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         Actions.newProfile -> requiresArgs(action, msg, extraArgs, ::newProfile)
         Actions.wipeUserData -> wipeUserData()
         Actions.setUserProfileState -> devOnly { setUserProfileState(msg) }
+        Actions.setOtherUserProfileState -> devOnly { setOtherUserProfileState(msg) }
+        Actions.dumpUserProfileState -> devOnly { dumpUserProfileState(msg) }
+        Actions.getFriends -> getFriends()
+        Actions.setFriends -> { setFriends(msg) }
         else -> unrecognizedAction(action)
     }
 }

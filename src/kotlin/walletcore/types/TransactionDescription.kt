@@ -26,7 +26,7 @@ data class TransactionDescription (
                     val split = coinsOutCsv.split(",")
                     for (i in 0 until split.count()) if (i % 2 == 0) coinsOut.add(Coin(split[i], split[i+1].toInt()))
                 }
-                // fetch full item descriptions from the ids
+                // TODO: fetch full item descriptions from the ids
                 val itemsOutCsv = msg.strings[Keys.itemsOut]
                 val itemsOut = when (itemsOutCsv) {
                     null -> listOf()

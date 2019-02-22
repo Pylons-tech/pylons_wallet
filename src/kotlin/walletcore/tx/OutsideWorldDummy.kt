@@ -14,8 +14,13 @@ internal object OutsideWorldDummy {
                             ))))
             ))
     )
-    val profiles : Map<String, ForeignProfile> = mapOf(
+    val profiles : Map<String, ForeignProfile> get() = m_profiles
+    private val m_profiles : MutableMap<String, ForeignProfile> = mutableMapOf(
             "012345678910" to ForeignProfile("012345678910", mapOf(
             ReservedKeys.profileName to "fooBar"))
     )
+
+    fun addProfile (id : String, prf : ForeignProfile) {
+        m_profiles[id] = prf
+    }
 }
