@@ -20,7 +20,7 @@ data class ForeignProfile (
         if (name != null) msg.strings[Keys.name] = name
         msg.strings[Keys.id] = id
         msg.strings[Keys.coins] = knownCoins.serialize()
-        msg.strings[Keys.items] = knownItems.serialize()
+        msg.stringArrays[Keys.items] = knownItems.serialize()
         // and extras!
         return msg
     }

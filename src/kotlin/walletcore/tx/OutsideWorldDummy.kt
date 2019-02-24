@@ -11,6 +11,36 @@ internal object OutsideWorldDummy {
                             itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
                                     "type" to setOf(StringConstraint("thingy")),
                                     "foo" to setOf(StringConstraint("bar"))
+                            )))),
+                    "buyFurniture_Bed" to Recipe(id = "buyFurniture_Bed",
+                            coinsIn = setOf(Coin("gold", 5)),
+                            itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
+                                    "type" to setOf(StringConstraint("decorFurniture")),
+                                    "subtype" to setOf(StringConstraint("Bed"))
+                            )))),
+                    "buyFurniture_Chest" to Recipe(id = "buyFurniture_Chest",
+                            coinsIn = setOf(Coin("gold", 3)),
+                            itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
+                                    "type" to setOf(StringConstraint("decorFurniture")),
+                                    "subtype" to setOf(StringConstraint("Chest"))
+                            )))),
+                    "buyFurniture_Table" to Recipe(id = "buyFurniture_Table",
+                            coinsIn = setOf(Coin("gold", 6)),
+                            itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
+                                    "type" to setOf(StringConstraint("decorFurniture")),
+                                    "subtype" to setOf(StringConstraint("Endtable"))
+                            )))),
+                    "buyFurniture_Chair" to Recipe(id = "buyFurniture_Chair",
+                            coinsIn = setOf(Coin("gold", 3)),
+                            itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
+                                    "type" to setOf(StringConstraint("decorFurniture")),
+                                    "subtype" to setOf(StringConstraint("Chair"))
+                            )))),
+                    "buyFurniture_Torch" to Recipe(id = "buyFurniture_Torch",
+                            coinsIn = setOf(Coin("gold", 1)),
+                            itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
+                                    "type" to setOf(StringConstraint("decorFurniture")),
+                                    "subtype" to setOf(StringConstraint("Torch"))
                             ))))
             ))
     )

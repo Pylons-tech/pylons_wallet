@@ -118,15 +118,12 @@ fun Item.toJson () : String {
     return jsonAdapter.toJson(this)
 }
 
-fun Set<Item>.serialize () : String {
+fun Set<Item>.serialize () : MutableList<String> {
     val moshi = Moshi.Builder().build()
     val jsonAdapter = moshi.adapter<Item>(Item::class.java)
-    val sb = StringBuilder()
+    val ls = mutableListOf<String>()
     forEach{
-        sb.append("${jsonAdapter.toJson(it)},")
+        ls.add(jsonAdapter.toJson(it))
     }
-    return when (sb.isNotEmpty()) {
-        true -> sb.delete(sb.lastIndex, sb.length).toString()
-        false -> ""
-    }
+    return ls
 }

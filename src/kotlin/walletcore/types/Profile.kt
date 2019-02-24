@@ -53,7 +53,7 @@ data class Profile (
         if (name != null) msg.strings[Keys.name] = name
         msg.strings[Keys.id] = id
         msg.strings[Keys.coins] = coins.serializeCoins()
-        msg.strings[Keys.items] = items.serialize()
+        msg.stringArrays[Keys.items] = items.serialize()
         // and extras!
         return msg
     }
