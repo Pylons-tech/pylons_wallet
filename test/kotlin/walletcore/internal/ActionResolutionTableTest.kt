@@ -144,11 +144,44 @@ internal class ActionResolutionTableTest {
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start()
         val item = Item("ITEM???")
-        val incomingMsg = MessageData(stringArrays = mutableMapOf(Keys.strings to arrayListOf("NAMA", ReservedKeys.profileName),
-                Keys.coins to arrayListOf("3", "pylons"), Keys.items to arrayListOf(item.toJson())), strings =
-                mutableMapOf(ReservedKeys.wcAction to Actions.setUserProfileState))
+        val incomingMsg = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.setUserProfileState, "json" to
+        """{
+  "coins": { "gold": 999998 },
+  "id": "just whatever for now afa id goes",
+  "items": [
+    {
+      "doubles": {},
+      "id": "0_[ITEM]_DUMMY",
+      "longs": {},
+      "strings": {
+        "type": "decorFurniture",
+        "subtype": "Torch"
+      }
+    },
+    {
+      "doubles": {},
+      "id": "1_[ITEM]_DUMMY",
+      "longs": {},
+      "strings": {
+        "type": "decorFurniture",
+        "subtype": "Torch"
+      }
+    },
+    {
+      "doubles": {},
+      "id": "2_[ITEM]_DUMMY",
+      "longs": {},
+      "strings": {
+        "type": "decorFurniture",
+        "subtype": "Torch"
+      }
+    }
+  ],
+  "provisional": false,
+  "strings": { "@P__profileName": "nooo" }
+}"""))
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.setUserProfileState, incomingMsg)
-        assertEquals("NAMA", Core.userProfile!!.getName())
+        assertEquals("nooo", Core.userProfile!!.getName())
     }
 }

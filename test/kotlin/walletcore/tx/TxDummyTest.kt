@@ -3,6 +3,7 @@ package walletcore.tx
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
+import walletcore.Core
 import walletcore.crypto.CryptoDummy
 import walletcore.types.*
 
@@ -14,6 +15,8 @@ internal class TxDummyTest {
     fun commitTx() {
         val txDummy = TxDummy()
         val tx = Transaction()
+        Core.start()
+        Core.userProfile = Profile()
         txDummy.commitTx(tx)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }

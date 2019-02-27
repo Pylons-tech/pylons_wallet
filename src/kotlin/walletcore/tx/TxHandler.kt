@@ -13,6 +13,7 @@ import walletcore.types.*
  */
 abstract class TxHandler {
     abstract val isDevTxLayer : Boolean
+    abstract val isOfflineTxLayer : Boolean
 
     abstract fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>) : Profile?
 

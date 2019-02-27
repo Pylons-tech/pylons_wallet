@@ -1,9 +1,20 @@
 package walletcore.tx
 
+import com.squareup.moshi.Moshi
 import walletcore.constants.*
 import walletcore.types.*
 
 internal object OutsideWorldDummy {
+    private class ProfileStore {
+        val m_profiles : MutableMap<String, ForeignProfile> = mutableMapOf(
+                "012345678910" to ForeignProfile("012345678910", mapOf(
+                        ReservedKeys.profileName to "fooBar"))
+        )
+
+    }
+
+    private var profileStore : ProfileStore = ProfileStore()
+
     val cookbooks : Map<String, Cookbook> = mapOf(
             "foo" to Cookbook(id = "foo", recipes = mapOf(
                     "bar" to Recipe(id = "bar",
@@ -44,13 +55,21 @@ internal object OutsideWorldDummy {
                             ))))
             ))
     )
-    val profiles : Map<String, ForeignProfile> get() = m_profiles
-    private val m_profiles : MutableMap<String, ForeignProfile> = mutableMapOf(
-            "012345678910" to ForeignProfile("012345678910", mapOf(
-            ReservedKeys.profileName to "fooBar"))
-    )
+    val profiles : Map<String, ForeignProfile> get() = profileStore.m_profiles
 
     fun addProfile (id : String, prf : ForeignProfile) {
-        m_profiles[id] = prf
+        profileStore.m_profiles[id] = prf
+    }
+
+    fun dumpProfiles () : String {
+        val moshi = Moshi.Builder().build()
+        val adapter = moshi.adapter<ProfileStore>(ProfileStore::class.java)
+        return adapter.toJson(profileStore)
+    }
+
+    fun loadProfiles (json : String) {
+        val moshi = Moshi.Builder().build()
+        val adapter = moshi.adapter<ProfileStore>(ProfileStore::class.java)
+        profileStore = adapter.fromJson(json)!!
     }
 }

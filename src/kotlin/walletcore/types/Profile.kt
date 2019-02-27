@@ -1,5 +1,6 @@
 package walletcore.types
 
+import com.squareup.moshi.Moshi
 import walletcore.Core
 import walletcore.constants.*
 
@@ -33,6 +34,12 @@ data class Profile (
                     }
                 }
             }
+        }
+
+        fun load (str : String) : Profile {
+            val moshi = Moshi.Builder().build()
+            val adapter = moshi.adapter<Profile>(Profile::class.java)
+            return adapter.fromJson(str)!!
         }
     }
 
@@ -93,5 +100,11 @@ data class Profile (
             }
         }
         return selectedItem
+    }
+
+    fun dump () : String {
+        val moshi = Moshi.Builder().build()
+        val adapter = moshi.adapter<Profile>(Profile::class.java)
+        return adapter.toJson(this)
     }
 }

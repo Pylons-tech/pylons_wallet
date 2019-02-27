@@ -50,7 +50,15 @@ object Core {
         }
     }
 
-    fun start (json : String? = null) {
+    fun dumpUserProfile () : String {
+        return userProfile!!.dump()
+    }
+
+    fun dumpForeignProfiles () : String {
+        return OutsideWorldDummy.dumpProfiles()
+    }
+
+    fun start (json : String? = null, dbgStateProfileJson : String? = null, dbgStateWorldJson : String? = null) {
         runBlocking {
             val userData = when (json) {
                 null -> null
@@ -61,11 +69,11 @@ object Core {
                 cryptoHandler = txHandler.getNewCryptoHandler(userData)
                 if (userData.friends != null) friends = userData.friends
             } else {
-                userProfile = Profile()
+                userProfile = null
                 cryptoHandler = txHandler.getNewCryptoHandler()
             }
-
-
+            if (dbgStateWorldJson != null) OutsideWorldDummy.loadProfiles(dbgStateWorldJson)
+            if (dbgStateProfileJson != null) userProfile = Profile.load(dbgStateProfileJson)
             sane = true
         }
     }

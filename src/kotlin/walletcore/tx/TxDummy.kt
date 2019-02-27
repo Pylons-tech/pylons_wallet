@@ -20,6 +20,7 @@ import walletcore.types.*
  */
 class TxDummy : TxHandler() {
     override val isDevTxLayer: Boolean = true
+    override val isOfflineTxLayer: Boolean = true
 
     override fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>): Profile? {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
