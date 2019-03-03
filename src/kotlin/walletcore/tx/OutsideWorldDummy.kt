@@ -35,7 +35,7 @@ internal object OutsideWorldDummy {
                                     "type" to setOf(StringConstraint("decorFurniture")),
                                     "subtype" to setOf(StringConstraint("Chest"))
                             )))),
-                    "buyFurniture_Table" to Recipe(id = "buyFurniture_Table",
+                    "buyFurniture_Endtable" to Recipe(id = "buyFurniture_Endtable",
                             coinsIn = setOf(Coin("gold", 6)),
                             itemsOut = setOf(ItemPrototype(stringConstraints = mapOf(
                                     "type" to setOf(StringConstraint("decorFurniture")),
