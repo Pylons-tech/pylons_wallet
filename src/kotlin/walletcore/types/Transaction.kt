@@ -1,6 +1,8 @@
 package walletcore.types
 
 import walletcore.Core
+import walletcore.constants.Keys
+import walletcore.constants.Keys.Companion.items
 import java.lang.NullPointerException
 
 /**
@@ -8,12 +10,15 @@ import java.lang.NullPointerException
  */
 data class Transaction(
         val txId: String = "",
-        val otherProfileId: String = "",
+        val addressIn: String = "",
+        val addressOut: String = "",
         val coinsIn: Set<Coin> = setOf(),
         val coinsOut: Set<Coin> = setOf(),
         val itemsIn: Set<Item> = setOf(),
         val itemsOut: Set<Item> = setOf(),
-        var state: State = State.TX_NOT_YET_SENT
+        var state: State = State.TX_NOT_YET_SENT,
+        val coinsCatalysts: Set<Coin> = setOf(),
+        val itemsCatalysts: Set<Item> = setOf()
 ) {
     enum class State(val value: Int) {
         TX_REFUSED(-1),
@@ -33,12 +38,15 @@ data class Transaction(
                 txDescription.itemsOutIds.forEach {
                     itemsOut.add(Item.findInBufferedForeignProfile(txDescription.otherProfileId, it)!!)
                 }
-                Transaction(Core.txHandler.getNewTransactionId(), txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
+                Transaction(Core.txHandler.getNewTransactionId(), Core.userProfile!!.id,
+                        txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
                         itemsIn.toSet(), itemsOut.toSet())
             } catch (e : NullPointerException) {
                 return null
             }
         }
+
+
     }
 
     fun finish(newState: State) {
@@ -51,6 +59,7 @@ data class Transaction(
             //State.TX_ACCEPTED -> onResolved.onSuccess(this)
             //State.TX_REFUSED -> onResolved.onFailure(this)
         }
+
     }
 
     fun submit() {
@@ -58,5 +67,16 @@ data class Transaction(
                 "Transactions of state TX_NOT_YET_SEND")
         state = State.TX_NOT_YET_COMMITTED
         //onSubmitted.onSuccess(this)
+    }
+
+    fun detailsToMessageData() : MessageData {
+        val msg = MessageData()
+        msg.strings["txId"] = txId
+        msg.strings[Keys.otherProfileId] = addressOut
+        msg.strings[Keys.coinsIn] = coinsIn.serialize()
+        msg.strings[Keys.coinsOut] = coinsOut.serialize()
+        msg.stringArrays[Keys.itemsIn] = itemsIn.serialize()
+        msg.stringArrays[Keys.itemsOut] = itemsOut.serialize()
+        return msg
     }
 }

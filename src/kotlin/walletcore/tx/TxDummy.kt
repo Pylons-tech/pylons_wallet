@@ -6,6 +6,10 @@ import walletcore.Core
 import walletcore.crypto.*
 import walletcore.internal.newItemFromPrototype
 import walletcore.types.*
+import java.sql.Date
+import java.sql.Time
+import java.time.Instant
+import java.util.*
 
 
 /***
@@ -19,13 +23,17 @@ import walletcore.types.*
  * system, which will have to wait on network operations.
  */
 class TxDummy : TxHandler() {
+    override fun getTransaction(id: String): Transaction? {
+        return OutsideWorldDummy.transactions[id]
+    }
+
     override val isDevTxLayer: Boolean = true
     override val isOfflineTxLayer: Boolean = true
 
-    override fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>): Profile? {
+    override fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>): ApplyRecipeOutput? {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
         val boundItemInputs = bindItemInputsForRecipe(recipe, preferredItemIds) ?: return null
-        bindItemCatalystsForRecipe(recipe) ?: return null
+        val catalystItems = bindItemCatalystsForRecipe(recipe) ?: return null
         if (!Core.userProfile!!.canPayCoins(recipe.coinsIn)) return null
         if (!Core.userProfile!!.canPayCoins(recipe.coinCatalysts)) return null
         recipe.coinsIn.forEach {
@@ -39,7 +47,15 @@ class TxDummy : TxHandler() {
         val items = Core.userProfile!!.items.exclude(boundItemInputs) + outItems
         Core.userProfile = Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings,
                 coins = coins, items = items)
-        return Core.userProfile
+        val boundAssetSet = BoundAssetSet(recipe.coinsIn, recipe.coinsOut, boundItemInputs, outItems, recipe.coinCatalysts, catalystItems)
+        val output = ApplyRecipeOutput(Core.userProfile, boundAssetSet)
+        OutsideWorldDummy.addTx(buildTxForApplyRecipe(Core.userProfile!!.id, recipe, output))
+        return output
+    }
+
+    private fun buildTxForApplyRecipe (address : String, recipe: Recipe, applyRecipeOutput: TxHandler.ApplyRecipeOutput) : Transaction {
+        return Transaction(Core.txHandler.getNewTransactionId(), Core.userProfile!!.id, address, recipe.coinsIn, recipe.coinsOut, applyRecipeOutput.boundAssetSet!!.itemsIn,
+                applyRecipeOutput.boundAssetSet!!.itemsOut, Transaction.State.TX_ACCEPTED, recipe.coinCatalysts, applyRecipeOutput.boundAssetSet!!.itemsCatalysts)
     }
 
     override fun commitTx(tx: Transaction) : Profile? {
@@ -48,6 +64,7 @@ class TxDummy : TxHandler() {
         // Since there's no blockchain, we need to apply the transaction by hand
         Core.userProfile = Core.userProfile!!.addCoins(tx.coinsOut).removeCoins(tx.coinsIn).addItems(tx.itemsOut).removeItems(tx.itemsIn)
         tx.finish(Transaction.State.TX_ACCEPTED)
+        OutsideWorldDummy.addTx(tx)
         return Core.userProfile
     }
 
@@ -67,11 +84,11 @@ class TxDummy : TxHandler() {
     }
 
     override fun getNewTransactionId(): String {
-        return "DUMMY"
+        return "tx_${Date.from(Instant.now())}"
     }
 
     override fun getNewUserId(): String {
-        return "DUMMY"
+        return "usr_${Date.from(Instant.now())}"
     }
 
     override fun loadCookbook(id: String): Cookbook? {

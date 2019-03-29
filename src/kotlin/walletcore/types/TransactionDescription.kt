@@ -37,6 +37,7 @@ data class TransactionDescription (
                     null -> listOf()
                     else -> itemsInCsv?.split(",")
                 }
+                //val itemsCatalystsCsv = msg.strings["itemsCatalyst"]
                 return TransactionDescription(otherProfileId, coinsIn.toSet(), coinsOut.toSet(), itemsIn.toSet(), itemsOut.toSet())
             } catch (e : NullPointerException) {
                 return null

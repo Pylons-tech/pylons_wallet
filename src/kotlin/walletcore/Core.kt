@@ -50,16 +50,16 @@ object Core {
         }
     }
 
-    fun dumpUserProfile () : String {
-        return userProfile!!.dump()
-    }
+    fun dumpUserProfile () : String = userProfile!!.dump()
 
-    fun dumpForeignProfiles () : String {
-        return OutsideWorldDummy.dumpProfiles()
-    }
+    fun dumpForeignProfiles () : String = OutsideWorldDummy.dumpProfiles()
 
-    fun start (json : String? = null, dbgStateProfileJson : String? = null, dbgStateWorldJson : String? = null) {
+    fun dumpTx () : String = OutsideWorldDummy.dumpTransactions()
+
+    fun start (json : String? = null, dbgRecipesJson : String? = null,
+               dbgStateProfileJson : String? = null, dbgStateWorldJson : String? = null, dbgStateTxJson : String? = null) {
         runBlocking {
+            if (dbgRecipesJson != null) OutsideWorldDummy.loadRecipes(dbgRecipesJson)
             val userData = when (json) {
                 null -> null
                 else -> UserData.parseFromJson(json)
@@ -74,6 +74,7 @@ object Core {
             }
             if (dbgStateWorldJson != null) OutsideWorldDummy.loadProfiles(dbgStateWorldJson)
             if (dbgStateProfileJson != null) userProfile = Profile.load(dbgStateProfileJson)
+            if (dbgStateTxJson != null) OutsideWorldDummy.loadTransactions(dbgStateTxJson)
             sane = true
         }
     }
@@ -114,7 +115,9 @@ object Core {
     /**
      * Wipe user data without going through action resolution table. Provided for wallet app UI wiring.
      */
-    fun wipeUserData () {
-        walletcore.ops.wipeUserData()
-    }
+    fun wipeUserData () = walletcore.ops.wipeUserData()
+
+    fun importRecipes (json : String) = OutsideWorldDummy.loadRecipes(json)
+
+    fun dumpRecipes () : String = OutsideWorldDummy.dumpRecipes()
 }

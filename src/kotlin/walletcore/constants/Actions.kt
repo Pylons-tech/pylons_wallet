@@ -16,5 +16,6 @@ class Actions {
         const val dumpUserProfileState = "DUMP_USER_PROFILE_STATE"
         const val getFriends = "GET_FRIENDS"
         const val setFriends = "SET_FRIENDS"
+        const val getTransaction ="GET_TRANSACTION"
     }
 }

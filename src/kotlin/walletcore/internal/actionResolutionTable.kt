@@ -21,6 +21,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         Actions.dumpUserProfileState -> devOnly { dumpUserProfileState(msg) }
         Actions.getFriends -> getFriends()
         Actions.setFriends -> { setFriends(msg) }
+        Actions.getTransaction -> getTransaction(msg)
         else -> unrecognizedAction(action)
     }
 }

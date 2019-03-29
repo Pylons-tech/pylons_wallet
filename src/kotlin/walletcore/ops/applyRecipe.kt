@@ -5,6 +5,7 @@ import walletcore.Logger
 import walletcore.constants.Keys
 import walletcore.constants.LogTag
 import walletcore.internal.*
+import walletcore.tx.TxHandler
 import walletcore.types.*
 
 internal fun applyRecipe (msg: MessageData) : Response {
@@ -19,8 +20,8 @@ internal fun applyRecipe (msg: MessageData) : Response {
     } ?: return generateErrorMessageData(Error.COOKBOOK_DOES_NOT_EXIST, "Specified cookbook could not be loaded.")
     val recipe = cookbook.recipes[msg.strings[Keys.recipe]] ?: return generateErrorMessageData(Error.RECIPE_DOES_NOT_EXIST, "Recipe not in cookbook.")
     if (!canApplyRecipe(recipe){error = it}) return error!!
-    val prf = Core.txHandler.applyRecipe(cookbook, recipe, preferredItemIds.toSet())
-    val msg = when (prf) {
+    val output = Core.txHandler.applyRecipe(cookbook, recipe, preferredItemIds.toSet())
+    val msg = when (output?.profile) {
         null -> MessageData(booleans = mutableMapOf(Keys.success to false))
         else -> MessageData(booleans = mutableMapOf(Keys.success to true))
     }

@@ -15,7 +15,12 @@ abstract class TxHandler {
     abstract val isDevTxLayer : Boolean
     abstract val isOfflineTxLayer : Boolean
 
-    abstract fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>) : Profile?
+    data class ApplyRecipeOutput (
+            val profile : Profile?,
+            val boundAssetSet: BoundAssetSet?
+    )
+
+    abstract fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>) : ApplyRecipeOutput?
 
     fun bindItemCatalystsForRecipe (recipe: Recipe) : Set<Item>? {
         val set = mutableSetOf<Item>()
@@ -46,6 +51,8 @@ abstract class TxHandler {
     abstract fun getNewTransactionId() : String
 
     abstract fun getNewUserId() : String
+
+    abstract fun getTransaction (id : String) : Transaction?
 
     abstract fun loadCookbook(id : String) : Cookbook?
 
