@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions.*
 import walletcore.Core
 import walletcore.constants.*
 import walletcore.ops.*
+import walletcore.tx.OutsideWorldDummy
 import walletcore.types.*
 
 internal class ActionResolutionTableTest {
@@ -139,11 +140,8 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_setUserProfileState () {
-        // This will fail right now.
-        // TODO: fix it
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start()
-        val item = Item("ITEM???")
         val incomingMsg = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.setUserProfileState, "json" to
         """{
   "coins": { "gold": 999998 },
@@ -183,5 +181,21 @@ internal class ActionResolutionTableTest {
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.setUserProfileState, incomingMsg)
         assertEquals("nooo", Core.userProfile!!.getName())
+        assertEquals(successResponse.status, actualResponse.status)
+    }
+
+    @Test
+    fun case_getTransaction () {
+        val json = UserData("fooBar", "12345").exportAsJson()
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start(json)
+        val tx = Transaction("tst", "0", "1", setOf(), setOf(), setOf(), setOf(), Transaction.State.TX_ACCEPTED,
+                setOf(), setOf())
+        OutsideWorldDummy.addTx(tx)
+        val successResponse = Response(tx.detailsToMessageData().merge(MessageData(booleans = mutableMapOf(Keys.success to true))), Status.OK_TO_RETURN_TO_CLIENT)
+        val actualResponse = actionResolutionTable(Actions.getTransaction,
+                MessageData(strings = mutableMapOf("txId" to "tst")))
+        assertEquals(successResponse.status, actualResponse.status)
+        assertEquals(successResponse.msg!!.strings["txId"], actualResponse.msg!!.strings["txId"])
     }
 }
