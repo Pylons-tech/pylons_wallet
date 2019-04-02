@@ -42,6 +42,8 @@ abstract class TxHandler {
 
     abstract fun commitTx(tx: Transaction) : Profile?
 
+    abstract fun getAverageBlockTime () : Double
+
     abstract fun getForeignBalances(id : String) : ForeignProfile?
 
     abstract fun getOwnBalances () : Profile?

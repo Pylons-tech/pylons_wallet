@@ -198,4 +198,15 @@ internal class ActionResolutionTableTest {
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.strings["txId"], actualResponse.msg!!.strings["txId"])
     }
+
+    @Test
+    fun case_getBlockTime () {
+        val json = UserData("fooBar", "12345").exportAsJson()
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start(json)
+        val successResponse = Response(MessageData(doubles = mutableMapOf("blockTime" to 60.0)), Status.OK_TO_RETURN_TO_CLIENT)
+        val actualResponse = actionResolutionTable(Actions.getBlockTime, MessageData())
+        assertEquals(successResponse.status, actualResponse.status)
+        assertEquals(successResponse.msg!!.doubles["blockTime"], actualResponse.msg!!.doubles["blockTime"])
+    }
 }

@@ -23,6 +23,11 @@ import java.util.*
  * system, which will have to wait on network operations.
  */
 class TxDummy : TxHandler() {
+
+    override fun getAverageBlockTime(): Double {
+        return 60.0
+    }
+
     override fun getTransaction(id: String): Transaction? {
         return OutsideWorldDummy.transactions[id]
     }

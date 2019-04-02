@@ -22,6 +22,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         Actions.getFriends -> getFriends()
         Actions.setFriends -> { setFriends(msg) }
         Actions.getTransaction -> getTransaction(msg)
+        Actions.getBlockTime -> getBlockTime()
         else -> unrecognizedAction(action)
     }
 }
