@@ -1,5 +1,7 @@
 package walletcore.types
 
+import walletcore.Core
+
 /**
  * The object that's returned from WalletCore.resolveMessage calls.
  * status is a value of either INCOMING_MESSAGE_MALFORMED, OK_TO_RETURN_TO_CLIENT,
@@ -8,4 +10,4 @@ package walletcore.types
  * msg is a MessageData object, the usage of which will differ depending on what
  * status is. (see documentation on Status for details)
  */
-data class Response (val msg : MessageData?, val status : Status)
+data class Response (val msg : MessageData?, val status : Status, val statusBlock: StatusBlock = Core.statusBlock)

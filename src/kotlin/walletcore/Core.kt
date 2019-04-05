@@ -30,6 +30,7 @@ object Core {
     var suspendedAction : String? = null
         internal set
     internal var suspendedMsg : MessageData? = null
+    var statusBlock : StatusBlock = StatusBlock(-1, 0.0, "0.0.1a")
 
     internal fun tearDown () {
         cryptoHandler = null
@@ -104,6 +105,7 @@ object Core {
      * behavior - resolveMessage should not be called from the main thread of any wallet app.
      */
     fun resolveMessage(msg: MessageData): Response? {
+        statusBlock = StatusBlock(txHandler.getHeight(), txHandler.getAverageBlockTime(), statusBlock.walletCoreVersion)
         if (!sane) {
             var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
             throw Exception(msg.msg!!.strings[Keys.info])

@@ -44,6 +44,8 @@ abstract class TxHandler {
 
     abstract fun getAverageBlockTime () : Double
 
+    abstract fun getHeight () : Long
+
     abstract fun getForeignBalances(id : String) : ForeignProfile?
 
     abstract fun getOwnBalances () : Profile?
