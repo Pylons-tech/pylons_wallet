@@ -16,7 +16,8 @@ data class Profile (
      * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
      * from the network.
      */
-    val provisional : Boolean = false
+    val provisional : Boolean = false,
+    val singletonGameRules : MutableList<String> = mutableListOf()
 ) {
     companion object {
         fun fromUserData (userData: UserData?) : Profile? {
@@ -61,6 +62,8 @@ data class Profile (
         msg.strings[Keys.id] = id
         msg.strings[Keys.coins] = coins.serializeCoins()
         msg.stringArrays[Keys.items] = items.serialize()
+        msg.stringArrays["singletonGameRules"] = singletonGameRules
+
         // and extras!
         return msg
     }
