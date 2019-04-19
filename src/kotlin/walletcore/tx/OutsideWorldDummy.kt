@@ -2,10 +2,16 @@ package walletcore.tx
 
 import com.squareup.moshi.Moshi
 import walletcore.constants.*
+import walletcore.gamerules.OneTimeContract
+import walletcore.gamerules.SimpleContract
 import walletcore.types.*
 
 object OutsideWorldDummy {
-    var loadRuleJson : ((String, String) -> String)? = null
+    data class GameRuleData (
+            val json : String,
+            val type : String
+    )
+    var loadRuleJson : ((String, String) -> GameRuleData)? = null
     private val moshi : Moshi = Moshi.Builder().build()
 
     private class ProfileStore {
@@ -35,9 +41,19 @@ object OutsideWorldDummy {
 
     fun loadExternalGameRuleDef (cookbook: String, id : String) : GameRule {
         if (loadRuleJson == null) throw Exception("GameRule JSON load function hasn't been set!")
-        val json = loadRuleJson!!(cookbook, id)
-        val adapter = moshi.adapter<GameRule>(GameRule::class.java)
-        return adapter.fromJson(json)!!
+        val data = loadRuleJson!!(cookbook, id)
+        return when (data.type) {
+            "SimpleContract" -> {
+                val adapter = moshi.adapter<SimpleContract>(SimpleContract::class.java)
+                return adapter.fromJson(data.json)!!
+            }
+            "OneTimeContract" -> {
+                val adapter = moshi.adapter<SimpleContract>(OneTimeContract::class.java)
+                return adapter.fromJson(data.json)!!
+            }
+            else -> throw Exception("${data.type} is not a valid type for LoadExternalGameRuleDef")
+        }
+
     }
 
     fun addTx (tx : Transaction) {

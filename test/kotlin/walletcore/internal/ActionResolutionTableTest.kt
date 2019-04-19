@@ -123,8 +123,16 @@ internal class ActionResolutionTableTest {
         assertEquals("fooBar", actualResponse.msg!!.strings[Keys.name])
     }
 
+    private fun getJsonForRecipe (cookbook : String, recipe : String) : OutsideWorldDummy.GameRuleData {
+        return OutsideWorldDummy.GameRuleData(
+                type = "SimpleContract",
+                json = """{"id" : "test", "coinsOut" : [{"id" : "pylons", "count" : 1}]}"""
+        )
+    }
+
     @Test
     fun case_applyRecipe () {
+        OutsideWorldDummy.loadRuleJson = this::getJsonForRecipe
         val json = UserData("fooBar", "12345").exportAsJson()
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start(json)
@@ -134,8 +142,7 @@ internal class ActionResolutionTableTest {
                 MessageData(strings = mutableMapOf(Keys.cookbook to "foo", Keys.recipe to "bar")))
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.booleans[Keys.success], actualResponse.msg!!.booleans[Keys.success])
-        assertEquals("thingy", Core.userProfile!!.items.toList().first().strings["type"])
-        System.out.println(Core.userProfile!!.items.serialize())
+        assertEquals(100, Core.userProfile!!.coins["pylons"])
     }
 
     @Test
