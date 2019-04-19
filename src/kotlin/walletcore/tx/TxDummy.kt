@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.runBlocking
 import walletcore.Core
 import walletcore.crypto.*
+import walletcore.internal.generateFailureMessageData
 import walletcore.internal.newItemFromPrototype
 import walletcore.types.*
 import java.sql.Date
@@ -38,32 +39,23 @@ class TxDummy : TxHandler() {
     override val isDevTxLayer: Boolean = true
     override val isOfflineTxLayer: Boolean = true
 
-    override fun applyRecipe(cookbook: Cookbook, recipe: Recipe, preferredItemIds : Set<String>): ApplyRecipeOutput? {
+    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : Set<String>): Profile? {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
-        val boundItemInputs = bindItemInputsForRecipe(recipe, preferredItemIds) ?: return null
-        val catalystItems = bindItemCatalystsForRecipe(recipe) ?: return null
-        if (!Core.userProfile!!.canPayCoins(recipe.coinsIn)) return null
-        if (!Core.userProfile!!.canPayCoins(recipe.coinCatalysts)) return null
-        recipe.coinsIn.forEach {
-            Core.userProfile = Core.userProfile!!.removeCoins(setOf(it))
+        val gameRule = fetchGameRule(cookbook, recipe)
+        return when (gameRule.canApply()) {
+            true -> {
+                gameRule.applyOffline()
+                return Core.userProfile
+            }
+            false -> null
         }
-        val coins = Core.userProfile!!.coins.addCoins(recipe.coinsOut, false)
-        val outItems = mutableSetOf<Item>()
-        recipe.itemsOut.forEach {
-            outItems.add(newItemFromPrototype(it))
-        }
-        val items = Core.userProfile!!.items.exclude(boundItemInputs) + outItems
-        Core.userProfile = Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings,
-                coins = coins, items = items)
-        val boundAssetSet = BoundAssetSet(recipe.coinsIn, recipe.coinsOut, boundItemInputs, outItems, recipe.coinCatalysts, catalystItems)
-        val output = ApplyRecipeOutput(Core.userProfile, boundAssetSet)
-        OutsideWorldDummy.addTx(buildTxForApplyRecipe(Core.userProfile!!.id, recipe, output))
-        return output
     }
 
-    private fun buildTxForApplyRecipe (address : String, recipe: Recipe, applyRecipeOutput: TxHandler.ApplyRecipeOutput) : Transaction {
-        return Transaction(Core.txHandler.getNewTransactionId(), Core.userProfile!!.id, address, recipe.coinsIn, recipe.coinsOut, applyRecipeOutput.boundAssetSet!!.itemsIn,
-                applyRecipeOutput.boundAssetSet!!.itemsOut, Transaction.State.TX_ACCEPTED, recipe.coinCatalysts, applyRecipeOutput.boundAssetSet!!.itemsCatalysts)
+    private fun fetchGameRule (cookbook: String, id: String) : GameRule {
+        return when (OutsideWorldDummy.builtinGameRules.containsKey(cookbook) && OutsideWorldDummy.builtinGameRules[cookbook]!!.containsKey(id)) {
+            true -> OutsideWorldDummy.builtinGameRules[cookbook]!![id]!!
+            false -> OutsideWorldDummy.loadExternalGameRuleDef(cookbook, id)
+        }
     }
 
     override fun commitTx(tx: Transaction) : Profile? {
@@ -97,16 +89,6 @@ class TxDummy : TxHandler() {
 
     override fun getNewUserId(): String {
         return "usr_${Date.from(Instant.now())}"
-    }
-
-    override fun loadCookbook(id: String): Cookbook? {
-        val cbk = OutsideWorldDummy.cookbooks[id]
-        if (cbk != null) {
-            val map = Core.loadedCookbooks.toMutableMap()
-            map[id] = cbk
-            Core.loadedCookbooks = map.toMap()
-        }
-        return cbk
     }
 
     override fun registerNewProfile() : Profile? {

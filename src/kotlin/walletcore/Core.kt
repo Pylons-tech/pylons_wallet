@@ -23,7 +23,6 @@ object Core {
     internal var userProfile: Profile? = null
     internal var friends: List<Friend> = listOf()
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
-    internal var loadedCookbooks : Map<String, Cookbook> = mapOf()
     var uiInterrupts : UiInterrupts? = null
     var sane : Boolean = false
         private set
@@ -57,10 +56,8 @@ object Core {
 
     fun dumpTx () : String = OutsideWorldDummy.dumpTransactions()
 
-    fun start (json : String? = null, dbgRecipesJson : String? = null,
-               dbgStateProfileJson : String? = null, dbgStateWorldJson : String? = null, dbgStateTxJson : String? = null) {
+    fun start (json : String? = null, dbgStateProfileJson : String? = null, dbgStateWorldJson : String? = null, dbgStateTxJson : String? = null) {
         runBlocking {
-            if (dbgRecipesJson != null) OutsideWorldDummy.loadRecipes(dbgRecipesJson)
             val userData = when (json) {
                 null -> null
                 else -> UserData.parseFromJson(json)
@@ -119,7 +116,4 @@ object Core {
      */
     fun wipeUserData () = walletcore.ops.wipeUserData()
 
-    fun importRecipes (json : String) = OutsideWorldDummy.loadRecipes(json)
-
-    fun dumpRecipes () : String = OutsideWorldDummy.dumpRecipes()
 }
