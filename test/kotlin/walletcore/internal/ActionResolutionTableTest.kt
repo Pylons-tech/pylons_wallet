@@ -136,7 +136,7 @@ internal class ActionResolutionTableTest {
         val json = UserData("fooBar", "12345").exportAsJson()
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start(json)
-        Core.userProfile = Core.userProfile!!.addCoins(setOf(Coin(Keys.pylons, 99)))
+        Core.userProfile!!.coins["pylons"] = 99
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.applyRecipe,
                 MessageData(strings = mutableMapOf(Keys.cookbook to "foo", Keys.recipe to "bar")))

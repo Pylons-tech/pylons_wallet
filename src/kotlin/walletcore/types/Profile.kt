@@ -8,15 +8,15 @@ import walletcore.constants.*
  * Internal state representation of the user's own userProfile.
  */
 data class Profile (
-    val id : String = "",
-    val strings : Map<String, String> = mapOf(),
-    val coins : Map<String, Int> = mapOf(),
-    val items : Set<Item> = setOf(),
+    var id : String = "",
+    val strings : MutableMap<String, String> = mutableMapOf(),
+    val coins : MutableMap<String, Int> = mutableMapOf(),
+    val items : MutableSet<Item> = mutableSetOf(),
     /**
      * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
      * from the network.
      */
-    val provisional : Boolean = false,
+    var provisional : Boolean = false,
     val singletonGameRules : MutableList<String> = mutableListOf()
 ) {
     companion object {
@@ -31,7 +31,7 @@ data class Profile (
                     }
                     return when (name) {
                         null -> Profile(id = id, provisional = true)
-                        else -> Profile(id = id, strings = mapOf(ReservedKeys.profileName to name), provisional = true)
+                        else -> Profile(id = id, strings = mutableMapOf(ReservedKeys.profileName to name), provisional = true)
                     }
                 }
             }
@@ -45,14 +45,6 @@ data class Profile (
     }
 
     fun getName () : String? = strings[ReservedKeys.profileName]
-
-    fun addCoins (c : Set<Coin>) : Profile = Profile(id, strings, coins.addCoins(c, false), items)
-
-    fun addItems (i : Set<Item>) : Profile = Profile(id, strings, coins, items + i)
-
-    fun removeCoins (c : Set<Coin>) : Profile = Profile(id, strings, coins.addCoins(c, true), items)
-
-    fun removeItems (i : Set<Item>) : Profile = Profile(id, strings, coins, items.exclude(i))
 
     fun detailsToMessageData () : MessageData {
         val msg = MessageData()

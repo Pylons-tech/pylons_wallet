@@ -17,7 +17,7 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     Core.cryptoHandler = Core.txHandler.getNewCryptoHandler()
     Core.cryptoHandler!!.newKeys()
     val id = Core.txHandler.getNewUserId()
-    Core.userProfile = Profile(id = id, strings = mapOf(ReservedKeys.profileName to name!!), provisional = true)
+    Core.setProfile(Profile(id = id, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true))
     val prf = Core.txHandler.registerNewProfile()
     val msg = when (prf) {
         null -> MessageData(booleans = mutableMapOf(Keys.profileExists to false))

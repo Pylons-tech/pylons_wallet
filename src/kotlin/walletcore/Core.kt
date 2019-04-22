@@ -21,6 +21,7 @@ object Core {
     internal val txHandler: TxHandler = TxDummy()
     internal var cryptoHandler: CryptoHandler? = null
     internal var userProfile: Profile? = null
+        private set
     internal var friends: List<Friend> = listOf()
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
     var uiInterrupts : UiInterrupts? = null
@@ -48,6 +49,10 @@ object Core {
             null -> null
             else -> UserData(name = userProfile!!.getName(), id = userProfile!!.id, friends = friends).exportAsJson()
         }
+    }
+
+    fun setProfile (profile: Profile) {
+        userProfile = profile
     }
 
     fun dumpUserProfile () : String = userProfile!!.dump()

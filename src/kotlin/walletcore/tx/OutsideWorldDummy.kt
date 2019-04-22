@@ -45,11 +45,11 @@ object OutsideWorldDummy {
         return when (data.type) {
             "SimpleContract" -> {
                 val adapter = moshi.adapter<SimpleContract>(SimpleContract::class.java)
-                return adapter.fromJson(data.json)!!
+                adapter.fromJson(data.json)!!
             }
             "OneTimeContract" -> {
                 val adapter = moshi.adapter<SimpleContract>(OneTimeContract::class.java)
-                return adapter.fromJson(data.json)!!
+                adapter.fromJson(data.json)!!
             }
             else -> throw Exception("${data.type} is not a valid type for LoadExternalGameRuleDef")
         }

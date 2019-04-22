@@ -11,7 +11,7 @@ fun setUserProfileState (msg : MessageData) : Response {
     val moshi = Moshi.Builder().build()
     val adapter = moshi.adapter<Profile>(Profile::class.java)
     val prf = adapter.fromJson(msg.strings[Keys.json]!!)
-    Core.userProfile = prf
+    Core.setProfile(prf!!)
 
     return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
 }

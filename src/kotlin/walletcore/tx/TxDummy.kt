@@ -1,9 +1,11 @@
 package walletcore.tx
 
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import kotlinx.coroutines.runBlocking
 import walletcore.Core
 import walletcore.crypto.*
+import walletcore.gamerules.SimpleContract
 import walletcore.internal.generateFailureMessageData
 import walletcore.internal.newItemFromPrototype
 import walletcore.types.*
@@ -42,6 +44,7 @@ class TxDummy : TxHandler() {
     override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : Set<String>): Profile? {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
         val gameRule = fetchGameRule(cookbook, recipe)
+        System.out.println("Can apply rule $cookbook/$recipe? ${gameRule.canApply()}")
         return when (gameRule.canApply()) {
             true -> {
                 gameRule.applyOffline()
@@ -62,7 +65,15 @@ class TxDummy : TxHandler() {
         tx.submit()
         runBlocking { delay(500) }
         // Since there's no blockchain, we need to apply the transaction by hand
-        Core.userProfile = Core.userProfile!!.addCoins(tx.coinsOut).removeCoins(tx.coinsIn).addItems(tx.itemsOut).removeItems(tx.itemsIn)
+        Core.userProfile!!.items.removeAll(tx.itemsIn)
+        tx.itemsOut.forEach { Core.userProfile!!.items.add(it) }
+        tx.coinsIn.forEach { Core.userProfile!!.coins[it.id] = Core.userProfile!!.coins[it.id]!! - it.count!! }
+        tx.coinsOut.forEach {
+            val base = when (Core.userProfile!!.coins[it.id]) {
+                null -> 0
+                else -> Core.userProfile!!.coins[it.id]!!
+            }
+            Core.userProfile!!.coins[it.id] = base + it.count!! }
         tx.finish(Transaction.State.TX_ACCEPTED)
         OutsideWorldDummy.addTx(tx)
         return Core.userProfile
@@ -93,7 +104,7 @@ class TxDummy : TxHandler() {
 
     override fun registerNewProfile() : Profile? {
         runBlocking { delay(500) }
-        Core.userProfile = Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings, provisional = false)
+        Core.setProfile(Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings, provisional = false))
         return Core.userProfile
     }
 }

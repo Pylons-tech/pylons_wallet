@@ -16,7 +16,7 @@ internal class TxDummyTest {
         val txDummy = TxDummy()
         val tx = Transaction()
         Core.start()
-        Core.userProfile = Profile()
+        Core.setProfile(Profile())
         txDummy.commitTx(tx)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }

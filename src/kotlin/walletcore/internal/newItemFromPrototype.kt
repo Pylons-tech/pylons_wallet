@@ -17,7 +17,7 @@ private var itemsCreated = 0
 internal fun newItemFromPrototype (itemPrototype: ItemPrototype) : Item {
     val id = "${itemsCreated++}_[ITEM]_${Core.txHandler.getNewUserId()}" // garbage, but we just need a unique id
     val strings = mutableMapOf<String, String>()
-    itemPrototype.stringConstraints.forEach{
+    itemPrototype.stringConstraints.orEmpty().forEach{
         var strBuilder = StringBuilder()
         it.value.forEach{
             if (it.mode == ConstraintMode.EXACT_MATCH) strBuilder.delete(0, strBuilder.length); strBuilder.append(it.value)
@@ -26,7 +26,7 @@ internal fun newItemFromPrototype (itemPrototype: ItemPrototype) : Item {
         strings[it.key] = strBuilder.toString()
     }
     val longs = mutableMapOf<String, Long>()
-    itemPrototype.longConstraints.forEach{
+    itemPrototype.longConstraints.orEmpty().forEach{
         var v : Long = 0
         it.value.forEach{
             if (it.mode == ConstraintMode.EXACT_MATCH) v = it.value
@@ -36,7 +36,7 @@ internal fun newItemFromPrototype (itemPrototype: ItemPrototype) : Item {
         longs[it.key] = v
     }
     val doubles = mutableMapOf<String, Double>()
-    itemPrototype.doubleConstraints.forEach{
+    itemPrototype.doubleConstraints.orEmpty().forEach{
         var v : Double = 0.0
         it.value.forEach{
             if (it.mode == ConstraintMode.EXACT_MATCH) v = it.value

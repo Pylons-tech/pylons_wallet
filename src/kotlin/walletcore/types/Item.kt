@@ -59,7 +59,7 @@ data class Item(
     }
 
     fun matchesPrototype (prototype: ItemPrototype) : Boolean {
-        prototype.doubleConstraints.forEach { set ->
+        prototype.doubleConstraints.orEmpty().forEach { set ->
             set.value.forEach {
                 if (!when (it.mode) {
                             ConstraintMode.KEY_EXISTS -> doubles.containsKey(set.key)
@@ -72,7 +72,7 @@ data class Item(
                         }) return false
             }
         }
-        prototype.longConstraints.forEach { set ->
+        prototype.longConstraints.orEmpty().forEach { set ->
             set.value.forEach {
                 if (!when (it.mode) {
                             ConstraintMode.KEY_EXISTS -> longs.containsKey(set.key)
@@ -85,7 +85,7 @@ data class Item(
                         }) return false
             }
         }
-        prototype.stringConstraints.forEach { set ->
+        prototype.stringConstraints.orEmpty().forEach { set ->
             set.value.forEach {
                 if (!when (it.mode) {
                             ConstraintMode.KEY_EXISTS -> strings.containsKey(set.key)
