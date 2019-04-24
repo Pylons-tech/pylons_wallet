@@ -19,29 +19,45 @@ internal fun newItemFromPrototype (itemPrototype: ItemPrototype) : Item {
     val strings = mutableMapOf<String, String>()
     itemPrototype.stringConstraints.orEmpty().forEach{
         var strBuilder = StringBuilder()
+        var set = mutableSetOf<String>()
         it.value.forEach{
             if (it.mode == ConstraintMode.EXACT_MATCH) strBuilder.delete(0, strBuilder.length); strBuilder.append(it.value)
             if (it.mode == ConstraintMode.STRING_INCLUDES) strBuilder.append(it.value)
+            if (it.mode == ConstraintMode.ONE_OF_THESE) set.add(it.value)
         }
-        strings[it.key] = strBuilder.toString()
+        strings[it.key] = when (set.size){
+            0 -> strBuilder.toString()
+            else -> set.random()
+        }
     }
     val longs = mutableMapOf<String, Long>()
     itemPrototype.longConstraints.orEmpty().forEach{
         var v : Long = 0
+        var set = mutableSetOf<Long>()
         it.value.forEach{
             if (it.mode == ConstraintMode.EXACT_MATCH) v = it.value
             if (it.mode == ConstraintMode.NUM_LESS_THAN && v > it.value) v = it.value - 1
             if (it.mode == ConstraintMode.NUM_MORE_THAN && v < it.value) v = it.value + 1
+            if (it.mode == ConstraintMode.ONE_OF_THESE) set.add(it.value)
         }
-        longs[it.key] = v
+        longs[it.key] = when (set.size) {
+            0 -> v
+            else -> set.random()
+        }
     }
     val doubles = mutableMapOf<String, Double>()
     itemPrototype.doubleConstraints.orEmpty().forEach{
         var v : Double = 0.0
+        var set = mutableSetOf<Double>()
         it.value.forEach{
             if (it.mode == ConstraintMode.EXACT_MATCH) v = it.value
             if (it.mode == ConstraintMode.NUM_LESS_THAN && v > it.value) v = it.value.nextDown()
             if (it.mode == ConstraintMode.NUM_MORE_THAN && v < it.value) v = it.value.nextUp()
+            if (it.mode == ConstraintMode.ONE_OF_THESE) set.add(it.value)
+        }
+        doubles[it.key] = when (set.size) {
+            0 -> v
+            else -> set.random()
         }
     }
     return Item(id = id, strings = strings, longs = longs, doubles = doubles)
