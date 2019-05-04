@@ -34,7 +34,7 @@ fun Map<String, Int>.serializeCoins () : String {
     }
 }
 
-fun Set<Coin>.serialize () : String {
+fun List<Coin>.serialize () : String {
     val moshi = Moshi.Builder().build()
     val jsonAdapter = moshi.adapter<Coin>(Item::class.java)
     val sb = StringBuilder()

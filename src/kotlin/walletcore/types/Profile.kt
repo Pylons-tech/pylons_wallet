@@ -11,7 +11,7 @@ data class Profile (
     var id : String = "",
     val strings : MutableMap<String, String> = mutableMapOf(),
     val coins : MutableMap<String, Int> = mutableMapOf(),
-    val items : MutableSet<Item> = mutableSetOf(),
+    val items : MutableList<Item> = mutableListOf(),
     /**
      * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
      * from the network.
@@ -67,7 +67,7 @@ data class Profile (
         }
     }
 
-    fun canPayCoins (coinsOut : Set<Coin>) : Boolean {
+    fun canPayCoins (coinsOut : List<Coin>) : Boolean {
         var ok = true
         coinsOut.forEach{
             if (countOfCoin(it.id) < it.count) ok = false
@@ -75,7 +75,7 @@ data class Profile (
         return ok
     }
 
-    fun canPayItems(itemProtos : Set<ItemPrototype>) : Boolean {
+    fun canPayItems(itemProtos : List<ItemPrototype>) : Boolean {
         itemProtos.forEach {
             if (findItemForPrototype(it, emptySet()) == null) return false
         }

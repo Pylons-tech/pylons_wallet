@@ -5,23 +5,23 @@ import java.lang.NullPointerException
 
 data class TransactionDescription (
         val otherProfileId : String = "",
-        val coinsIn: Set<Coin> = setOf(),
-        val coinsOut: Set<Coin> = setOf(),
-        val itemsInIds:Set<String> = setOf(),
-        val itemsOutIds:Set<String> = setOf()
+        val coinsIn: List<Coin> = listOf(),
+        val coinsOut: List<Coin> = listOf(),
+        val itemsInIds:List<String> = listOf(),
+        val itemsOutIds:List<String> = listOf()
 ) {
     companion object {
         fun fromMessageData (msg : MessageData) : TransactionDescription? {
             try {
                 val otherProfileId = msg.strings[Keys.otherProfileId]!!
                 val coinsInCsv = msg.strings[Keys.coinsIn]
-                val coinsIn = mutableSetOf<Coin>()
+                val coinsIn = mutableListOf<Coin>()
                 if (coinsInCsv != null && coinsInCsv != "") {
                     val split = coinsInCsv.split(",")
                     for (i in 0 until split.count()) if (i % 2 == 0) coinsIn.add(Coin(split[i], split[i+1].toInt()))
                 }
                 val coinsOutCsv = msg.strings[Keys.coinsOut]
-                val coinsOut = mutableSetOf<Coin>()
+                val coinsOut = mutableListOf<Coin>()
                 if (coinsOutCsv != null && coinsOutCsv != "") {
                     val split = coinsOutCsv.split(",")
                     for (i in 0 until split.count()) if (i % 2 == 0) coinsOut.add(Coin(split[i], split[i+1].toInt()))
@@ -38,7 +38,8 @@ data class TransactionDescription (
                     else -> itemsInCsv?.split(",")
                 }
                 //val itemsCatalystsCsv = msg.strings["itemsCatalyst"]
-                return TransactionDescription(otherProfileId, coinsIn.toSet(), coinsOut.toSet(), itemsIn.toSet(), itemsOut.toSet())
+                return TransactionDescription(otherProfileId, coinsIn.toList(), coinsOut.toList(),
+                        itemsIn.toList(), itemsOut.toList())
             } catch (e : NullPointerException) {
                 return null
             }

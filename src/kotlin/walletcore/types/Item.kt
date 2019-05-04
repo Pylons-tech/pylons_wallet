@@ -118,7 +118,7 @@ fun Item.toJson () : String {
     return jsonAdapter.toJson(this)
 }
 
-fun Set<Item>.serialize () : MutableList<String> {
+fun List<Item>.serialize () : MutableList<String> {
     val moshi = Moshi.Builder().build()
     val jsonAdapter = moshi.adapter<Item>(Item::class.java)
     val ls = mutableListOf<String>()

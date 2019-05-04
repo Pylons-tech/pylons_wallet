@@ -14,7 +14,7 @@ internal fun applyRecipe (msg: MessageData) : Response {
     var error : Response? = null
     if (!isValid(msg){error = it}) return error!!
     val preferredItemIds = msg.stringArrays[Keys.preferredItemIds] ?: mutableListOf()
-    val msg = when (Core.txHandler.applyRecipe(msg.strings[Keys.cookbook]!!, msg.strings[Keys.recipe]!!, preferredItemIds.toSet())) {
+    val msg = when (Core.txHandler.applyRecipe(msg.strings[Keys.cookbook]!!, msg.strings[Keys.recipe]!!, preferredItemIds.toList())) {
         null -> MessageData(booleans = mutableMapOf(Keys.success to false))
         else -> MessageData(booleans = mutableMapOf(Keys.success to true))
     }

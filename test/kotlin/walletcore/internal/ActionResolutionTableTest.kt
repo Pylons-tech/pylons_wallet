@@ -196,24 +196,13 @@ internal class ActionResolutionTableTest {
         val json = UserData("fooBar", "12345").exportAsJson()
         Core.uiInterrupts = InternalUiInterrupts()
         Core.start(json)
-        val tx = Transaction("tst", "0", "1", setOf(), setOf(), setOf(), setOf(), Transaction.State.TX_ACCEPTED,
-                setOf(), setOf())
+        val tx = Transaction("tst", "0", "1", listOf(), listOf(), listOf(), listOf(), Transaction.State.TX_ACCEPTED,
+                listOf(), listOf())
         OutsideWorldDummy.addTx(tx)
         val successResponse = Response(tx.detailsToMessageData().merge(MessageData(booleans = mutableMapOf(Keys.success to true))), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.getTransaction,
                 MessageData(strings = mutableMapOf("txId" to "tst")))
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.strings["txId"], actualResponse.msg!!.strings["txId"])
-    }
-
-    @Test
-    fun case_getBlockTime () {
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
-        val successResponse = Response(MessageData(doubles = mutableMapOf("blockTime" to 60.0)), Status.OK_TO_RETURN_TO_CLIENT)
-        val actualResponse = actionResolutionTable(Actions.getBlockTime, MessageData())
-        assertEquals(successResponse.status, actualResponse.status)
-        assertEquals(successResponse.msg!!.doubles["blockTime"], actualResponse.msg!!.doubles["blockTime"])
     }
 }

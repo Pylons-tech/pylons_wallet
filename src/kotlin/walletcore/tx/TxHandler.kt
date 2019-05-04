@@ -15,7 +15,7 @@ abstract class TxHandler {
     abstract val isDevTxLayer : Boolean
     abstract val isOfflineTxLayer : Boolean
 
-    abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : Set<String>) : Profile?
+    abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Profile?
 
     abstract fun commitTx(tx: Transaction) : Profile?
 

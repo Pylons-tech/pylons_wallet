@@ -41,9 +41,10 @@ class TxDummy : TxHandler() {
     override val isDevTxLayer: Boolean = true
     override val isOfflineTxLayer: Boolean = true
 
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : Set<String>): Profile? {
+    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>): Profile? {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
         val gameRule = fetchGameRule(cookbook, recipe)
+        System.out.println("${gameRule.itemsOut?.size}")
         System.out.println("Can apply rule $cookbook/$recipe? ${gameRule.canApply()}")
         return when (gameRule.canApply()) {
             true -> {

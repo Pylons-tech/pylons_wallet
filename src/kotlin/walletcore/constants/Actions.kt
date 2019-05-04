@@ -17,6 +17,5 @@ class Actions {
         const val getFriends = "GET_FRIENDS"
         const val setFriends = "SET_FRIENDS"
         const val getTransaction ="GET_TRANSACTION"
-        const val getBlockTime = "GET_BLOCK_TIME"
     }
 }

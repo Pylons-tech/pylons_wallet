@@ -10,8 +10,8 @@ import walletcore.constants.ReservedKeys
 data class ForeignProfile (
     val id : String = "",
     val strings : Map<String, String> = mapOf(),
-    val knownCoins : Set<Coin> = setOf(),
-    val knownItems : Set<Item> = setOf()
+    val knownCoins : List<Coin> = listOf(),
+    val knownItems : List<Item> = listOf()
 ) {
     fun detailsToMessageData () : MessageData {
         val msg = MessageData()

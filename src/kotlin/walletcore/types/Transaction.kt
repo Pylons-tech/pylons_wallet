@@ -12,13 +12,13 @@ data class Transaction(
         val txId: String = "",
         val addressIn: String = "",
         val addressOut: String = "",
-        val coinsIn: Set<Coin> = setOf(),
-        val coinsOut: Set<Coin> = setOf(),
-        val itemsIn: Set<Item> = setOf(),
-        val itemsOut: Set<Item> = setOf(),
+        val coinsIn: List<Coin> = listOf(),
+        val coinsOut: List<Coin> = listOf(),
+        val itemsIn: List<Item> = listOf(),
+        val itemsOut: List<Item> = listOf(),
         var state: State = State.TX_NOT_YET_SENT,
-        val coinsCatalysts: Set<Coin> = setOf(),
-        val itemsCatalysts: Set<Item> = setOf()
+        val coinsCatalysts: List<Coin> = listOf(),
+        val itemsCatalysts: List<Item> = listOf()
 ) {
     enum class State(val value: Int) {
         TX_REFUSED(-1),
@@ -30,8 +30,8 @@ data class Transaction(
     companion object {
         fun build (txDescription: TransactionDescription) : Transaction? {
             return try {
-                val itemsIn = mutableSetOf<Item>()
-                val itemsOut = mutableSetOf<Item>()
+                val itemsIn = mutableListOf<Item>()
+                val itemsOut = mutableListOf<Item>()
                 txDescription.itemsInIds.forEach {
                     itemsIn.add(Item.findInLocalProfile(it)!!)
                 }
@@ -40,7 +40,7 @@ data class Transaction(
                 }
                 Transaction(Core.txHandler.getNewTransactionId(), Core.userProfile!!.id,
                         txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
-                        itemsIn.toSet(), itemsOut.toSet())
+                        itemsIn.toList(), itemsOut.toList())
             } catch (e : NullPointerException) {
                 return null
             }
