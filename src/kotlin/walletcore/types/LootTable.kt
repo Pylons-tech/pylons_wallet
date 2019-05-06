@@ -12,7 +12,6 @@ data class LootTable (
         var maxRange : Int = -1
     }
 
-    private val totalLikelihood : Int = calculateTotalLikelihood()
 
     private fun calculateTotalLikelihood () : Int {
         var t = 0
@@ -25,7 +24,7 @@ data class LootTable (
     }
 
     fun getRandomEntry () : Entry? {
-        val v = (0..totalLikelihood).random()
+        val v = (0 until calculateTotalLikelihood()).random()
         entries.forEach {
             if (v >= it.minRange && v < it.maxRange) return it
         }
