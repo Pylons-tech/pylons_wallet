@@ -20,23 +20,27 @@ open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {
         Core.userProfile!!.items.removeAll(boundItemsIn)
         var actualItemsOut = itemsOut.orEmpty().toMutableList()
         var actualCoinsOut = coinsOut.orEmpty().toMutableList()
+        System.out.println("Bwuh? ${lootTables == null}")
         lootTables.forEach {
             var entry = it.getRandomEntry()!!
+            System.out.println("...Bwuh?")
             actualCoinsOut.addAll(entry.coins.orEmpty())
             actualItemsOut.addAll(entry.items.orEmpty())
         }
+        System.out.println("Bwuh?!?")
         actualItemsOut.orEmpty().forEach {
             var item = newItemFromPrototype(it)
             Core.userProfile!!.items.add(item)
             outItems.add(item)
         }
-        coinsIn.orEmpty().forEach { Core.userProfile!!.coins[it.id] = Core.userProfile!!.coins[it.id]!! - it.count!! }
+        coinsIn.orEmpty().forEach { Core.userProfile!!.coins[it.id] = Core.userProfile!!.coins[it.id]!! - it.count }
         actualCoinsOut.orEmpty().forEach {
             val base = when (Core.userProfile!!.coins[it.id]) {
                 null -> 0
                 else -> Core.userProfile!!.coins[it.id]!!
             }
-            Core.userProfile!!.coins[it.id] = base + it.count!! }
+            Core.userProfile!!.coins[it.id] = base + it.count
+        }
         val txId = Core.txHandler.getNewTransactionId()
         OutsideWorldDummy.addTx(Transaction(txId, Core.userProfile!!.id, txId, coinsIn.orEmpty(), actualCoinsOut.orEmpty(),
                 boundItemsIn, outItems, Transaction.State.TX_ACCEPTED, boundCoinsCatalysts, boundItemsCatalysts))

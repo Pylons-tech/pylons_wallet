@@ -19,7 +19,9 @@ data class LootTable (
             it.minRange = t
             t += it.likelihood
             it.maxRange = t
+            System.out.println("${it.minRange}, ${it.maxRange}")
         }
+        System.out.println(t)
         return t
     }
 
