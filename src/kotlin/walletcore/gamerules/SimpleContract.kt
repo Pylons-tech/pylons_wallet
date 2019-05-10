@@ -20,8 +20,8 @@ open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {
         Core.userProfile!!.items.removeAll(boundItemsIn)
         var actualItemsOut = itemsOut.orEmpty().toMutableList()
         var actualCoinsOut = coinsOut.orEmpty().toMutableList()
-        if (lootTableOutput != null) {
-            var entry = lootTableOutput!!.getRandomEntry()!!
+        lootTables.forEach {
+            var entry = it.getRandomEntry()!!
             actualCoinsOut.addAll(entry.coins.orEmpty())
             actualItemsOut.addAll(entry.items.orEmpty())
         }
