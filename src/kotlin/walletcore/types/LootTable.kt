@@ -27,6 +27,7 @@ data class LootTable (
 
     fun getRandomEntry () : Entry? {
         val v = (0 until calculateTotalLikelihood()).random()
+        System.out.println(v)
         entries.forEach {
             if (v >= it.minRange && v < it.maxRange) return it
         }
