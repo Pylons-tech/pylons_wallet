@@ -30,7 +30,7 @@ internal class SimpleContractTest {
         assertNotNull(rule.coinsOut)
         assertNotNull(rule.itemsOut)
         assertNotNull(rule.lootTables)
-        assertNotNull(rule.lootTables.first().entries)
-        assertNotNull(rule.lootTables.first().entries.first().items)
+        assertNotNull(rule.lootTables!!.first().entries)
+        assertNotNull(rule.lootTables!!.first().entries!!.first().items)
     }
 }

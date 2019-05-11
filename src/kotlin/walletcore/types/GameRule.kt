@@ -8,7 +8,7 @@ abstract class GameRule (
         open val itemsIn : List<ItemPrototype>? = listOf(),
         open val itemsOut : List<ItemPrototype>? = listOf(),
         open val itemCatalysts : List<ItemPrototype>? = listOf(),
-        open val lootTables : List<LootTable> = listOf()
+        open val lootTables : List<LootTable>? = listOf()
 ) {
     @Transient
     var boundCoinsIn : List<Coin> = listOf()

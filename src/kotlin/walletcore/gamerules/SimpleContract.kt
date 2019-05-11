@@ -21,7 +21,7 @@ open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {
         var actualItemsOut = itemsOut.orEmpty().toMutableList()
         var actualCoinsOut = coinsOut.orEmpty().toMutableList()
         System.out.println("Bwuh? ${lootTables == null}")
-        lootTables.forEach {
+        lootTables.orEmpty().forEach {
             var entry = it.getRandomEntry()!!
             System.out.println("...Bwuh?")
             actualCoinsOut.addAll(entry.coins.orEmpty())

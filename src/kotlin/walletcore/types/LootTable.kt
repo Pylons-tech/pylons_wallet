@@ -1,7 +1,7 @@
 package walletcore.types
 
 data class LootTable (
-        val entries : List<Entry>
+        val entries : List<Entry>?
 ) {
     data class Entry (
             val items: List<ItemPrototype>?,
@@ -15,7 +15,7 @@ data class LootTable (
 
     private fun calculateTotalLikelihood () : Int {
         var t = 0
-        entries.forEach {
+        entries.orEmpty().forEach {
             it.minRange = t
             t += it.likelihood
             it.maxRange = t
@@ -28,7 +28,7 @@ data class LootTable (
     fun getRandomEntry () : Entry? {
         val v = (0 until calculateTotalLikelihood()).random()
         System.out.println(v)
-        entries.forEach {
+        entries.orEmpty().forEach {
             if (v >= it.minRange && v < it.maxRange) return it
         }
         return null // This shouldn't happen
