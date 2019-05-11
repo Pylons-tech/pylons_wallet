@@ -6,8 +6,8 @@ open class OneTimeContract (preferredItemIds : Set<String>): SimpleContract(pref
 
     override fun applyOffline() {
         System.out.println("One-time contract $id ${Core.userProfile!!.singletonGameRules.contains(id)}")
-        Core.userProfile!!.singletonGameRules.add(id)
-        System.out.println(Core.userProfile!!.singletonGameRules.contains(id))
+        Core.userProfile!!.singletonGameRules.add(id!!)
+        System.out.println(Core.userProfile!!.singletonGameRules.contains(id!!))
         super.applyOffline()
     }
 

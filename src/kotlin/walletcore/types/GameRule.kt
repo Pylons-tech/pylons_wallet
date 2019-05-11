@@ -1,7 +1,7 @@
 package walletcore.types
 
 abstract class GameRule (
-        open val id : String = "",
+        open val id : String? = "",
         open val coinsIn : List<Coin>? = listOf(),
         open val coinsOut : List<Coin>? = listOf(),
         open val coinCatalysts : List<Coin>? = listOf(),
