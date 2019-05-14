@@ -14,6 +14,7 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     catch (e : NullPointerException) {
         return badArgs()
     }
+    System.out.println("Name: ${name}")
     Core.cryptoHandler = Core.txHandler.getNewCryptoHandler()
     Core.cryptoHandler!!.newKeys()
     val id = Core.txHandler.getNewUserId()

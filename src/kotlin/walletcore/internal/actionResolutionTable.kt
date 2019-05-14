@@ -14,7 +14,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         Actions.getOtherUserDetails -> getOtherUserDetails(msg)
         Actions.applyRecipe -> retryOnError { applyRecipe(msg) }
         Actions.performTransaction -> retryOnError { performTransaction(msg) }
-        Actions.newProfile -> requiresArgs(action, msg, extraArgs, ::newProfile)
+        Actions.newProfile -> newProfile(msg) //requiresArgs(action, msg, extraArgs, ::newProfile)
         Actions.wipeUserData -> wipeUserData()
         Actions.setUserProfileState -> devOnly { setUserProfileState(msg) }
         Actions.setOtherUserProfileState -> devOnly { setOtherUserProfileState(msg) }
