@@ -205,4 +205,16 @@ internal class ActionResolutionTableTest {
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.strings["txId"], actualResponse.msg!!.strings["txId"])
     }
+
+    @Test
+    fun case_getPylons () {
+        val json = UserData("fooBar", "12345").exportAsJson()
+        Core.uiInterrupts = InternalUiInterrupts()
+        Core.start(json)
+        val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
+        val actualResponse = actionResolutionTable(Actions.getPylons,
+                MessageData(ints = mutableMapOf("pylons" to 43)))
+        assertEquals(successResponse.status, actualResponse.status)
+        assertEquals(43, Core.userProfile!!.coins["pylons"])
+    }
 }

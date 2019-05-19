@@ -108,4 +108,10 @@ class TxDummy : TxHandler() {
         Core.setProfile(Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings, provisional = false))
         return Core.userProfile
     }
+
+    override fun getPylons(q: Int): Profile? {
+        //runBlocking { delay(500) }
+        var tx = Transaction(getNewTransactionId(), "", Core.userProfile!!.id, listOf(), listOf(Coin("pylons", q)))
+        return commitTx(tx)
+    }
 }

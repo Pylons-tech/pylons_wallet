@@ -36,4 +36,6 @@ abstract class TxHandler {
     abstract fun getTransaction (id : String) : Transaction?
 
     abstract fun registerNewProfile () : Profile?
+
+    abstract fun getPylons (q : Int) : Profile?
 }
