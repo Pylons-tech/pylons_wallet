@@ -91,7 +91,7 @@ internal class ActionResolutionTableTest {
     fun case_registerProfile () {
         Core.start()
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.profileExists to true)), Status.OK_TO_RETURN_TO_CLIENT)
-        val actualResponse = actionResolutionTable(Actions.newProfile, MessageData.empty(), MessageData(strings = mutableMapOf(Keys.name to "fooBar")))
+        val actualResponse = actionResolutionTable(Actions.newProfile, MessageData(strings = mutableMapOf(Keys.name to "fooBar")))
         assertEquals(successResponse.status, actualResponse.status)
         assertEquals(successResponse.msg!!.booleans[Keys.profileExists], actualResponse.msg!!.booleans[Keys.profileExists])
     }
