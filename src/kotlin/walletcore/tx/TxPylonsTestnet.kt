@@ -1,4 +1,4 @@
-package kotlin.walletcore.tx
+package walletcore.tx
 
 import walletcore.Core
 import walletcore.crypto.CryptoHandler
@@ -16,25 +16,25 @@ class TxPylonsTestnet  : TxHandler() {
     override val isOfflineTxLayer: Boolean = true
 
     class SdkCoin (
-        val denom : String? = null
+        val denom : String? = null,
         val amount : Long? = null
     )
 
     class SdkDecCoin (
-        val denom : String? = null
+        val denom : String? = null,
         val amount : BigDecimal? = null
     )
 
     class BaseReq (
-        val from : String? = null
-        val memo : String? = null
-        val chain_id : String? = null
-        val account_nuumber : Long? = null
-        val sequence : Long? = null
-        val fees : Array<SdkCoin>? = null
-        val gasPrices : Array<SdkDecCoin>? = null
-        val gas : String? = null
-        val gasAdjustment : String? = null
+        val from : String? = null,
+        val memo : String? = null,
+        val chain_id : String? = null,
+        val account_nuumber : Long? = null,
+        val sequence : Long? = null,
+        val fees : Array<SdkCoin>? = null,
+        val gasPrices : Array<SdkDecCoin>? = null,
+        val gas : String? = null,
+        val gasAdjustment : String? = null,
         val simulate : Boolean? = null
     )
 
@@ -75,19 +75,21 @@ class TxPylonsTestnet  : TxHandler() {
     }
 
     override fun registerNewProfile(): Profile? {
-
+        return null
     }
 
     override fun getOwnBalances(): Profile? {
         val url = "$addr/bank/balances/${Core.userProfile!!.id}"
+        return null
     }
 
     override fun getPylons(q: Int): Profile? {
         val url = "$addr/pylons/get_pylons"
         class jsonMessage (
-            val base_req : BaseReq? = null
-            val amount : String? = null
+            val base_req : BaseReq? = null,
+            val amount : String? = null,
             val buyer : String? = null
         )
+        return null
     }
 }

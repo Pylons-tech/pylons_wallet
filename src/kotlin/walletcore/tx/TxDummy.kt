@@ -25,7 +25,7 @@ import java.util.*
  * on any kind of remote resources, calling delay() allows us to emulate the behavior of a real-world
  * system, which will have to wait on network operations.
  */
-class TxDummy : TxHandler() {
+open class TxDummy : TxHandler() {
     override fun getHeight(): Long {
         return OutsideWorldDummy.transactions.size.toLong()
     }

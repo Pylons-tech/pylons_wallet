@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 
 internal class UserDataTest {
-    var userData = UserData(name = "foo", id = "bar", cryptoKeys = mapOf("key" to "DEADBEEF".toByteArray()),
+    var userData = UserData(name = "foo", id = "bar", keys = "fasfasf",
             extras = mapOf("spam" to "eggs"))
     val jsonFixture = """{"cryptoKeys":{"key":[68,69,65,68,66,69,69,70]},"extras":{"spam":"eggs"},"friends":[],"id":"bar","name":"foo","version":"1.0.0"}"""
 
@@ -31,9 +31,7 @@ internal class UserDataTest {
         assertEquals(userData.name, newConfig!!.name)
         assertEquals(userData.id, newConfig.id)
         assertEquals(userData.version, newConfig.version)
-        assertEquals(userData.cryptoKeys.size, newConfig.cryptoKeys.size)
-        userData.cryptoKeys.forEach {s, _ -> assertArrayEquals(userData.cryptoKeys[s], newConfig.cryptoKeys[s])}
-        assertEquals(userData.extras.size, newConfig.extras.size)
+        assertEquals(userData.keys, newConfig.keys)
         userData.extras.forEach { s, _ -> assertEquals(userData.extras[s], newConfig.extras[s])}
     }
 }

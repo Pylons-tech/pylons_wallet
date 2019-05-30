@@ -1,19 +1,23 @@
 package walletcore.crypto
 
-import walletcore.Core
+import com.squareup.moshi.Moshi
 import walletcore.types.UserData
 
 /**
  * Dummy CryptoHandler implementation.
  * Performs exactly no cryptography, but does so through the appropriate APIs.
  */
-class CryptoDummy (userData: UserData?) : CryptoHandler () {
-    init {
-        keys = userData?.cryptoKeys ?: generateNewKeys()
+class CryptoDummy (userData: UserData?) : CryptoHandler (userData) {
+    private val adapter = Moshi.Builder().build().adapter<Map<String, ByteArray>>(Map::class.java)
+    var keys : Map<String, ByteArray>? = null
+        internal set
+
+    override fun importKeysFromUserData() {
+        keys = adapter.fromJson(userData!!.keys)
     }
 
-    override fun generateNewKeys(): Map<String, ByteArray> {
-        return mapOf()
+    override fun generateNewKeys() {
+        keys = mapOf()
     }
 
     override fun signature(bytes: ByteArray): ByteArray {

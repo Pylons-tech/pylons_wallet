@@ -10,7 +10,7 @@ import walletcore.Core
 data class UserData (
     val name : String? = "",
     val id : String? = "",
-    val cryptoKeys : Map<String, ByteArray> = mapOf(),
+    val keys : String? = "",
     val extras : Map<String, String> = mapOf(),
     val friends : List<Friend>? = listOf(),
     /**

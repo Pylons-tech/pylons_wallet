@@ -5,6 +5,8 @@
       <element id="module-output" name="pylons_wallet" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/squareup/moshi/moshi/1.8.0/moshi-1.8.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/squareup/okio/okio/1.16.0/okio-1.16.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/tuweni-bytes-0.8.0-SNAPSHOT.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/tuweni-crypto-0.8.0-SNAPSHOT.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

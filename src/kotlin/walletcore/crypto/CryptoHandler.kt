@@ -1,14 +1,15 @@
 package walletcore.crypto
 
-abstract class CryptoHandler  {
-    var keys : Map<String, ByteArray>? = null
-        internal set
+import walletcore.types.UserData
 
-    fun newKeys () {
-        keys = generateNewKeys()
-    }
-
-    protected abstract fun generateNewKeys () : Map<String, ByteArray>
+abstract class CryptoHandler (val userData: UserData?)  {
+    protected abstract fun generateNewKeys ()
+    protected abstract fun importKeysFromUserData()
     abstract fun signature (bytes : ByteArray) : ByteArray
     abstract fun verify (bytes : ByteArray, signature : ByteArray) : Boolean
+
+    init {
+        if (userData?.keys == null) generateNewKeys()
+        else importKeysFromUserData()
+    }
 }

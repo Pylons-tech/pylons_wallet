@@ -16,7 +16,6 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     }
     System.out.println("Name: ${name}")
     Core.cryptoHandler = Core.txHandler.getNewCryptoHandler()
-    Core.cryptoHandler!!.newKeys()
     val id = Core.txHandler.getNewUserId()
     Core.setProfile(Profile(id = id, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true))
     val prf = Core.txHandler.registerNewProfile()
