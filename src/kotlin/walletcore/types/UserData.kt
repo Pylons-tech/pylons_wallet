@@ -7,12 +7,9 @@ import walletcore.Core
  * Object representing persistent data stored on local storage.
  * Used to configure walletcore's initial state when starting.
  */
-data class UserData (
-    val name : String? = "",
-    val id : String? = "",
-    val keys : String? = "",
-    val extras : Map<String, String> = mapOf(),
-    val friends : List<Friend>? = listOf(),
+internal object UserData {
+    var dataSets : MutableMap<String, MutableMap<String, String>> = mutableMapOf()
+    //var friends : List<Friend>? = listOf()
     /**
      * UserData.version exists for forwards compatibility reasons.
      * Since we just serialize the object directly as JSON, it'd be easy
@@ -21,18 +18,20 @@ data class UserData (
      * UserData that it corresponds to, we can handle older JSON
      * documents as a special case down the road, if needed.
      */
-    val version : String = "1.0.0"
-) {
-    companion object {
-        @JvmStatic()
-        fun parseFromJson(json: String?): UserData? {
-            return when (json) {
-                null -> null
-                else -> {
-                    val moshi = Moshi.Builder().build()
-                    val jsonAdapter = moshi.adapter<UserData>(UserData::class.java)
-                    return jsonAdapter.fromJson(json)
-                }
+    const val version : String = "1.0.0"
+
+    fun parseFromJson(json: String?) {
+        class Model {
+            var dataSets : Map<String, MutableMap<String, String>>? = mutableMapOf()
+            val version : String? = null
+        }
+        when (json) {
+            null -> null
+            else -> {
+                val moshi = Moshi.Builder().build()
+                val jsonAdapter = moshi.adapter<Model>(Model::class.java)
+                val d=  jsonAdapter.fromJson(json)
+                dataSets = d?.dataSets.orEmpty().toMutableMap()
             }
         }
     }

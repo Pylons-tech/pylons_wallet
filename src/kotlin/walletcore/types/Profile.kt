@@ -8,32 +8,31 @@ import walletcore.constants.*
  * Internal state representation of the user's own userProfile.
  */
 data class Profile (
-    var id : String = "",
-    val strings : MutableMap<String, String> = mutableMapOf(),
-    val coins : MutableMap<String, Int> = mutableMapOf(),
-    val items : MutableList<Item> = mutableListOf(),
-    /**
-     * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
-     * from the network.
-     */
-    var provisional : Boolean = false,
-    val singletonGameRules : MutableList<String> = mutableListOf()
+        val credentials: Credentials,
+        val strings : MutableMap<String, String>,
+        val coins : MutableMap<String, Int>,
+        val items : MutableList<Item>,
+        /**
+         * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
+         * from the network.
+         */
+        var provisional : Boolean = false,
+        val singletonGameRules : MutableList<String> = mutableListOf()
 ) {
+    abstract class Credentials {
+        abstract fun dumpToMessageData (msg : MessageData)
+    }
+
+
     companion object {
-        fun fromUserData (userData: UserData?) : Profile? {
-            return when (userData) {
-                null -> null
-                else -> {
-                    val name = userData.name
-                    val id = when (userData.id) {
-                        null -> Core.txHandler.getNewUserId()
-                        else -> userData.id
-                    }
-                    return when (name) {
-                        null -> Profile(id = id, provisional = true)
-                        else -> Profile(id = id, strings = mutableMapOf(ReservedKeys.profileName to name), provisional = true)
-                    }
-                }
+        fun fromUserData () : Profile? {
+            val data = UserData.dataSets.getValue(Core.txHandler!!.prefix)
+            val credentials = Core.txHandler!!.getCredentials()
+            return when (val name = data.getValue("name")) {
+                "" -> Profile(credentials = credentials, provisional = true,
+                        coins = mutableMapOf(), strings = mutableMapOf(), items = mutableListOf())
+                else -> Profile(credentials = credentials, strings = mutableMapOf(ReservedKeys.profileName to name),
+                        provisional = true, coins = mutableMapOf(), items = mutableListOf())
             }
         }
 
@@ -51,7 +50,7 @@ data class Profile (
         msg.booleans[Keys.profileExists] = true
         val name = getName()
         if (name != null) msg.strings[Keys.name] = name
-        msg.strings[Keys.id] = id
+        credentials.dumpToMessageData(msg)
         msg.strings[Keys.coins] = coins.serializeCoins()
         msg.stringArrays[Keys.items] = items.serialize()
         msg.stringArrays["singletonGameRules"] = singletonGameRules

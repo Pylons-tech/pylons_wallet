@@ -25,7 +25,32 @@ import java.util.*
  * on any kind of remote resources, calling delay() allows us to emulate the behavior of a real-world
  * system, which will have to wait on network operations.
  */
-open class TxDummy : TxHandler() {
+internal class TxDummy : TxHandler() {
+    override val prefix : String = "__TXDUMMY__"
+    override val usesCrypto: Boolean = true // txdummy doesn't actually use crypto, but it thinkx it does
+    override val isDevTxLayer: Boolean = true
+    override val isOfflineTxLayer: Boolean = true
+
+    class Credentials (val id : String) : Profile.Credentials () {
+        override fun dumpToMessageData(msg: MessageData) {
+            msg.strings["id"] = id
+        }
+    }
+
+    override fun dumpCredentials(credentials: Profile.Credentials) {
+        val c = credentials as Credentials
+        UserData.dataSets.getValue(prefix)["id"] = c.id
+    }
+
+    override fun getCredentials(): Credentials {
+        UserData.dataSets[prefix]
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun bootstrap() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun getHeight(): Long {
         return OutsideWorldDummy.transactions.size.toLong()
     }
@@ -37,9 +62,6 @@ open class TxDummy : TxHandler() {
     override fun getTransaction(id: String): Transaction? {
         return OutsideWorldDummy.transactions[id]
     }
-
-    override val isDevTxLayer: Boolean = true
-    override val isOfflineTxLayer: Boolean = true
 
     override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>): Profile? {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
@@ -105,13 +127,14 @@ open class TxDummy : TxHandler() {
 
     override fun registerNewProfile() : Profile? {
         runBlocking { delay(500) }
-        Core.setProfile(Profile(id = Core.userProfile!!.id, strings = Core.userProfile!!.strings, provisional = false))
+        Core.userProfile!!.provisional = false
         return Core.userProfile
     }
 
     override fun getPylons(q: Int): Profile? {
         //runBlocking { delay(500) }
-        var tx = Transaction(getNewTransactionId(), "", Core.userProfile!!.id, listOf(), listOf(Coin("pylons", q)))
+        var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).id,
+                listOf(), listOf(Coin("pylons", q)))
         return commitTx(tx)
     }
 }

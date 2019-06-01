@@ -11,15 +11,23 @@ import walletcore.types.*
  * will do the dirty work of binding that functionality to low-level blockchain
  * systems, in effect acting as "drivers."
  */
-abstract class TxHandler {
+internal abstract class TxHandler {
+    abstract val prefix : String
+    abstract val usesCrypto : Boolean
     abstract val isDevTxLayer : Boolean
     abstract val isOfflineTxLayer : Boolean
 
     abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Profile?
 
+    abstract fun bootstrap ()
+
     abstract fun commitTx(tx: Transaction) : Profile?
 
     abstract fun getAverageBlockTime () : Double
+
+    abstract fun dumpCredentials (credentials: Profile.Credentials)
+
+    abstract fun getCredentials () : Profile.Credentials
 
     abstract fun getHeight () : Long
 

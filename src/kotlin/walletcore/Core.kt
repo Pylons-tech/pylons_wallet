@@ -18,10 +18,9 @@ object Core {
      * The amount of time (in milliseconds) to wait before retrying such operations.
      */
     internal const val retryDelay : Long = 500 // milliseconds
-    internal val txHandler: TxHandler = TxDummy()
-    internal var cryptoHandler: CryptoHandler? = null
-    internal var userProfile: Profile? = null
+    internal var txHandler: TxHandler? = null
         private set
+    internal var userProfile: Profile? = null
     internal var friends: List<Friend> = listOf()
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
     var uiInterrupts : UiInterrupts? = null
@@ -31,9 +30,11 @@ object Core {
         internal set
     internal var suspendedMsg : MessageData? = null
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, "0.0.1a")
+    internal var userData : UserData? = null
+
 
     internal fun tearDown () {
-        cryptoHandler = null
+        txHandler = null
         userProfile = null
         uiInterrupts = null
         friends = listOf()
@@ -44,12 +45,7 @@ object Core {
      * Serializes persistent user data as a JSON string. All wallet apps will need to take care of calling
      * backupUserData() and storing the results in local storage on their own.
      */
-    fun backupUserData () : String? {
-        return when (userProfile) {
-            null -> null
-            else -> UserData(name = userProfile!!.getName(), id = userProfile!!.id, friends = friends).exportAsJson()
-        }
-    }
+    fun backupUserData () : String? = UserData.exportAsJson()
 
     fun setProfile (profile: Profile) {
         userProfile = profile
@@ -61,23 +57,23 @@ object Core {
 
     fun dumpTx () : String = OutsideWorldDummy.dumpTransactions()
 
-    fun start (json : String? = null, dbgStateProfileJson : String? = null, dbgStateWorldJson : String? = null, dbgStateTxJson : String? = null) {
+    fun initializeFakeWorldState (dbgStateProfileJson : String, dbgStateWorldJson : String, dbgStateTxJson : String) {
+        OutsideWorldDummy.loadProfiles(dbgStateWorldJson)
+        userProfile = Profile.load(dbgStateProfileJson)
+        OutsideWorldDummy.loadTransactions(dbgStateTxJson)
+    }
+
+    fun start (backend: Backend, json : String) {
+        txHandler = when (backend) {
+            Backend.DUMMY -> TxDummy()
+            Backend.ALPHA_REST -> TxDummy()
+        }
         runBlocking {
-            val userData = when (json) {
-                null -> null
-                else -> UserData.parseFromJson(json)
+            UserData.parseFromJson(json)
+            userProfile = when (userData) {
+                null -> Profile.fromUserData()
+                else -> null
             }
-            if (userData != null) {
-                userProfile = Profile.fromUserData(userData)
-                cryptoHandler = txHandler.getNewCryptoHandler(userData)
-                if (userData.friends != null) friends = userData.friends
-            } else {
-                userProfile = null
-                cryptoHandler = txHandler.getNewCryptoHandler()
-            }
-            if (dbgStateWorldJson != null) OutsideWorldDummy.loadProfiles(dbgStateWorldJson)
-            if (dbgStateProfileJson != null) userProfile = Profile.load(dbgStateProfileJson)
-            if (dbgStateTxJson != null) OutsideWorldDummy.loadTransactions(dbgStateTxJson)
             sane = true
         }
     }
@@ -107,7 +103,7 @@ object Core {
      * behavior - resolveMessage should not be called from the main thread of any wallet app.
      */
     fun resolveMessage(msg: MessageData): Response? {
-        statusBlock = StatusBlock(txHandler.getHeight(), txHandler.getAverageBlockTime(), statusBlock.walletCoreVersion)
+        statusBlock = StatusBlock(txHandler!!.getHeight(), txHandler!!.getAverageBlockTime(), statusBlock.walletCoreVersion)
         if (!sane) {
             var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
             throw Exception(msg.msg!!.strings[Keys.info])

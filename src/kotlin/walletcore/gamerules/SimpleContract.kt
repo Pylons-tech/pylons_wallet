@@ -3,6 +3,7 @@ package walletcore.gamerules
 import walletcore.Core
 import walletcore.internal.newItemFromPrototype
 import walletcore.tx.OutsideWorldDummy
+import walletcore.tx.TxDummy
 import walletcore.types.*
 
 open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {
@@ -41,8 +42,8 @@ open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {
             }
             Core.userProfile!!.coins[it.id] = base + it.count
         }
-        val txId = Core.txHandler.getNewTransactionId()
-        OutsideWorldDummy.addTx(Transaction(txId, Core.userProfile!!.id, txId, coinsIn.orEmpty(), actualCoinsOut.orEmpty(),
+        val txId = Core.txHandler!!.getNewTransactionId()
+        OutsideWorldDummy.addTx(Transaction(txId, (Core.userProfile!!.credentials as TxDummy.Credentials).id, txId, coinsIn.orEmpty(), actualCoinsOut.orEmpty(),
                 boundItemsIn, outItems, Transaction.State.TX_ACCEPTED, boundCoinsCatalysts, boundItemsCatalysts))
     }
 
