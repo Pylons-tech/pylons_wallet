@@ -20,8 +20,8 @@
 //
 //class TxPylonsTestnet  : Engine() {
 //    private val addr = "http://35.224.155.76:80"
-//    override val isDevTxLayer: Boolean = true
-//    override val isOfflineTxLayer: Boolean = true
+//    override val isDevEngine: Boolean = true
+//    override val isOffLineEngine: Boolean = true
 //
 //    class Signature (
 //        val signature : String? = null,

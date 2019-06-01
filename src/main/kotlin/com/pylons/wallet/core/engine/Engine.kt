@@ -13,8 +13,8 @@ import com.pylons.wallet.core.types.*
 internal abstract class Engine {
     abstract val prefix : String
     abstract val usesCrypto : Boolean
-    abstract val isDevTxLayer : Boolean
-    abstract val isOfflineTxLayer : Boolean
+    abstract val isDevEngine : Boolean
+    abstract val isOffLineEngine : Boolean
 
     abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Profile?
 
@@ -26,7 +26,7 @@ internal abstract class Engine {
 
     abstract fun dumpCredentials (credentials: Profile.Credentials)
 
-    abstract fun getCredentials () : Profile.Credentials
+    abstract fun getNewCredentials () : Profile.Credentials
 
     abstract fun getHeight () : Long
 

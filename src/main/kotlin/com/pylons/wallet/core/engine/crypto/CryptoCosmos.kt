@@ -6,7 +6,8 @@ import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.UserData
 import org.apache.tuweni.crypto.*
 
-internal class CryptoCosmos (userData: UserData?) : CryptoHandler (userData) {
+internal class CryptoCosmos (userData: UserData?) : CryptoHandler() {
+    override val prefix: String = "__CRYPTO_COSMOS__"
     private val adapter = Moshi.Builder().build().adapter<SECP256K1.KeyPair>(SECP256K1.KeyPair::class.java)
     var keyPair : SECP256K1.KeyPair? = null
 

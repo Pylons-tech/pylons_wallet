@@ -17,12 +17,11 @@ object Core {
      * The amount of time (in milliseconds) to wait before retrying such operations.
      */
     internal const val retryDelay : Long = 500 // milliseconds
-    internal var engine: Engine? = null
+    internal var engine: Engine = NoEngine()
         private set
     internal var userProfile: Profile? = null
     internal var friends: List<Friend> = listOf()
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
-    var uiInterrupts : UiInterrupts? = null
     var sane : Boolean = false
         private set
     var suspendedAction : String? = null
@@ -31,11 +30,9 @@ object Core {
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, "0.0.1a")
     internal var userData : UserData? = null
 
-
     internal fun tearDown () {
-        engine = null
+        engine = NoEngine()
         userProfile = null
-        uiInterrupts = null
         friends = listOf()
         sane = false
     }

@@ -15,9 +15,10 @@ internal fun newProfile (extraArgs : MessageData) : Response {
         return badArgs()
     }
     System.out.println("Name: ${name}")
-    Core.cryptoHandler = Core.engine.getNewCryptoHandler()
-    val id = Core.engine.getNewUserId()
-    Core.setProfile(Profile(id = id, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true))
+    Core.engine.bootstrap()
+    val c = Core.engine.getNewCredentials()
+    Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true,
+            coins = mutableMapOf(), items = mutableListOf()))
     val prf = Core.engine.registerNewProfile()
     val msg = when (prf) {
         null -> MessageData(booleans = mutableMapOf(Keys.profileExists to false))

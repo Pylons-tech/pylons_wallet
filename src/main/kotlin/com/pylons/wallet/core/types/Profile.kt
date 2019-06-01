@@ -19,7 +19,7 @@ data class Profile (
         var provisional : Boolean = false,
         val singletonGameRules : MutableList<String> = mutableListOf()
 ) {
-    abstract class Credentials {
+    abstract class Credentials (val id : String) {
         abstract fun dumpToMessageData (msg : MessageData)
     }
 
@@ -27,7 +27,7 @@ data class Profile (
     companion object {
         fun fromUserData () : Profile? {
             val data = UserData.dataSets.getValue(Core.engine!!.prefix)
-            val credentials = Core.engine!!.getCredentials()
+            val credentials = Core.engine!!.getNewCredentials()
             return when (val name = data.getValue("name")) {
                 "" -> Profile(credentials = credentials, provisional = true,
                         coins = mutableMapOf(), strings = mutableMapOf(), items = mutableListOf())

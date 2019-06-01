@@ -22,10 +22,10 @@ import java.time.Instant
 internal class TxDummyEngine : Engine() {
     override val prefix : String = "__TXDUMMY__"
     override val usesCrypto: Boolean = true // txdummy doesn't actually use crypto, but it thinkx it does
-    override val isDevTxLayer: Boolean = true
-    override val isOfflineTxLayer: Boolean = true
+    override val isDevEngine: Boolean = true
+    override val isOffLineEngine: Boolean = true
 
-    class Credentials (val id : String) : Profile.Credentials () {
+    class Credentials (id : String) : Profile.Credentials (id) {
         override fun dumpToMessageData(msg: MessageData) {
             msg.strings["id"] = id
         }
@@ -36,7 +36,7 @@ internal class TxDummyEngine : Engine() {
         UserData.dataSets.getValue(prefix)["id"] = c.id
     }
 
-    override fun getCredentials(): Credentials {
+    override fun getNewCredentials(): Credentials {
         UserData.dataSets[prefix]
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
