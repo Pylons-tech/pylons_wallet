@@ -9,12 +9,19 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.engine.OutsideWorldDummy
+import com.pylons.wallet.core.engine.TxDummyEngine
 import com.pylons.wallet.core.types.*
+import sun.plugin.util.UserProfile
 
 internal class ActionResolutionTableTest {
     @AfterEach
     internal fun tearDown() {
         Core.tearDown()
+    }
+
+    private fun bootstrapCoreForBasicCases () {
+        Core.start(backend = Backend.DUMMY, json = "")
+        Core.userProfile = Profile(TxDummyEngine.Credentials("12345"), mutableMapOf(ReservedKeys.profileName to "fooBar"), mutableMapOf(), mutableListOf())
     }
 
     @Test
@@ -55,8 +62,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_getUserDetailsNoProfile() {
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start()
+        Core.start(backend = Backend.DUMMY, json = "")
         val noProfileResponse = Response(MessageData(booleans = mutableMapOf(Keys.profileExists to false)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.getUserDetails, MessageData.empty())
         assertEquals(noProfileResponse.status, actualResponse.status)
@@ -65,9 +71,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_getUserDetailsProfileExists() {
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
+        bootstrapCoreForBasicCases()
         val profileResponse = Response(Core.userProfile!!.detailsToMessageData(), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.getUserDetails, MessageData.empty())
         assertEquals(profileResponse.status, actualResponse.status)
@@ -79,9 +83,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_wipeUserData () {
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
+        bootstrapCoreForBasicCases()
         assertNotNull(Core.userProfile)
         actionResolutionTable(Actions.wipeUserData, MessageData.empty())
         assertNull(Core.userProfile)
@@ -89,7 +91,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_registerProfile () {
-        Core.start()
+        Core.start(backend = Backend.DUMMY, json = "")
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.profileExists to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.newProfile, MessageData(strings = mutableMapOf(Keys.name to "fooBar")))
         assertEquals(successResponse.status, actualResponse.status)
@@ -98,9 +100,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_submitTx () {
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
+        bootstrapCoreForBasicCases()
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val txMessage = MessageData()
         txMessage.strings[Keys.otherProfileId] = "012345678910"
@@ -114,8 +114,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_getOtherUserDetails () {
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start()
+        bootstrapCoreForBasicCases()
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.profileExists to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.getOtherUserDetails, MessageData(strings = mutableMapOf(Keys.otherProfileId to "012345678910")))
         assertEquals(successResponse.status, actualResponse.status)
@@ -133,9 +132,7 @@ internal class ActionResolutionTableTest {
     @Test
     fun case_applyRecipe () {
         OutsideWorldDummy.loadRuleJson = this::getJsonForRecipe
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
+        bootstrapCoreForBasicCases()
         Core.userProfile!!.coins["pylons"] = 99
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.applyRecipe,
@@ -147,8 +144,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_setUserProfileState () {
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start()
+        bootstrapCoreForBasicCases()
         val incomingMsg = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.setUserProfileState, "json" to
         """{
   "coins": { "gold": 999998 },
@@ -193,9 +189,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_getTransaction () {
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
+        bootstrapCoreForBasicCases()
         val tx = Transaction("tst", "0", "1", listOf(), listOf(), listOf(), listOf(), Transaction.State.TX_ACCEPTED,
                 listOf(), listOf())
         OutsideWorldDummy.addTx(tx)
@@ -208,9 +202,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_getPylons () {
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
+        bootstrapCoreForBasicCases()
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.getPylons,
                 MessageData(ints = mutableMapOf("pylons" to 43)))

@@ -8,7 +8,7 @@ import com.pylons.wallet.core.types.UserData
  * Dummy CryptoHandler implementation.
  * Performs exactly no cryptography, but does so through the appropriate APIs.
  */
-internal class CryptoDummy (userData: UserData?) : CryptoHandler () {
+internal class CryptoDummy () : CryptoHandler () {
     override val prefix: String = "__CRYPTO_DUMMY__"
     private val adapter = Moshi.Builder().build().adapter<Map<String, ByteArray>>(Map::class.java)
     var keys : Map<String, ByteArray>? = null

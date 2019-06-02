@@ -107,8 +107,8 @@ internal class TxDummyEngine : Engine() {
         return Core.userProfile
     }
 
-    override fun getNewCryptoHandler(userData: UserData?): CryptoHandler {
-        return CryptoDummy(userData)
+    override fun getNewCryptoHandler(): CryptoHandler {
+        return CryptoDummy()
     }
 
     override fun getNewTransactionId(): String {

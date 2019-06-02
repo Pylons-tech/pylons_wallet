@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.types.UserData
 
 internal class CryptoDummyTest {
-    val cryptoDummy = CryptoDummy(UserData()) // We don't have any keys, but that's okay because CryptoDummy doesn't do crypto
+    val cryptoDummy = CryptoDummy() // We don't have any keys, but that's okay because CryptoDummy doesn't do crypto
     val garbage_0 = byteArrayOf(9, 9, 9, 4, 4, 4, 3, 3)
     val garbage_1 = byteArrayOf(9, 9, 3, 4, 2, 2, 3, 3)
     val garbage_2 = byteArrayOf(5, 9, 0xF, 4, 4, 4, 0, 3)

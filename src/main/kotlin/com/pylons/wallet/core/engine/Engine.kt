@@ -34,7 +34,7 @@ internal abstract class Engine {
 
     abstract fun getOwnBalances () : Profile?
 
-    abstract fun getNewCryptoHandler(userData: UserData? = null) : CryptoHandler
+    abstract fun getNewCryptoHandler() : CryptoHandler
 
     abstract fun getNewTransactionId() : String
 

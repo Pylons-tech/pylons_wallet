@@ -15,8 +15,7 @@ internal class TxDummyTest {
     fun commitTx() {
         val txDummy = TxDummyEngine()
         val tx = Transaction()
-        Core.start()
-        Core.setProfile(Profile())
+        Core.start(Backend.DUMMY, "")
         txDummy.commitTx(tx)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }
@@ -26,7 +25,7 @@ internal class TxDummyTest {
      */
     @Test
     fun getNewCryptoHandler() {
-        val cryptoHandler = TxDummyEngine().getNewCryptoHandler(UserData())
+        val cryptoHandler = TxDummyEngine().getNewCryptoHandler()
         assertNotNull(cryptoHandler)
         assertEquals(CryptoDummy::class, cryptoHandler::class)
     }

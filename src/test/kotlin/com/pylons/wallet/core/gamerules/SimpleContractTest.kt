@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.OutsideWorldDummy
+import com.pylons.wallet.core.types.Backend
 import com.pylons.wallet.core.types.UserData
 
 internal class SimpleContractTest {
@@ -19,9 +20,7 @@ internal class SimpleContractTest {
     @Test
     fun parses () {
         OutsideWorldDummy.loadRuleJson = ::getJsonForRecipe
-        val json = UserData("fooBar", "12345").exportAsJson()
-        Core.uiInterrupts = InternalUiInterrupts()
-        Core.start(json)
+        Core.start(Backend.DUMMY,"")
         val rule = OutsideWorldDummy.loadExternalGameRuleDef("a", "b")
         assertNotNull(rule)
         assertNotNull(rule.coinsOut)

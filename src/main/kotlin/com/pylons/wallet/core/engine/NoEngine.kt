@@ -47,7 +47,7 @@ internal class NoEngine : Engine() {
     override fun getOwnBalances(): Profile? =
             throw NoEngineException()
 
-    override fun getNewCryptoHandler(userData: UserData?): CryptoHandler =
+    override fun getNewCryptoHandler(): CryptoHandler =
             throw NoEngineException()
 
     override fun getNewTransactionId(): String =
