@@ -28,7 +28,6 @@ object Core {
         internal set
     internal var suspendedMsg : MessageData? = null
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, "0.0.1a")
-    internal var userData : UserData? = null
 
     internal fun tearDown () {
         engine = NoEngine()
@@ -66,9 +65,9 @@ object Core {
         }
         runBlocking {
             UserData.parseFromJson(json)
-            userProfile = when (userData) {
-                null -> Profile.fromUserData()
-                else -> null
+            userProfile = when (json) {
+                "" -> null
+                else -> Profile.fromUserData()
             }
             sane = true
         }
