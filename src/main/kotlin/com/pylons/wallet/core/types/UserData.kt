@@ -8,6 +8,10 @@ import com.pylons.wallet.core.Core
  * Used to configure com.pylons.wallet.core's initial state when starting.
  */
 internal object UserData {
+    class Model {
+        var dataSets : Map<String, MutableMap<String, String>>? = mutableMapOf()
+        val version : String? = null
+    }
     var dataSets : MutableMap<String, MutableMap<String, String>> = mutableMapOf()
     //var friends : List<Friend>? = listOf()
     /**
@@ -20,13 +24,10 @@ internal object UserData {
      */
     const val version : String = "1.0.0"
 
-    fun parseFromJson(json: String?) {
-        class Model {
-            var dataSets : Map<String, MutableMap<String, String>>? = mutableMapOf()
-            val version : String? = null
-        }
+    fun parseFromJson(json: String) {
+
         when (json) {
-            null -> null
+            "" -> initializeUserData()
             else -> {
                 val moshi = Moshi.Builder().build()
                 val jsonAdapter = moshi.adapter<Model>(Model::class.java)
@@ -34,6 +35,10 @@ internal object UserData {
                 dataSets = d?.dataSets.orEmpty().toMutableMap()
             }
         }
+    }
+
+    fun initializeUserData () {
+        dataSets = Core.engine.getInitialDataSets()
     }
 
     fun exportAsJson () : String {

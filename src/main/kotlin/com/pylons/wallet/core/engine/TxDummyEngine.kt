@@ -6,7 +6,10 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.*
 import com.pylons.wallet.core.types.*
 import java.sql.Date
+import java.sql.Time
+import java.sql.Timestamp
 import java.time.Instant
+import kotlin.random.Random
 
 
 /***
@@ -37,8 +40,7 @@ internal class TxDummyEngine : Engine() {
     }
 
     override fun getNewCredentials(): Credentials {
-        UserData.dataSets[prefix]
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Credentials(UserData.dataSets.get(prefix).orEmpty().getOrDefault("id", Random.nextLong().toString()))
     }
 
     override fun bootstrap() {
@@ -130,5 +132,11 @@ internal class TxDummyEngine : Engine() {
         var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).id,
                 listOf(), listOf(Coin("pylons", q)))
         return commitTx(tx)
+    }
+
+    override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
+        val cryptoTable = mutableMapOf<String, String>()
+        val engineTable = mutableMapOf<String, String>()
+        return mutableMapOf("__CRYPTO_DUMMY__" to cryptoTable, "__TXDUMMY__" to engineTable)
     }
 }

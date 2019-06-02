@@ -45,4 +45,6 @@ internal abstract class Engine {
     abstract fun registerNewProfile () : Profile?
 
     abstract fun getPylons (q : Int) : Profile?
+
+    abstract fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
 }

@@ -9,13 +9,13 @@ import com.pylons.wallet.core.types.UserData
  * Performs exactly no cryptography, but does so through the appropriate APIs.
  */
 internal class CryptoDummy () : CryptoHandler () {
-    override val prefix: String = "__CRYPTO_DUMMY__"
+    override fun getPrefix() : String = "__CRYPTO_DUMMY__"
     private val adapter = Moshi.Builder().build().adapter<Map<String, ByteArray>>(Map::class.java)
     var keys : Map<String, ByteArray>? = null
         internal set
 
     override fun importKeysFromUserData() {
-        keys = adapter.fromJson(UserData.dataSets.getValue(prefix)["keys"])
+        keys = adapter.fromJson(UserData.dataSets.getValue(getPrefix())["keys"])
     }
 
     override fun generateNewKeys() {

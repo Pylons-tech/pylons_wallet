@@ -28,7 +28,7 @@ data class Profile (
         fun fromUserData () : Profile? {
             val data = UserData.dataSets.getValue(Core.engine!!.prefix)
             val credentials = Core.engine!!.getNewCredentials()
-            return when (val name = data.getValue("name")) {
+            return when (val name = data.getOrDefault("name", "")) {
                 "" -> Profile(credentials = credentials, provisional = true,
                         coins = mutableMapOf(), strings = mutableMapOf(), items = mutableListOf())
                 else -> Profile(credentials = credentials, strings = mutableMapOf(ReservedKeys.profileName to name),

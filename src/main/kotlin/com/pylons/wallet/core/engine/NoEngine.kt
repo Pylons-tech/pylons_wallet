@@ -64,4 +64,8 @@ internal class NoEngine : Engine() {
 
     override fun getPylons(q: Int): Profile? =
             throw NoEngineException()
+
+    override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
+            throw NoEngineException()
+
 }
