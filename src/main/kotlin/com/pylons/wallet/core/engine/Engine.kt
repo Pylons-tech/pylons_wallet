@@ -18,8 +18,6 @@ internal abstract class Engine {
 
     abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Profile?
 
-    abstract fun bootstrap ()
-
     abstract fun commitTx(tx: Transaction) : Profile?
 
     abstract fun getAverageBlockTime () : Double

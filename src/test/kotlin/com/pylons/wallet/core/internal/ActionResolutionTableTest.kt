@@ -26,6 +26,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_noAction () {
+        Core.start(backend = Backend.DUMMY, json = "")
         val noActionError = noAction()
         val actualResponse = actionResolutionTable("", MessageData.empty())
         assertEquals(noActionError.status, actualResponse.status)
@@ -34,6 +35,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_invalidAction () {
+        Core.start(backend = Backend.DUMMY, json = "")
         val badActionError = unrecognizedAction("not_a_real_action")
         val actualResponse = actionResolutionTable("not_a_real_action", MessageData.empty())
         assertEquals(badActionError.status, actualResponse.status)
@@ -42,6 +44,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_walletServiceTest () {
+        Core.start(backend = Backend.DUMMY, json = "")
         val svcTestResponse = walletServiceTest()
         val actualResponse = actionResolutionTable(Actions.walletServiceTest, MessageData.empty())
         assertEquals(svcTestResponse.status, actualResponse.status)
@@ -50,6 +53,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_walletUiTest() {
+        Core.start(backend = Backend.DUMMY, json = "")
         val uiTestResponse = walletUiTest(MessageData.empty()) // ui test only checks that it _has_ args
         val noArgsResponse = requiresArgs(Actions.walletUiTest, MessageData.empty(), null) { m -> walletUiTest(m) }
         val actualNoArgsResponse = actionResolutionTable(Actions.walletUiTest, MessageData.empty())

@@ -23,9 +23,6 @@ internal class NoEngine : Engine() {
     override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Profile? =
             throw NoEngineException()
 
-    override fun bootstrap() =
-            throw NoEngineException()
-
     override fun commitTx(tx: Transaction): Profile? =
             throw NoEngineException()
 

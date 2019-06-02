@@ -43,10 +43,6 @@ internal class TxDummyEngine : Engine() {
         return Credentials(UserData.dataSets.get(prefix).orEmpty().getOrDefault("id", Random.nextLong().toString()))
     }
 
-    override fun bootstrap() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun getHeight(): Long {
         return OutsideWorldDummy.transactions.size.toLong()
     }
