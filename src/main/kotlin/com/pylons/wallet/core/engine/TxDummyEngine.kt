@@ -5,6 +5,7 @@ import kotlinx.coroutines.runBlocking
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.*
 import com.pylons.wallet.core.types.*
+import com.squareup.moshi.*
 import java.sql.Date
 import java.sql.Time
 import java.sql.Timestamp
@@ -31,6 +32,18 @@ internal class TxDummyEngine : Engine() {
     class Credentials (id : String) : Profile.Credentials (id) {
         override fun dumpToMessageData(msg: MessageData) {
             msg.strings["id"] = id
+        }
+    }
+
+    class CredentialsAdapter {
+        @FromJson
+        fun fromJson (json : String) : Profile.Credentials {
+            return Moshi.Builder().build().adapter<Credentials>(Credentials::class.java).fromJson(json)!!
+        }
+
+        @ToJson
+        fun toJson (credentials : Profile.Credentials) : String {
+            return Moshi.Builder().build().adapter<Credentials>(Credentials::class.java).toJson(credentials as Credentials)!!
         }
     }
 

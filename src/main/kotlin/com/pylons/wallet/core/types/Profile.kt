@@ -1,6 +1,6 @@
 package com.pylons.wallet.core.types
 
-import com.squareup.moshi.Moshi
+import com.squareup.moshi.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
 
@@ -22,7 +22,6 @@ data class Profile (
     abstract class Credentials (val id : String) {
         abstract fun dumpToMessageData (msg : MessageData)
     }
-
 
     companion object {
         fun fromUserData () : Profile? {
