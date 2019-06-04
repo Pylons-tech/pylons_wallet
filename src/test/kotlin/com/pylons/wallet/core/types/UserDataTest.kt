@@ -8,7 +8,7 @@
 //
 //internal class UserDataTest {
 //    var userData = UserData(name = "foo", id = "bar", keys = "fasfasf",
-//            extras = mapOf("spam" to "eggs"))
+//            extras = mapOf("spam" dsPrivate "eggs"))
 //    val jsonFixture = """{"cryptoKeys":{"key":[68,69,65,68,66,69,69,70]},"extras":{"spam":"eggs"},"friends":[],"id":"bar","name":"foo","version":"1.0.0"}"""
 //
 //    /**

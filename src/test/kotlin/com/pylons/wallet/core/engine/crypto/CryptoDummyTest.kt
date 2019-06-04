@@ -13,7 +13,7 @@ internal class CryptoDummyTest {
     val garbage_2 = byteArrayOf(5, 9, 0xF, 4, 4, 4, 0, 3)
 
     /**
-     * Crypto dummy just gives an empty bytearray when you tell it to sign... anything.
+     * Crypto dummy just gives an empty bytearray when you tell it dsPrivate sign... anything.
      */
     @Test
     fun signature() {
