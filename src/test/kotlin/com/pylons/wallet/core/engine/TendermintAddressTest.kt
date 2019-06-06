@@ -23,7 +23,6 @@ internal class TendermintAddressTest {
         System.out.println("registered")
         val privateKey = SECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(dsPrivate))
         val keyPair = SECP256K1.KeyPair.create(privateKey, SECP256K1.PublicKey.fromSecretKey(privateKey))
-        // TODO: how is this encoded?
         assertEquals(dsAddr, Base58.encodeChecked(0, CryptoCosmos.getAddressFromKeyPair(keyPair).toArray()))
     }
 }

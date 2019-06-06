@@ -9,6 +9,11 @@ import org.apache.tuweni.crypto.Hash
 import org.apache.tuweni.crypto.sodium.SHA256Hash
 import java.security.KeyPair
 import org.wildfly.openssl.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 
 internal class TxPylonsAlphaEngine : Engine() {
     override val prefix : String = "__TXPYLONSALPHA__"
@@ -16,19 +21,44 @@ internal class TxPylonsAlphaEngine : Engine() {
     override val isDevEngine: Boolean = true
     override val isOffLineEngine: Boolean = false
     var cryptoHandler = CryptoCosmos()
+    private val url = """"http:\\35.224.155.76:80"""
 
-    fun addressFromPubKey () {
-        var compressedPubKey = cryptoHandler.keyPair!!.publicKey().asEcPoint()
-        //val sha256 = Hash.sha2_256(compressedPubKey)
+    class TxModel {
+        val msg : Array<Object>? = null
+        //val fee =
     }
+
+
+    private fun getJsonForTx (tx : Transaction) : String {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+    }
+
 
     override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Profile? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun commitTx(tx: Transaction): Profile? {
+        with(URL("$url/txs").openConnection() as HttpURLConnection) {
+            requestMethod = "POST"
+            val wr = OutputStreamWriter(outputStream);
+            wr.write(getJsonForTx(tx))
+            wr.flush()
+            BufferedReader(InputStreamReader(inputStream)).use {
+                val response = StringBuffer()
 
+                var inputLine = it.readLine()
+                while (inputLine != null) {
+                    response.append(inputLine)
+                    inputLine = it.readLine()
+                }
+                it.close()
+                println("Response : $response")
+            }
+        }
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun getAverageBlockTime(): Double {
