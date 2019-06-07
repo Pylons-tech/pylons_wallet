@@ -27,7 +27,8 @@ object Core {
     var suspendedAction : String? = null
         internal set
     internal var suspendedMsg : MessageData? = null
-    var statusBlock : StatusBlock = StatusBlock(-1, 0.0, "0.0.1a")
+    const val VERSION_STRING = "0.0.1a"
+    var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
 
     internal fun tearDown () {
         engine = NoEngine()

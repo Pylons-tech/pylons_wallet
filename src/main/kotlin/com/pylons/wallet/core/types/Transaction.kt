@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types
 
+import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import java.lang.NullPointerException
@@ -8,17 +9,42 @@ import java.lang.NullPointerException
  * Models a transaction. Internally, transactions are just sets of inputs and outputs
  */
 data class Transaction(
-        val txId: String = "",
-        val addressIn: String = "",
-        val addressOut: String = "",
-        val coinsIn: List<Coin> = listOf(),
-        val coinsOut: List<Coin> = listOf(),
-        val itemsIn: List<Item> = listOf(),
-        val itemsOut: List<Item> = listOf(),
-        var state: State = State.TX_NOT_YET_SENT,
-        val coinsCatalysts: List<Coin> = listOf(),
-        val itemsCatalysts: List<Item> = listOf()
+        val txId: String? = null,
+        val requester : String? = null,
+        val msg : Message? = null,
+        val msgType : String? = null,
+        //val addressIn: String = "",
+        //val addressOut: String = "",
+        //val coinsIn: List<Coin> = listOf(),
+        //val coinsOut: List<Coin> = listOf(),
+        //val itemsIn: List<Item> = listOf(),
+        //val itemsOut: List<Item> = listOf(),
+        var state: State = State.TX_NOT_YET_SENT
+        //val coinsCatalysts: List<Coin> = listOf(),
+        //val itemsCatalysts: List<Item> = listOf()
 ) {
+    abstract class Message
+
+    data class MsgGetPylons(val amount : Long = 0): Message() {
+        companion object {
+            fun fromResponse (json : String) : MsgGetPylons {
+                val amount = JsonPath.read<Long>(json, "$.tx.msg.value.Amount.amount")
+                return MsgGetPylons(amount)
+            }
+        }
+    }
+
+    data class MsgSendPylons(val amount : Long = 0, val sender : String = "", val receiver : String = "") {
+        companion object {
+            fun fromResponse (json : String) : MsgSendPylons {
+                val amount = JsonPath.read<Long>(json, "$.tx.msg.value.Amount.amount")
+                val sender = JsonPath.read<String>(json, "\$.tx.msg.value.Sender")
+                val receiver = JsonPath.read<String>(json, "\$.tx.msg.value.Receiver")
+                return MsgSendPylons(amount)
+            }
+        }
+    }
+
     enum class State(val value: Int) {
         TX_REFUSED(-1),
         TX_NOT_YET_SENT(0),

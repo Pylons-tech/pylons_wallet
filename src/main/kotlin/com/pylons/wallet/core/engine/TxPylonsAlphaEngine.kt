@@ -1,14 +1,13 @@
 package com.pylons.wallet.core.engine
 
+import com.jayway.jsonpath.JsonPath
+import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
-import com.pylons.wallet.core.types.ForeignProfile
-import com.pylons.wallet.core.types.Profile
-import com.pylons.wallet.core.types.Transaction
-import org.apache.tuweni.crypto.Hash
-import org.apache.tuweni.crypto.sodium.SHA256Hash
-import java.security.KeyPair
-import org.wildfly.openssl.*
+import com.pylons.wallet.core.types.*
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.JsonReader
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -21,15 +20,51 @@ internal class TxPylonsAlphaEngine : Engine() {
     override val isDevEngine: Boolean = true
     override val isOffLineEngine: Boolean = false
     var cryptoHandler = CryptoCosmos()
-    private val url = """"http:\\35.224.155.76:80"""
+    private val url = """"http://35.224.155.76:80"""
 
     class TxModel {
         val msg : Array<Object>? = null
         //val fee =
     }
 
+    private fun get (url : String) : String {
+        with(URL(url).openConnection() as HttpURLConnection) {
+            requestMethod = "GET"
+            BufferedReader(InputStreamReader(inputStream)).use {
+                val response = StringBuffer()
+                var inputLine = it.readLine()
+                while (inputLine != null) {
+                    response.append(inputLine)
+                    inputLine = it.readLine()
+                }
+                it.close()
+                return response.toString()
+            }
+        }
+    }
+
+    private fun post (url : String, input : String) : String {
+        with(URL(url).openConnection() as HttpURLConnection) {
+            requestMethod = "POST"
+            val wr = OutputStreamWriter(outputStream);
+            wr.write(input)
+            wr.flush()
+            BufferedReader(InputStreamReader(inputStream)).use {
+                val response = StringBuffer()
+                var inputLine = it.readLine()
+                while (inputLine != null) {
+                    response.append(inputLine)
+                    inputLine = it.readLine()
+                }
+                it.close()
+                return response.toString()
+            }
+        }
+    }
+
 
     private fun getJsonForTx (tx : Transaction) : String {
+        //val jsonObject =
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
     }
@@ -40,29 +75,8 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun commitTx(tx: Transaction): Profile? {
-        with(URL("$url/txs").openConnection() as HttpURLConnection) {
-            requestMethod = "POST"
-            val wr = OutputStreamWriter(outputStream);
-            wr.write(getJsonForTx(tx))
-            wr.flush()
-            BufferedReader(InputStreamReader(inputStream)).use {
-                val response = StringBuffer()
+        val response = post("$url/txs", getJsonForTx(tx))
 
-                var inputLine = it.readLine()
-                while (inputLine != null) {
-                    response.append(inputLine)
-                    inputLine = it.readLine()
-                }
-                it.close()
-                println("Response : $response")
-            }
-        }
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
-    }
-
-    override fun getAverageBlockTime(): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
@@ -70,10 +84,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getNewCredentials(): Profile.Credentials {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
-    override fun getHeight(): Long {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -97,7 +108,16 @@ internal class TxPylonsAlphaEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun getStatusBlock(): StatusBlock {
+        val response = get("$url/blocks/latest")
+        val height = JsonPath.read<Long>(response, "$.block_meta.header.height")
+        // TODO: calculate block time (this will be Gross)
+        return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = Core.VERSION_STRING)
+    }
+
     override fun getTransaction(id: String): Transaction? {
+        val response = get("$url/txs/$id")
+
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

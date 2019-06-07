@@ -20,13 +20,9 @@ internal abstract class Engine {
 
     abstract fun commitTx(tx: Transaction) : Profile?
 
-    abstract fun getAverageBlockTime () : Double
-
     abstract fun dumpCredentials (credentials: Profile.Credentials)
 
     abstract fun getNewCredentials () : Profile.Credentials
-
-    abstract fun getHeight () : Long
 
     abstract fun getForeignBalances(id : String) : ForeignProfile?
 
@@ -37,6 +33,8 @@ internal abstract class Engine {
     abstract fun getNewTransactionId() : String
 
     abstract fun getNewUserId() : String
+
+    abstract fun getStatusBlock() : StatusBlock
 
     abstract fun getTransaction (id : String) : Transaction?
 
