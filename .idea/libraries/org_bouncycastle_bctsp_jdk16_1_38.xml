@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="org.bouncycastle:bctsp-jdk16:1.38" type="repository">
+    <properties maven-id="org.bouncycastle:bctsp-jdk16:1.38" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bctsp-jdk16/1.38/bctsp-jdk16-1.38.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk16/1.38/bcprov-jdk16-1.38.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcmail-jdk16/1.38/bcmail-jdk16-1.38.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bctsp-jdk16/1.38/bctsp-jdk16-1.38-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk16/1.38/bcprov-jdk16-1.38-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcmail-jdk16/1.38/bcmail-jdk16-1.38-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

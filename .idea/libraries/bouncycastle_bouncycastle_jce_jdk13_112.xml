@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="bouncycastle:bouncycastle-jce-jdk13:112" type="repository">
+    <properties maven-id="bouncycastle:bouncycastle-jce-jdk13:112" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/bouncycastle/bouncycastle-jce-jdk13/112/bouncycastle-jce-jdk13-112.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

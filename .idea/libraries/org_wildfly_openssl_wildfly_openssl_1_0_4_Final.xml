@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="org.wildfly.openssl:wildfly-openssl:1.0.4.Final" type="repository">
+    <properties maven-id="org.wildfly.openssl:wildfly-openssl:1.0.4.Final" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/wildfly/openssl/wildfly-openssl/1.0.4.Final/wildfly-openssl-1.0.4.Final.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
