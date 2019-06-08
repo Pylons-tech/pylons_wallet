@@ -1,10 +1,7 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
-import com.pylons.wallet.core.types.ForeignProfile
-import com.pylons.wallet.core.types.Profile
-import com.pylons.wallet.core.types.Transaction
-import com.pylons.wallet.core.types.UserData
+import com.pylons.wallet.core.types.*
 
 /**
  * Engine that throws NoEngineException on calling any function.
@@ -20,22 +17,20 @@ internal class NoEngine : Engine() {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
+    override fun getStatusBlock(): StatusBlock  =
+            throw NoEngineException()
+
     override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Profile? =
             throw NoEngineException()
 
     override fun commitTx(tx: Transaction): Profile? =
             throw NoEngineException()
 
-    override fun getAverageBlockTime(): Double =
-            throw NoEngineException()
 
     override fun dumpCredentials(credentials: Profile.Credentials) =
             throw NoEngineException()
 
     override fun getNewCredentials(): Profile.Credentials =
-            throw NoEngineException()
-
-    override fun getHeight(): Long =
             throw NoEngineException()
 
     override fun getForeignBalances(id: String): ForeignProfile? =

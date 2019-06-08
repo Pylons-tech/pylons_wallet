@@ -56,12 +56,8 @@ internal class TxDummyEngine : Engine() {
         return Credentials(UserData.dataSets.get(prefix).orEmpty().getOrDefault("id", Random.nextLong().toString()))
     }
 
-    override fun getHeight(): Long {
-        return OutsideWorldDummy.transactions.size.toLong()
-    }
-
-    override fun getAverageBlockTime(): Double {
-        return 60.0
+    override fun getStatusBlock(): StatusBlock {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun getTransaction(id: String): Transaction? {
@@ -90,20 +86,20 @@ internal class TxDummyEngine : Engine() {
     }
 
     override fun commitTx(tx: Transaction) : Profile? {
-        tx.submit()
-        runBlocking { delay(500) }
-        // Since there's no blockchain, we need to apply the transaction by hand
-        Core.userProfile!!.items.removeAll(tx.itemsIn)
-        tx.itemsOut.forEach { Core.userProfile!!.items.add(it) }
-        tx.coinsIn.forEach { Core.userProfile!!.coins[it.id] = Core.userProfile!!.coins[it.id]!! - it.count!! }
-        tx.coinsOut.forEach {
-            val base = when (Core.userProfile!!.coins[it.id]) {
-                null -> 0
-                else -> Core.userProfile!!.coins[it.id]!!
-            }
-            Core.userProfile!!.coins[it.id] = base + it.count!! }
-        tx.finish(Transaction.State.TX_ACCEPTED)
-        OutsideWorldDummy.addTx(tx)
+//        tx.submit()
+//        runBlocking { delay(500) }
+//        // Since there's no blockchain, we need to apply the transaction by hand
+//        Core.userProfile!!.items.removeAll(tx.itemsIn)
+//        tx.itemsOut.forEach { Core.userProfile!!.items.add(it) }
+//        tx.coinsIn.forEach { Core.userProfile!!.coins[it.id] = Core.userProfile!!.coins[it.id]!! - it.count!! }
+//        tx.coinsOut.forEach {
+//            val base = when (Core.userProfile!!.coins[it.id]) {
+//                null -> 0
+//                else -> Core.userProfile!!.coins[it.id]!!
+//            }
+//            Core.userProfile!!.coins[it.id] = base + it.count!! }
+//        tx.finish(Transaction.State.TX_ACCEPTED)
+//        OutsideWorldDummy.addTx(tx)
         return Core.userProfile
     }
 
@@ -137,10 +133,11 @@ internal class TxDummyEngine : Engine() {
     }
 
     override fun getPylons(q: Int): Profile? {
+        TODO("tx redesign")
         //runBlocking { delay(500) }
-        var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).id,
-                listOf(), listOf(Coin("pylons", q)))
-        return commitTx(tx)
+//        var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).id,
+//                listOf(), listOf(Coin("pylons", q)))
+//        return commitTx(tx)
     }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {

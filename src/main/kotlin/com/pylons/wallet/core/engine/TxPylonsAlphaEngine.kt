@@ -1,18 +1,28 @@
 package com.pylons.wallet.core.engine
 
 import com.jayway.jsonpath.JsonPath
+import com.lambdaworks.codec.Base64
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.JsonReader
+import com.pylons.wallet.core.types.Transaction
+import com.squareup.moshi.*
+import org.apache.commons.codec.binary.Base32
+import org.apache.tuweni.crypto.SECP256K1
+import org.bitcoinj.core.*
+import org.bitcoinj.params.MainNetParams
+import org.bitcoinj.params.Networks
+import org.bouncycastle.util.encoders.Hex
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.charset.Charset
+import java.io.ByteArrayOutputStream
+import kotlin.experimental.and
+
 
 internal class TxPylonsAlphaEngine : Engine() {
     override val prefix : String = "__TXPYLONSALPHA__"
@@ -22,9 +32,22 @@ internal class TxPylonsAlphaEngine : Engine() {
     var cryptoHandler = CryptoCosmos()
     private val url = """"http://35.224.155.76:80"""
 
-    class TxModel {
-        val msg : Array<Object>? = null
-        //val fee =
+    class Credentials (address : String) : Profile.Credentials (address) {
+        override fun dumpToMessageData(msg: MessageData) {
+            msg.strings["id"] = id
+        }
+    }
+
+    class CredentialsAdapter {
+        @FromJson
+        fun fromJson (json : String) : Profile.Credentials {
+            return Moshi.Builder().build().adapter<Credentials>(Credentials::class.java).fromJson(json)!!
+        }
+
+        @ToJson
+        fun toJson (credentials : Profile.Credentials) : String {
+            return Moshi.Builder().build().adapter<Credentials>(Credentials::class.java).toJson(credentials as Credentials)!!
+        }
     }
 
     private fun get (url : String) : String {
@@ -76,6 +99,7 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun commitTx(tx: Transaction): Profile? {
         val response = post("$url/txs", getJsonForTx(tx))
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
     }
 
@@ -84,8 +108,16 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getNewCredentials(): Profile.Credentials {
-
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val address = CryptoCosmos.getAddressFromKeyPair(cryptoHandler.keyPair!!).toArray()
+        System.out.println("addr:")
+        System.out.println(address.size)
+        System.out.println(Base64.encode(address))
+        System.out.println(Hex.toHexString(Base32().encode(address)))
+        var a = SegwitAddress.fromKey(NetworkParameters.fromID(NetworkParameters.ID_MAINNET), ECKey.fromPrivate(cryptoHandler.keyPair!!.secretKey().bytesArray()))
+        //System.out.println(a.toBech32())
+        val f = a.toBech32().replace("bc1q", "cosmos")
+        //SegwitAddress.fromString()
+        return Credentials(f)
     }
 
     override fun getForeignBalances(id: String): ForeignProfile? {
@@ -96,9 +128,7 @@ internal class TxPylonsAlphaEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getNewCryptoHandler(): CryptoHandler {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
     override fun getNewTransactionId(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -126,11 +156,54 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getPylons(q: Int): Profile? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val json = getGetPylonsJson(q.toString(), Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!)
+        post("$url/txs", json)
+        return Core.userProfile
     }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun getGetPylonsJson (amount : String, address : String, keyPair : SECP256K1.KeyPair) : String{
+        val msg = """
+            [
+            {
+                "type": "pylons/GetPylons",
+                "value": {
+                "Amount": [
+                {
+                    "denom": "pylon",
+                    "amount": "$amount"
+                }
+                ],
+                "Requester": "$address"
+            }
+            }
+            ]
+        """.trimIndent()
+        val pubkey = Bech32.encode("A", keyPair.publicKey().bytesArray()) // oh my god
+        val signature = Base64.encode(cryptoHandler.signature(msg.toByteArray(charset = Charset.defaultCharset()))).toString()
+        return """{
+        "tx": {
+            "msg": $msg,
+            "fee": {
+            "amount": null,
+            "gas": "200000"
+        },
+            "signatures": [
+            {
+                "pub_key": {
+                "type": "tendermint/PubKeySecp256k1",
+                "value": "$pubkey"
+            },
+                "signature": "$signature"
+            }
+            ],
+            "memo": ""
+        },
+        "mode": "sync"
+    }""".trimIndent()
     }
 
 }

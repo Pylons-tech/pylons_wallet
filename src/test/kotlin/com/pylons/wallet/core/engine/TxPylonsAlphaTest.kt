@@ -1,0 +1,26 @@
+package com.pylons.wallet.core.engine
+
+import org.junit.jupiter.api.Test
+
+import org.junit.jupiter.api.Assertions.*
+import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.engine.crypto.CryptoCosmos
+import com.pylons.wallet.core.engine.crypto.CryptoDummy
+import com.pylons.wallet.core.types.*
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
+
+internal class TxPylonsAlphaTest {
+
+    @Test
+    fun frankenstein() {
+        Security.addProvider(BouncyCastleProvider())
+        Core.start(Backend.ALPHA_REST, "")
+        val engine = Core.engine as TxPylonsAlphaEngine
+        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
+        engine.cryptoHandler.generateNewKeys()
+        Core.userProfile = Profile(engine.getNewCredentials(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        engine.getPylons(501)
+        //assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+    }
+}

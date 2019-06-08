@@ -193,15 +193,16 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_getTransaction () {
-        bootstrapCoreForBasicCases()
-        val tx = Transaction("tst", "0", "1", listOf(), listOf(), listOf(), listOf(), Transaction.State.TX_ACCEPTED,
-                listOf(), listOf())
-        OutsideWorldDummy.addTx(tx)
-        val successResponse = Response(tx.detailsToMessageData().merge(MessageData(booleans = mutableMapOf(Keys.success to true))), Status.OK_TO_RETURN_TO_CLIENT)
-        val actualResponse = actionResolutionTable(Actions.getTransaction,
-                MessageData(strings = mutableMapOf("txId" to "tst")))
-        assertEquals(successResponse.status, actualResponse.status)
-        assertEquals(successResponse.msg!!.strings["txId"], actualResponse.msg!!.strings["txId"])
+        assertFalse(true)
+//        bootstrapCoreForBasicCases()
+//        val tx = Transaction("tst", "0", "1", listOf(), listOf(), listOf(), listOf(), Transaction.State.TX_ACCEPTED,
+//                listOf(), listOf())
+//        OutsideWorldDummy.addTx(tx)
+//        val successResponse = Response(tx.detailsToMessageData().merge(MessageData(booleans = mutableMapOf(Keys.success to true))), Status.OK_TO_RETURN_TO_CLIENT)
+//        val actualResponse = actionResolutionTable(Actions.getTransaction,
+//                MessageData(strings = mutableMapOf("txId" to "tst")))
+//        assertEquals(successResponse.status, actualResponse.status)
+//        assertEquals(successResponse.msg!!.strings["txId"], actualResponse.msg!!.strings["txId"])
     }
 
     @Test

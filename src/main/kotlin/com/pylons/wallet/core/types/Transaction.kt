@@ -54,21 +54,22 @@ data class Transaction(
 
     companion object {
         fun build (txDescription: TransactionDescription) : Transaction? {
-            return try {
-                val itemsIn = mutableListOf<Item>()
-                val itemsOut = mutableListOf<Item>()
-                txDescription.itemsInIds.forEach {
-                    itemsIn.add(Item.findInLocalProfile(it)!!)
-                }
-                txDescription.itemsOutIds.forEach {
-                    itemsOut.add(Item.findInBufferedForeignProfile(txDescription.otherProfileId, it)!!)
-                }
-                Transaction(Core.engine.getNewTransactionId(), Core.userProfile!!.credentials.id,
-                        txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
-                        itemsIn.toList(), itemsOut.toList())
-            } catch (e : NullPointerException) {
-                return null
-            }
+            TODO("????????")
+//            return try {
+//                val itemsIn = mutableListOf<Item>()
+//                val itemsOut = mutableListOf<Item>()
+//                txDescription.itemsInIds.forEach {
+//                    itemsIn.add(Item.findInLocalProfile(it)!!)
+//                }
+//                txDescription.itemsOutIds.forEach {
+//                    itemsOut.add(Item.findInBufferedForeignProfile(txDescription.otherProfileId, it)!!)
+//                }
+//                Transaction(Core.engine.getNewTransactionId(), Core.userProfile!!.credentials.id,
+//                        txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
+//                        itemsIn.toList(), itemsOut.toList())
+//            } catch (e : NullPointerException) {
+//                return null
+//            }
         }
 
 
@@ -96,12 +97,12 @@ data class Transaction(
 
     fun detailsToMessageData() : MessageData {
         val msg = MessageData()
-        msg.strings["txId"] = txId
-        msg.strings[Keys.otherProfileId] = addressOut
-        msg.strings[Keys.coinsIn] = coinsIn.serialize()
-        msg.strings[Keys.coinsOut] = coinsOut.serialize()
-        msg.stringArrays[Keys.itemsIn] = itemsIn.serialize()
-        msg.stringArrays[Keys.itemsOut] = itemsOut.serialize()
+//        msg.strings["txId"] = txId
+//        msg.strings[Keys.otherProfileId] = addressOut
+//        msg.strings[Keys.coinsIn] = coinsIn.serialize()
+//        msg.strings[Keys.coinsOut] = coinsOut.serialize()
+//        msg.stringArrays[Keys.itemsIn] = itemsIn.serialize()
+//        msg.stringArrays[Keys.itemsOut] = itemsOut.serialize()
         return msg
     }
 }

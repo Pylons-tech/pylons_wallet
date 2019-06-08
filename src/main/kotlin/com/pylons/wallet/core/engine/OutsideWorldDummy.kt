@@ -57,7 +57,7 @@ object OutsideWorldDummy {
     }
 
     fun addTx (tx : Transaction) {
-        txStore.m_txRecord[tx.txId] = tx
+        //txStore.m_txRecord[tx.txId] = tx
     }
 
     fun dumpProfiles () : String {

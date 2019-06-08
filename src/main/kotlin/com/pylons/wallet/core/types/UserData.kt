@@ -38,7 +38,7 @@ internal object UserData {
     }
 
     fun initializeUserData () {
-        dataSets = Core.engine.getInitialDataSets()
+        //dataSets = Core.engine.getInitialDataSets()
     }
 
     fun exportAsJson () : String {

@@ -62,7 +62,7 @@ object Core {
     fun start (backend: Backend, json : String) {
         engine = when (backend) {
             Backend.DUMMY -> TxDummyEngine()
-            Backend.ALPHA_REST -> TxDummyEngine()
+            Backend.ALPHA_REST -> TxPylonsAlphaEngine()
         }
         runBlocking {
             UserData.parseFromJson(json)
@@ -99,7 +99,7 @@ object Core {
      * behavior - resolveMessage should not be called from the main thread of any wallet app.
      */
     fun resolveMessage(msg: MessageData): Response? {
-        statusBlock = StatusBlock(engine!!.getHeight(), engine!!.getAverageBlockTime(), statusBlock.walletCoreVersion)
+        //statusBlock = StatusBlock(engine!!.getHeight(), engine!!.getAverageBlockTime(), statusBlock.walletCoreVersion)
         if (!sane) {
             var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
             throw Exception(msg.msg!!.strings[Keys.info])

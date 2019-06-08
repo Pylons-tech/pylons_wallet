@@ -18,7 +18,7 @@ import java.security.MessageDigest
 
 internal class CryptoCosmos () : CryptoHandler() {
     override fun getPrefix() : String = "__CRYPTO_COSMOS__"
-    private val adapter = Moshi.Builder().build().adapter<SECP256K1.KeyPair>(SECP256K1.KeyPair::class.java)
+//    private val adapter = Moshi.Builder().build().adapter<SECP256K1.KeyPair>(SECP256K1.KeyPair::class.java)
     var keyPair : SECP256K1.KeyPair? = null
 
     override fun importKeysFromUserData() {
