@@ -3,6 +3,7 @@ package com.pylons.wallet.core.engine
 import com.jayway.jsonpath.JsonPath
 import com.lambdaworks.codec.Base64
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
@@ -68,7 +69,6 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     private fun post (url : String, input : String) : String {
-        System.out.println(input)
         with(URL(url).openConnection() as HttpURLConnection) {
             doOutput = true
             requestMethod = "POST"
@@ -161,6 +161,9 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getPylons(q: Int): Profile? {
         val json = getGetPylonsJson(q.toString(), Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!)
+        Logger().log(json, "request_json")
+        System.out.println(json)
+        Logger().log(url, "request_url")
         post("""$url/txs""", json)
         return Core.userProfile
     }
