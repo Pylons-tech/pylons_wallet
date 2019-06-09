@@ -85,5 +85,14 @@
     </orderEntry>
     <orderEntry type="library" name="org.bitcoinj:bitcoinj-core:0.15.2" level="project" />
     <orderEntry type="library" name="com.jayway.jsonpath:json-path:2.4.0" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/tuweni-units-0.8.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

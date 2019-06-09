@@ -4,7 +4,7 @@ import com.pylons.wallet.core.types.UserData
 
 internal abstract class CryptoHandler ()  {
      abstract fun generateNewKeys ()
-    protected abstract fun importKeysFromUserData()
+    abstract fun importKeysFromUserData()
     abstract fun signature (bytes : ByteArray) : ByteArray
     abstract fun verify (bytes : ByteArray, signature : ByteArray) : Boolean
     abstract fun getEncodedPublicKey () : String

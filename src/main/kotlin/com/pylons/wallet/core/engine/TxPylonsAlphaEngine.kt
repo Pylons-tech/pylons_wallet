@@ -21,6 +21,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
 import java.io.ByteArrayOutputStream
+import java.lang.StringBuilder
 import kotlin.experimental.and
 
 
@@ -30,7 +31,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     override val isDevEngine: Boolean = true
     override val isOffLineEngine: Boolean = false
     var cryptoHandler = CryptoCosmos()
-    private val url = """"http://35.224.155.76:80"""
+    private val url = """http://35.224.155.76:80"""
 
     class Credentials (address : String) : Profile.Credentials (address) {
         override fun dumpToMessageData(msg: MessageData) {
@@ -67,7 +68,9 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     private fun post (url : String, input : String) : String {
+        System.out.println(input)
         with(URL(url).openConnection() as HttpURLConnection) {
+            doOutput = true
             requestMethod = "POST"
             val wr = OutputStreamWriter(outputStream);
             wr.write(input)
@@ -115,7 +118,8 @@ internal class TxPylonsAlphaEngine : Engine() {
         System.out.println(Hex.toHexString(Base32().encode(address)))
         var a = SegwitAddress.fromKey(NetworkParameters.fromID(NetworkParameters.ID_MAINNET), ECKey.fromPrivate(cryptoHandler.keyPair!!.secretKey().bytesArray()))
         //System.out.println(a.toBech32())
-        val f = a.toBech32().replace("bc1q", "cosmos")
+
+        val f = Bech32.encode("cosmos", Bech32.decode(a.toBech32()).data)
         //SegwitAddress.fromString()
         return Credentials(f)
     }
@@ -157,12 +161,18 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getPylons(q: Int): Profile? {
         val json = getGetPylonsJson(q.toString(), Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!)
-        post("$url/txs", json)
+        post("""$url/txs""", json)
         return Core.userProfile
     }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun strFromBase64 (base64 : CharArray) : String {
+        val sb = StringBuilder()
+        base64.forEach { sb.append(it) }
+        return sb.toString()
     }
 
     fun getGetPylonsJson (amount : String, address : String, keyPair : SECP256K1.KeyPair) : String{
@@ -182,8 +192,8 @@ internal class TxPylonsAlphaEngine : Engine() {
             }
             ]
         """.trimIndent()
-        val pubkey = Bech32.encode("A", keyPair.publicKey().bytesArray()) // oh my god
-        val signature = Base64.encode(cryptoHandler.signature(msg.toByteArray(charset = Charset.defaultCharset()))).toString()
+        val pubkey = strFromBase64(Base64.encode(keyPair.publicKey().bytesArray()))
+        val signature = strFromBase64(Base64.encode(cryptoHandler.signature(msg.toByteArray(charset = Charset.defaultCharset()))))
         return """{
         "tx": {
             "msg": $msg,
@@ -195,9 +205,9 @@ internal class TxPylonsAlphaEngine : Engine() {
             {
                 "pub_key": {
                 "type": "tendermint/PubKeySecp256k1",
-                "value": "$pubkey"
+                "value": "${pubkey}"
             },
-                "signature": "$signature"
+                "signature": "${signature}"
             }
             ],
             "memo": ""

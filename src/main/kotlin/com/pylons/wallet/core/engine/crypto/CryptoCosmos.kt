@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import org.apache.commons.codec.binary.Base32
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.UserData
+import org.apache.commons.codec.binary.Base64
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.bytes.MutableBytes
@@ -12,6 +13,7 @@ import org.apache.tuweni.bytes.MutableBytes32
 import org.apache.tuweni.crypto.*
 import org.apache.tuweni.crypto.sodium.SHA256Hash
 import org.bouncycastle.jcajce.provider.digest.RIPEMD160
+import org.bouncycastle.util.encoders.Hex
 import java.security.MessageDigest
 
 
@@ -22,7 +24,8 @@ internal class CryptoCosmos () : CryptoHandler() {
     var keyPair : SECP256K1.KeyPair? = null
 
     override fun importKeysFromUserData() {
-        //keyPair = adapter.fromJson(userData!!.keys)
+        val bytes = Hex.decode(UserData.dataSets[getPrefix()]!!["key"]!!)
+        keyPair =  SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(bytes)))
     }
 
     override fun generateNewKeys() {
