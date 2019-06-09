@@ -13,7 +13,8 @@ internal class PylonsBech32Test {
     @Test
     fun decode(){
         val decoded = Bech32.decode(addr)
-        assertEquals(key, decoded)
+        assertEquals("cosmos", decoded.hrp)
+        assertEquals(key, decoded.data)
     }
 
     @Test
