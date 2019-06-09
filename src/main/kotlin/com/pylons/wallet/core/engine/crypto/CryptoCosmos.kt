@@ -40,8 +40,8 @@ internal class CryptoCosmos () : CryptoHandler() {
     override fun getEncodedPublicKey() : String = Base32().encodeToString(keyPair!!.publicKey()!!.bytesArray())
 
     companion object {
-        private fun getComprressedPubkey (keyPair: SECP256K1.KeyPair) : Bytes {
-            val ecPoint = keyPair.publicKey().asEcPoint()
+        private fun getCompressedPubkey (key: SECP256K1.PublicKey) : Bytes {
+            val ecPoint = key.asEcPoint()
             var xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()
             System.out.println(xBytes.toHexString())
             val yStr = ecPoint.yCoord.toBigInteger().toString()
@@ -57,11 +57,15 @@ internal class CryptoCosmos () : CryptoHandler() {
             return bytes
         }
 
-        fun getAddressFromKeyPair (keyPair : SECP256K1.KeyPair) : Bytes {
-            val pubkey = getComprressedPubkey(keyPair)
+        fun getAddressFromPubkey (pubkey : Bytes) : Bytes {
+            val pubkey = getCompressedPubkey(SECP256K1.PublicKey.fromBytes(pubkey))
             val sha = MessageDigest.getInstance("SHA-256").digest(pubkey.toArray())
             val ripEmd = MessageDigest.getInstance("RIPEMD160").digest(sha)
             return Bytes.wrap(ripEmd)
+        }
+
+        fun getAddressFromKeyPair (keyPair : SECP256K1.KeyPair) : Bytes {
+            return getAddressFromPubkey(keyPair.publicKey().bytes())
         }
     }
 }
