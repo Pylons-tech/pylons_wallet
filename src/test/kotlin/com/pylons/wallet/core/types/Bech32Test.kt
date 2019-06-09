@@ -8,6 +8,6 @@ internal class PylonsBech32Test {
 
     @Test
     fun fromKey() {
-        assertEquals("input", "output")
+        assertEquals("A7AqbjDky/lrA1bj7bEW3vww8Kc4IDXIb76w3Zg+DTKj", "cosmos146yrz0p79pm6xd33nr3ajtxv2206rvcx0rs2c6")
     }
 }
