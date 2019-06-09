@@ -11,7 +11,6 @@ import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.engine.OutsideWorldDummy
 import com.pylons.wallet.core.engine.TxDummyEngine
 import com.pylons.wallet.core.types.*
-import sun.plugin.util.UserProfile
 
 internal class ActionResolutionTableTest {
     @AfterEach
