@@ -1,0 +1,110 @@
+package com.pylons.wallet.core.types
+
+import com.sun.org.apache.xpath.internal.operations.Bool
+import org.bitcoinj.core.Bech32
+
+internal class Bech32Cosmos {
+    class Bech32Data (
+            val data : ByteArray,
+            val hrp : String
+    )
+
+    class UnencodedBech32Data (
+        val data : ByteArray,
+        val hrp : String
+    )
+
+
+
+    companion object {
+        infix fun Byte.shl(that: Int): Byte = (this.toInt().shl(that)).toByte()
+        infix fun Int.shl(that: Byte): Byte = (this.shl(that.toInt())).toByte()
+        infix fun Byte.shl(that: Byte): Byte = (this.toInt().shl(that.toInt())).toByte()
+        infix fun Byte.shr(that: Int): Byte = (this.toInt().shr(that)).toByte()
+        infix fun Int.shr(that: Byte): Byte = (this.shr(that.toInt())).toByte()
+        infix fun Byte.shr(that: Byte): Byte = (this.toInt().shr(that.toInt())).toByte()
+        infix fun Byte.or(that: Int): Byte = (this.toInt().and(that)).toByte()
+        infix fun Int.or(that: Byte): Byte = (this.and(that.toInt())).toByte()
+        infix fun Byte.or(that: Byte): Byte = (this.toInt().and(that.toInt())).toByte()
+
+
+        fun convertAndEncode (hrp : String, data : ByteArray) : String {
+            val converted = convertBits(data, 8, 5, true)
+            return encode(hrp, converted)
+        }
+
+        /**
+         * Converts a ByteArray where each byte encodes fromBits bits to one where each byte
+         * encodes toBits bits. Ported from btcutil Go implementation; see
+         * https://github.com/btcsuite/btcutil/blob/master/bech32/bech32.go
+         */
+        fun convertBits (data : ByteArray, fromBits : Byte, toBits : Byte, pad : Boolean) : ByteArray {
+            if (fromBits < 1 || fromBits > 8 || toBits < 1 || toBits > 8) {
+                throw Exception("Bit groups must be between 1 and 8, but provided were fromBits:" +
+                        "$fromBits and toBits: $toBits")
+            }
+            // Final bytes, each byte encoding toBits bits
+            var regrouped : MutableList<Byte> = mutableListOf()
+            // Next byte to be created
+            var nextByte = 0.toByte()
+            // Number of bits added to nextByte (up to goal of toBits)
+            var filledBits = 0.toByte()
+
+            data.forEach{
+                // Discard unused bits
+                var b = it.shr(8 - fromBits)
+                // Bits remaining to extract from input data
+                var remFromBits = fromBits
+                while (remFromBits > 0) {
+                    // Bits remaining to add to next byte
+                    var remToBits = (toBits - filledBits).toByte()
+                    // Number of bytes to extract next.
+                    // The lesser of remToBits and remFromBits.
+                    var toExtract = when (remToBits < remFromBits) {
+                        true -> remToBits
+                        false -> remFromBits
+                    }
+                    // Add the next bits to nextByte, shifting the already-added bits left.
+                    nextByte = (nextByte.shl(toExtract)).or(b.shl(8 - toExtract)).toByte()
+                    // Discard the bits we just extracted and get ready for next iteration.
+                    b = b.shl(toExtract).toByte()
+                    remFromBits = (remFromBits - toExtract).toByte()
+                    filledBits = (filledBits + toExtract).toByte()
+                    // If nextByte is completely filled, add it to our regrouped bytes and start on the next byte.
+                    if (filledBits == toBits) {
+                        regrouped.add(nextByte)
+                        filledBits = 0
+                        nextByte = 0
+                    }
+                }
+            }
+            // Pad an unfinished group if specified (and group is unfinished)
+            if (pad && filledBits > 0) {
+                nextByte = nextByte.shl((toBits - filledBits))
+                regrouped.add(nextByte)
+                filledBits = 0
+                nextByte = 0
+            }
+            // Any incomplete group must be <= 4 bits, and all zeroes.
+            if (filledBits > 0 && (filledBits > 4 || nextByte != 0.toByte())) {
+                throw Exception("Invalid incomplete group")
+            }
+            return regrouped.toByteArray()
+        }
+
+        fun decode (input : String) : Bech32Data {
+            throw NotImplementedError()
+        }
+
+        fun decodeAndConvert (bech : String) : UnencodedBech32Data {
+            val data = decode(bech)
+            val converted = convertBits(data.data, 5, 8, false)
+            return UnencodedBech32Data(converted, data.hrp)
+        }
+
+        fun encode (hrp : String, data : ByteArray) : String{
+            throw NotImplementedError()
+        }
+
+    }
+}
