@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types
 import com.sun.org.apache.xpath.internal.operations.Bool
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.Bech32
+import com.pylons.wallet.core.Infixes.*
 
 internal class Bech32Cosmos {
     class Bech32Data(
@@ -160,6 +161,97 @@ internal class Bech32Cosmos {
                     )
             ) throw AddressFormatException.InvalidChecksum()
             return Bech32Data(hrp, values.copyOfRange(0, values.size - 6))
+        }
+
+        /**
+         * Converts a ByteArray where each byte encodes fromBits bits to one where each byte
+         * encodes toBits bits. Ported from btcutil Go implementation; see
+         * https://github.com/btcsuite/btcutil/blob/master/bech32/bech32.go
+         */
+        fun convertBits (data : ByteArray, fromBits : Byte, toBits : Byte, pad : Boolean) : ByteArray {
+            if (fromBits < 1 || fromBits > 8 || toBits < 1 || toBits > 8) {
+                throw Exception("Bit groups must be between 1 and 8, but provided were fromBits:" +
+                        "$fromBits and toBits: $toBits")
+            }
+
+            // Final bytes, each byte encoding toBits bits
+            var regrouped : MutableList<Byte> = mutableListOf()
+
+            // Next byte to be created
+            var nextByte = 0.toByte()
+
+            // Number of bits added to nextByte (up to goal of toBits)
+            var filledBits = 0.toByte()
+
+            data.forEach{
+                // Discard unused bits
+                var b = it.shr(8 - fromBits)
+
+                // Bits remaining to extract from input data
+                var remFromBits = fromBits
+                while (remFromBits > 0) {
+                    // Bits remaining to add to next byte
+                    var remToBits = (toBits - filledBits).toByte()
+
+                    // Number of bytes to extract next.
+                    // The lesser of remToBits and remFromBits.
+                    var toExtract = when (remToBits < remFromBits) {
+                        true -> remToBits
+                        false -> remFromBits
+                    }
+
+                    // Add the next bits to nextByte, shifting the already-added bits left.
+                    nextByte = (nextByte.shl(toExtract)).or(b.shl(8 - toExtract)).toByte()
+
+                    // Discard the bits we just extracted and get ready for next iteration.
+                    b = b.shl(toExtract).toByte()
+                    remFromBits = (remFromBits - toExtract).toByte()
+                    filledBits = (filledBits + toExtract).toByte()
+
+                    // If nextByte is completely filled, add it to our regrouped bytes and start on the next byte.
+                    if (filledBits == toBits) {
+                        regrouped.add(nextByte)
+                        filledBits = 0
+                        nextByte = 0
+                    }
+                }
+            }
+
+            // Pad an unfinished group if specified (and group is unfinished)
+            if (pad && filledBits > 0) {
+                nextByte = nextByte.shl((toBits - filledBits))
+                regrouped.add(nextByte)
+                filledBits = 0
+                nextByte = 0
+            }
+
+            // Any incomplete group must be <= 4 bits, and all zeroes.
+            if (filledBits > 0 && (filledBits > 4 || nextByte != 0.toByte())) {
+                throw Exception("Invalid incomplete group")
+            }
+
+            return regrouped.toByteArray()
+        }
+
+        /**
+         * Tendermint bech32 helper.
+         * Converts from a base64 encoded byte string to base32 encoded byte string and then to bech32
+         */
+
+        fun convertAndEncode (hrp : String, data : ByteArray) : String {
+            val converted = convertBits(data, 8, 5, true)
+            return encode(hrp, converted)
+        }
+
+
+        /**
+         * Tendermint bech32 helper.
+         * Decodes a bech32 encoded string and converts to base64 encoded bytes
+         */
+        fun decodeAndConvert (bech : String) : UnencodedBech32Data {
+            val data = decode(bech)
+            val converted = convertBits(data.data, 5, 8, false)
+            return UnencodedBech32Data(data.hrp, converted)
         }
     }
 }
