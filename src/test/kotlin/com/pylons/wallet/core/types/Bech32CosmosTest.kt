@@ -2,6 +2,8 @@ package com.pylons.wallet.core.types
 
 import org.junit.jupiter.api.Test
 import com.pylons.wallet.core.Infixes.*
+import org.bouncycastle.crypto.tls.HashAlgorithm.sha256
+import org.bouncycastle.jcajce.provider.digest.SHA256
 import org.bouncycastle.pqc.crypto.ntru.IndexGenerator
 
 import org.junit.jupiter.api.*
@@ -14,7 +16,7 @@ internal class Bech32CosmosTest {
      * (https://github.com/btcsuite/btcutil/blob/master/bech32/bech32_test.go)
      */
     @Test
-    fun testBech32 () {
+    fun bech32 () {
         data class TestConfig (val str : String, val valid : Boolean)
         val tests = arrayOf(
                 TestConfig("A12UEL5L", true),
@@ -62,5 +64,22 @@ internal class Bech32CosmosTest {
                 Bech32Cosmos.decode(flipped)
             }
         }
+    }
+
+    /**
+     * Port from tendermint bech32_test.go
+     * (https://github.com/tendermint/tendermint/blob/master/libs/bech32/bech32_test.go)
+     */
+    @Test
+    fun tendermintHelpers() {
+        val sum = SHA256.Digest().digest("hello world\n".toByteArray(Charsets.US_ASCII))
+        val bech = assertDoesNotThrow("Failed convert-and-encode operation") {
+            Bech32Cosmos.convertAndEncode("shasum", sum)
+        }
+        val data = assertDoesNotThrow(("Failed decode-and-convert operation")) {
+            Bech32Cosmos.decodeAndConvert(bech)
+        }
+        assertEquals("shasum", data.hrp, "Invalid hrp")
+        assertArrayEquals(sum, data.data, "Invalid decode")
     }
 }
