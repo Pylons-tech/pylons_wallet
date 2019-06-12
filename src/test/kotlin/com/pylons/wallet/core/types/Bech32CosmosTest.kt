@@ -1,10 +1,7 @@
 package com.pylons.wallet.core.types
 
 import org.junit.jupiter.api.Test
-import com.pylons.wallet.core.Infixes.*
-import org.bouncycastle.crypto.tls.HashAlgorithm.sha256
 import org.bouncycastle.jcajce.provider.digest.SHA256
-import org.bouncycastle.pqc.crypto.ntru.IndexGenerator
 
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*

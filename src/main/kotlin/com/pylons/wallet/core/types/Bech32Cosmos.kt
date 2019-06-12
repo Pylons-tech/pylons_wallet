@@ -1,9 +1,7 @@
 package com.pylons.wallet.core.types
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.bitcoinj.core.AddressFormatException
-import org.bitcoinj.core.Bech32
-import com.pylons.wallet.core.Infixes.*
+import com.pylons.wallet.core.infixes.*
 
 internal class Bech32Cosmos {
     class Bech32Data(
@@ -167,9 +165,13 @@ internal class Bech32Cosmos {
          * Converts a ByteArray where each byte encodes fromBits bits to one where each byte
          * encodes toBits bits. Ported from btcutil Go implementation; see
          * https://github.com/btcsuite/btcutil/blob/master/bech32/bech32.go
+         *
+         * This does a lot of conversions, which isn't terribly efficient, but we want
+         * to guarantee correct behavior in the event of overflow.
          */
-        fun convertBits (data : ByteArray, fromBits : Byte, toBits : Byte, pad : Boolean) : ByteArray {
-            if (fromBits < 1 || fromBits > 8 || toBits < 1 || toBits > 8) {
+        @kotlin.ExperimentalUnsignedTypes
+        fun convertBits (data : ByteArray, fromBits : UByte, toBits : UByte, pad : Boolean) : ByteArray {
+            if (fromBits < 1.toUByte() || fromBits > 8.toUByte() || toBits < 1.toUByte() || toBits > 8.toUByte()) {
                 throw Exception("Bit groups must be between 1 and 8, but provided were fromBits:" +
                         "$fromBits and toBits: $toBits")
             }
@@ -178,55 +180,53 @@ internal class Bech32Cosmos {
             var regrouped : MutableList<Byte> = mutableListOf()
 
             // Next byte to be created
-            var nextByte = 0.toByte()
+            var nextByte = 0.toUByte()
 
             // Number of bits added to nextByte (up to goal of toBits)
-            var filledBits = 0.toByte()
+            var filledBits = 0.toUByte()
 
             data.forEach{
                 // Discard unused bits
-                var b = it.shr(8 - fromBits)
+                var b = it.shr((8.toUByte() - fromBits).toInt()).toUByte()
 
                 // Bits remaining to extract from input data
                 var remFromBits = fromBits
-                while (remFromBits > 0) {
+                while (remFromBits > 0.toUByte()) {
                     // Bits remaining to add to next byte
-                    var remToBits = (toBits - filledBits).toByte()
+                    var remToBits = (toBits - filledBits).toUByte()
 
                     // Number of bytes to extract next.
                     // The lesser of remToBits and remFromBits.
-                    var toExtract = when (remToBits < remFromBits) {
-                        true -> remToBits
-                        false -> remFromBits
-                    }
+                    var toExtract = remFromBits
+                    if (remToBits < remFromBits) toExtract = remToBits
 
                     // Add the next bits to nextByte, shifting the already-added bits left.
-                    nextByte = (nextByte.shl(toExtract)).or(b.shl(8 - toExtract)).toByte()
+                    nextByte = (nextByte.shl(toExtract)).or(b.shl((8.toUByte() - toExtract).toInt()).toUByte())
 
                     // Discard the bits we just extracted and get ready for next iteration.
-                    b = b.shl(toExtract).toByte()
-                    remFromBits = (remFromBits - toExtract).toByte()
-                    filledBits = (filledBits + toExtract).toByte()
+                    b = b.shl(toExtract).toUByte()
+                    remFromBits = (remFromBits - toExtract).toUByte()
+                    filledBits = (filledBits + toExtract).toUByte()
 
                     // If nextByte is completely filled, add it to our regrouped bytes and start on the next byte.
                     if (filledBits == toBits) {
-                        regrouped.add(nextByte)
-                        filledBits = 0
-                        nextByte = 0
+                        regrouped.add(nextByte.toByte())
+                        filledBits = 0.toUByte()
+                        nextByte = 0.toUByte()
                     }
                 }
             }
 
             // Pad an unfinished group if specified (and group is unfinished)
-            if (pad && filledBits > 0) {
-                nextByte = nextByte.shl((toBits - filledBits))
-                regrouped.add(nextByte)
-                filledBits = 0
-                nextByte = 0
+            if (pad && filledBits > 0.toUByte()) {
+                nextByte = nextByte.shl((toBits - filledBits).toUByte())
+                regrouped.add(nextByte.toByte())
+                filledBits = 0.toUByte()
+                nextByte = 0.toUByte()
             }
 
             // Any incomplete group must be <= 4 bits, and all zeroes.
-            if (filledBits > 0 && (filledBits > 4 || nextByte != 0.toByte())) {
+            if (filledBits > 0.toUByte() && (filledBits > 4.toUByte() || nextByte != 0.toUByte())) {
                 throw Exception("Invalid incomplete group")
             }
 
@@ -239,7 +239,7 @@ internal class Bech32Cosmos {
          */
 
         fun convertAndEncode (hrp : String, data : ByteArray) : String {
-            val converted = convertBits(data, 8, 5, true)
+            val converted = convertBits(data, 8.toUByte(), 5.toUByte(), true)
             return encode(hrp, converted)
         }
 
@@ -250,7 +250,7 @@ internal class Bech32Cosmos {
          */
         fun decodeAndConvert (bech : String) : UnencodedBech32Data {
             val data = decode(bech)
-            val converted = convertBits(data.data, 5, 8, false)
+            val converted = convertBits(data.data, 5.toUByte(), 8.toUByte(), false)
             return UnencodedBech32Data(data.hrp, converted)
         }
     }

@@ -1,10 +1,11 @@
 package com.pylons.wallet.core
 
-import com.pylons.wallet.core.Infixes.shl
-import com.pylons.wallet.core.Infixes.shr
+import com.pylons.wallet.core.infixes.shl
+import com.pylons.wallet.core.infixes.shr
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
+@kotlin.ExperimentalUnsignedTypes
 internal class InfixTest {
     val shl = mapOf(
             // 0111 1111 to 1111 1110
