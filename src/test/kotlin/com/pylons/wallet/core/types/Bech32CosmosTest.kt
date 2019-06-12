@@ -2,9 +2,11 @@ package com.pylons.wallet.core.types
 
 import org.junit.jupiter.api.Test
 import com.pylons.wallet.core.Infixes.*
+import org.bouncycastle.pqc.crypto.ntru.IndexGenerator
 
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import java.util.*
 
 internal class Bech32CosmosTest {
     /**
@@ -52,7 +54,10 @@ internal class Bech32CosmosTest {
 
             // Flip a bit in the string and make sure it is caught.
             val pos = str.lastIndexOf("1")
-            val flipped = str.substring(0, pos + 1) + str[pos + 1].flip(1) + str.substring(pos + 2)
+            val bits = BitSet.valueOf(byteArrayOf(str[pos + 1].toByte()))
+            bits.flip(0)
+            val flippedChar = bits.toByteArray()[0].toChar()
+            val flipped = str.substring(0, pos + 1) + flippedChar + str.substring(pos + 2)
             assertThrows<Exception>("Expected decoding to fail") {
                 Bech32Cosmos.decode(flipped)
             }
