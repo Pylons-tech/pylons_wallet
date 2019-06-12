@@ -15,6 +15,7 @@ internal class PylonsBech32Test {
     fun decode(){
         val decoded = Bech32Cosmos.decode(addr)
         assertEquals("cosmos", decoded.hrp)
+        println(Bytes.wrap(Base64.decode(key.toCharArray())))
         val rawAddr = CryptoCosmos.getAddressFromPubkey(Bytes.wrap(Base64.decode(key.toCharArray())))
         assertEquals(rawAddr, decoded.data)
     }
