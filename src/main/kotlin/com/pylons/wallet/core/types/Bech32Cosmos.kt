@@ -161,6 +161,5 @@ internal class Bech32Cosmos {
             ) throw AddressFormatException.InvalidChecksum()
             return Bech32Data(hrp, values.copyOfRange(0, values.size - 6))
         }
-
     }
 }

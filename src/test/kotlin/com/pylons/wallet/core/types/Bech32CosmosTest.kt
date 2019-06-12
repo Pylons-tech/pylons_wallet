@@ -5,8 +5,6 @@ import com.pylons.wallet.core.Infixes.*
 
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import kotlin.experimental.and
-import kotlin.experimental.xor
 
 internal class Bech32CosmosTest {
     /**
