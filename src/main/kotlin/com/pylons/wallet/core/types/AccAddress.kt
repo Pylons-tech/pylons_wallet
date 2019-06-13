@@ -2,7 +2,7 @@ package com.pylons.wallet.core.types
 
 import org.bouncycastle.util.encoders.Hex
 
-class AccAddress (val bytes : ByteArray) {
+class AccAddress (val bytes : ByteArray = byteArrayOf()) {
 
     companion object {
         // AddrLen defines a valid address length

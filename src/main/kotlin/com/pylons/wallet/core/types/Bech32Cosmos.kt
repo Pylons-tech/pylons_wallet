@@ -1,7 +1,6 @@
 package com.pylons.wallet.core.types
 
 import org.bitcoinj.core.AddressFormatException
-import com.pylons.wallet.core.infixes.*
 import com.pylons.wallet.core.types.Bech32CosmosExtensions
 
 internal class Bech32Cosmos {
