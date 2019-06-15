@@ -15,7 +15,7 @@ import org.apache.tuweni.crypto.sodium.SHA256Hash
 import org.bouncycastle.jcajce.provider.digest.RIPEMD160
 import org.bouncycastle.util.encoders.Hex
 import java.security.MessageDigest
-
+import java.security.spec.ECPoint
 
 
 internal class CryptoCosmos () : CryptoHandler() {
@@ -40,6 +40,11 @@ internal class CryptoCosmos () : CryptoHandler() {
     override fun getEncodedPublicKey() : String = Base32().encodeToString(keyPair!!.publicKey()!!.bytesArray())
 
     companion object {
+
+        fun getUncompressedPubkey (bytes : Bytes) : SECP256K1.PublicKey {
+            throw NotImplementedError()
+        }
+
         fun getCompressedPubkey (key: SECP256K1.PublicKey) : Bytes {
             val ecPoint = key.asEcPoint()
             var xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()

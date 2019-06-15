@@ -53,4 +53,12 @@ internal class TxPylonsAlphaTest {
         var pubkey = engine.cryptoHandler.keyPair!!.publicKey()
         System.out.println( Bech32Cosmos.convertAndEncode("cosmospub", pubkey.bytesArray()))
     }
+
+    @Test
+    fun roundTripDecompressPubkey () {
+        val pubkeyAsBytes = Hex.decode(k_CompressedPubkey)
+        val decompressed = CryptoCosmos.getUncompressedPubkey(Bytes.wrap(pubkeyAsBytes))
+        val recompressed = CryptoCosmos.getCompressedPubkey(decompressed)
+        assertArrayEquals(pubkeyAsBytes, recompressed.toArray())
+    }
 }
