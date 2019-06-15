@@ -59,6 +59,52 @@ class AccAddress (val bytes : ByteArray = byteArrayOf()) {
             if (decoded.hrp != prefix) throw Exception("invalid Bech32 prefix; expected $prefix, got ${decoded.hrp}")
             return decoded.data
         }
+
+        // Auxiliary
+
+        /**
+         * Bech32ifyAccPub returns a Bech32 encoded string containing the
+         * Bech32PrefixAccPub prefix for a given account PubKey.
+         * (Because we don't implement the full PubKey interface, we have
+         * two entry points for different key types.)
+         */
+        fun bech32ifyAccPubEd25519(pub : ByteArray) : String {
+            return Bech32Cosmos.convertAndEncode(bech32PrefixAccPub, AminoCompat.pubKeyEd25519(pub))
+        }
+
+        /**
+         * Bech32ifyAccPub returns a Bech32 encoded string containing the
+         * Bech32PrefixAccPub prefix for a given account PubKey.
+         * (Because we don't implement the full PubKey interface, we have
+         * two entry points for different key types.)
+         */
+        fun bech32ifyAccPubSecp256k1(pub : ByteArray) : String {
+            return Bech32Cosmos.convertAndEncode(bech32PrefixAccPub, AminoCompat.pubKeySecp256k1(pub))
+        }
+
+        /**
+         * GetAccPubKeyBech32 creates a PubKey for an account with a given public key
+         * string using the Bech32 Bech32PrefixAccPub prefix.
+         * (Because we don't implement the full PubKey interface, we have
+         * two entry points for different key types.)
+         */
+        fun getAccPubKeyBech32Ed25519(pubkey : String) : ByteArray {
+            val bz = getFromBech32(pubkey, bech32PrefixAccPub)
+            val pk = AminoCompat.stripPrefixBytes(bz)
+            return pk
+        }
+
+        /**
+         * GetAccPubKeyBech32 creates a PubKey for an account with a given public key
+         * string using the Bech32 Bech32PrefixAccPub prefix.
+         * (Because we don't implement the full PubKey interface, we have
+         * two entry points for different key types.)
+         */
+        fun getAccPubKeyBech32Secp256k1(pubkey : String) : ByteArray {
+            val bz = getFromBech32(pubkey, bech32PrefixAccPub)
+            val pk = AminoCompat.stripPrefixBytes(bz)
+            return pk
+        }
     }
 
     /**

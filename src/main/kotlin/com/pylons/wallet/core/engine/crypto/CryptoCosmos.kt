@@ -40,7 +40,7 @@ internal class CryptoCosmos () : CryptoHandler() {
     override fun getEncodedPublicKey() : String = Base32().encodeToString(keyPair!!.publicKey()!!.bytesArray())
 
     companion object {
-        private fun getCompressedPubkey (key: SECP256K1.PublicKey) : Bytes {
+        fun getCompressedPubkey (key: SECP256K1.PublicKey) : Bytes {
             val ecPoint = key.asEcPoint()
             var xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()
             System.out.println(xBytes.toHexString())

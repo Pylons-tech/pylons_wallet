@@ -1,7 +1,11 @@
 package com.pylons.wallet.core.types
 
+import org.bouncycastle.jcajce.provider.asymmetric.edec.KeyPairGeneratorSpi
+import org.bouncycastle.math.ec.rfc8032.Ed25519
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 
 internal class AccAddressTest {
     val invalidStrs = arrayOf(
@@ -21,6 +25,21 @@ internal class AccAddressTest {
         }
         assertTrue(accAddr.empty())
     }
+
+    @Test
+    fun randBech32PubkeyConsistency() {
+        for (i in 0..1000) {
+            val pub = KeyPairGenerator.getInstance("Ed25519").genKeyPair().public
+            val bech32AccPub = assertDoesNotThrow("Threw exception getting bech32AccPub") {
+                AccAddress.bech32ifyAccPubEd25519(pub.encoded)
+            }
+            val accPub = assertDoesNotThrow("Threw exception getting accPub") {
+                AccAddress.getAccPubKeyBech32Ed25519(bech32AccPub)
+            }
+        }
+    }
+
+    
 
 
 }

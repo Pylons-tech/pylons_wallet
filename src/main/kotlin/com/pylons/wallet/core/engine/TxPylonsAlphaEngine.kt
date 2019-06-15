@@ -34,6 +34,12 @@ internal class TxPylonsAlphaEngine : Engine() {
     var cryptoHandler = CryptoCosmos()
     private val url = """http://35.224.155.76:80"""
 
+    companion object {
+        fun getAddressString (addr : ByteArray) : String {
+            return Bech32Cosmos.convertAndEncode("cosmos", AminoCompat.accAddress(addr))
+        }
+    }
+
     class Credentials (address : String) : Profile.Credentials (address) {
         override fun dumpToMessageData(msg: MessageData) {
             msg.strings["id"] = id
@@ -116,10 +122,9 @@ internal class TxPylonsAlphaEngine : Engine() {
         System.out.println(address.size)
         System.out.println(Base64.encode(address))
         System.out.println(Hex.toHexString(Base32().encode(address)))
-        var a = SegwitAddress.fromKey(NetworkParameters.fromID(NetworkParameters.ID_MAINNET), ECKey.fromPrivate(cryptoHandler.keyPair!!.secretKey().bytesArray()))
         //System.out.println(a.toBech32())
 
-        val f = Bech32.encode("cosmos", Bech32.decode(a.toBech32()).data)
+        val f = getAddressString(address)
         //SegwitAddress.fromString()
         return Credentials(f)
     }
