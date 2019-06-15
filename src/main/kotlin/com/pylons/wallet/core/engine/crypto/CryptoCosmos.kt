@@ -13,9 +13,9 @@ import org.apache.tuweni.bytes.MutableBytes32
 import org.apache.tuweni.crypto.*
 import org.apache.tuweni.crypto.sodium.SHA256Hash
 import org.bouncycastle.jcajce.provider.digest.RIPEMD160
+import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.util.encoders.Hex
 import java.security.MessageDigest
-import java.security.spec.ECPoint
 
 
 internal class CryptoCosmos () : CryptoHandler() {
@@ -41,19 +41,24 @@ internal class CryptoCosmos () : CryptoHandler() {
 
     companion object {
 
-        fun getUncompressedPubkey (bytes : Bytes) : SECP256K1.PublicKey {
-            throw NotImplementedError()
+        fun getUncompressedPubkey (bytes : ByteArray) : SECP256K1.PublicKey {
+            val SPEC = ECNamedCurveTable.getParameterSpec("secp256k1");
+            val point = SPEC.curve.decodePoint(bytes)
+            val x = point.xCoord.encoded
+            val y = point.yCoord.encoded
+            // concat 0x04, x, and y, make sure x and y has 32-bytes:
+            return SECP256K1.PublicKey.fromBytes(Bytes.wrap(x + y))
         }
 
         fun getCompressedPubkey (key: SECP256K1.PublicKey) : Bytes {
             val ecPoint = key.asEcPoint()
             var xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()
-            System.out.println(xBytes.toHexString())
             val yStr = ecPoint.yCoord.toBigInteger().toString()
             val xStr = ecPoint.xCoord.toBigInteger().toString()
+            System.out.println("$xStr $yStr")
             val prefix = when (yStr > xStr) {
-                true -> 0x02
-                false -> 0x03
+                true -> 0x03
+                false -> 0x02
             }
             var bytes = MutableBytes.wrap(ByteArray(33))
             bytes[0] = prefix.toByte()

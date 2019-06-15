@@ -57,8 +57,9 @@ internal class TxPylonsAlphaTest {
     @Test
     fun roundTripDecompressPubkey () {
         val pubkeyAsBytes = Hex.decode(k_CompressedPubkey)
-        val decompressed = CryptoCosmos.getUncompressedPubkey(Bytes.wrap(pubkeyAsBytes))
+        val decompressed = CryptoCosmos.getUncompressedPubkey(pubkeyAsBytes)
         val recompressed = CryptoCosmos.getCompressedPubkey(decompressed)
+        System.out.println(Hex.toHexString(recompressed.toArray()))
         assertArrayEquals(pubkeyAsBytes, recompressed.toArray())
     }
 }
