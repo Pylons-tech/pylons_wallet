@@ -62,4 +62,11 @@ internal class TxPylonsAlphaTest {
         System.out.println(Hex.toHexString(recompressed.toArray()))
         assertArrayEquals(pubkeyAsBytes, recompressed.toArray())
     }
+
+    @Test
+    fun addressGen () {
+        val key = CryptoCosmos.getUncompressedPubkey(Hex.decode("0283e197461d60d77d3b40e854646583ffebdcb12fa7f0327c4cd1c68b316e80f5"))
+        val addr = CryptoCosmos.getAddressFromPubkey(key.bytes())
+        assertArrayEquals(Hex.decode("050445E241606088942B8AE403DFF2FEF055CB0C"), addr.toArray())
+    }
 }

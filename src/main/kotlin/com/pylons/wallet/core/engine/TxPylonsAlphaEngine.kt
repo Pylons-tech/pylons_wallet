@@ -27,6 +27,10 @@ import kotlin.experimental.and
 
 
 internal class TxPylonsAlphaEngine : Engine() {
+    class AddressResponse {
+        val Bech32Addr : String? = null
+    }
+
     override val prefix : String = "__TXPYLONSALPHA__"
     override val usesCrypto: Boolean = true
     override val isDevEngine: Boolean = true
@@ -35,6 +39,8 @@ internal class TxPylonsAlphaEngine : Engine() {
     private val url = """http://35.224.155.76:80"""
 
     companion object {
+        val moshi = Moshi.Builder().build()
+
         fun getAddressString (addr : ByteArray) : String {
             return Bech32Cosmos.convertAndEncode("cosmos", AminoCompat.accAddress(addr))
         }
@@ -49,12 +55,12 @@ internal class TxPylonsAlphaEngine : Engine() {
     class CredentialsAdapter {
         @FromJson
         fun fromJson (json : String) : Profile.Credentials {
-            return Moshi.Builder().build().adapter<Credentials>(Credentials::class.java).fromJson(json)!!
+            return moshi.adapter<Credentials>(Credentials::class.java).fromJson(json)!!
         }
 
         @ToJson
         fun toJson (credentials : Profile.Credentials) : String {
-            return Moshi.Builder().build().adapter<Credentials>(Credentials::class.java).toJson(credentials as Credentials)!!
+            return moshi.adapter<Credentials>(Credentials::class.java).toJson(credentials as Credentials)!!
         }
     }
 
@@ -118,15 +124,9 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getNewCredentials(): Profile.Credentials {
         val address = CryptoCosmos.getAddressFromKeyPair(cryptoHandler.keyPair!!).toArray()
-        System.out.println("addr:")
-        System.out.println(address.size)
-        System.out.println(Base64.encode(address))
-        System.out.println(Hex.toHexString(Base32().encode(address)))
-        //System.out.println(a.toBech32())
-
-        val f = getAddressString(address)
-        //SegwitAddress.fromString()
-        return Credentials(f)
+        val json = get("$url/pylons/addr_from_pub_key/${cryptoHandler.keyPair!!.publicKey().toHexString().substring(2)}")
+        val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
+        return Credentials(addrString)
     }
 
     override fun getForeignBalances(id: String): ForeignProfile? {
@@ -166,8 +166,10 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getPylons(q: Int): Profile? {
         val json = getGetPylonsJson(q.toString(), Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!)
-        Logger().log(json, "request_json")
         System.out.println(json)
+        System.out.println()
+
+        Logger().log(json, "request_json")
         Logger().log(url, "request_url")
         post("""$url/txs""", json)
         return Core.userProfile
@@ -200,7 +202,7 @@ internal class TxPylonsAlphaEngine : Engine() {
             }
             ]
         """.trimIndent()
-        val pubkey = strFromBase64(Base64.encode(keyPair.publicKey().bytesArray()))
+        val pubkey = strFromBase64(Base64.encode(CryptoCosmos.getCompressedPubkey(keyPair.publicKey()).toArray()))
         val signature = strFromBase64(Base64.encode(cryptoHandler.signature(msg.toByteArray(charset = Charset.defaultCharset()))))
         return """{
         "tx": {
