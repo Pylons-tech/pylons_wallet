@@ -81,6 +81,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     private fun post (url : String, input : String) : String {
+        System.out.println(input)
         with(URL(url).openConnection() as HttpURLConnection) {
             doOutput = true
             requestMethod = "POST"
@@ -123,8 +124,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getNewCredentials(): Profile.Credentials {
-        val address = CryptoCosmos.getAddressFromKeyPair(cryptoHandler.keyPair!!).toArray()
-        val json = get("$url/pylons/addr_from_pub_key/${cryptoHandler.keyPair!!.publicKey().toHexString().substring(2)}")
+        val json = get("$url/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
         val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
         return Credentials(addrString)
     }
@@ -134,6 +134,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getOwnBalances(): Profile? {
+        val json = get("$url/")
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -166,12 +167,10 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getPylons(q: Int): Profile? {
         val json = getGetPylonsJson(q.toString(), Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!)
-        System.out.println(json)
-        System.out.println()
-
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")
-        post("""$url/txs""", json)
+        val response = post("""$url/txs""", json)
+        Logger().log(response, "request_response")
         return Core.userProfile
     }
 
@@ -202,21 +201,34 @@ internal class TxPylonsAlphaEngine : Engine() {
             }
             ]
         """.trimIndent()
+        val signable = """
+            {"account_number":"4",
+            "chain_id":"pylonschain",
+            "fee":{"amount":null,"gas":"200000"},
+            "memo":"",
+            "msgs":$msg,
+            "sequence":"0"}
+            """.trimIndent().replace("\\s".toRegex(), "")
+        System.out.println(signable)
         val pubkey = strFromBase64(Base64.encode(CryptoCosmos.getCompressedPubkey(keyPair.publicKey()).toArray()))
-        val signature = strFromBase64(Base64.encode(cryptoHandler.signature(msg.toByteArray(charset = Charset.defaultCharset()))))
+        val signature = strFromBase64(Base64.encode(cryptoHandler.signature(signable.toByteArray(charset = Charset.defaultCharset()))))
         return """{
         "tx": {
             "msg": $msg,
+
             "fee": {
             "amount": null,
             "gas": "200000"
         },
             "signatures": [
             {
+                "chain_id": "pylonschain",
                 "pub_key": {
                 "type": "tendermint/PubKeySecp256k1",
                 "value": "${pubkey}"
             },
+                  "account_number": "4",
+                "sequence": "0",
                 "signature": "${signature}"
             }
             ],

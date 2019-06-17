@@ -9,6 +9,7 @@ import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.crypto.SECP256K1
+import org.bitcoinj.core.Bech32
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.security.Security
@@ -30,7 +31,7 @@ internal class TxPylonsAlphaTest {
 
         engine.cryptoHandler.importKeysFromUserData()
         Core.userProfile = Profile(engine.getNewCredentials(), mutableMapOf(), mutableMapOf(), mutableListOf())
-        engine.getPylons(501)
+        engine.getPylons(500)
         //assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }
 
@@ -42,17 +43,7 @@ internal class TxPylonsAlphaTest {
         assertEquals("cosmos1g9ahr6xhht5rmqven628nklxluzyv8z9jqjcmc", TxPylonsAlphaEngine.getAddressString(addr.toArray()))
     }
 
-    @Test
-    fun bech32Pubkey () {
-        Security.addProvider(BouncyCastleProvider())
-        Core.start(Backend.ALPHA_REST, "")
-        val engine = Core.engine as TxPylonsAlphaEngine
-        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to Hex.toHexString(Base64.decodeBase64(k_Third)))
-        engine.cryptoHandler.importKeysFromUserData()
-        var pubkey = engine.cryptoHandler.keyPair!!.publicKey()
-        System.out.println( Bech32Cosmos.convertAndEncode("cosmospub", pubkey.bytesArray()))
-    }
+
 
     @Test
     fun roundTripDecompressPubkey () {
