@@ -3,6 +3,7 @@ package com.pylons.wallet.core.internal
 import kotlin.math.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.types.*
+import kotlin.random.Random
 
 /**
  * Returns a new Item matching the given prototype.
@@ -15,7 +16,7 @@ import com.pylons.wallet.core.types.*
 private var itemsCreated = 0
 
 internal fun newItemFromPrototype (itemPrototype: ItemPrototype) : Item {
-    val id = "${itemsCreated++}_[ITEM]_${Core.engine.getNewUserId()}" // garbage, but we just need a unique id
+    val id = "${itemsCreated++}_[ITEM]_${Random.nextLong()}" // garbage, but we just need a unique id
     val strings = mutableMapOf<String, String>()
     itemPrototype.stringConstraints.orEmpty().forEach{
         var strBuilder = StringBuilder()

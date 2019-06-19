@@ -118,14 +118,6 @@ internal class TxDummyEngine : Engine() {
         return CryptoDummy()
     }
 
-    override fun getNewTransactionId(): String {
-        return "tx_${Date.from(Instant.now())}"
-    }
-
-    override fun getNewUserId(): String {
-        return "usr_${Date.from(Instant.now())}"
-    }
-
     override fun registerNewProfile() : Profile? {
         runBlocking { delay(500) }
         Core.userProfile!!.provisional = false

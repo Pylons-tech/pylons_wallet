@@ -140,14 +140,6 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
-    override fun getNewTransactionId(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getNewUserId(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun getStatusBlock(): StatusBlock {
         val response = get("$url/blocks/latest")
         val height = JsonPath.read<Long>(response, "$.block_meta.header.height")

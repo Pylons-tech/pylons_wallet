@@ -30,10 +30,6 @@ internal abstract class Engine {
 
     abstract fun getNewCryptoHandler() : CryptoHandler
 
-    abstract fun getNewTransactionId() : String
-
-    abstract fun getNewUserId() : String
-
     abstract fun getStatusBlock() : StatusBlock
 
     abstract fun getTransaction (id : String) : Transaction?
