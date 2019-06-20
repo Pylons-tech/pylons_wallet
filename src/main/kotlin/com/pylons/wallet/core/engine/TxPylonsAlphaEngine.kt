@@ -1,7 +1,6 @@
 package com.pylons.wallet.core.engine
 
 import com.jayway.jsonpath.JsonPath
-import com.lambdaworks.codec.Base64
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
@@ -11,9 +10,6 @@ import com.pylons.wallet.core.types.Transaction
 import com.squareup.moshi.*
 import org.apache.commons.codec.binary.Base32
 import org.apache.tuweni.crypto.SECP256K1
-import org.bitcoinj.core.*
-import org.bitcoinj.params.MainNetParams
-import org.bitcoinj.params.Networks
 import org.bouncycastle.util.encoders.Hex
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -158,7 +154,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getPylons(q: Int): Profile? {
-        val json = getGetPylonsJson(q.toString(), Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!)
+        val json = TxJson.getPylons(q, Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!.publicKey(), 4, 0)
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")
         val response = post("""$url/txs""", json)
@@ -169,65 +165,4 @@ internal class TxPylonsAlphaEngine : Engine() {
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
-    private fun strFromBase64 (base64 : CharArray) : String {
-        val sb = StringBuilder()
-        base64.forEach { sb.append(it) }
-        return sb.toString()
-    }
-
-    fun getGetPylonsJson (amount : String, address : String, keyPair : SECP256K1.KeyPair) : String{
-        val msg = """
-            [
-            {
-                "type": "pylons/GetPylons",
-                "value": {
-                "Amount": [
-                {
-                    "denom": "pylon",
-                    "amount": "$amount"
-                }
-                ],
-                "Requester": "$address"
-            }
-            }
-            ]
-        """.trimIndent()
-        val signable = """
-            {"account_number":"4",
-            "chain_id":"pylonschain",
-            "fee":{"amount":null,"gas":"200000"},
-            "memo":"",
-            "msgs":$msg,
-            "sequence":"0"}
-            """.trimIndent().replace("\\s".toRegex(), "")
-        System.out.println(signable)
-        val pubkey = strFromBase64(Base64.encode(CryptoCosmos.getCompressedPubkey(keyPair.publicKey()).toArray()))
-        val signature = strFromBase64(Base64.encode(cryptoHandler.signature(signable.toByteArray(charset = Charset.defaultCharset()))))
-        return """{
-        "tx": {
-            "msg": $msg,
-
-            "fee": {
-            "amount": null,
-            "gas": "200000"
-        },
-            "signatures": [
-            {
-                "chain_id": "pylonschain",
-                "pub_key": {
-                "type": "tendermint/PubKeySecp256k1",
-                "value": "${pubkey}"
-            },
-                  "account_number": "4",
-                "sequence": "0",
-                "signature": "${signature}"
-            }
-            ],
-            "memo": ""
-        },
-        "mode": "sync"
-    }""".trimIndent()
-    }
-
 }

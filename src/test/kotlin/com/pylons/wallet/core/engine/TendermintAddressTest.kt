@@ -7,7 +7,6 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.crypto.SECP256K1
-import org.bitcoinj.core.Base58
 import org.bouncycastle.jcajce.provider.symmetric.ARC4
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Provider
@@ -23,6 +22,7 @@ internal class TendermintAddressTest {
         System.out.println("registered")
         val privateKey = SECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(dsPrivate))
         val keyPair = SECP256K1.KeyPair.create(privateKey, SECP256K1.PublicKey.fromSecretKey(privateKey))
-        assertEquals(dsAddr, Base58.encodeChecked(0, CryptoCosmos.getAddressFromKeyPair(keyPair).toArray()))
+        fail<Exception>("Update this test")
+        //assertEquals(dsAddr, Base58.encodeChecked(0, CryptoCosmos.getAddressFromKeyPair(keyPair).toArray()))
     }
 }
