@@ -21,6 +21,22 @@ internal class TxPylonsAlphaTest {
     private val k_CompressedPubkey = "0291677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
     @Test
+    fun generateJson () {
+        Security.addProvider(BouncyCastleProvider())
+        Core.start(Backend.ALPHA_REST, "")
+        val engine = Core.engine as TxPylonsAlphaEngine
+        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
+        //engine.cryptoHandler.generateNewKeys()
+        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_GaiaCli)
+
+        engine.cryptoHandler.importKeysFromUserData()
+        Core.userProfile = Profile(engine.getNewCredentials(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        val a = engine.getGetPylonsJson("500", "DUMMYADDR", engine.cryptoHandler.keyPair!!)
+        val b = TxJson.getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
+        assertEquals(a.trimIndent().replace("\\s".toRegex(), ""), b)
+    }
+
+    @Test
     fun frankenstein() {
         Security.addProvider(BouncyCastleProvider())
         Core.start(Backend.ALPHA_REST, "")
