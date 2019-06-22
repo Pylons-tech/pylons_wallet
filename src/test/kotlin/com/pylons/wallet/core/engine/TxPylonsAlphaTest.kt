@@ -21,7 +21,6 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun generateJson () {
-        Security.addProvider(BouncyCastleProvider())
         Core.start(Backend.ALPHA_REST, "")
         val engine = Core.engine as TxPylonsAlphaEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
@@ -38,7 +37,6 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun frankenstein() {
-        Security.addProvider(BouncyCastleProvider())
         Core.start(Backend.ALPHA_REST, "")
         val engine = Core.engine as TxPylonsAlphaEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos

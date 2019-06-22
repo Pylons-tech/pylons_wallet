@@ -14,7 +14,6 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     catch (e : NullPointerException) {
         return badArgs()
     }
-    System.out.println("Name: ${name}")
     val c = Core.engine.getNewCredentials()
     Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true,
             coins = mutableMapOf(), items = mutableListOf()))

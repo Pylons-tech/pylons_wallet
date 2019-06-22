@@ -10,6 +10,7 @@ import com.pylons.wallet.core.types.Transaction
 import com.squareup.moshi.*
 import org.apache.commons.codec.binary.Base32
 import org.apache.tuweni.crypto.SECP256K1
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -19,10 +20,15 @@ import java.net.URL
 import java.nio.charset.Charset
 import java.io.ByteArrayOutputStream
 import java.lang.StringBuilder
+import java.security.Security
 import kotlin.experimental.and
 
 
 internal class TxPylonsAlphaEngine : Engine() {
+    init {
+        Security.removeProvider("BC")
+        Security.addProvider(BouncyCastleProvider())
+    }
     class AddressResponse {
         val Bech32Addr : String? = null
     }
@@ -77,7 +83,6 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     private fun post (url : String, input : String) : String {
-        System.out.println(input)
         with(URL(url).openConnection() as HttpURLConnection) {
             doOutput = true
             requestMethod = "POST"
@@ -120,6 +125,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getNewCredentials(): Profile.Credentials {
+        cryptoHandler.generateNewKeys()
         val json = get("$url/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
         val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
         return Credentials(addrString)

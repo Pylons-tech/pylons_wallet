@@ -1,18 +1,12 @@
 package com.pylons.wallet.core.engine.crypto
 
-import com.google.common.hash.Hashing
-import com.squareup.moshi.Moshi
+import com.pylons.wallet.core.Logger
 import org.apache.commons.codec.binary.Base32
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.UserData
-import org.apache.commons.codec.binary.Base64
-import org.apache.commons.codec.digest.DigestUtils
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.bytes.MutableBytes
-import org.apache.tuweni.bytes.MutableBytes32
 import org.apache.tuweni.crypto.*
-import org.apache.tuweni.crypto.sodium.SHA256Hash
-import org.bouncycastle.jcajce.provider.digest.RIPEMD160
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.util.encoders.Hex
 import java.security.MessageDigest
@@ -32,6 +26,9 @@ internal class CryptoCosmos () : CryptoHandler() {
 
     override fun generateNewKeys() {
         keyPair = SECP256K1.KeyPair.random()
+        Logger.implementation.log("Generated new keys: \n" +
+                "public key: ${Hex.toHexString(getCompressedPubkey(keyPair!!.publicKey()).toArray())}",
+                "INFO")
     }
 
     override fun signature(bytes: ByteArray): ByteArray = SECP256K1.sign(bytes, keyPair).bytes().toArray()
