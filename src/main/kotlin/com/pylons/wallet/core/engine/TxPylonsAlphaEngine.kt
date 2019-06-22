@@ -154,7 +154,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getPylons(q: Int): Profile? {
-        val json = TxJson.getPylons(q, Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!.publicKey(), 4, 0)
+        val json = TxJson.getPylons(q, Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!.publicKey(), 4, 1)
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")
         val response = post("""$url/txs""", json)
