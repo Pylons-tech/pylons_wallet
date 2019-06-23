@@ -83,7 +83,7 @@ internal class TxPylonsAlphaTest {
         engine.cryptoHandler.importKeysFromUserData()
         Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
         val signature = SECP256K1.sign(data, engine.cryptoHandler.keyPair)
-        println("signature : \n" + Hex.toHexString(signature.bytes().toArray()))
+        println("signature : \n" + Hex.toHexString(signature.bytes().toArray().slice(0 until 64).toByteArray()))
         val a = SECP256K1.verify(data, signature, engine.cryptoHandler.keyPair!!.publicKey())
         assertTrue(a)
         //assertEquals(Transaction.State.TX_ACCEPTED, tx.state)

@@ -31,7 +31,7 @@ internal class CryptoCosmos () : CryptoHandler() {
                 "INFO")
     }
 
-    override fun signature(bytes: ByteArray): ByteArray = SECP256K1.sign(bytes, keyPair).bytes().toArray()
+    override fun signature(bytes: ByteArray): ByteArray = SECP256K1.sign(bytes, keyPair).bytes().toArray().slice(0 until 64).toByteArray()
 
     override fun verify(bytes: ByteArray, signature : ByteArray): Boolean =
         SECP256K1.verify(bytes, SECP256K1.Signature.fromBytes(Bytes.wrap(signature)), keyPair!!.publicKey())
