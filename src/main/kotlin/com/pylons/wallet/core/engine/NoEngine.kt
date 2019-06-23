@@ -30,6 +30,9 @@ internal class NoEngine : Engine() {
     override fun dumpCredentials(credentials: Profile.Credentials) =
             throw NoEngineException()
 
+    override fun generateCredentialsFromKeys(): Profile.Credentials =
+            throw NoEngineException()
+
     override fun getNewCredentials(): Profile.Credentials =
             throw NoEngineException()
 

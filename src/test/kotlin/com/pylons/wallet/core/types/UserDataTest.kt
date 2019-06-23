@@ -7,9 +7,9 @@
 //import org.junit.jupiter.api.Assertions.*
 //
 //internal class UserDataTest {
-//    var userData = UserData(name = "foo", id = "bar", keys = "fasfasf",
+//    var userData = UserData(name = "foo", address = "bar", keys = "fasfasf",
 //            extras = mapOf("spam" dsPrivate "eggs"))
-//    val jsonFixture = """{"cryptoKeys":{"key":[68,69,65,68,66,69,69,70]},"extras":{"spam":"eggs"},"friends":[],"id":"bar","name":"foo","version":"1.0.0"}"""
+//    val jsonFixture = """{"cryptoKeys":{"key":[68,69,65,68,66,69,69,70]},"extras":{"spam":"eggs"},"friends":[],"address":"bar","name":"foo","version":"1.0.0"}"""
 //
 //    /**
 //     * UserData can be exported as JSON, and will produce a JSON object
@@ -31,7 +31,7 @@
 //    fun parseFromJson() {
 //        UserData.parseFromJson(jsonFixture)
 //        assertEquals(userData.name, newConfig!!.name)
-//        assertEquals(userData.id, newConfig.id)
+//        assertEquals(userData.address, newConfig.address)
 //        assertEquals(userData.version, newConfig.version)
 //        assertEquals(userData.keys, newConfig.keys)
 //        userData.extras.forEach { s, _ -> assertEquals(userData.extras[s], newConfig.extras[s])}

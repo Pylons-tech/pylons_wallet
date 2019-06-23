@@ -6,10 +6,6 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.*
 import com.pylons.wallet.core.types.*
 import com.squareup.moshi.*
-import java.sql.Date
-import java.sql.Time
-import java.sql.Timestamp
-import java.time.Instant
 import kotlin.random.Random
 
 
@@ -31,7 +27,7 @@ internal class TxDummyEngine : Engine() {
 
     class Credentials (id : String) : Profile.Credentials (id) {
         override fun dumpToMessageData(msg: MessageData) {
-            msg.strings["id"] = id
+            msg.strings["address"] = address
         }
     }
 
@@ -49,11 +45,15 @@ internal class TxDummyEngine : Engine() {
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
-        UserData.dataSets.getValue(prefix)["id"] = c.id
+        UserData.dataSets.getValue(prefix)["address"] = c.address
+    }
+
+    override fun generateCredentialsFromKeys(): Profile.Credentials {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun getNewCredentials(): Credentials {
-        return Credentials(UserData.dataSets.get(prefix).orEmpty().getOrDefault("id", Random.nextLong().toString()))
+        return Credentials(UserData.dataSets.get(prefix).orEmpty().getOrDefault("address", Random.nextLong().toString()))
     }
 
     override fun getStatusBlock(): StatusBlock {
@@ -91,13 +91,13 @@ internal class TxDummyEngine : Engine() {
 //        // Since there's no blockchain, we need to apply the transaction by hand
 //        Core.userProfile!!.items.removeAll(tx.itemsIn)
 //        tx.itemsOut.forEach { Core.userProfile!!.items.add(it) }
-//        tx.coinsIn.forEach { Core.userProfile!!.coins[it.id] = Core.userProfile!!.coins[it.id]!! - it.count!! }
+//        tx.coinsIn.forEach { Core.userProfile!!.coins[it.address] = Core.userProfile!!.coins[it.address]!! - it.count!! }
 //        tx.coinsOut.forEach {
-//            val base = when (Core.userProfile!!.coins[it.id]) {
+//            val base = when (Core.userProfile!!.coins[it.address]) {
 //                null -> 0
-//                else -> Core.userProfile!!.coins[it.id]!!
+//                else -> Core.userProfile!!.coins[it.address]!!
 //            }
-//            Core.userProfile!!.coins[it.id] = base + it.count!! }
+//            Core.userProfile!!.coins[it.address] = base + it.count!! }
 //        tx.finish(Transaction.State.TX_ACCEPTED)
 //        OutsideWorldDummy.addTx(tx)
         return Core.userProfile
@@ -127,7 +127,7 @@ internal class TxDummyEngine : Engine() {
     override fun getPylons(q: Int): Profile? {
         TODO("tx redesign")
         //runBlocking { delay(500) }
-//        var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).id,
+//        var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).address,
 //                listOf(), listOf(Coin("pylons", q)))
 //        return commitTx(tx)
     }

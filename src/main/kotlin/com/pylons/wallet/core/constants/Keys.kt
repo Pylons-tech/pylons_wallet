@@ -5,7 +5,7 @@ class Keys {
         const val coins = "coins"
         const val error = "error"
         const val errorCode = "errorCode"
-        const val id = "id"
+        const val id = "address"
         const val info = "info"
         const val items = "items"
         const val name = "name"

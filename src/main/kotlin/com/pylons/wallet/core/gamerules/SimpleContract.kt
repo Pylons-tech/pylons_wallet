@@ -16,7 +16,7 @@ open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {
     }
 
     override fun applyOffline() {
-//        System.out.println("Applying contract $id offline")
+//        System.out.println("Applying contract $address offline")
 //        val outItems = mutableListOf<Item>()
 //        Core.userProfile!!.items.removeAll(boundItemsIn)
 //        var actualItemsOut = itemsOut.orEmpty().toMutableList()
@@ -34,16 +34,16 @@ open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {
 //            Core.userProfile!!.items.add(item)
 //            outItems.add(item)
 //        }
-//        coinsIn.orEmpty().forEach { Core.userProfile!!.coins[it.id] = Core.userProfile!!.coins[it.id]!! - it.count }
+//        coinsIn.orEmpty().forEach { Core.userProfile!!.coins[it.address] = Core.userProfile!!.coins[it.address]!! - it.count }
 //        actualCoinsOut.orEmpty().forEach {
-//            val base = when (Core.userProfile!!.coins[it.id]) {
+//            val base = when (Core.userProfile!!.coins[it.address]) {
 //                null -> 0
-//                else -> Core.userProfile!!.coins[it.id]!!
+//                else -> Core.userProfile!!.coins[it.address]!!
 //            }
-//            Core.userProfile!!.coins[it.id] = base + it.count
+//            Core.userProfile!!.coins[it.address] = base + it.count
 //        }
 //        val txId = Core.engine!!.getNewTransactionId()
-//        OutsideWorldDummy.addTx(Transaction(txId, (Core.userProfile!!.credentials as TxDummyEngine.Credentials).id, txId, coinsIn.orEmpty(), actualCoinsOut.orEmpty(),
+//        OutsideWorldDummy.addTx(Transaction(txId, (Core.userProfile!!.credentials as TxDummyEngine.Credentials).address, txId, coinsIn.orEmpty(), actualCoinsOut.orEmpty(),
 //                boundItemsIn, outItems, Transaction.State.TX_ACCEPTED, boundCoinsCatalysts, boundItemsCatalysts))
     }
 

@@ -22,6 +22,8 @@ internal abstract class Engine {
 
     abstract fun dumpCredentials (credentials: Profile.Credentials)
 
+    abstract fun generateCredentialsFromKeys () : Profile.Credentials
+
     abstract fun getNewCredentials () : Profile.Credentials
 
     abstract fun getForeignBalances(id : String) : ForeignProfile?

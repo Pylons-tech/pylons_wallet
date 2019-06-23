@@ -5,11 +5,11 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
+import com.pylons.wallet.core.internal.retryOnError
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction
 import com.squareup.moshi.*
-import org.apache.commons.codec.binary.Base32
-import org.apache.tuweni.crypto.SECP256K1
+import com.sun.xml.internal.fastinfoset.util.StringArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.io.BufferedReader
@@ -17,11 +17,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
-import java.nio.charset.Charset
-import java.io.ByteArrayOutputStream
-import java.lang.StringBuilder
 import java.security.Security
-import kotlin.experimental.and
 
 
 internal class TxPylonsAlphaEngine : Engine() {
@@ -49,8 +45,11 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     class Credentials (address : String) : Profile.Credentials (address) {
+        var sequence : Int = 0
+        var accountNumber : Int = 0
+
         override fun dumpToMessageData(msg: MessageData) {
-            msg.strings["id"] = id
+            msg.strings["address"] = address
         }
     }
 
@@ -66,43 +65,6 @@ internal class TxPylonsAlphaEngine : Engine() {
         }
     }
 
-    private fun get (url : String) : String {
-        with(URL(url).openConnection() as HttpURLConnection) {
-            requestMethod = "GET"
-            BufferedReader(InputStreamReader(inputStream)).use {
-                val response = StringBuffer()
-                var inputLine = it.readLine()
-                while (inputLine != null) {
-                    response.append(inputLine)
-                    inputLine = it.readLine()
-                }
-                it.close()
-                return response.toString()
-            }
-        }
-    }
-
-    private fun post (url : String, input : String) : String {
-        with(URL(url).openConnection() as HttpURLConnection) {
-            doOutput = true
-            requestMethod = "POST"
-            val wr = OutputStreamWriter(outputStream);
-            wr.write(input)
-            wr.flush()
-            BufferedReader(InputStreamReader(inputStream)).use {
-                val response = StringBuffer()
-                var inputLine = it.readLine()
-                while (inputLine != null) {
-                    response.append(inputLine)
-                    inputLine = it.readLine()
-                }
-                it.close()
-                return response.toString()
-            }
-        }
-    }
-
-
     private fun getJsonForTx (tx : Transaction) : String {
         //val jsonObject =
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -115,7 +77,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun commitTx(tx: Transaction): Profile? {
-        val response = post("$url/txs", getJsonForTx(tx))
+        val response = HttpWire.post("$url/txs", getJsonForTx(tx))
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
     }
@@ -124,9 +86,15 @@ internal class TxPylonsAlphaEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun generateCredentialsFromKeys() : Profile.Credentials {
+        val json = HttpWire.get("$url/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
+        val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
+        return Credentials(addrString)
+    }
+
     override fun getNewCredentials(): Profile.Credentials {
         cryptoHandler.generateNewKeys()
-        val json = get("$url/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
+        val json = HttpWire.get("$url/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
         val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
         return Credentials(addrString)
     }
@@ -136,21 +104,38 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getOwnBalances(): Profile? {
-        val json = get("$url/")
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val json = HttpWire.get("$url/auth/accounts/${Core.userProfile!!.credentials.address}")
+        val sequence = JsonPath.read<String>(json, "$.value.sequence").toInt()
+        val accountNumber = JsonPath.read<String>(json, "$.value.account_number").toInt()
+        //val coinStrings = JsonPath.read<StringArray>(json, "$.value.coins.*")
+        //println(coinStrings[0])
+        val coins = mutableMapOf<String, Int>()
+//        for (it in coinStrings) {
+//            // gross and hacky
+//            println(it)
+//            val split = it.split(",")
+//            System.out.println("sss")
+//            val denom = split[0].replace("{denom=", "")
+//            val q = split[1].replace("amount=", "").replace("}", "").toInt()
+//            coins[denom] = q
+//        }
+        (Core.userProfile?.credentials as Credentials?)?.accountNumber = accountNumber
+        (Core.userProfile?.credentials as Credentials?)?.sequence = sequence
+        Core.userProfile?.coins = coins
+        return Core.userProfile
     }
 
     override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
     override fun getStatusBlock(): StatusBlock {
-        val response = get("$url/blocks/latest")
+        val response = HttpWire.get("$url/blocks/latest")
         val height = JsonPath.read<Long>(response, "$.block_meta.header.height")
         // TODO: calculate block time (this will be Gross)
         return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = Core.VERSION_STRING)
     }
 
     override fun getTransaction(id: String): Transaction? {
-        val response = get("$url/txs/$id")
+        val response = HttpWire.get("$url/txs/$id")
 
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -160,10 +145,11 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getPylons(q: Int): Profile? {
-        val json = TxJson.getPylons(q, Core.userProfile!!.credentials.id, cryptoHandler.keyPair!!.publicKey(), 4, 1)
+        val c = Core.userProfile!!.credentials as Credentials
+        val json = TxJson.getPylons(q, c.address, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence)
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")
-        val response = post("""$url/txs""", json)
+        val response = HttpWire.post("""$url/txs""", json)
         Logger().log(response, "request_response")
         return Core.userProfile
     }

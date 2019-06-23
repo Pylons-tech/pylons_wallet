@@ -128,7 +128,7 @@ internal class ActionResolutionTableTest {
     private fun getJsonForRecipe (cookbook : String, recipe : String) : OutsideWorldDummy.GameRuleData {
         return OutsideWorldDummy.GameRuleData(
                 type = "SimpleContract",
-                json = """{"id" : "test", "coinsOut" : [{"id" : "pylons", "count" : 1}]}"""
+                json = """{"address" : "test", "coinsOut" : [{"address" : "pylons", "count" : 1}]}"""
         )
     }
 
@@ -151,11 +151,11 @@ internal class ActionResolutionTableTest {
         val incomingMsg = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.setUserProfileState, "json" to
         """{
   "coins": { "gold": 999998 },
-  "id": "just whatever for now afa id goes",
+  "address": "just whatever for now afa address goes",
   "items": [
     {
       "doubles": {},
-      "id": "0_[ITEM]_DUMMY",
+      "address": "0_[ITEM]_DUMMY",
       "longs": {},
       "strings": {
         "type": "decorFurniture",
@@ -164,7 +164,7 @@ internal class ActionResolutionTableTest {
     },
     {
       "doubles": {},
-      "id": "1_[ITEM]_DUMMY",
+      "address": "1_[ITEM]_DUMMY",
       "longs": {},
       "strings": {
         "type": "decorFurniture",
@@ -173,7 +173,7 @@ internal class ActionResolutionTableTest {
     },
     {
       "doubles": {},
-      "id": "2_[ITEM]_DUMMY",
+      "address": "2_[ITEM]_DUMMY",
       "longs": {},
       "strings": {
         "type": "decorFurniture",

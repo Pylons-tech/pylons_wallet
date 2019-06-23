@@ -16,7 +16,7 @@ import kotlin.random.Random
 private var itemsCreated = 0
 
 internal fun newItemFromPrototype (itemPrototype: ItemPrototype) : Item {
-    val id = "${itemsCreated++}_[ITEM]_${Random.nextLong()}" // garbage, but we just need a unique id
+    val id = "${itemsCreated++}_[ITEM]_${Random.nextLong()}" // garbage, but we just need a unique address
     val strings = mutableMapOf<String, String>()
     itemPrototype.stringConstraints.orEmpty().forEach{
         var strBuilder = StringBuilder()

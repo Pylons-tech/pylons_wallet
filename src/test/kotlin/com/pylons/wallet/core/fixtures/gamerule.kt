@@ -2,10 +2,10 @@ package com.pylons.wallet.core.fixtures
 
 val gamerule = """
     {
-  "id": "onboard",
+  "address": "onboard",
   "coinsOut": [
     {
-      "id": "gold",
+      "address": "gold",
       "count": 100
     }
   ],

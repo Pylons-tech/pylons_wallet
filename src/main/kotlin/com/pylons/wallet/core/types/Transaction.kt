@@ -64,7 +64,7 @@ data class Transaction(
 //                txDescription.itemsOutIds.forEach {
 //                    itemsOut.add(Item.findInBufferedForeignProfile(txDescription.otherProfileId, it)!!)
 //                }
-//                Transaction(Core.engine.getNewTransactionId(), Core.userProfile!!.credentials.id,
+//                Transaction(Core.engine.getNewTransactionId(), Core.userProfile!!.credentials.address,
 //                        txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
 //                        itemsIn.toList(), itemsOut.toList())
 //            } catch (e : NullPointerException) {

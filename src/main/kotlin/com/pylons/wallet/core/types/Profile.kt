@@ -8,9 +8,9 @@ import com.pylons.wallet.core.constants.*
  * Internal state representation of the user's own userProfile.
  */
 data class Profile (
-        val credentials: Credentials,
+        var credentials: Credentials,
         val strings : MutableMap<String, String>,
-        val coins : MutableMap<String, Int>,
+        var coins : MutableMap<String, Int>,
         val items : MutableList<Item>,
         /**
          * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
@@ -19,7 +19,7 @@ data class Profile (
         var provisional : Boolean = false,
         val singletonGameRules : MutableList<String> = mutableListOf()
 ) {
-    abstract class Credentials (val id : String) {
+    abstract class Credentials (val address : String) {
         abstract fun dumpToMessageData (msg : MessageData)
     }
 

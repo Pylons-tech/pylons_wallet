@@ -74,7 +74,7 @@
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 //    }
 //
-//    override fun getForeignBalances(id: String): ForeignProfile? {
+//    override fun getForeignBalances(address: String): ForeignProfile? {
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 //    }
 //
@@ -88,7 +88,7 @@
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 //    }
 //
-//    override fun getTransaction(id: String): Transaction? {
+//    override fun getTransaction(address: String): Transaction? {
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 //    }
 //
@@ -97,7 +97,7 @@
 //    }
 //
 //    override fun getOwnBalances(): Profile? {
-//        val url = "$addr/bank/balances/${Core.userProfile!!.id}"
+//        val url = "$addr/bank/balances/${Core.userProfile!!.address}"
 //        return null
 //    }
 //
@@ -106,7 +106,7 @@
 //        val pubKey = PubKey("tendermint/PubKeySecp256k1", Core.cryptoHandler!!.getEncodedPublicKey())
 //        class Message {
 //            var base_req : BaseReq = BaseReq()
-//            var Requester : String = Core.userProfile!!.id
+//            var Requester : String = Core.userProfile!!.address
 //        }
 //        // We don't actually use q right now...
 //        val msg = Message()
