@@ -8,7 +8,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
-import org.apache.tuweni.crypto.SECP256K1
+import com.pylons.wallet.core.types.SECP256K1
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.math.BigInteger

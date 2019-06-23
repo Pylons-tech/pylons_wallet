@@ -4,7 +4,7 @@ import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsAlphaEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import org.apache.tuweni.crypto.SECP256K1
+import com.pylons.wallet.core.types.SECP256K1
 import org.bouncycastle.jcajce.provider.digest.SHA256
 
 import java.lang.StringBuilder

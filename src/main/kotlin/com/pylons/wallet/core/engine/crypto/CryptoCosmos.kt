@@ -6,7 +6,7 @@ import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.UserData
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.bytes.MutableBytes
-import org.apache.tuweni.crypto.*
+import com.pylons.wallet.core.types.SECP256K1
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.util.encoders.Hex
 import java.security.MessageDigest

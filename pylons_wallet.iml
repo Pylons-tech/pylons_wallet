@@ -82,5 +82,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="org.junit.jupiter:junit-jupiter-api:5.5.0-RC1" level="project" />
+    <orderEntry type="library" name="tuweni-io-0.8.0-SNAPSHOT" level="project" />
   </component>
 </module>
