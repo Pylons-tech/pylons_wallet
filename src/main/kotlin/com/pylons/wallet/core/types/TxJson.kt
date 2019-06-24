@@ -6,6 +6,7 @@ import com.pylons.wallet.core.engine.TxPylonsAlphaEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.SECP256K1
 import org.bouncycastle.jcajce.provider.digest.SHA256
+import org.bouncycastle.util.encoders.Hex
 
 import java.lang.StringBuilder
 import java.nio.charset.Charset
@@ -22,15 +23,18 @@ object TxJson {
         //val signable = msgTemplate_Signable(msg, sequence, accountNumber)
         //val signBytes = SHA256.Digest().digest(signable.toByteArray(charset = Charset.defaultCharset()))
         val signBytes = getSignBytesFromTxBuilder("get_pylons")
-        val signature = base64.encodeToString(cryptoHandler.signature(signBytes))
+        val signatureBytes = cryptoHandler.signature(signBytes)
+        println(Hex.toHexString(signatureBytes))
+
+        val signature = base64.encodeToString( signatureBytes)
         return removeWhitespace(baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature))
     }
 
 
     private fun getSignBytesFromTxBuilder (method : String) : ByteArray {
         val json = HttpWire.get("$url/pylons/$method/tx_build/${Core.userProfile!!.credentials.address}")
-        println(json)
-        val bytes =  base64.encode(JsonPath.read<String>(json, "$.SignerBytes").toByteArray(Charsets.US_ASCII))
+        println(JsonPath.read<String>(json, "$.SignerBytes"))
+        val bytes =  Hex.decode(JsonPath.read<String>(json, "$.SignerBytes"))
         return bytes
     }
 

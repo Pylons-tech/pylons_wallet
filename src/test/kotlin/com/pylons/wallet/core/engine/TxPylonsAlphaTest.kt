@@ -19,8 +19,9 @@ internal class TxPylonsAlphaTest {
     private val k_GaiaCli = "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330"
     private val k_Self = "7e5c0ad3c8771ffe29cff8752da55859fe787f9677003bf8f78b78c6b87ea486"
     private val k_Third = "0XmJ33XhHvQjTBv3eIItl307Q8AcDKxQo9iF2DA==yik8"
-    private val k_CompressedPubkey = "0291677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
+    private val k_CompressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
     private val k_ApacheSecret = "c85ef7d79691fe79573b1a7064c19c1a9819ebdbd1faaab1a8ec92344438aaf4"
+    private val k_Jack = "c651abedcf4b636b556d868b6b85376ec97e1be26a050adb1f1f7a2fbc1c7776"
 
     @Test
     fun generateJson () {
@@ -44,7 +45,7 @@ internal class TxPylonsAlphaTest {
         val engine = Core.engine as TxPylonsAlphaEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         //engine.cryptoHandler.generateNewKeys()
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_GaiaCli)
+        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_Jack)
 
         engine.cryptoHandler.importKeysFromUserData()
         Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
@@ -94,5 +95,12 @@ internal class TxPylonsAlphaTest {
         val key = CryptoCosmos.getUncompressedPubkey(Hex.decode("0283e197461d60d77d3b40e854646583ffebdcb12fa7f0327c4cd1c68b316e80f5"))
         val addr = CryptoCosmos.getAddressFromPubkey(key.bytes())
         assertArrayEquals(Hex.decode("050445E241606088942B8AE403DFF2FEF055CB0C"), addr.toArray())
+    }
+
+    @Test
+    fun b64ToHex () {
+        println(Hex.toHexString(Base64.decodeBase64("MEUCIQD02fsDPra8MtbRsyB1w7bqTM55Wu138zQbFcWx4+CFyAIge5WNPfKIuvzBZ69MyqHsqD8S1IwiEp+iUb6VSdtlpgY=")))
+        println(Hex.toHexString(Base64.decodeBase64("vSfAvDzPMnJXy/wy5jMbTs6z+6KYe2CmWFEH3l2pQ21XJy1380CIcajBw34l5OOFZg03PdZ4O6ytuQH1SFU6vQ==")))
+
     }
 }

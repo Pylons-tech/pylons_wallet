@@ -18,6 +18,7 @@ object HttpWire {
                     inputLine = it.readLine()
                 }
                 it.close()
+                System.out.println(response.toString())
                 return response.toString()
             }
         }

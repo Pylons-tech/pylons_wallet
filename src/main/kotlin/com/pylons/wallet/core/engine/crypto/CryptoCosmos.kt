@@ -56,8 +56,8 @@ internal class CryptoCosmos () : CryptoHandler() {
             val xStr = ecPoint.xCoord.toBigInteger().toString()
             System.out.println("$xStr $yStr")
             val prefix = when (yStr > xStr) {
-                true -> 0x03
-                false -> 0x02
+                true -> 0x02
+                false -> 0x03
             }
             var bytes = MutableBytes.wrap(ByteArray(33))
             bytes[0] = prefix.toByte()
