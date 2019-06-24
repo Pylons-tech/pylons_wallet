@@ -20,22 +20,15 @@ object TxJson {
     fun getPylons (amount : Int, address: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String {
         val cryptoHandler = (Core.engine as TxPylonsAlphaEngine).cryptoHandler
         val msg = msgTemplate_GetPylons(amount.toString(), address)
-        //val signable = msgTemplate_Signable(msg, sequence, accountNumber)
-        //val signBytes = SHA256.Digest().digest(signable.toByteArray(charset = Charset.defaultCharset()))
-        val signBytes = getSignBytesFromTxBuilder("get_pylons")
+        val sComponent = msgTemplate_SignComponent_GetPylons(amount)
+        val signBytes = removeWhitespace( msgTemplate_Signable(sComponent, sequence, accountNumber)).toByteArray(Charsets.UTF_8)
         val signatureBytes = cryptoHandler.signature(signBytes)
-        println(Hex.toHexString(signatureBytes))
-
         val signature = base64.encodeToString( signatureBytes)
         return removeWhitespace(baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature))
     }
 
-
-    private fun getSignBytesFromTxBuilder (method : String) : ByteArray {
-        val json = HttpWire.get("$url/pylons/$method/tx_build/${Core.userProfile!!.credentials.address}")
-        println(JsonPath.read<String>(json, "$.SignerBytes"))
-        val bytes =  Hex.decode(JsonPath.read<String>(json, "$.SignerBytes"))
-        return bytes
+    private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String {
+        return """[{"Amount":[{"amount":"$amount","denom":"pylon"}]"""
     }
 
     private fun strFromBase64 (base64 : CharArray) : String {
@@ -47,12 +40,19 @@ object TxJson {
     private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())
 
     private fun msgTemplate_Signable (msg : String, sequence: Int, accountNumber: Int) = removeWhitespace("""
-            {"account_number":"$accountNumber",
-            "chain_id":"pylonschain",
-            "fee":{"amount":null,"gas":"200000"},
-            "memo":"",
-            "msgs":$msg,
-            "sequence":"$sequence"}
+            {
+                "account_number": "$accountNumber",
+                "chain_id": "pylonschain",
+                "fee": {
+                    "amount": [],
+                    "gas": "200000"
+                },
+                "memo": "",
+                "msgs": $msg,
+                    "Requester": "cosmos146yrz0p79pm6xd33nr3ajtxv2206rvcx0rs2c6"
+                }],
+                "sequence": "$sequence"
+            }
             """)
 
     private fun msgTemplate_GetPylons (amount : String, address : String) = """
