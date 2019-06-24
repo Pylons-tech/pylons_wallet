@@ -21,10 +21,12 @@ object TxJson {
         val cryptoHandler = (Core.engine as TxPylonsAlphaEngine).cryptoHandler
         val msg = msgTemplate_GetPylons(amount.toString(), address)
         val sComponent = msgTemplate_SignComponent_GetPylons(amount)
-        val signBytes = removeWhitespace( msgTemplate_Signable(sComponent, sequence, accountNumber)).toByteArray(Charsets.UTF_8)
+        val signable = removeWhitespace(msgTemplate_Signable(sComponent, sequence, accountNumber))
+        println(signable)
+        val signBytes = signable.toByteArray(Charsets.UTF_8)
         val signatureBytes = cryptoHandler.signature(signBytes)
         val signature = base64.encodeToString( signatureBytes)
-        return removeWhitespace(baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature))
+        return baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature)
     }
 
     private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String {

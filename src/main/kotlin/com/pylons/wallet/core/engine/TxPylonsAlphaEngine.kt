@@ -10,6 +10,7 @@ import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction
 import com.squareup.moshi.*
 import com.sun.xml.internal.fastinfoset.util.StringArray
+import net.minidev.json.JSONArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.io.BufferedReader
@@ -107,18 +108,12 @@ internal class TxPylonsAlphaEngine : Engine() {
         val json = HttpWire.get("$url/auth/accounts/${Core.userProfile!!.credentials.address}")
         val sequence = JsonPath.read<String>(json, "$.value.sequence").toInt()
         val accountNumber = JsonPath.read<String>(json, "$.value.account_number").toInt()
-        //val coinStrings = JsonPath.read<StringArray>(json, "$.value.coins.*")
-        //println(coinStrings[0])
+        val denoms = JsonPath.read<JSONArray>(json, "$.value.coins.*.denom")
+        val amounts = JsonPath.read<JSONArray>(json, "$.value.coins.*.amount")
         val coins = mutableMapOf<String, Int>()
-//        for (it in coinStrings) {
-//            // gross and hacky
-//            println(it)
-//            val split = it.split(",")
-//            System.out.println("sss")
-//            val denom = split[0].replace("{denom=", "")
-//            val q = split[1].replace("amount=", "").replace("}", "").toInt()
-//            coins[denom] = q
-//        }
+        for (i in 0 until denoms.size) {
+            coins[denoms[i].toString()] = amounts[i].toString().toInt()
+        }
         (Core.userProfile?.credentials as Credentials?)?.accountNumber = accountNumber
         (Core.userProfile?.credentials as Credentials?)?.sequence = sequence
         Core.userProfile?.coins = coins
