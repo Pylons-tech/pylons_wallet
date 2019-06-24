@@ -19,7 +19,7 @@ data class Profile (
         var provisional : Boolean = false,
         val singletonGameRules : MutableList<String> = mutableListOf()
 ) {
-    abstract class Credentials (val address : String) {
+    abstract class Credentials (var address : String) {
         abstract fun dumpToMessageData (msg : MessageData)
     }
 

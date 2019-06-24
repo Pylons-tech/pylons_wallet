@@ -5,7 +5,11 @@ import kotlinx.coroutines.*
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.engine.*
+import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
+import org.apache.tuweni.bytes.Bytes32
+import org.bouncycastle.util.encoders.Hex
+import sun.plugin.util.UserProfile
 
 object Core {
     /**
@@ -45,6 +49,12 @@ object Core {
 
     fun setProfile (profile: Profile) {
         userProfile = profile
+    }
+
+    fun forceKeys (keyString : String, address : String) {
+        val engine = engine as TxPylonsAlphaEngine
+        engine.cryptoHandler.keyPair = SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(keyString))))
+        userProfile = Profile(TxPylonsAlphaEngine.Credentials(address), mutableMapOf("name" to "Jack"), mutableMapOf(), mutableListOf())
     }
 
     fun dumpUserProfile () : String = userProfile!!.dump()

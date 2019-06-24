@@ -25,6 +25,7 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/tuweni-bytes-0.8.0-SNAPSHOT.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/tuweni-crypto-0.8.0-SNAPSHOT.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/tuweni-units-0.8.0-SNAPSHOT.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/tuweni-io-0.8.0-SNAPSHOT.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
