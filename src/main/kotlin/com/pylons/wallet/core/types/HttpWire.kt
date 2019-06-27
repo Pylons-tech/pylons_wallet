@@ -16,8 +16,8 @@ object HttpWire {
     fun get (url : String) : String {
         var retryCount = 0
         while (true) {
-            try {
-                with(URL(url).openConnection() as HttpURLConnection) {
+            with(URL(url).openConnection() as HttpURLConnection) {
+                try {
                     requestMethod = "GET"
                     BufferedReader(InputStreamReader(inputStream)).use {
                         val response = StringBuffer()
@@ -29,11 +29,18 @@ object HttpWire {
                         it.close()
                         println(response.toString())
                         return response.toString()
+
+                    }
+                } catch (e : FileNotFoundException) {
+                    if (retryCount > RETRIES) {
+                        this.disconnect()
+                        throw e
+                    }
+                    else {
+                        retryCount++
+                        println("Retrying connection...")
                     }
                 }
-            } catch (e : FileNotFoundException) {
-                if (retryCount > RETRIES) throw e
-                else retryCount++
                 runBlocking { delay(RETRY_DELAY) }
             }
         }
@@ -43,8 +50,8 @@ object HttpWire {
         println(input)
         var retryCount = 0
         while (true) {
-            try {
-                with(URL(url).openConnection() as HttpURLConnection) {
+            with(URL(url).openConnection() as HttpURLConnection) {
+                try {
                     doOutput = true
                     requestMethod = "POST"
                     val wr = OutputStreamWriter(outputStream);
@@ -60,10 +67,16 @@ object HttpWire {
                         it.close()
                         return response.toString()
                     }
+                } catch (e : FileNotFoundException) {
+                    if (retryCount > RETRIES) {
+                        this.disconnect()
+                        throw e
+                    }
+                    else {
+                        retryCount++
+                        println("Retrying connection...")
+                    }
                 }
-            } catch (e : FileNotFoundException) {
-                if (retryCount > RETRIES) throw e
-                else retryCount++
                 runBlocking { delay(RETRY_DELAY) }
             }
         }

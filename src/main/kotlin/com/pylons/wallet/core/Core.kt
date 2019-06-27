@@ -10,6 +10,8 @@ import com.pylons.wallet.core.types.*
 import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.util.encoders.Hex
 import sun.plugin.util.UserProfile
+import java.util.*
+import java.util.concurrent.LinkedBlockingQueue
 
 object Core {
     /**
@@ -90,6 +92,17 @@ object Core {
         return actionResolutionTable(action, msg, args)
     }
 
+    private class MessageWithCallback (val msg : MessageData, val callback: ((Response?) -> Unit)?)
+
+    private val messageResolutionQueue : LinkedBlockingQueue<MessageWithCallback> = LinkedBlockingQueue<MessageWithCallback>()
+    private var inDoResolveMessage = false
+
+    var onCompletedOperation : (() -> Unit)? = null
+
+    fun isReady () : Boolean {
+        return sane && !inDoResolveMessage
+    }
+
     /**
      * resolveMessage is the main entry point which platform-specific wallet apps should use
      * in order to call into WalletCore. It takes two arguments:
@@ -108,14 +121,26 @@ object Core {
      * the core to a single thread of execution ensures consistent state and deterministic
      * behavior - resolveMessage should not be called from the main thread of any wallet app.
      */
-    fun resolveMessage(msg: MessageData): Response? {
-        //statusBlock = StatusBlock(engine!!.getHeight(), engine!!.getAverageBlockTime(), statusBlock.walletCoreVersion)
-        if (!sane) {
-            var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
-            throw Exception(msg.msg!!.strings[Keys.info])
+    fun resolveMessage(msg: MessageData, callback : ((Response?) -> Unit)?) {
+        val dat = MessageWithCallback(msg, callback)
+        try {
+            inDoResolveMessage = true
+            if (!sane) {
+                var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
+                throw Exception(msg.msg!!.strings[Keys.info])
+            }
+            val action = dat.msg.strings[ReservedKeys.wcAction].orEmpty()
+            val out = actionResolutionTable(action, dat.msg)
+            Logger.implementation.log("Resolution of message ${dat.msg.getAction()} complete}", LogTag.info)
+            inDoResolveMessage = false
+            dat.callback?.invoke(out)
+            onCompletedOperation?.invoke()
         }
-        val action = msg.strings[ReservedKeys.wcAction].orEmpty()
-        return actionResolutionTable(action, msg)
+        // This isn't handled, so we're gonna throw it
+        catch (e : Exception) {
+            inDoResolveMessage = false // Cleanup before doing that
+            throw e
+        }
     }
 
     /**

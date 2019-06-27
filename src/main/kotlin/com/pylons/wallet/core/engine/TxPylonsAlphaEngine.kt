@@ -16,6 +16,7 @@ import org.bouncycastle.util.encoders.Hex
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
+import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.security.Security
