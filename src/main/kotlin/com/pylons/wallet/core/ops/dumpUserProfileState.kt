@@ -5,7 +5,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.*
 
-fun dumpUserProfileState (msg : MessageData) : Response {
+internal fun dumpUserProfileState (msg : MessageData) : Response {
     val moshi = Moshi.Builder().build()
     val adapter = moshi.adapter<Profile>(Profile::class.java)
     val json = adapter.toJson(Core.userProfile!!)

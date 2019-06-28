@@ -34,11 +34,11 @@ internal abstract class Engine {
 
     abstract fun getStatusBlock() : StatusBlock
 
-    abstract fun getTransaction (id : String) : Transaction?
+    abstract fun getTransaction (id : String) : Transaction
 
     abstract fun registerNewProfile (name : String) : String
 
-    abstract fun getPylons (q : Int) : Profile?
+    abstract fun getPylons (q : Int) : String
 
     abstract fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
 }

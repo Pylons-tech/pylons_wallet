@@ -5,7 +5,7 @@ import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.engine.OutsideWorldDummy
 import com.pylons.wallet.core.types.*
 
-fun setOtherUserProfileState (msg : MessageData) : Response {
+internal fun setOtherUserProfileState (msg : MessageData) : Response {
     val moshi = Moshi.Builder().build()
     val adapter = moshi.adapter<ForeignProfile>(ForeignProfile::class.java)
     val id = msg.strings[Keys.id]!!

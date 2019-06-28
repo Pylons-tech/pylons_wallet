@@ -8,7 +8,7 @@ import com.pylons.wallet.core.internal.bufferForeignProfile
 import com.pylons.wallet.core.internal.generateErrorMessageData
 import com.pylons.wallet.core.types.*
 
-fun setUserProfileState (msg : MessageData) : Response {
+internal fun setUserProfileState (msg : MessageData) : Response {
     val moshi = Moshi.Builder().add(TxDummyEngine.CredentialsAdapter()).build()
     val adapter = moshi.adapter<Profile>(Profile::class.java)
     val prf = adapter.fromJson(msg.strings[Keys.json]!!)
