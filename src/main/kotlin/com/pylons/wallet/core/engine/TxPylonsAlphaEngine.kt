@@ -137,7 +137,7 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun registerNewProfile(): Profile? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return getPylons(500) // is this actually gonna work?
     }
 
     override fun getPylons(q: Int): Profile? {

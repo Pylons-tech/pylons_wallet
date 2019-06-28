@@ -17,10 +17,9 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     val c = Core.engine.getNewCredentials()
     Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true,
             coins = mutableMapOf(), items = mutableListOf()))
-    val prf = Core.engine.registerNewProfile()
-    val msg = when (prf) {
-        null -> MessageData(booleans = mutableMapOf(Keys.profileExists to false))
-        else -> MessageData(booleans = mutableMapOf(Keys.profileExists to true))
-    }
-    return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
+    val txHash = Core.newProfile(extraArgs.strings[Keys.name]!!)
+    waitUntilCommitted(txHash)
+    return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
 }
+
+fun Core.newProfile (name : String) : String = Core.engine.registerNewProfile(name)

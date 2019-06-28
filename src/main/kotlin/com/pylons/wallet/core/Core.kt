@@ -7,6 +7,7 @@ import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.engine.*
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.util.encoders.Hex
 import sun.plugin.util.UserProfile
@@ -30,17 +31,24 @@ object Core {
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
     var sane : Boolean = false
         private set
+    var started : Boolean = false
+        private set
     var suspendedAction : String? = null
         internal set
     internal var suspendedMsg : MessageData? = null
     const val VERSION_STRING = "0.0.1a"
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
 
+    var onWipeUserData : (() -> Unit)? = null
+
     internal fun tearDown () {
         engine = NoEngine()
         userProfile = null
         friends = listOf()
         sane = false
+        inDoResolveMessage = false
+        started = false
+        onCompletedOperation = null
     }
 
     /**
@@ -83,6 +91,7 @@ object Core {
                 else -> Profile.fromUserData()
             }
             sane = true
+            started = true
         }
     }
 
@@ -100,7 +109,7 @@ object Core {
     var onCompletedOperation : (() -> Unit)? = null
 
     fun isReady () : Boolean {
-        return sane && !inDoResolveMessage
+        return sane && !inDoResolveMessage && started
     }
 
     /**

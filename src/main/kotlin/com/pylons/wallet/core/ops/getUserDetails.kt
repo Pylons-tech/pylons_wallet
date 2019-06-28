@@ -8,7 +8,7 @@ internal fun getUserDetails(): Response {
         val msg = when (Core.userProfile) {
             null -> MessageData(booleans = mutableMapOf(Keys.profileExists to false))
             else -> {
-                val prf = Core.engine.getOwnBalances()
+                val prf = Core.getUserDetails()
                 when (prf) {
                     null -> MessageData(booleans = mutableMapOf(Keys.profileExists to false))
                     else -> prf.detailsToMessageData()
@@ -17,3 +17,5 @@ internal fun getUserDetails(): Response {
         }
         return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
 }
+
+fun Core.getUserDetails () : Profile? = Core.engine.getOwnBalances()

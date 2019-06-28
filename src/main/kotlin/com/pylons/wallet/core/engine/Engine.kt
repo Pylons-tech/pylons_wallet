@@ -16,9 +16,9 @@ internal abstract class Engine {
     abstract val isDevEngine : Boolean
     abstract val isOffLineEngine : Boolean
 
-    abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Profile?
+    abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : String
 
-    abstract fun commitTx(tx: Transaction) : Profile?
+    abstract fun commitTx(tx: Transaction) : String
 
     abstract fun dumpCredentials (credentials: Profile.Credentials)
 
@@ -36,7 +36,7 @@ internal abstract class Engine {
 
     abstract fun getTransaction (id : String) : Transaction?
 
-    abstract fun registerNewProfile () : Profile?
+    abstract fun registerNewProfile (name : String) : String
 
     abstract fun getPylons (q : Int) : Profile?
 

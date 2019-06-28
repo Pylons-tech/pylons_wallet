@@ -25,3 +25,5 @@ fun performTransaction (msg : MessageData) : Response {
         }
     }
 }
+
+fun Core.performTx (txDesc : TransactionDescription) : String = Core.engine.commitTx(Transaction.build(txDesc)!!)
