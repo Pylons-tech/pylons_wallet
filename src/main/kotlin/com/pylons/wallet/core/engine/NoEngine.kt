@@ -20,12 +20,11 @@ internal class NoEngine : Engine() {
     override fun getStatusBlock(): StatusBlock  =
             throw NoEngineException()
 
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Profile? =
+    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): String =
             throw NoEngineException()
 
-    override fun commitTx(tx: Transaction): Profile? =
+    override fun commitTx(tx: Transaction): String =
             throw NoEngineException()
-
 
     override fun dumpCredentials(credentials: Profile.Credentials) =
             throw NoEngineException()
@@ -45,16 +44,15 @@ internal class NoEngine : Engine() {
     override fun getNewCryptoHandler(): CryptoHandler =
             throw NoEngineException()
 
-    override fun getTransaction(id: String): Transaction? =
+    override fun getTransaction(id: String): Transaction =
             throw NoEngineException()
 
-    override fun registerNewProfile(): Profile? =
+    override fun registerNewProfile(name : String): String =
             throw NoEngineException()
 
-    override fun getPylons(q: Int): Profile? =
+    override fun getPylons(q: Int): String =
             throw NoEngineException()
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
             throw NoEngineException()
-
 }
