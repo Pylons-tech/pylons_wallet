@@ -76,6 +76,9 @@ import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
  *
  * <p>
  * BouncyCastle can be included using the gradle dependency 'org.bouncycastle:bcprov-jdk15on'.
+ *
+ * <p>
+ * (This has been "fixed" to use the wrong hashing algorithm for compatibility with Cosmos backend.)
  */
 public final class SECP256K1 {
     private SECP256K1() {}

@@ -60,22 +60,23 @@ internal class TxDummyEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getTransaction(id: String): Transaction? {
-        return OutsideWorldDummy.transactions[id]
+    override fun getTransaction(id: String): Transaction {
+        return OutsideWorldDummy.transactions[id]!!
     }
 
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>): Profile? {
+    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>): String {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
-        val gameRule = fetchGameRule(cookbook, recipe)
-        System.out.println("${gameRule.itemsOut?.size}")
-        System.out.println("Can apply rule $cookbook/$recipe? ${gameRule.canApply()}")
-        return when (gameRule.canApply()) {
-            true -> {
-                gameRule.applyOffline()
-                return Core.userProfile
-            }
-            false -> null
-        }
+        TODO("Rejigger this")
+//        val gameRule = fetchGameRule(cookbook, recipe)
+//        System.out.println("${gameRule.itemsOut?.size}")
+//        System.out.println("Can apply rule $cookbook/$recipe? ${gameRule.canApply()}")
+//        return when (gameRule.canApply()) {
+//            true -> {
+//                gameRule.applyOffline()
+//                return Core.userProfile
+//            }
+//            false -> null
+//        }
     }
 
     private fun fetchGameRule (cookbook: String, id: String) : GameRule {
@@ -85,7 +86,8 @@ internal class TxDummyEngine : Engine() {
         }
     }
 
-    override fun commitTx(tx: Transaction) : Profile? {
+    override fun commitTx(tx: Transaction) : String {
+        TODO("Rejigger this")
 //        tx.submit()
 //        runBlocking { delay(500) }
 //        // Since there's no blockchain, we need to apply the transaction by hand
@@ -100,12 +102,12 @@ internal class TxDummyEngine : Engine() {
 //            Core.userProfile!!.coins[it.address] = base + it.count!! }
 //        tx.finish(Transaction.State.TX_ACCEPTED)
 //        OutsideWorldDummy.addTx(tx)
-        return Core.userProfile
+        //return Core.userProfile
     }
 
     override fun getForeignBalances(id : String) : ForeignProfile?{
         runBlocking { delay(500) }
-        System.out.println(OutsideWorldDummy.profiles.containsKey(id).toString() + " $id")
+        println(OutsideWorldDummy.profiles.containsKey(id).toString() + " $id")
         return OutsideWorldDummy.profiles[id]
     }
 
@@ -118,13 +120,14 @@ internal class TxDummyEngine : Engine() {
         return CryptoDummy()
     }
 
-    override fun registerNewProfile() : Profile? {
-        runBlocking { delay(500) }
-        Core.userProfile!!.provisional = false
-        return Core.userProfile
+    override fun registerNewProfile(name : String) : String {
+        TODO("Rejigger this")
+        //runBlocking { delay(500) }
+        //Core.userProfile!!.provisional = false
+        //return Core.userProfile
     }
 
-    override fun getPylons(q: Int): Profile? {
+    override fun getPylons(q: Int): String {
         TODO("tx redesign")
         //runBlocking { delay(500) }
 //        var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).address,

@@ -9,7 +9,6 @@ internal fun applyRecipe (msg: MessageData) : Response {
     checkValid(msg)
     val preferredItemIds = msg.stringArrays[Keys.preferredItemIds] ?: mutableListOf()
     val txHash = Core.applyRecipe(msg.strings[Keys.cookbook]!!, msg.strings[Keys.recipe]!!, preferredItemIds)
-            ?: throw Exception("Failed to apply recipe ${msg.strings[Keys.cookbook]}.${msg.strings[Keys.recipe]}")
     waitUntilCommitted(txHash)
     return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
 }

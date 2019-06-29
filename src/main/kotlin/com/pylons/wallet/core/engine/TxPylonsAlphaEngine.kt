@@ -67,19 +67,12 @@ internal class TxPylonsAlphaEngine : Engine() {
         }
     }
 
-    private fun getJsonForTx (tx : Transaction) : String {
-        //val jsonObject =
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
-    }
-
-
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Profile? {
+    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun commitTx(tx: Transaction): Profile? {
-        val response = HttpWire.post("$url/txs", getJsonForTx(tx))
+    override fun commitTx(tx: Transaction): String {
+        //val response = HttpWire.post("$url/txs", getJsonForTx(tx))
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
     }
@@ -130,24 +123,31 @@ internal class TxPylonsAlphaEngine : Engine() {
         return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = Core.VERSION_STRING)
     }
 
-    override fun getTransaction(id: String): Transaction? {
+    override fun getTransaction(id: String): Transaction {
         val response = HttpWire.get("$url/txs/$id")
 
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun registerNewProfile(): Profile? {
+    override fun registerNewProfile(name : String): String {
         return getPylons(500) // is this actually gonna work?
     }
 
-    override fun getPylons(q: Int): Profile? {
+    override fun getPylons(q: Int): String {
         val c = Core.userProfile!!.credentials as Credentials
         val json = TxJson.getPylons(q, c.address, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence)
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")
         val response = HttpWire.post("""$url/txs""", json)
         Logger().log(response, "request_response")
-        return Core.userProfile
+        try {
+            val code = JsonPath.read<Int>(response, "$.code")
+            if (code != null)
+                throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
+        } catch (e : com.jayway.jsonpath.PathNotFoundException) {
+            // swallow this - we only find an error code if there is in fact an error
+        }
+        return JsonPath.read(response, "$.txhash")
     }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
