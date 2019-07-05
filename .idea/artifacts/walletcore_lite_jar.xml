@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact name="walletcore-lite:jar">
+  <artifact build-on-make="true" name="walletcore-lite:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/walletcore_lite_jar</output-path>
     <root id="root">
       <element id="archive" name="pylons_wallet.jar">
