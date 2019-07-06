@@ -57,7 +57,7 @@ object Core {
      */
     fun backupUserData () : String? {
         engine.dumpCredentials(userProfile!!.credentials)
-        println(UserData.dataSets.count())
+        println(UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"])
         println( UserData.exportAsJson())
         return UserData.exportAsJson()
     }

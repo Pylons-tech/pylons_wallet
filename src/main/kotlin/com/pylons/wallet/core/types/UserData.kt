@@ -43,7 +43,9 @@ internal object UserData {
 
     fun exportAsJson () : String {
         val moshi = Moshi.Builder().build()
-        val jsonAdapter = moshi.adapter<UserData>(UserData::class.java)
-        return jsonAdapter.toJson(this)
+        val model = Model()
+        model.dataSets = dataSets
+        val jsonAdapter = moshi.adapter<Model>(Model::class.java)
+        return jsonAdapter.toJson(model)
     }
 }
