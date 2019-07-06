@@ -85,10 +85,17 @@ object Core {
             Backend.ALPHA_REST -> TxPylonsAlphaEngine()
         }
         runBlocking {
-            UserData.parseFromJson(json)
-            userProfile = when (json) {
-                "" -> null
-                else -> Profile.fromUserData()
+            try {
+                UserData.parseFromJson(json)
+                userProfile = when (json) {
+                    "" -> null
+                    else -> Profile.fromUserData()
+                }
+            } catch (e : Exception) { // Eventually: we should recover properly from bad data
+                Logger.implementation.log(LogTag.info, "Saved data was bad; generating new credentials." +
+                        "(This behavior should not exist in production)")
+                UserData.dataSets = engine.getInitialDataSets()
+                userProfile = null
             }
             sane = true
             started = true
