@@ -42,7 +42,7 @@ internal class TxPylonsAlphaEngine : Engine() {
         val moshi = Moshi.Builder().build()
 
         fun getAddressString (addr : ByteArray) : String {
-            return Bech32Cosmos.convertAndEncode("cosmos", AminoCompat.accAddress(addr))
+            return Bech32Cosmos.convertAndEncode("cosmos1", AminoCompat.accAddress(addr))
         }
     }
 
@@ -78,7 +78,8 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val c = credentials as TxDummyEngine.Credentials
+        UserData.dataSets.getValue(prefix)["address"] = c.address
     }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
@@ -151,6 +152,8 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val cryptoTable = mutableMapOf<String, String>()
+        val engineTable = mutableMapOf<String, String>()
+        return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 }

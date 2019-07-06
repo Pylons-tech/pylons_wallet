@@ -56,9 +56,8 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun addressFromPubkey() {
-        val pubkey =
-        SECP256K1.PublicKey.fromBytes(Bytes.wrap(Base64().decode("Avz04VhtKJh8ACCVzlI8aTosGy0ikFXKIVHQ3jKMrosH"))).bytesArray()
-        val addr = CryptoCosmos.getAddressFromPubkey(Bytes.wrap(pubkey))
+        val pubkey = CryptoCosmos.getUncompressedPubkey(Base64().decode("Avz04VhtKJh8ACCVzlI8aTosGy0ikFXKIVHQ3jKMrosH"))
+        val addr = CryptoCosmos.getAddressFromPubkey(pubkey.bytes())
         assertEquals("cosmos1g9ahr6xhht5rmqven628nklxluzyv8z9jqjcmc", TxPylonsAlphaEngine.getAddressString(addr.toArray()))
     }
 
