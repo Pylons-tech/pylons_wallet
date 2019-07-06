@@ -78,8 +78,9 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
-        val c = credentials as TxDummyEngine.Credentials
+        val c = credentials as Credentials
         UserData.dataSets.getValue(prefix)["address"] = c.address
+        UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoHandler.keyPair!!.secretKey().bytes().toHexString()
     }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
@@ -136,11 +137,8 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getPylons(q: Int): String {
         val c = Core.userProfile!!.credentials as Credentials
-        val json = TxJson.getPylons(q, c.address, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence)
-        Logger().log(json, "request_json")
-        Logger().log(url, "request_url")
-        val response = HttpWire.post("""$url/txs""", json)
-        Logger().log(response, "request_response")
+        val response = postTxJson(
+                TxJson.getPylons(q, c.address, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
         try {
             val code = JsonPath.read<Int>(response, "$.code")
             if (code != null)
@@ -155,5 +153,13 @@ internal class TxPylonsAlphaEngine : Engine() {
         val cryptoTable = mutableMapOf<String, String>()
         val engineTable = mutableMapOf<String, String>()
         return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
+    }
+
+    private fun postTxJson (json : String) : String {
+        Logger().log(json, "request_json")
+        Logger().log(url, "request_url")
+        val response = HttpWire.post("""$url/txs""", json)
+        Logger().log(response, "request_response")
+        return response
     }
 }

@@ -18,10 +18,10 @@ internal class CryptoCosmos () : CryptoHandler() {
     var keyPair : SECP256K1.KeyPair? = null
 
     override fun importKeysFromUserData() {
-        System.out.println("Importing keys")
+        println("Importing keys")
         val bytes = Hex.decode(UserData.dataSets[getPrefix()]!!["key"]!!)
         keyPair =  SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(bytes)))
-        System.out.println(getCompressedPubkey(keyPair!!.publicKey()).toHexString())
+        println(getCompressedPubkey(keyPair!!.publicKey()).toHexString())
     }
 
     override fun generateNewKeys() {
@@ -54,7 +54,7 @@ internal class CryptoCosmos () : CryptoHandler() {
             var xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()
             val yStr = ecPoint.yCoord.toBigInteger().toString()
             val xStr = ecPoint.xCoord.toBigInteger().toString()
-            System.out.println("$xStr $yStr")
+            println("$xStr $yStr")
             val prefix = when (yStr > xStr) {
                 true -> 0x02
                 false -> 0x03
@@ -62,7 +62,7 @@ internal class CryptoCosmos () : CryptoHandler() {
             var bytes = MutableBytes.wrap(ByteArray(33))
             bytes[0] = prefix.toByte()
             xBytes.copyTo(bytes, 1)
-            System.out.println(bytes.toHexString())
+            println(bytes.toHexString())
             return bytes
         }
 

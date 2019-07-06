@@ -55,7 +55,11 @@ object Core {
      * Serializes persistent user data as a JSON string. All wallet apps will need to take care of calling
      * backupUserData() and storing the results in local storage on their own.
      */
-    fun backupUserData () : String? = UserData.exportAsJson()
+    fun backupUserData () : String? {
+        engine.dumpCredentials(userProfile!!.credentials)
+        println( UserData.exportAsJson())
+        return UserData.exportAsJson()
+    }
 
     fun setProfile (profile: Profile) {
         userProfile = profile
