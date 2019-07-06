@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
+import com.pylons.wallet.core.ops.newProfile
 import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
@@ -101,5 +102,17 @@ internal class TxPylonsAlphaTest {
         println(Hex.toHexString(Base64.decodeBase64("MEUCIQD02fsDPra8MtbRsyB1w7bqTM55Wu138zQbFcWx4+CFyAIge5WNPfKIuvzBZ69MyqHsqD8S1IwiEp+iUb6VSdtlpgY=")))
         println(Hex.toHexString(Base64.decodeBase64("vSfAvDzPMnJXy/wy5jMbTs6z+6KYe2CmWFEH3l2pQ21XJy1380CIcajBw34l5OOFZg03PdZ4O6ytuQH1SFU6vQ==")))
 
+    }
+
+    @Test
+    fun dumpCredentials () {
+        Core.start(Backend.ALPHA_REST, "")
+        val engine = Core.engine as TxPylonsAlphaEngine
+        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
+        engine.cryptoHandler.generateNewKeys()
+        Core.newProfile("fucko")
+        //UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_ApacheSecret)
+        val str = Core.backupUserData()
+        assertNotEquals("{}", str)
     }
 }

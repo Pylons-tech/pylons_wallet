@@ -57,6 +57,7 @@ object Core {
      */
     fun backupUserData () : String? {
         engine.dumpCredentials(userProfile!!.credentials)
+        println(UserData.dataSets.count())
         println( UserData.exportAsJson())
         return UserData.exportAsJson()
     }

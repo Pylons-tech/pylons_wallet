@@ -79,7 +79,7 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
-        UserData.dataSets.getValue(prefix)["address"] = c.address
+        UserData.dataSets[prefix]!!["address"] = c.address
         UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoHandler.keyPair!!.secretKey().bytes().toHexString()
     }
 
@@ -132,6 +132,8 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override fun registerNewProfile(name : String): String {
+        cryptoHandler.generateNewKeys()
+        Core.userProfile = Profile(credentials = getNewCredentials(), coins = mutableMapOf(), items = mutableListOf(), strings = mutableMapOf())
         return getPylons(500) // is this actually gonna work?
     }
 
