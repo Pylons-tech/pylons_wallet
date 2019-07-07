@@ -127,8 +127,15 @@ internal class TxPylonsAlphaEngine : Engine() {
 
     override fun getTransaction(id: String): Transaction {
         val response = HttpWire.get("$url/txs/$id")
-
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val msgType =JsonPath.read<String>(response, "$.tx.value.msg[0].type")
+        when (msgType) {
+            "pylons/GetPylons" -> {
+                val requester = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Requester")
+                val pylons = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Amount[0].amount")
+                return  Transaction(id, requester, Transaction.MsgGetPylons(pylons.toLong()), msgType)
+            }
+            else -> throw Exception("Unrecognized message type")
+        }
     }
 
     override fun registerNewProfile(name : String): String {
