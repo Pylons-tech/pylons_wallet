@@ -152,8 +152,10 @@ object Core {
             }
             val action = dat.msg.strings[ReservedKeys.wcAction].orEmpty()
             val out = actionResolutionTable(action, dat.msg)
+            out.msg!!.strings[ReservedKeys.statusBlock] = statusBlock.toJson()
             Logger.implementation.log("Resolution of message ${dat.msg.getAction()} complete}", LogTag.info)
             inDoResolveMessage = false
+            println(out.msg!!.toString())
             dat.callback?.invoke(out)
             onCompletedOperation?.invoke()
         }

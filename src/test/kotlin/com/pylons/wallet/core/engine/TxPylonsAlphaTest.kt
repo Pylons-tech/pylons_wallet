@@ -49,6 +49,7 @@ internal class TxPylonsAlphaTest {
         UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_Jack)
 
         engine.cryptoHandler.importKeysFromUserData()
+        engine.cryptoHandler.generateNewKeys()
         Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
         engine.getOwnBalances()
         engine.getPylons(500)

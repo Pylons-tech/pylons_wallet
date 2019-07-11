@@ -6,5 +6,6 @@ class ReservedKeys {
         const val wcAction = "${prefix}action"
         const val itemName = "${prefix}itemName"
         const val profileName = "${prefix}profileName"
+        const val statusBlock = "${prefix}statusBlock"
     }
 }

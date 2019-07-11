@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.Core
 import com.squareup.moshi.Moshi
 import com.pylons.wallet.core.constants.Actions
 import com.pylons.wallet.core.constants.Keys
