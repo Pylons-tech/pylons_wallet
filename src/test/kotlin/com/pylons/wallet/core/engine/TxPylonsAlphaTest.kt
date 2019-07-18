@@ -10,6 +10,7 @@ import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
+import org.apache.commons.codec.digest.Crypt
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.math.BigInteger
@@ -42,14 +43,16 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun frankenstein() {
+        val blah = "7b226163636f756e745f6e756d626572223a2230222c22636861696e5f6964223a2270796c6f6e73636861696e222c22666565223a7b22616d6f756e74223a5b5d2c22676173223a22323030303030227d2c226d656d6f223a22222c226d736773223a5b7b22416d6f756e74223a5b7b22616d6f756e74223a22353030222c2264656e6f6d223a2270796c6f6e227d5d2c22526571756573746572223a22636f736d6f733133726b7435727a6634677a3864766d777878786e326b717936703934686b70676c756838646a227d5d2c2273657175656e6365223a2230227d"
+        println(Hex.decode(blah).toString(Charsets.UTF_8))
+
         Core.start(Backend.ALPHA_REST, "")
         val engine = Core.engine as TxPylonsAlphaEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         //engine.cryptoHandler.generateNewKeys()
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_Jack)
-
+        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_ApacheSecret)
         engine.cryptoHandler.importKeysFromUserData()
-        engine.cryptoHandler.generateNewKeys()
+        println(Bech32Cosmos.convertAndEncode("cosmospub", Hex.decode("1624DE6420") + CryptoCosmos.getCompressedPubkey(engine.cryptoHandler.keyPair!!.publicKey()).toArray()))
         Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
         engine.getOwnBalances()
         engine.getPylons(500)

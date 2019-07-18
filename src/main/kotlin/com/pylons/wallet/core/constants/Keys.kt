@@ -23,5 +23,6 @@ class Keys {
         const val strings = "strings"
         const val json = "json"
         const val friends = "friends"
+        const val tx = "tx"
     }
 }

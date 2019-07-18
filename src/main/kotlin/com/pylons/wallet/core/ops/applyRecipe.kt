@@ -10,7 +10,7 @@ internal fun applyRecipe (msg: MessageData) : Response {
     val preferredItemIds = msg.stringArrays[Keys.preferredItemIds] ?: mutableListOf()
     val txHash = Core.applyRecipe(msg.strings[Keys.cookbook]!!, msg.strings[Keys.recipe]!!, preferredItemIds)
     waitUntilCommitted(txHash)
-    return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
+    return Response(MessageData(strings = mutableMapOf(Keys.tx to txHash)), Status.OK_TO_RETURN_TO_CLIENT)
 }
 
 private fun checkValid (msg : MessageData) {

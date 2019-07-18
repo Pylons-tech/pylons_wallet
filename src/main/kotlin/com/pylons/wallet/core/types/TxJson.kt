@@ -21,7 +21,7 @@ object TxJson {
         val cryptoHandler = (Core.engine as TxPylonsAlphaEngine).cryptoHandler
         val msg = msgTemplate_GetPylons(amount.toString(), address)
         val sComponent = msgTemplate_SignComponent_GetPylons(amount)
-        val signable = removeWhitespace(msgTemplate_Signable(sComponent, sequence, accountNumber))
+        val signable = removeWhitespace(msgTemplate_Signable(sComponent, sequence, accountNumber, address))
         println(signable)
         val signBytes = signable.toByteArray(Charsets.UTF_8)
         val signatureBytes = cryptoHandler.signature(signBytes)
@@ -41,7 +41,7 @@ object TxJson {
 
     private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())
 
-    private fun msgTemplate_Signable (msg : String, sequence: Int, accountNumber: Int) = removeWhitespace("""
+    private fun msgTemplate_Signable (msg : String, sequence: Int, accountNumber: Int, address: String) = removeWhitespace("""
             {
                 "account_number": "$accountNumber",
                 "chain_id": "pylonschain",
@@ -51,7 +51,7 @@ object TxJson {
                 },
                 "memo": "",
                 "msgs": $msg,
-                    "Requester": "cosmos146yrz0p79pm6xd33nr3ajtxv2206rvcx0rs2c6"
+                    "Requester": "$address"
                 }],
                 "sequence": "$sequence"
             }
