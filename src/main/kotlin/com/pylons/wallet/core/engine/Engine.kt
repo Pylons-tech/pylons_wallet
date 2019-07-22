@@ -41,4 +41,6 @@ internal abstract class Engine {
     abstract fun getPylons (q : Int) : String
 
     abstract fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
+
+    abstract fun sendPylons (q : Int, receiver : String) : String
 }

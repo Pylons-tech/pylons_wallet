@@ -140,4 +140,8 @@ internal class TxDummyEngine : Engine() {
         val engineTable = mutableMapOf<String, String>()
         return mutableMapOf("__CRYPTO_DUMMY__" to cryptoTable, "__TXDUMMY__" to engineTable)
     }
+
+    override fun sendPylons(q: Int, receiver: String): String {
+        TODO("tx redesign")
+    }
 }

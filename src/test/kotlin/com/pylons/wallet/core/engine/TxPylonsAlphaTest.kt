@@ -23,6 +23,7 @@ internal class TxPylonsAlphaTest {
     private val k_Third = "0XmJ33XhHvQjTBv3eIItl307Q8AcDKxQo9iF2DA==yik8"
     private val k_CompressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
     private val k_ApacheSecret = "c85ef7d79691fe79573b1a7064c19c1a9819ebdbd1faaab1a8ec92344438aaf4"
+    private val k_Bullshit = "ddddf7d79691fe79573b1a7064c19c1a9819ebdbd1faaab1a8ec92344438aaf4"
     private val k_Jack = "c651abedcf4b636b556d868b6b85376ec97e1be26a050adb1f1f7a2fbc1c7776"
 
     @Test
@@ -50,12 +51,13 @@ internal class TxPylonsAlphaTest {
         val engine = Core.engine as TxPylonsAlphaEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         //engine.cryptoHandler.generateNewKeys()
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_ApacheSecret)
+        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_Bullshit)
         engine.cryptoHandler.importKeysFromUserData()
-        println(Bech32Cosmos.convertAndEncode("cosmospub", Hex.decode("1624DE6420") + CryptoCosmos.getCompressedPubkey(engine.cryptoHandler.keyPair!!.publicKey()).toArray()))
+        //println(Bech32Cosmos.convertAndEncode("cosmospub", Hex.decode("1624DE6420") + CryptoCosmos.getCompressedPubkey(engine.cryptoHandler.keyPair!!.publicKey()).toArray()))
         Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
         engine.getOwnBalances()
         engine.getPylons(500)
+        engine.sendPylons(500, "cosmos13rkt5rzf4gz8dvmwxxxn2kqy6p94hkpgluh8dj")
         //assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }
 

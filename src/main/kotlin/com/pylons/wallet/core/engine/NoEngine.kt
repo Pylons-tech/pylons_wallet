@@ -55,4 +55,7 @@ internal class NoEngine : Engine() {
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
             throw NoEngineException()
+
+    override fun sendPylons(q: Int, receiver: String) =
+            throw NoEngineException()
 }

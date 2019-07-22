@@ -164,6 +164,20 @@ internal class TxPylonsAlphaEngine : Engine() {
         return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 
+    override fun sendPylons(q: Int, receiver: String): String {
+        val c = Core.userProfile!!.credentials as Credentials
+        val response = postTxJson(
+                TxJson.sendPylons(q, c.address, receiver, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
+        try {
+            val code = JsonPath.read<Int>(response, "$.code")
+            if (code != null)
+                throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
+        } catch (e : com.jayway.jsonpath.PathNotFoundException) {
+            // swallow this - we only find an error code if there is in fact an error
+        }
+        return JsonPath.read(response, "$.txhash")
+    }
+
     private fun postTxJson (json : String) : String {
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")

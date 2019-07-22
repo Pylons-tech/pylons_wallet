@@ -1,37 +1,41 @@
 package com.pylons.wallet.core.types
 
-import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsAlphaEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.SECP256K1
-import org.bouncycastle.jcajce.provider.digest.SHA256
-import org.bouncycastle.util.encoders.Hex
 
 import java.lang.StringBuilder
 import java.nio.charset.Charset
 import java.util.*
 
 object TxJson {
-    private val url = """http://35.224.155.76:80"""
     val base64 = Base64.getEncoder()
     private fun removeWhitespace (input : String) = input.trimIndent().replace("\\s".toRegex(), "")
 
-    fun getPylons (amount : Int, address: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String {
+    private fun baseJsonWeldFlow (msg : String, signComponent : String, address: String, accountNumber: Int, sequence: Int,
+                                  pubkey: SECP256K1.PublicKey) : String {
         val cryptoHandler = (Core.engine as TxPylonsAlphaEngine).cryptoHandler
-        val msg = msgTemplate_GetPylons(amount.toString(), address)
-        val sComponent = msgTemplate_SignComponent_GetPylons(amount)
-        val signable = removeWhitespace(msgTemplate_Signable(sComponent, sequence, accountNumber, address))
-        println(signable)
+        val signable = removeWhitespace(msgTemplate_Signable(signComponent, sequence, accountNumber, address))
         val signBytes = signable.toByteArray(Charsets.UTF_8)
         val signatureBytes = cryptoHandler.signature(signBytes)
-        val signature = base64.encodeToString( signatureBytes)
+        val signature = base64.encodeToString(signatureBytes)
         return baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature)
     }
 
-    private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String {
-        return """[{"Amount":[{"amount":"$amount","denom":"pylon"}]"""
-    }
+    fun getPylons (amount : Int, address: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+            baseJsonWeldFlow(msgTemplate_GetPylons(amount.toString(), address), msgTemplate_SignComponent_GetPylons(amount),
+                    address, accountNumber, sequence, pubkey)
+
+
+    fun sendPylons (amount : Int, sender: String, receiver: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String =
+            baseJsonWeldFlow(msgTemplate_SendPylons(amount.toString(), sender, receiver), msgTemplate_SignComponent_SendPylons(amount, sender, receiver),
+                    sender, accountNumber, sequence, pubkey)
+
+    private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
+            """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
+
+    private fun msgTemplate_SignComponent_SendPylons (amount: Int, sender : String, receiver: String) : String =
+            """{"Amount":[{"amount":"$amount","denom":"pylon"}],"Sender":"$sender","Receiver":"$receiver"}"""
 
     private fun strFromBase64 (base64 : CharArray) : String {
         val sb = StringBuilder()
@@ -56,6 +60,24 @@ object TxJson {
                 "sequence": "$sequence"
             }
             """)
+
+    private fun msgTemplate_SendPylons (amount : String, sender : String, receiver : String) = """
+            [
+            {
+                "type": "pylons/SendPylons",
+                "value": {
+                "Amount": [
+                {
+                    "denom": "pylon",
+                    "amount": "$amount"
+                }
+                ],
+                "Sender": "$sender",
+                "Receiver": "$receiver"
+            }
+            }
+            ]   
+    """
 
     private fun msgTemplate_GetPylons (amount : String, address : String) = """
             [
