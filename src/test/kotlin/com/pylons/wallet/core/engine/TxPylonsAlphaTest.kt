@@ -73,7 +73,7 @@ internal class TxPylonsAlphaTest {
         val pubkeyAsBytes = Hex.decode(k_CompressedPubkey)
         val decompressed = CryptoCosmos.getUncompressedPubkey(pubkeyAsBytes)
         val recompressed = CryptoCosmos.getCompressedPubkey(decompressed)
-        System.out.println(Hex.toHexString(recompressed.toArray()))
+        println(Hex.toHexString(recompressed.toArray()))
         assertArrayEquals(pubkeyAsBytes, recompressed.toArray())
     }
 
