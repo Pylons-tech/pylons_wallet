@@ -88,6 +88,7 @@ object Core {
         engine = when (backend) {
             Backend.DUMMY -> TxDummyEngine()
             Backend.ALPHA_REST -> TxPylonsAlphaEngine()
+            Backend.NONE -> NoEngine()
         }
         runBlocking {
             try {

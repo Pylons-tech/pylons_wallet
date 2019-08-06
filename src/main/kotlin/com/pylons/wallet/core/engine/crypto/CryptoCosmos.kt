@@ -17,6 +17,10 @@ internal class CryptoCosmos () : CryptoHandler() {
 //    private val adapter = Moshi.Builder().build().adapter<SECP256K1.KeyPair>(SECP256K1.KeyPair::class.java)
     var keyPair : SECP256K1.KeyPair? = null
 
+    fun keysFromSeed (seed : ByteArray) {
+        //SECP256K1.KeyPair.fromSecretKey()
+    }
+
     override fun importKeysFromUserData() {
         println("Importing keys")
         val bytes = Hex.decode(UserData.dataSets[getPrefix()]!!["key"]!!)

@@ -6,6 +6,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.*
 import com.pylons.wallet.core.types.*
 import com.squareup.moshi.*
+import javafx.scene.input.Mnemonic
 import kotlin.random.Random
 
 
@@ -21,7 +22,9 @@ import kotlin.random.Random
  */
 internal class TxDummyEngine : Engine() {
     override val prefix : String = "__TXDUMMY__"
+    override val backendType: Backend = Backend.DUMMY
     override val usesCrypto: Boolean = true // txdummy doesn't actually use crypto, but it thinkx it does
+    override val usesMnemonic: Boolean = false
     override val isDevEngine: Boolean = true
     override val isOffLineEngine: Boolean = true
 
@@ -46,6 +49,10 @@ internal class TxDummyEngine : Engine() {
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets.getValue(prefix)["address"] = c.address
+    }
+
+    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): Profile.Credentials {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun generateCredentialsFromKeys(): Profile.Credentials {

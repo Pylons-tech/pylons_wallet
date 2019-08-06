@@ -1,26 +1,22 @@
 package com.pylons.wallet.core.engine
 
+import com.github.alanverbner.bip39.WordList
+import com.github.alanverbner.bip39.WordListLanguage
 import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
-import com.pylons.wallet.core.internal.retryOnError
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction
 import com.squareup.moshi.*
-import com.sun.xml.internal.fastinfoset.util.StringArray
 import net.minidev.json.JSONArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
 import java.lang.Exception
-import java.net.HttpURLConnection
-import java.net.URL
 import java.security.Security
-
+import org.nightcode.bip39.*
+import org.nightcode.bip39.dictionary.*
 
 internal class TxPylonsAlphaEngine : Engine() {
     init {
@@ -32,7 +28,9 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override val prefix : String = "__TXPYLONSALPHA__"
+    override val backendType: Backend = Backend.ALPHA_REST
     override val usesCrypto: Boolean = true
+    override val usesMnemonic: Boolean = true
     override val isDevEngine: Boolean = true
     override val isOffLineEngine: Boolean = false
     var cryptoHandler = CryptoCosmos()
@@ -81,6 +79,15 @@ internal class TxPylonsAlphaEngine : Engine() {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
         UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoHandler.keyPair!!.secretKey().bytes().toHexString()
+    }
+
+    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): Profile.Credentials {
+        val bip39 = Bip39(EnglishDictionary.instance())
+        val seed = bip39.createSeed(mnemonic, passphrase)
+        //SECP256K1.SecretKey.
+
+        cryptoHandler.importKeysFromUserData()
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {

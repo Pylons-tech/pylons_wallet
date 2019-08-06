@@ -2,6 +2,7 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
+import com.sun.org.apache.xpath.internal.operations.Bool
 
 /***
  * Generic interface for transaction-handling layers.
@@ -12,7 +13,9 @@ import com.pylons.wallet.core.types.*
  */
 internal abstract class Engine {
     abstract val prefix : String
+    abstract val backendType : Backend
     abstract val usesCrypto : Boolean
+    abstract val usesMnemonic : Boolean
     abstract val isDevEngine : Boolean
     abstract val isOffLineEngine : Boolean
 
@@ -37,6 +40,12 @@ internal abstract class Engine {
      *  TODO: why does this actually exist?
      */
     abstract fun dumpCredentials (credentials: Profile.Credentials)
+
+    /**
+     * Generates a new Credentials object appropriate for our engine
+     * type from the given mnemonic.
+     */
+    abstract fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : Profile.Credentials
 
     /***
      * Generates a new Credentials object appropriate for our engine

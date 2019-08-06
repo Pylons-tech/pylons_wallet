@@ -10,8 +10,9 @@ import com.pylons.wallet.core.types.*
  */
 internal class NoEngine : Engine() {
     override val prefix: String = "__NOENGINE__"
-
+    override val backendType: Backend = Backend.NONE
     override val usesCrypto: Boolean = false
+    override val usesMnemonic: Boolean = false
     override val isDevEngine: Boolean = false
     override val isOffLineEngine: Boolean = false
 
@@ -27,6 +28,9 @@ internal class NoEngine : Engine() {
             throw NoEngineException()
 
     override fun dumpCredentials(credentials: Profile.Credentials) =
+            throw NoEngineException()
+
+    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String) =
             throw NoEngineException()
 
     override fun generateCredentialsFromKeys(): Profile.Credentials =

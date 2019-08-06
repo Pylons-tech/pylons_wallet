@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsAlphaEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
+import org.bouncycastle.util.encoders.Hex
 
 import java.lang.StringBuilder
 import java.nio.charset.Charset
@@ -16,8 +17,13 @@ object TxJson {
                                   pubkey: SECP256K1.PublicKey) : String {
         val cryptoHandler = (Core.engine as TxPylonsAlphaEngine).cryptoHandler
         val signable = removeWhitespace(msgTemplate_Signable(signComponent, sequence, accountNumber, address))
+        println("Signable:")
+        println(signable)
         val signBytes = signable.toByteArray(Charsets.UTF_8)
+        println(Hex.toHexString(signBytes))
         val signatureBytes = cryptoHandler.signature(signBytes)
+        println("girish:")
+        println(Hex.toHexString(cryptoHandler.signature("{}".toByteArray(Charsets.US_ASCII))))
         val signature = base64.encodeToString(signatureBytes)
         return baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature)
     }
@@ -35,7 +41,7 @@ object TxJson {
             """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
 
     private fun msgTemplate_SignComponent_SendPylons (amount: Int, sender : String, receiver: String) : String =
-            """{"Amount":[{"amount":"$amount","denom":"pylon"}],"Sender":"$sender","Receiver":"$receiver"}"""
+            """[{"Amount":[{"amount":"$amount","denom":"pylon"}],"Receiver":"$receiver","Sender":"$sender"}]"""
 
     private fun strFromBase64 (base64 : CharArray) : String {
         val sb = StringBuilder()
@@ -55,9 +61,7 @@ object TxJson {
                 },
                 "memo": "",
                 "msgs": $msg,
-                    "Requester": "$address"
-                }],
-                "sequence": "$sequence"
+                "sequence": "6"
             }
             """)
 
@@ -72,8 +76,10 @@ object TxJson {
                     "amount": "$amount"
                 }
                 ],
-                "Sender": "$sender",
-                "Receiver": "$receiver"
+                "Receiver": "$receiver",
+                "Sender": "$sender"
+                
+               
             }
             }
             ]   
