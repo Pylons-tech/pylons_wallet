@@ -11,6 +11,7 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
 import org.bouncycastle.util.encoders.Hex
+import java.sql.Time
 
 internal class TxPylonsAlphaTest {
     private val k_GaiaCli = "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330"
@@ -36,6 +37,25 @@ internal class TxPylonsAlphaTest {
         //assertEquals(a.trimIndent().replace("\\s".toRegex(), ""), b)
         // TODO: Rework this test now that the old functionality is kaput
     }
+
+    @Test
+    fun getsPylons () {
+        Core.start(Backend.LIVE_DEV, "")
+        val engine = Core.engine as TxPylonsEngine
+        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
+        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to InternalPrivKeyStore.BANK_TEST_KEY)
+        engine.cryptoHandler.importKeysFromUserData()
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        engine.getOwnBalances()
+        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
+        val txhash = engine.getPylons(500)
+        println("Waiting 3 seconds to allow chain to catch up")
+        Thread.sleep(3000)
+        engine.getOwnBalances()
+        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
+        assertEquals(engine.getTransaction(txhash).state, Transaction.State.TX_ACCEPTED)
+    }
+
 
     @Test
     fun frankenstein() {
