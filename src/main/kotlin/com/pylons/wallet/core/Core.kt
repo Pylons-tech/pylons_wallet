@@ -5,13 +5,9 @@ import kotlinx.coroutines.*
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.engine.*
-import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.util.encoders.Hex
-import sun.plugin.util.UserProfile
-import java.util.*
 import java.util.concurrent.LinkedBlockingQueue
 
 object Core {
@@ -67,9 +63,9 @@ object Core {
     }
 
     fun forceKeys (keyString : String, address : String) {
-        val engine = engine as TxPylonsAlphaEngine
+        val engine = engine as TxPylonsEngine
         engine.cryptoHandler.keyPair = SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(keyString))))
-        userProfile = Profile(TxPylonsAlphaEngine.Credentials(address), mutableMapOf("name" to "Jack"), mutableMapOf(), mutableListOf())
+        userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), mutableMapOf(), mutableListOf())
     }
 
     fun dumpUserProfile () : String = userProfile!!.dump()
@@ -87,7 +83,8 @@ object Core {
     fun start (backend: Backend, json : String) {
         engine = when (backend) {
             Backend.DUMMY -> TxDummyEngine()
-            Backend.ALPHA_REST -> TxPylonsAlphaEngine()
+            Backend.LIVE -> TxPylonsEngine()
+            Backend.LIVE_DEV -> TxPylonsDevEngine()
             Backend.NONE -> NoEngine()
         }
         runBlocking {

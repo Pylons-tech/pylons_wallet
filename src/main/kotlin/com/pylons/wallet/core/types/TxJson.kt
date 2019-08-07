@@ -1,12 +1,11 @@
 package com.pylons.wallet.core.types
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.engine.TxPylonsAlphaEngine
+import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import org.bouncycastle.util.encoders.Hex
 
 import java.lang.StringBuilder
-import java.nio.charset.Charset
 import java.util.*
 
 object TxJson {
@@ -15,7 +14,7 @@ object TxJson {
 
     private fun baseJsonWeldFlow (msg : String, signComponent : String, address: String, accountNumber: Int, sequence: Int,
                                   pubkey: SECP256K1.PublicKey) : String {
-        val cryptoHandler = (Core.engine as TxPylonsAlphaEngine).cryptoHandler
+        val cryptoHandler = (Core.engine as TxPylonsEngine).cryptoHandler
         val signable = removeWhitespace(msgTemplate_Signable(signComponent, sequence, accountNumber, address))
         println("Signable:")
         println(signable)
@@ -61,7 +60,7 @@ object TxJson {
                 },
                 "memo": "",
                 "msgs": $msg,
-                "sequence": "6"
+                "sequence": "$sequence"
             }
             """)
 

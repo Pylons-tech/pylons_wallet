@@ -1,7 +1,5 @@
 package com.pylons.wallet.core.engine
 
-import com.github.alanverbner.bip39.WordList
-import com.github.alanverbner.bip39.WordListLanguage
 import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Logger
@@ -18,7 +16,7 @@ import java.security.Security
 import org.nightcode.bip39.*
 import org.nightcode.bip39.dictionary.*
 
-internal class TxPylonsAlphaEngine : Engine() {
+internal open class TxPylonsEngine : Engine() {
     init {
         Security.removeProvider("BC")
         Security.addProvider(BouncyCastleProvider())
@@ -28,10 +26,10 @@ internal class TxPylonsAlphaEngine : Engine() {
     }
 
     override val prefix : String = "__TXPYLONSALPHA__"
-    override val backendType: Backend = Backend.ALPHA_REST
+    override val backendType: Backend = Backend.LIVE
     override val usesCrypto: Boolean = true
     override val usesMnemonic: Boolean = true
-    override val isDevEngine: Boolean = true
+    override val isDevEngine: Boolean = false
     override val isOffLineEngine: Boolean = false
     var cryptoHandler = CryptoCosmos()
     private val url = """http://35.224.155.76:80"""
