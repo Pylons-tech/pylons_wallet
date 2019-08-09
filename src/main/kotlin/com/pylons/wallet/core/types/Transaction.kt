@@ -34,7 +34,7 @@ data class Transaction(
         }
     }
 
-    data class MsgSendPylons(val amount : Long = 0, val sender : String = "", val receiver : String = "") {
+    data class MsgSendPylons(val amount : Long = 0, val sender : String = "", val receiver : String = ""): Message() {
         companion object {
             fun fromResponse (json : String) : MsgSendPylons {
                 val amount = JsonPath.read<Long>(json, "$.tx.msg.value.Amount.amount")

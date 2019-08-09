@@ -139,6 +139,12 @@ internal open class TxPylonsEngine : Engine() {
                 val pylons = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Amount[0].amount")
                 return  Transaction(id, requester, Transaction.MsgGetPylons(pylons.toLong()), msgType)
             }
+            "pylons/SendPylons" -> {
+                val pylons = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Amount[0].amount")
+                val sender = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Sender")
+                val receiver = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Receiver")
+                return  Transaction(id, sender, Transaction.MsgSendPylons(pylons.toLong(), sender, receiver))
+            }
             else -> throw Exception("Unrecognized message type")
         }
     }
