@@ -53,7 +53,7 @@ internal class TxPylonsAlphaTest {
         Thread.sleep(5000)
         engine.getOwnBalances()
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        assertEquals(Transaction.State.TX_ACCEPTED, engine.getTransaction(txhash).state)
+        //assertEquals(Transaction.State.TX_ACCEPTED, engine.getTransaction(txhash).state)
     }
 
     @Test
@@ -71,24 +71,7 @@ internal class TxPylonsAlphaTest {
         Thread.sleep(5000)
         engine.getOwnBalances()
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        assertEquals(Transaction.State.TX_ACCEPTED, engine.getTransaction(txhash).state)
-    }
-
-
-    @Test
-    fun frankenstein() {
-        Core.start(Backend.LIVE_DEV, "")
-        val engine = Core.engine as TxPylonsEngine
-        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-        //engine.cryptoHandler.generateNewKeys()
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to InternalPrivKeyStore.BANK_TEST_KEY)
-        engine.cryptoHandler.importKeysFromUserData()
-        //println(Bech32Cosmos.convertAndEncode("cosmospub", Hex.decode("1624DE6420") + CryptoCosmos.getCompressedPubkey(engine.cryptoHandler.keyPair!!.publicKey()).toArray()))
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
-        engine.getOwnBalances()
-        //engine.getPylons(500)
-        engine.sendPylons(5, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch")
-        //assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+        //assertEquals(Transaction.State.TX_ACCEPTED, engine.getTransaction(txhash).state)
     }
 
     @Test
