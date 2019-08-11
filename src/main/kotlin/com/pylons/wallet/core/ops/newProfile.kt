@@ -17,9 +17,9 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     val c = Core.engine.getNewCredentials()
     Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true,
             coins = mutableMapOf(), items = mutableListOf()))
-    val txHash = Core.newProfile(extraArgs.strings[Keys.name]!!)
-    waitUntilCommitted(txHash)
+    val tx = Core.newProfile(extraArgs.strings[Keys.name]!!)
+    waitUntilCommitted(tx.id!!)
     return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
 }
 
-fun Core.newProfile (name : String) : String = Core.engine.registerNewProfile(name)
+fun Core.newProfile (name : String) : Transaction = Core.engine.registerNewProfile(name)

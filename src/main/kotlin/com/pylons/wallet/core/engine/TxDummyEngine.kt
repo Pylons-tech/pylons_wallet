@@ -71,7 +71,7 @@ internal class TxDummyEngine : Engine() {
         return OutsideWorldDummy.transactions[id]!!
     }
 
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>): String {
+    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>): Transaction {
         // There really needs to be an apparatus for getting more detailed error data out of this than "nope"
         TODO("Rejigger this")
 //        val gameRule = fetchGameRule(cookbook, recipe)
@@ -93,7 +93,7 @@ internal class TxDummyEngine : Engine() {
         }
     }
 
-    override fun commitTx(tx: Transaction) : String {
+    override fun commitTx(tx: Transaction) : Transaction {
         TODO("Rejigger this")
 //        tx.submit()
 //        runBlocking { delay(500) }
@@ -127,14 +127,14 @@ internal class TxDummyEngine : Engine() {
         return CryptoDummy()
     }
 
-    override fun registerNewProfile(name : String) : String {
+    override fun registerNewProfile(name : String) : Transaction {
         TODO("Rejigger this")
         //runBlocking { delay(500) }
         //Core.userProfile!!.provisional = false
         //return Core.userProfile
     }
 
-    override fun getPylons(q: Int): String {
+    override fun getPylons(q: Int): Transaction {
         TODO("tx redesign")
         //runBlocking { delay(500) }
 //        var tx = Transaction(getNewTransactionId(), "", (Core.userProfile!!.credentials as Credentials).address,
@@ -148,7 +148,7 @@ internal class TxDummyEngine : Engine() {
         return mutableMapOf("__CRYPTO_DUMMY__" to cryptoTable, "__TXDUMMY__" to engineTable)
     }
 
-    override fun sendPylons(q: Int, receiver: String): String {
+    override fun sendPylons(q: Int, receiver: String): Transaction {
         TODO("tx redesign")
     }
 }
