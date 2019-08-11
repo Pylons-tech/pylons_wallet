@@ -7,8 +7,8 @@ import com.pylons.wallet.core.types.*
 
 internal fun getPylons(msg: MessageData): Response {
     if (msg.ints[Keys.pylons] == null) throw BadMessageException("getPylons", Keys.pylons, "Int")
-    val txHash = Core.engine.getPylons(msg.ints[Keys.pylons]!!)
-    waitUntilCommitted(txHash)
-    return Response(MessageData(strings = mutableMapOf(Keys.tx to txHash)), Status.OK_TO_RETURN_TO_CLIENT)}
+    val tx = Core.engine.getPylons(msg.ints[Keys.pylons]!!)
+    waitUntilCommitted(tx.id!!)
+    return Response(MessageData(strings = mutableMapOf(Keys.tx to tx.id!!)), Status.OK_TO_RETURN_TO_CLIENT)}
 
-fun Core.getPylons (q : Int) : String = Core.engine.getPylons(q)
+fun Core.getPylons (q : Int) : String = Core.engine.getPylons(q).id!!

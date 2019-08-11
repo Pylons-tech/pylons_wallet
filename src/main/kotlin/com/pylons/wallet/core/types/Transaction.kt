@@ -9,19 +9,12 @@ import java.lang.NullPointerException
  * Models a transaction. Internally, transactions are just sets of inputs and outputs
  */
 data class Transaction(
-        val txId: String? = null,
+        var id: String? = null,
         val requester : String? = null,
         val msg : Message? = null,
         val msgType : String? = null,
-        //val addressIn: String = "",
-        //val addressOut: String = "",
-        //val coinsIn: List<Coin> = listOf(),
-        //val coinsOut: List<Coin> = listOf(),
-        //val itemsIn: List<Item> = listOf(),
-        //val itemsOut: List<Item> = listOf(),
+        val resolver : ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT
-        //val coinsCatalysts: List<Coin> = listOf(),
-        //val itemsCatalysts: List<Item> = listOf()
 ) {
     abstract class Message
 
@@ -75,24 +68,18 @@ data class Transaction(
 
     }
 
-    fun finish(newState: State) {
-        state = newState
-        when (state) {
-            State.TX_NOT_YET_SENT -> throw Exception("Transaction.finish should never be called with" +
-                    "State.TX_NOT_YET_SENT as an argument. Debug this.")
-            State.TX_NOT_YET_COMMITTED -> throw Exception("Transaction.finish should never be called with" +
-                    "State.TX_NOT_YET_COMMITTED as an argument. Debug this.")
-            //State.TX_ACCEPTED -> onResolved.onSuccess(this)
-            //State.TX_REFUSED -> onResolved.onFailure(this)
-        }
-
-    }
-
     fun submit() {
         if (state != State.TX_NOT_YET_SENT) throw Exception("Transaction.submit() should only be called on" +
-                "Transactions of state TX_NOT_YET_SEND")
+                "Transactions of state TX_NOT_YET_SENT")
         state = State.TX_NOT_YET_COMMITTED
-        //onSubmitted.onSuccess(this)
+        state = try {
+            resolver?.invoke(this)
+            State.TX_ACCEPTED
+        } catch (e : Exception) {
+            // todo: this should get some data
+            State.TX_REFUSED
+        }
+
     }
 
     fun detailsToMessageData() : MessageData {

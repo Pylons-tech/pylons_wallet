@@ -26,13 +26,13 @@ internal abstract class Engine {
      * we'll preferentially use those items to fill inputs that they
      * fit the conditions for.
      */
-    abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : String
+    abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Transaction
 
     /**
      * Low-level commit TX function.
      * TODO: determine if this should even exist; sendPylons suggests 'no'
      */
-    abstract fun commitTx(tx: Transaction) : String
+    abstract fun commitTx(tx: Transaction) : Transaction
 
     /**
      * Copies some data from profile's credentials object to userdata
@@ -92,7 +92,7 @@ internal abstract class Engine {
      * Does not generate new keys!
      * TODO: actually i think this does generate keys, but it Oughtn't
      */
-    abstract fun registerNewProfile (name : String) : String
+    abstract fun registerNewProfile (name : String) : Transaction
 
     /**
      * Calls get pylons endpoint.
@@ -100,7 +100,7 @@ internal abstract class Engine {
      * but backend is locked to 500 right now.
      * TODO: payment integration???
      */
-    abstract fun getPylons (q : Int) : String
+    abstract fun getPylons (q : Int) : Transaction
 
     /**
      * Gets initial userdata tables for the engine type.
@@ -110,5 +110,5 @@ internal abstract class Engine {
     /***
      * Calls send pylons endpoint.
      */
-    abstract fun sendPylons (q : Int, receiver : String) : String
+    abstract fun sendPylons (q : Int, receiver : String) : Transaction
 }

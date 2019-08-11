@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.engine
 
 import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.PathNotFoundException
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
@@ -63,11 +64,11 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): String {
+    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Transaction {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun commitTx(tx: Transaction): String {
+    override fun commitTx(tx: Transaction): Transaction {
         //val response = HttpWire.post("$url/txs", getJsonForTx(tx))
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
@@ -149,24 +150,26 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    override fun registerNewProfile(name : String): String {
+    override fun registerNewProfile(name : String): Transaction {
         cryptoHandler.generateNewKeys()
         Core.userProfile = Profile(credentials = getNewCredentials(), coins = mutableMapOf(), items = mutableListOf(), strings = mutableMapOf())
         return getPylons(500) // is this actually gonna work?
     }
 
-    override fun getPylons(q: Int): String {
+    override fun getPylons(q: Int): Transaction {
         val c = Core.userProfile!!.credentials as Credentials
-        val response = postTxJson(
-                TxJson.getPylons(q, c.address, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
-        try {
-            val code = JsonPath.read<Int>(response, "$.code")
-            if (code != null)
-                throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
-        } catch (e : com.jayway.jsonpath.PathNotFoundException) {
-            // swallow this - we only find an error code if there is in fact an error
-        }
-        return JsonPath.read(response, "$.txhash")
+        return Transaction(resolver =  {
+            val response = postTxJson(
+                    TxJson.getPylons(q, c.address, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
+            try {
+                val code = JsonPath.read<Int>(response, "$.code")
+                if (code != null)
+                    throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
+            } catch (e : com.jayway.jsonpath.PathNotFoundException) {
+                // swallow this - we only find an error code if there is in fact an error
+            }
+            it.id = JsonPath.read(response, "$.txhash")
+        })
     }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
@@ -175,18 +178,20 @@ internal open class TxPylonsEngine : Engine() {
         return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 
-    override fun sendPylons(q: Int, receiver: String): String {
+    override fun sendPylons(q: Int, receiver: String): Transaction {
         val c = Core.userProfile!!.credentials as Credentials
-        val response = postTxJson(
-                TxJson.sendPylons(q, c.address, receiver, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
-        try {
-            val code = JsonPath.read<Int>(response, "$.code")
-            if (code != null)
-                throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
-        } catch (e : com.jayway.jsonpath.PathNotFoundException) {
-            // swallow this - we only find an error code if there is in fact an error
-        }
-        return JsonPath.read(response, "$.txhash")
+        return Transaction(resolver =  {
+            val response = postTxJson(
+                    TxJson.sendPylons(q, c.address, receiver, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
+            try {
+                val code = JsonPath.read<Int>(response, "$.code")
+                if (code != null)
+                    throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
+            } catch (e : PathNotFoundException) {
+                // swallow this - we only find an error code if there is in fact an error
+            }
+            it.id = JsonPath.read(response, "$.txhash")
+        })
     }
 
     private fun postTxJson (json : String) : String {
