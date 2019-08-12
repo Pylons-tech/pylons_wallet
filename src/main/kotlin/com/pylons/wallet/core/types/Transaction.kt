@@ -9,13 +9,20 @@ import java.lang.NullPointerException
  * Models a transaction. Internally, transactions are just sets of inputs and outputs
  */
 data class Transaction(
-        var id: String? = null,
         val requester : String? = null,
         val msg : Message? = null,
         val msgType : String? = null,
         val resolver : ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT
 ) {
+    var id : String? = null
+        get() = {
+            if (field == null) println("Warning: got tx id, but tx id was unset. Was the transaction submitted?")
+            field
+        }()
+
+
+
     abstract class Message
 
     data class MsgGetPylons(val amount : Long = 0): Message() {
@@ -68,7 +75,7 @@ data class Transaction(
 
     }
 
-    fun submit() {
+    fun submit() : Transaction {
         if (state != State.TX_NOT_YET_SENT) throw Exception("Transaction.submit() should only be called on" +
                 "Transactions of state TX_NOT_YET_SENT")
         state = State.TX_NOT_YET_COMMITTED
@@ -79,7 +86,7 @@ data class Transaction(
             // todo: this should get some data
             State.TX_REFUSED
         }
-
+        return this
     }
 
     fun detailsToMessageData() : MessageData {

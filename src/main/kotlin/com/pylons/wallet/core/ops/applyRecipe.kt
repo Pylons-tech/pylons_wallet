@@ -19,4 +19,4 @@ private fun checkValid (msg : MessageData) {
 }
 
 fun Core.applyRecipe (cookbook : String, recipe : String, preferredItemIds : List<String>?) : Transaction =
-        Core.engine.applyRecipe(cookbook, recipe, preferredItemIds.orEmpty())
+        Core.engine.applyRecipe(cookbook, recipe, preferredItemIds.orEmpty()).submit()

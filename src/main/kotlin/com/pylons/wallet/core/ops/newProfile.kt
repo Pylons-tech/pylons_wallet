@@ -22,4 +22,4 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
 }
 
-fun Core.newProfile (name : String) : Transaction = Core.engine.registerNewProfile(name)
+fun Core.newProfile (name : String) : Transaction = Core.engine.registerNewProfile(name).submit()

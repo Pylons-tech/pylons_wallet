@@ -48,12 +48,13 @@ internal class TxPylonsAlphaTest {
         Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
         engine.getOwnBalances()
         var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val txhash = engine.getPylons(500)
+        val tx = engine.getPylons(500)
+        tx.submit()
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         engine.getOwnBalances()
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        //assertEquals(Transaction.State.TX_ACCEPTED, engine.getTransaction(txhash).state)
+        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }
 
     @Test
@@ -66,12 +67,13 @@ internal class TxPylonsAlphaTest {
         Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
         engine.getOwnBalances()
         var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val txhash = engine.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch")
+        val tx = engine.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch")
+        tx.submit()
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         engine.getOwnBalances()
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        //assertEquals(Transaction.State.TX_ACCEPTED, engine.getTransaction(txhash).state)
+        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }
 
     @Test

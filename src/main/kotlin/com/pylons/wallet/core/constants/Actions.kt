@@ -18,5 +18,6 @@ class Actions {
         const val setFriends = "SET_FRIENDS"
         const val getTransaction ="GET_TRANSACTION"
         const val getPylons = "GET_PYLONS"
+        const val sendPylons = "SEND_PYLONS"
     }
 }
