@@ -12,10 +12,11 @@ data class Transaction(
         val requester : String? = null,
         val msg : Message? = null,
         val msgType : String? = null,
+        val _id : String? = null,
         val resolver : ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT
 ) {
-    var id : String? = null
+    var id : String? = _id
         get() = {
             if (field == null) println("Warning: got tx id, but tx id was unset. Was the transaction submitted?")
             field

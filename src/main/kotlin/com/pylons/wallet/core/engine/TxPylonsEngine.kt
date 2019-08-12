@@ -133,18 +133,17 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getTransaction(id: String): Transaction {
         val response = HttpWire.get("$url/txs/$id")
-        val msgType =JsonPath.read<String>(response, "$.tx.value.msg[0].type")
-        when (msgType) {
+        return when (val msgType =JsonPath.read<String>(response, "$.tx.value.msg[0].type")) {
             "pylons/GetPylons" -> {
                 val requester = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Requester")
                 val pylons = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Amount[0].amount")
-                return  Transaction(id, requester, Transaction.MsgGetPylons(pylons.toLong()), msgType)
+                Transaction(requester, Transaction.MsgGetPylons(pylons.toLong()), msgType, id)
             }
             "pylons/SendPylons" -> {
                 val pylons = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Amount[0].amount")
                 val sender = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Sender")
                 val receiver = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Receiver")
-                return  Transaction(id, sender, Transaction.MsgSendPylons(pylons.toLong(), sender, receiver))
+                Transaction(sender, Transaction.MsgSendPylons(pylons.toLong(), sender, receiver), msgType, id)
             }
             else -> throw Exception("Unrecognized message type")
         }
