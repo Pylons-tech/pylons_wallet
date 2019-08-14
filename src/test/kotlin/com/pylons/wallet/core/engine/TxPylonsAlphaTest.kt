@@ -22,17 +22,22 @@ internal class TxPylonsAlphaTest {
     private val k_Bullshit = "ddddf7d79691fe79573b1a7064c19c1a9819ebdbd1faaab1a8ec92344438aaf4"
     private val k_Jack = "c651abedcf4b636b556d868b6b85376ec97e1be26a050adb1f1f7a2fbc1c7776"
 
+    private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
+        Core.start(Backend.LIVE_DEV, "")
+        val engine = Core.engine as TxPylonsDevEngine
+        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
+        if (key != null) {
+            UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
+            engine.cryptoHandler.importKeysFromUserData()
+        }
+        else engine.cryptoHandler.generateNewKeys()
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        return engine
+    }
+
     @Test
     fun generateJson () {
-        Core.start(Backend.LIVE_DEV, "")
-        val engine = Core.engine as TxPylonsEngine
-        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-        //engine.cryptoHandler.generateNewKeys()
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_GaiaCli)
-
-        engine.cryptoHandler.importKeysFromUserData()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
-        //val a = engine.getGetPylonsJson("500", "DUMMYADDR", engine.cryptoHandler.keyPair!!)
+        val engine = engineSetup(k_GaiaCli)
         val b = TxJson.getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
         //assertEquals(a.trimIndent().replace("\\s".toRegex(), ""), b)
         // TODO: Rework this test now that the old functionality is kaput
@@ -40,16 +45,10 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun getsPylons () {
-        Core.start(Backend.LIVE_DEV, "")
-        val engine = Core.engine as TxPylonsEngine
-        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to InternalPrivKeyStore.BANK_TEST_KEY)
-        engine.cryptoHandler.importKeysFromUserData()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.getOwnBalances()
         var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val tx = engine.getPylons(500)
-        tx.submit()
+        val tx = engine.getPylons(500).submit()
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         engine.getOwnBalances()
@@ -59,16 +58,10 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun sendsPylons () {
-        Core.start(Backend.LIVE_DEV, "")
-        val engine = Core.engine as TxPylonsEngine
-        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to InternalPrivKeyStore.BANK_TEST_KEY)
-        engine.cryptoHandler.importKeysFromUserData()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.getOwnBalances()
         var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val tx = engine.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch")
-        tx.submit()
+        val tx = engine.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch").submit()
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         engine.getOwnBalances()
@@ -96,43 +89,22 @@ internal class TxPylonsAlphaTest {
     fun signature () {
         val data = Bytes.wrap("This is an example of a signed message.".toByteArray(Charsets.UTF_8))
         println("signing: \n" + data.toHexString())
-        Core.start(Backend.LIVE_DEV, "")
-        val engine = Core.engine as TxPylonsEngine
-        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-        //engine.cryptoHandler.generateNewKeys()
-        UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_ApacheSecret)
-
-        engine.cryptoHandler.importKeysFromUserData()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        val engine = engineSetup(k_ApacheSecret)
         val signature = SECP256K1.sign(data, engine.cryptoHandler.keyPair)
         println("signature : \n" + Hex.toHexString(signature.bytes().toArray().slice(0 until 64).toByteArray()))
-        val a = SECP256K1.verify(data, signature, engine.cryptoHandler.keyPair!!.publicKey())
-        assertTrue(a)
-        //assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
-    }
-
-    @Test
-    fun addressGen () {
-        val key = CryptoCosmos.getUncompressedPubkey(Hex.decode("0283e197461d60d77d3b40e854646583ffebdcb12fa7f0327c4cd1c68b316e80f5"))
-        val addr = CryptoCosmos.getAddressFromPubkey(key.bytes())
-        assertArrayEquals(Hex.decode("050445E241606088942B8AE403DFF2FEF055CB0C"), addr.toArray())
+        assertTrue(SECP256K1.verify(data, signature, engine.cryptoHandler.keyPair!!.publicKey()))
     }
 
     @Test
     fun b64ToHex () {
         println(Hex.toHexString(Base64.decodeBase64("MEUCIQD02fsDPra8MtbRsyB1w7bqTM55Wu138zQbFcWx4+CFyAIge5WNPfKIuvzBZ69MyqHsqD8S1IwiEp+iUb6VSdtlpgY=")))
         println(Hex.toHexString(Base64.decodeBase64("vSfAvDzPMnJXy/wy5jMbTs6z+6KYe2CmWFEH3l2pQ21XJy1380CIcajBw34l5OOFZg03PdZ4O6ytuQH1SFU6vQ==")))
-
     }
 
     @Test
     fun dumpCredentials () {
-        Core.start(Backend.LIVE_DEV, "")
-        val engine = Core.engine as TxPylonsEngine
-        engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-        engine.cryptoHandler.generateNewKeys()
+        engineSetup()
         Core.newProfile("fucko")
-        //UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to k_ApacheSecret)
         val str = Core.backupUserData()
         assertNotEquals("{}", str)
     }
