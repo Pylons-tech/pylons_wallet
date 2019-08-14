@@ -152,7 +152,7 @@ internal open class TxPylonsEngine : Engine() {
     override fun registerNewProfile(name : String): Transaction {
         cryptoHandler.generateNewKeys()
         Core.userProfile = Profile(credentials = getNewCredentials(), coins = mutableMapOf(), items = mutableListOf(), strings = mutableMapOf())
-        return getPylons(500) // is this actually gonna work?
+        return getPylons(500)
     }
 
     override fun getPylons(q: Int): Transaction {
