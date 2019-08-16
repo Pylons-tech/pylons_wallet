@@ -112,6 +112,9 @@ internal class TxDummyEngine : Engine() {
         //return Core.userProfile
     }
 
+    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Int): Transaction =
+            TODO("?????")
+
     override fun getForeignBalances(id : String) : ForeignProfile?{
         runBlocking { delay(500) }
         println(OutsideWorldDummy.profiles.containsKey(id).toString() + " $id")

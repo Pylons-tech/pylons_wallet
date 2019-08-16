@@ -7,7 +7,7 @@ import com.pylons.wallet.core.types.*
 
 internal fun getPylons(msg: MessageData): Response {
     if (msg.ints[Keys.pylons] == null) throw BadMessageException("getPylons", Keys.pylons, "Int")
-    val tx = Core.engine.getPylons(msg.ints[Keys.pylons]!!)
+    val tx = Core.getPylons(msg.ints[Keys.pylons]!!)
     waitUntilCommitted(tx.id!!)
     return Response(MessageData(strings = mutableMapOf(Keys.tx to tx.id!!)), Status.OK_TO_RETURN_TO_CLIENT)}
 

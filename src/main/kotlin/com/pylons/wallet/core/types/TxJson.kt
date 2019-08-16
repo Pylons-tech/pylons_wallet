@@ -36,11 +36,23 @@ object TxJson {
             baseJsonWeldFlow(msgTemplate_SendPylons(amount.toString(), sender, receiver), msgTemplate_SignComponent_SendPylons(amount, sender, receiver),
                     sender, accountNumber, sequence, pubkey)
 
+    fun createCookbook (name : String, devel : String, desc : String, version : String,
+                        supportEmail : String, level : Int, sender : String,
+                        pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String =
+            baseJsonWeldFlow(msgTemplate_CreateCookbook(name, devel, desc, version, supportEmail, level, sender),
+                    msgTemplate_SignComponent_CreateCookbook(name, devel, desc, version, supportEmail, level, sender),
+                    sender, accountNumber, sequence, pubkey)
+
     private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
             """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
 
     private fun msgTemplate_SignComponent_SendPylons (amount: Int, sender : String, receiver: String) : String =
             """[{"Amount":[{"amount":"$amount","denom":"pylon"}],"Receiver":"$receiver","Sender":"$sender"}]"""
+
+    private fun msgTemplate_SignComponent_CreateCookbook (name : String, devel : String, desc : String, version : String,
+                                                          supportEmail : String, level : Int, sender : String) : String =
+            """["Name": "$name", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
+                    """"SupportEmail": "$supportEmail","Level": $level,"Sender": "$sender"]"""
 
     private fun strFromBase64 (base64 : CharArray) : String {
         val sb = StringBuilder()
@@ -63,6 +75,24 @@ object TxJson {
                 "sequence": "$sequence"
             }
             """)
+
+    private fun msgTemplate_CreateCookbook (name : String, devel : String, desc : String, version : String,
+                                            supportEmail : String, level : Int, sender : String) = """
+        [
+        {
+            "type": "pylons/CreateCookbook",
+            "value": {
+                "Name": "$name",
+                "Description": "$desc",
+                "Developer": "$devel",
+                "Version": "$version",
+                "SupportEmail": "$supportEmail",
+                "Level": $level,
+                "Sender": "$sender"
+            }
+        }
+        ]
+    """
 
     private fun msgTemplate_SendPylons (amount : String, sender : String, receiver : String) = """
             [

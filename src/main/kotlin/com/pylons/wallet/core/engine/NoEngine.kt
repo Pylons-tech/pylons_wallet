@@ -27,6 +27,9 @@ internal class NoEngine : Engine() {
     override fun commitTx(tx: Transaction): Transaction =
             throw NoEngineException()
 
+    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Int): Transaction =
+            throw NoEngineException()
+
     override fun dumpCredentials(credentials: Profile.Credentials) =
             throw NoEngineException()
 

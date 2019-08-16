@@ -68,6 +68,10 @@ internal open class TxPylonsEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Int): Transaction {
+        throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
+    }
+
     override fun commitTx(tx: Transaction): Transaction {
         //val response = HttpWire.post("$url/txs", getJsonForTx(tx))
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -193,7 +197,7 @@ internal open class TxPylonsEngine : Engine() {
         })
     }
 
-    private fun postTxJson (json : String) : String {
+    protected fun postTxJson (json : String) : String {
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")
         val response = HttpWire.post("""$url/txs""", json)

@@ -35,6 +35,12 @@ internal abstract class Engine {
     abstract fun commitTx(tx: Transaction) : Transaction
 
     /**
+     * Create-cookbook message
+     */
+    abstract fun createCookbook (name : String, devel : String, desc : String, version : String,
+                                 supportEmail : String, level : Int) : Transaction
+
+    /**
      * Copies some data from profile's credentials object to userdata
      * for serialization.
      *  TODO: why does this actually exist?

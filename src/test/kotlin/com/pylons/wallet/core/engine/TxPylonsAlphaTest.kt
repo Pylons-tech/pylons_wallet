@@ -12,6 +12,7 @@ import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
 import org.bouncycastle.util.encoders.Hex
 import java.sql.Time
+import java.util.*
 
 internal class TxPylonsAlphaTest {
     private val k_GaiaCli = "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330"
@@ -37,10 +38,61 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun generateJson () {
+        val fixture = """
+            {
+            "tx": {
+                "msg": 
+            [
+            {
+                "type": "pylons/GetPylons",
+                "value": {
+                "Amount": [
+                {
+                    "denom": "pylon",
+                    "amount": "500"
+                }
+                ],
+                "Requester": "DUMMYADDR"
+            }
+            }
+            ]
+        ,
+    
+                "fee": {
+                "amount": null,
+                "gas": "200000"
+            },
+                "signatures": [
+                {
+                    "pub_key": {
+                    "type": "tendermint/PubKeySecp256k1",
+                    "value": "ApUOHN/LEz1gJBCf1In3NO60UCQY5TjChIHyK84nbySM"
+                },
+                    "signature": "HD7lxC1Av2WkSljoY31LnV7VWFO9KxVDyGYNa7eUVUUyUPeI8J3Sw5rzFmM3vd2mLQuBK1o3AO/CrA37lpvLng=="
+                }
+                ],
+                "memo": ""
+            },
+            "mode": "sync"
+        }
+        """.trimIndent().replace(" ", "")
         val engine = engineSetup(k_GaiaCli)
-        val b = TxJson.getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
-        //assertEquals(a.trimIndent().replace("\\s".toRegex(), ""), b)
-        // TODO: Rework this test now that the old functionality is kaput
+        val json = TxJson.getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
+        assertEquals(fixture, json.trimIndent().replace(" ", ""))
+    }
+
+    @Test
+    fun createsCookbook () {
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        engine.getOwnBalances()
+        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
+        val tx = engine.createCookbook("blah ${Random().nextInt()}", "tst", "tst", "1.0.0",
+                "fake@example.com", 0)
+        println("Waiting 5 seconds to allow chain to catch up")
+        Thread.sleep(5000)
+        engine.getOwnBalances()
+        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
+        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
     }
 
     @Test
