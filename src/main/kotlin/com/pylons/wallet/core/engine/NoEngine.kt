@@ -65,4 +65,7 @@ internal class NoEngine : Engine() {
 
     override fun sendPylons(q: Int, receiver: String) =
             throw NoEngineException()
+
+    override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
+            throw NoEngineException()
 }

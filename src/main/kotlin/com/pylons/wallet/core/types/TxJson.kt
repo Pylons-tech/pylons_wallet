@@ -19,10 +19,7 @@ object TxJson {
         println("Signable:")
         println(signable)
         val signBytes = signable.toByteArray(Charsets.UTF_8)
-        println(Hex.toHexString(signBytes))
         val signatureBytes = cryptoHandler.signature(signBytes)
-        println("girish:")
-        println(Hex.toHexString(cryptoHandler.signature("{}".toByteArray(Charsets.US_ASCII))))
         val signature = base64.encodeToString(signatureBytes)
         return baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature)
     }

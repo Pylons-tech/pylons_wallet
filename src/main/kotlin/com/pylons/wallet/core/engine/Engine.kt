@@ -117,4 +117,10 @@ internal abstract class Engine {
      * Calls send pylons endpoint.
      */
     abstract fun sendPylons (q : Int, receiver : String) : Transaction
+
+    /**
+     * Update-cookbook message
+     */
+    abstract fun updateCookbook (id : String, devel : String, desc : String, version : String,
+                                 supportEmail : String) : Transaction
 }

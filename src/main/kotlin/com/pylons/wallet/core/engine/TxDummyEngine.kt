@@ -154,4 +154,8 @@ internal class TxDummyEngine : Engine() {
     override fun sendPylons(q: Int, receiver: String): Transaction {
         TODO("tx redesign")
     }
+
+    override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
+            TODO("???")
+
 }
