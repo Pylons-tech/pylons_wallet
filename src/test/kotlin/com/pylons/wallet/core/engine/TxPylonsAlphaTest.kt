@@ -36,6 +36,18 @@ internal class TxPylonsAlphaTest {
         return engine
     }
 
+    private fun basicTxTestFlow (txfun : (TxPylonsDevEngine) -> Transaction) {
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        engine.getOwnBalances()
+        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
+        val tx = txfun(engine).submit()
+        println("Waiting 5 seconds to allow chain to catch up")
+        Thread.sleep(5000)
+        engine.getOwnBalances()
+        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
+        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+    }
+
     @Test
     fun generateJson () {
         val fixture = """
@@ -83,42 +95,25 @@ internal class TxPylonsAlphaTest {
 
     @Test
     fun createsCookbook () {
-        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
-        engine.getOwnBalances()
-        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val tx = engine.createCookbook("blah ${Random().nextInt()}", "tst", "tst", "1.0.0",
-                "fake@example.com", 0)
-        println("Waiting 5 seconds to allow chain to catch up")
-        Thread.sleep(5000)
-        engine.getOwnBalances()
-        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+        basicTxTestFlow { it.createCookbook("blah ${Random().nextInt()}", "tst",
+                "this is a description for a test flow cookbook i guess",
+                "1.0.0", "fake@example.com", 0) }
+    }
+
+    @Test
+    fun updatesCookbook () {
+        basicTxTestFlow { it.updateCookbook("TEST_COOKBOOK_ID_GOES_HERE", "tst",
+                "this is a description for updatescookbook test", "1.0.0", "example@example.com") }
     }
 
     @Test
     fun getsPylons () {
-        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
-        engine.getOwnBalances()
-        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val tx = engine.getPylons(500).submit()
-        println("Waiting 5 seconds to allow chain to catch up")
-        Thread.sleep(5000)
-        engine.getOwnBalances()
-        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+        basicTxTestFlow { it.getPylons(500) }
     }
 
     @Test
     fun sendsPylons () {
-        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
-        engine.getOwnBalances()
-        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val tx = engine.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch").submit()
-        println("Waiting 5 seconds to allow chain to catch up")
-        Thread.sleep(5000)
-        engine.getOwnBalances()
-        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+        basicTxTestFlow { it.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch") }
     }
 
     @Test

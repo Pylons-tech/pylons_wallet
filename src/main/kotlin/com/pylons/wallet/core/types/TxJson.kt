@@ -84,7 +84,7 @@ object TxJson {
                 "Developer": "$devel",
                 "Version": "$version",
                 "SupportEmail": "$supportEmail",
-                "Level": $level,
+                "Level": "$level",
                 "Sender": "$sender"
             }
         }
