@@ -159,21 +159,9 @@ internal open class TxPylonsEngine : Engine() {
         return getPylons(500)
     }
 
-    override fun getPylons(q: Int): Transaction {
-        val c = Core.userProfile!!.credentials as Credentials
-        return Transaction(resolver =  {
-            val response = postTxJson(
-                    TxJson.getPylons(q, c.address, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
-            try {
-                val code = JsonPath.read<Int>(response, "$.code")
-                if (code != null)
-                    throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
-            } catch (e : com.jayway.jsonpath.PathNotFoundException) {
-                // swallow this - we only find an error code if there is in fact an error
-            }
-            it.id = JsonPath.read(response, "$.txhash")
-        })
-    }
+    override fun getPylons(q: Int): Transaction =
+            basicTxHandlerFlow { TxJson.getPylons(q, it.address, cryptoHandler.keyPair!!.publicKey(),
+                    it.accountNumber, it.sequence) }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
         val cryptoTable = mutableMapOf<String, String>()
@@ -181,11 +169,13 @@ internal open class TxPylonsEngine : Engine() {
         return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 
-    override fun sendPylons(q: Int, receiver: String): Transaction {
-        val c = Core.userProfile!!.credentials as Credentials
+    override fun sendPylons(q: Int, receiver: String): Transaction =
+        basicTxHandlerFlow { TxJson.sendPylons(q, it.address, receiver, cryptoHandler.keyPair!!.publicKey(),
+                it.accountNumber, it.sequence) }
+
+    protected fun basicTxHandlerFlow (func : (Credentials) -> String) : Transaction {
         return Transaction(resolver =  {
-            val response = postTxJson(
-                    TxJson.sendPylons(q, c.address, receiver, cryptoHandler.keyPair!!.publicKey(), c.accountNumber, c.sequence))
+            val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
             try {
                 val code = JsonPath.read<Int>(response, "$.code")
                 if (code != null)

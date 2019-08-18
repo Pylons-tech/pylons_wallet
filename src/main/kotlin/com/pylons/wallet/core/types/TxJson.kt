@@ -40,6 +40,13 @@ object TxJson {
                     msgTemplate_SignComponent_CreateCookbook(name, devel, desc, version, supportEmail, level, sender),
                     sender, accountNumber, sequence, pubkey)
 
+    fun updateCookbook (id : String, devel : String, desc : String, version : String,
+                        supportEmail : String, sender : String,
+                        pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String =
+            baseJsonWeldFlow(msgTemplate_UpdateCookbook(id, devel, desc, version, supportEmail, sender),
+                    msgTemplate_SignComponent_UpdateCookbook(id, devel, desc, version, supportEmail, sender),
+                    sender, accountNumber, sequence, pubkey)
+
     private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
             """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
 
@@ -49,7 +56,12 @@ object TxJson {
     private fun msgTemplate_SignComponent_CreateCookbook (name : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, level : Int, sender : String) : String =
             """["Name": "$name", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
-                    """"SupportEmail": "$supportEmail","Level": $level,"Sender": "$sender"]"""
+                    """"SupportEmail": "$supportEmail","Level": "$level","Sender": "$sender"]"""
+
+    private fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
+                                                          supportEmail : String, sender : String) : String =
+            """["ID":"$id", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
+                    """"SupportEmail": "$supportEmail","Sender": "$sender"]"""
 
     private fun strFromBase64 (base64 : CharArray) : String {
         val sb = StringBuilder()
@@ -85,6 +97,23 @@ object TxJson {
                 "Version": "$version",
                 "SupportEmail": "$supportEmail",
                 "Level": "$level",
+                "Sender": "$sender"
+            }
+        }
+        ]
+    """
+
+    private fun msgTemplate_UpdateCookbook (id : String, devel : String, desc : String, version : String,
+                                            supportEmail : String, sender : String) = """
+        [
+        {
+            "type": "pylons/CreateCookbook",
+            "value": {
+                "ID": "$id",
+                "Description": "$desc",
+                "Developer": "$devel",
+                "Version": "$version",
+                "SupportEmail": "$supportEmail",
                 "Sender": "$sender"
             }
         }
