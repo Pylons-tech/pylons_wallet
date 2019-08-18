@@ -32,6 +32,8 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             Actions.setUserProfileState -> devOnly { setUserProfileState(msg) }
             Actions.setOtherUserProfileState -> devOnly { setOtherUserProfileState(msg) }
             Actions.dumpUserProfileState -> devOnly { dumpUserProfileState(msg) }
+            Actions.createCookbook -> devOnly { createCookbook(msg) }
+            Actions.updateCookbook -> devOnly { updateCookbook(msg) }
 
             // Invalid inputs
             "" -> noAction()

@@ -190,7 +190,7 @@ internal open class TxPylonsEngine : Engine() {
     override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    protected fun postTxJson (json : String) : String {
+    private fun postTxJson (json : String) : String {
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")
         val response = HttpWire.post("""$url/txs""", json)

@@ -14,7 +14,7 @@ import org.bouncycastle.util.encoders.Hex
 import java.sql.Time
 import java.util.*
 
-internal class TxPylonsAlphaTest {
+internal class TxPylonsDevTest {
     private val k_GaiaCli = "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330"
     private val k_Self = "7e5c0ad3c8771ffe29cff8752da55859fe787f9677003bf8f78b78c6b87ea486"
     private val k_Third = "0XmJ33XhHvQjTBv3eIItl307Q8AcDKxQo9iF2DA==yik8"

@@ -55,13 +55,13 @@ object TxJson {
 
     private fun msgTemplate_SignComponent_CreateCookbook (name : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, level : Int, sender : String) : String =
-            """["Name": "$name", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
-                    """"SupportEmail": "$supportEmail","Level": "$level","Sender": "$sender"]"""
+            """[{"Name": "$name", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
+                    """"SupportEmail": "$supportEmail","Level": "$level","Sender": "$sender"}]"""
 
     private fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, sender : String) : String =
-            """["ID":"$id", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
-                    """"SupportEmail": "$supportEmail","Sender": "$sender"]"""
+            """[{"ID":"$id", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
+                    """"SupportEmail": "$supportEmail","Sender": "$sender"}]"""
 
     private fun strFromBase64 (base64 : CharArray) : String {
         val sb = StringBuilder()

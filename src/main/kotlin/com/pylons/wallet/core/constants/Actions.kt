@@ -19,5 +19,9 @@ class Actions {
         const val getTransaction ="GET_TRANSACTION"
         const val getPylons = "GET_PYLONS"
         const val sendPylons = "SEND_PYLONS"
+        const val createCookbook = "CREATE_COOKBOOK"
+        const val updateCookbook = "UPDATE_COOKBOOK"
+        const val createRecipe = "CREATE_RECIPE"
+        const val updateRecipe = "UPDATE_RECIPE"
     }
 }
