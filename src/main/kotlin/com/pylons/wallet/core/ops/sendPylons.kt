@@ -6,10 +6,10 @@ import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
 
 internal fun sendPylons(msg: MessageData): Response {
-    if (msg.ints[Keys.pylons] == null) throw BadMessageException("getPylons", Keys.pylons, "Int")
-    if (msg.strings["requester"] == null) throw  BadMessageException("sendPylons", "requester", "String")
-    val tx = Core.sendPylons(msg.ints[Keys.pylons]!!, msg.strings["requester"]!!)
+    if (msg.ints[Keys.PYLONS] == null) throw BadMessageException("getPylons", Keys.PYLONS, "Int")
+    if (msg.strings[Keys.REQUESTER] == null) throw  BadMessageException("sendPylons", Keys.REQUESTER, "String")
+    val tx = Core.sendPylons(msg.ints[Keys.PYLONS]!!, msg.strings["requester"]!!)
     waitUntilCommitted(tx.id!!)
-    return Response(MessageData(strings = mutableMapOf(Keys.tx to tx.id!!)), Status.OK_TO_RETURN_TO_CLIENT)}
+    return Response(MessageData(strings = mutableMapOf(Keys.TX to tx.id!!)), Status.OK_TO_RETURN_TO_CLIENT)}
 
 fun Core.sendPylons (q : Int, r : String) : Transaction = Core.engine.sendPylons(q, r).submit()

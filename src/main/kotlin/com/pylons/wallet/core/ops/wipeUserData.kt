@@ -9,7 +9,7 @@ import com.pylons.wallet.core.types.Status
 internal fun wipeUserData () : Response {
     Core.wipeUserData()
     val msg = MessageData()
-    msg.booleans[Keys.success] = true
+    msg.booleans[Keys.SUCCESS] = true
     return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
 }
 

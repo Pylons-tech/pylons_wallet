@@ -146,7 +146,7 @@ object Core {
             inDoResolveMessage = true
             if (!sane) {
                 var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
-                throw Exception(msg.msg!!.strings[Keys.info])
+                throw Exception(msg.msg!!.strings[Keys.INFO])
             }
             val action = dat.msg.strings[ReservedKeys.wcAction].orEmpty()
             val out = actionResolutionTable(action, dat.msg)

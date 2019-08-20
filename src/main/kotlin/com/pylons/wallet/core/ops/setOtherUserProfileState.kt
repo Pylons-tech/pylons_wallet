@@ -8,8 +8,8 @@ import com.pylons.wallet.core.types.*
 internal fun setOtherUserProfileState (msg : MessageData) : Response {
     val moshi = Moshi.Builder().build()
     val adapter = moshi.adapter<ForeignProfile>(ForeignProfile::class.java)
-    val id = msg.strings[Keys.id]!!
-    val prf = adapter.fromJson(msg.strings[Keys.json]!!)!!
+    val id = msg.strings[Keys.ADDRESS]!!
+    val prf = adapter.fromJson(msg.strings[Keys.JSON]!!)!!
     OutsideWorldDummy.addProfile(id, prf)
-    return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
+    return Response(MessageData(booleans = mutableMapOf(Keys.SUCCESS to true)), Status.OK_TO_RETURN_TO_CLIENT)
 }

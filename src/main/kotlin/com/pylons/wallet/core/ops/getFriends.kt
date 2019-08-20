@@ -6,7 +6,7 @@ import com.pylons.wallet.core.types.*
 
 internal fun getFriends () : Response {
     val str = Core.getFriends().serialize()
-    val msgOut = MessageData(strings = mutableMapOf(Keys.friends to str))
+    val msgOut = MessageData(strings = mutableMapOf(Keys.FRIENDS to str))
     return Response(msgOut, Status.OK_TO_RETURN_TO_CLIENT)
 }
 

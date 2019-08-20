@@ -46,12 +46,12 @@ data class Profile (
 
     fun detailsToMessageData () : MessageData {
         val msg = MessageData()
-        msg.booleans[Keys.profileExists] = true
+        msg.booleans[Keys.PROFILE_EXISTS] = true
         val name = getName()
-        if (name != null) msg.strings[Keys.name] = name
+        if (name != null) msg.strings[Keys.NAME] = name
         credentials.dumpToMessageData(msg)
-        msg.strings[Keys.coins] = coins.serializeCoins()
-        msg.stringArrays[Keys.items] = items.serialize()
+        msg.strings[Keys.COINS] = coins.serializeCoins()
+        msg.stringArrays[Keys.ITEMS] = items.serialize()
         msg.stringArrays["singletonGameRules"] = singletonGameRules
 
         // and extras!

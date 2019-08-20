@@ -1,6 +1,5 @@
 package com.pylons.wallet.core.types
 
-import com.pylons.wallet.core.Core
 import com.squareup.moshi.Moshi
 import com.pylons.wallet.core.constants.Actions
 import com.pylons.wallet.core.constants.Keys
@@ -31,18 +30,18 @@ data class MessageData(
     val stringArrays: MutableMap<String, MutableList<String>> = mutableMapOf()
 ) { companion object {
         @JvmStatic
-        fun deleteProfile() = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.wipeUserData))
+        fun deleteProfile() = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.WIPE_USER_DATA))
 
         @JvmStatic
         fun empty() = MessageData()
 
         @JvmStatic
-        fun getUserDetails () = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.getUserDetails))
+        fun getUserDetails () = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.GET_USER_DETAILS))
     }
 
-    fun isError () : Boolean = strings.containsKey(Keys.error)
+    fun isError () : Boolean = strings.containsKey(Keys.ERROR)
 
-    fun errorToString () : String = "ERROR | ${ints[Keys.errorCode]} | ${strings[Keys.error]} | ${strings[Keys.info]}"
+    fun errorToString () : String = "ERROR | ${ints[Keys.ERROR_CODE]} | ${strings[Keys.ERROR]} | ${strings[Keys.INFO]}"
 
     fun getAction () : String? = strings[ReservedKeys.wcAction]
 

@@ -9,5 +9,5 @@ internal fun dumpUserProfileState (msg : MessageData) : Response {
     val moshi = Moshi.Builder().build()
     val adapter = moshi.adapter<Profile>(Profile::class.java)
     val json = adapter.toJson(Core.userProfile!!)
-    return Response(MessageData(booleans = mutableMapOf(Keys.success to true), strings = mutableMapOf(Keys.json to json)), Status.OK_TO_RETURN_TO_CLIENT)
+    return Response(MessageData(booleans = mutableMapOf(Keys.SUCCESS to true), strings = mutableMapOf(Keys.JSON to json)), Status.OK_TO_RETURN_TO_CLIENT)
 }

@@ -9,7 +9,7 @@ import kotlin.NullPointerException
 
 internal fun newProfile (extraArgs : MessageData) : Response {
     val name = try {
-        extraArgs.strings[Keys.name]
+        extraArgs.strings[Keys.NAME]
     }
     catch (e : NullPointerException) {
         return badArgs()
@@ -17,9 +17,9 @@ internal fun newProfile (extraArgs : MessageData) : Response {
     val c = Core.engine.getNewCredentials()
     Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true,
             coins = mutableMapOf(), items = mutableListOf()))
-    val tx = Core.newProfile(extraArgs.strings[Keys.name]!!)
+    val tx = Core.newProfile(extraArgs.strings[Keys.NAME]!!)
     waitUntilCommitted(tx.id!!)
-    return Response(MessageData(booleans = mutableMapOf(Keys.success to true)), Status.OK_TO_RETURN_TO_CLIENT)
+    return Response(MessageData(booleans = mutableMapOf(Keys.SUCCESS to true)), Status.OK_TO_RETURN_TO_CLIENT)
 }
 
 fun Core.newProfile (name : String) : Transaction = Core.engine.registerNewProfile(name).submit()

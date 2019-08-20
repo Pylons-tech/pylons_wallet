@@ -9,31 +9,30 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
     try {
         return when (action) {
             // Transactions
-            Actions.applyRecipe -> retryOnError { applyRecipe(msg) }
-            Actions.performTransaction -> retryOnError { performTransaction(msg) }
-            Actions.newProfile -> retryOnError { newProfile(msg) }
-            Actions.getPylons -> retryOnError { getPylons(msg) }
-            Actions.sendPylons -> retryOnError { sendPylons(msg) }
+            Actions.APPLY_RECIPE -> retryOnError { applyRecipe(msg) }
+            Actions.PERFORM_TRANSACTION -> retryOnError { performTransaction(msg) }
+            Actions.NEW_PROFILE -> retryOnError { newProfile(msg) }
+            Actions.GET_PYLONS -> retryOnError { getPylons(msg) }
+            Actions.SEND_PYLONS -> retryOnError { sendPylons(msg) }
 
             // State queries
-            Actions.getUserDetails -> getUserDetails()
-            Actions.getOtherUserDetails -> getOtherUserDetails(msg)
-            Actions.getTransaction -> getTransaction(msg)
+            Actions.GET_USER_DETAILS -> getUserDetails()
+            Actions.GET_OTHER_USER_DETAILS -> getOtherUserDetails(msg)
+            Actions.GET_TRANSACTION -> getTransaction(msg)
 
             // Wallet management
-            Actions.getWalletCoreDetails -> getWalletCoreDetails()
-            Actions.getFriends -> getFriends()
-            Actions.setFriends -> setFriends(msg)
-            Actions.wipeUserData -> wipeUserData()
+            Actions.GET_FRIENDS -> getFriends()
+            Actions.SET_FRIENDS -> setFriends(msg)
+            Actions.WIPE_USER_DATA -> wipeUserData()
 
             // Dev
-            Actions.walletServiceTest -> devOnly(::walletServiceTest)
-            Actions.walletUiTest -> devOnly{ requiresArgs(action, msg, extraArgs, ::walletUiTest) }
-            Actions.setUserProfileState -> devOnly { setUserProfileState(msg) }
-            Actions.setOtherUserProfileState -> devOnly { setOtherUserProfileState(msg) }
-            Actions.dumpUserProfileState -> devOnly { dumpUserProfileState(msg) }
-            Actions.createCookbook -> devOnly { createCookbook(msg) }
-            Actions.updateCookbook -> devOnly { updateCookbook(msg) }
+            Actions.WALLET_SERVICE_TEST -> devOnly(::walletServiceTest)
+            Actions.WALLET_UI_TEST -> devOnly{ requiresArgs(action, msg, extraArgs, ::walletUiTest) }
+            Actions.SET_USER_PROFILE_STATE -> devOnly { setUserProfileState(msg) }
+            Actions.SET_OTHER_USER_PROFILE_STATE -> devOnly { setOtherUserProfileState(msg) }
+            Actions.DUMP_USER_PROFILE_STATE -> devOnly { dumpUserProfileState(msg) }
+            Actions.CREATE_COOKBOOK -> devOnly { createCookbook(msg) }
+            Actions.UPDATE_COOKBOOK -> devOnly { updateCookbook(msg) }
 
             // Invalid inputs
             "" -> noAction()
@@ -41,9 +40,9 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         }
     } catch (e : Exception) {
         var msg = MessageData()
-        msg.strings["exception"] = e::class.qualifiedName.toString()
-        msg.strings["message"] = e.message.orEmpty()
-        msg.strings["stackTrace"] = e.stackTrace.toString()
+        msg.strings[Keys.EXCEPTION] = e::class.qualifiedName.toString()
+        msg.strings[Keys.MESSAGE] = e.message.orEmpty()
+        msg.strings[Keys.STACK_TRACE] = e.stackTrace.toString()
         return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
     }
 

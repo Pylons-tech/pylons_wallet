@@ -14,9 +14,9 @@ import com.pylons.wallet.core.Logger
  */
 internal fun generateErrorMessageData(error: Error, info: String): Response {
     val msg = MessageData()
-    msg.ints[Keys.errorCode] = error.value
-    msg.strings[Keys.error] = error.name
-    msg.strings[Keys.info] = info
+    msg.ints[Keys.ERROR_CODE] = error.value
+    msg.strings[Keys.ERROR] = error.name
+    msg.strings[Keys.INFO] = info
     Logger.implementation.log(msg.errorToString(), LogTag.coreError)
     return Response(msg, Status.INCOMING_MESSAGE_MALFORMED)
 }

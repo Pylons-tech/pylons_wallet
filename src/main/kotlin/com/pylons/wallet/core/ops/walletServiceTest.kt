@@ -6,7 +6,7 @@ import com.pylons.wallet.core.types.*
 
 internal fun walletServiceTest(): Response {
     val msg = MessageData()
-    msg.strings[Keys.info] = Core.walletServiceTest()
+    msg.strings[Keys.INFO] = Core.walletServiceTest()
     return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
 }
 

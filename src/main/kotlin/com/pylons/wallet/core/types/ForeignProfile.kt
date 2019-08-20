@@ -15,12 +15,12 @@ data class ForeignProfile (
 ) {
     fun detailsToMessageData () : MessageData {
         val msg = MessageData()
-        msg.booleans[Keys.profileExists] = true
+        msg.booleans[Keys.PROFILE_EXISTS] = true
         val name = getName()
-        if (name != null) msg.strings[Keys.name] = name
-        msg.strings[Keys.id] = id
-        msg.strings[Keys.coins] = knownCoins.serialize()
-        msg.stringArrays[Keys.items] = knownItems.serialize()
+        if (name != null) msg.strings[Keys.NAME] = name
+        msg.strings[Keys.ADDRESS] = id
+        msg.strings[Keys.COINS] = knownCoins.serialize()
+        msg.stringArrays[Keys.ITEMS] = knownItems.serialize()
         // and extras!
         return msg
     }
