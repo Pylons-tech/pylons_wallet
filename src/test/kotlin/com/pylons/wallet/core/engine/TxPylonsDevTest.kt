@@ -102,7 +102,7 @@ internal class TxPylonsDevTest {
 
     @Test
     fun updatesCookbook () {
-        basicTxTestFlow { it.updateCookbook("TEST_COOKBOOK_ID_GOES_HERE", "tst",
+        basicTxTestFlow { it.updateCookbook("blah 1200783309", "tst",
                 "this is a description for updatescookbook test", "1.0.0", "example@example.com") }
     }
 

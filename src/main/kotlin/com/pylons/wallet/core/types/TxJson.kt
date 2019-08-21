@@ -58,8 +58,7 @@ object TxJson {
 
     private fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, sender : String) : String =
-            """[{"ID":"$id", "Description": "$desc","Developer": "$devel","Version":"$version",""" +
-                    """"SupportEmail": "$supportEmail","Sender": "$sender"}]"""
+            """[{"Description":"$desc","Developer":"$devel","ID":"$id","Sender":"$sender","SupportEmail":"$supportEmail","Version":"$version"}]"""
 
     private fun strFromBase64 (base64 : CharArray) : String {
         val sb = StringBuilder()
@@ -94,7 +93,7 @@ object TxJson {
                                             supportEmail : String, sender : String) = """
         [
         {
-            "type": "pylons/CreateCookbook",
+            "type": "pylons/UpdateCookbook",
             "value": {
                 "ID": "$id",
                 "Description": "$desc",
