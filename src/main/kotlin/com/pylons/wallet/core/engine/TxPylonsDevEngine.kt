@@ -16,4 +16,7 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
             basicTxHandlerFlow { TxJson.updateCookbook(id, devel, desc, version, supportEmail, it.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
+    override fun createRecipe(id: String, cookbookName: String, desc: String, inputs: String, outputs: String, time: Int): Transaction =
+            basicTxHandlerFlow { TxJson.createRecipe(id, cookbookName, desc, inputs, outputs, time,
+                    it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 }

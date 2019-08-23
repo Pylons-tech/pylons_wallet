@@ -29,6 +29,12 @@ internal abstract class Engine {
     abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Transaction
 
     /**
+     * Create-recipe message
+     */
+    abstract fun createRecipe(id : String, cookbookName : String, desc : String, inputs : String, outputs : String,
+                              time : Int) : Transaction
+
+    /**
      * Low-level commit TX function.
      * TODO: determine if this should even exist; sendPylons suggests 'no'
      */

@@ -68,4 +68,7 @@ internal class NoEngine : Engine() {
 
     override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
             throw NoEngineException()
+
+    override fun createRecipe(id: String, cookbookName: String, desc: String, inputs: String, outputs: String, time: Int): Transaction =
+            throw NoEngineException()
 }

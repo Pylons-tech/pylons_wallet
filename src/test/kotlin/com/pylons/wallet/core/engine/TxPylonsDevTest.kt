@@ -94,6 +94,14 @@ internal class TxPylonsDevTest {
     }
 
     @Test
+    fun createsRecipe () {
+        basicTxTestFlow { it.createRecipe("tst_recipe ${Random().nextInt()}", "blah 1200783309",
+                "this is a test recipe description which must comply w/ character limits",
+                """[{"Count":"5","Item":"Wood"}]""", """[{"Count":"1","Item":"Chair"}]""",
+                0) }
+    }
+
+    @Test
     fun createsCookbook () {
         basicTxTestFlow { it.createCookbook("blah ${Random().nextInt()}", "tst",
                 "this is a description for a test flow cookbook i guess",
