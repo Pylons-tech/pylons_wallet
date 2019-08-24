@@ -4,8 +4,8 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 
-import java.lang.StringBuilder
 import java.util.*
+import kotlin.text.StringBuilder
 
 object TxJson {
     val base64 = Base64.getEncoder()
@@ -26,10 +26,12 @@ object TxJson {
             baseJsonWeldFlow(msgTemplate_GetPylons(amount.toString(), address), msgTemplate_SignComponent_GetPylons(amount),
                     accountNumber, sequence, pubkey)
 
-    fun createRecipe (id : String, cookbookName : String, desc : String, inputs : String, outputs : String,
+    fun createRecipe (id : String, cookbookName : String, desc : String, inputs : Map<String, Int>, outputs : Map<String, Int>,
                       time : Int, sender : String,  pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
-            baseJsonWeldFlow(msgTemplate_CreateRecipe(id, cookbookName, desc, inputs, outputs, time, sender),
-                    msgTemplate_SignComponent_CreateRecipe(cookbookName, desc, time, id, inputs, outputs, sender),
+            baseJsonWeldFlow(msgTemplate_CreateRecipe(id, cookbookName, desc, getInputOutputListForMessage(inputs),
+                    getInputOutputListForMessage(outputs), time, sender),
+                    msgTemplate_SignComponent_CreateRecipe(cookbookName, desc, time, id,
+                    getInputOutputListForSigning(inputs), getInputOutputListForSigning(outputs), sender),
                     accountNumber, sequence, pubkey)
 
     fun sendPylons (amount : Int, sender: String, receiver: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String =
@@ -50,6 +52,26 @@ object TxJson {
                     msgTemplate_SignComponent_UpdateCookbook(id, devel, desc, version, supportEmail, sender),
                     accountNumber, sequence, pubkey)
 
+    private fun getInputOutputListForMessage(map : Map<String, Int>) : String {
+        var sb = StringBuilder("[")
+        map.forEach {
+            sb.append("""{"Count":"${it.value}","Item":"${it.key}"},""")
+        }
+        sb.deleteCharAt(sb.length - 1)
+        sb.append("]")
+        return sb.toString()
+    }
+
+    private fun getInputOutputListForSigning(map : Map<String, Int>) : String {
+        var sb = StringBuilder("[")
+        map.forEach {
+            sb.append("""{"Count":${it.value},"Item":"${it.key}"},""")
+        }
+        sb.deleteCharAt(sb.length - 1)
+        sb.append("]")
+        return sb.toString()
+    }
+
     private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
             """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
 
@@ -61,7 +83,7 @@ object TxJson {
             """[{"Description":"$desc","Developer":"$devel","Level":$level,"Name":"$name","Sender":"$sender","SupportEmail":"$supportEmail","Version":"$version"}]"""
 
     private fun msgTemplate_SignComponent_CreateRecipe (cookbookName: String, desc: String, time: Int, id: String, inputs: String, outputs: String, sender: String) =
-            """[{"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":"$time","ID":"$id","Inputs":$inputs,"Outputs":$outputs,"Sender":$sender}]"""
+            """[{"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"ID":"$id","Inputs":$inputs,"Outputs":$outputs,"Sender":$sender}]"""
 
     private fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, sender : String) : String =

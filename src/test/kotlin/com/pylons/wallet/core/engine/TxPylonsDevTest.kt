@@ -97,7 +97,7 @@ internal class TxPylonsDevTest {
     fun createsRecipe () {
         basicTxTestFlow { it.createRecipe("tst_recipe ${Random().nextInt()}", "blah 1200783309",
                 "this is a test recipe description which must comply w/ character limits",
-                """[{"Count":"5","Item":"Wood"}]""", """[{"Count":"1","Item":"Chair"}]""",
+                mapOf("wood" to 5), mapOf("chair" to 1),
                 0) }
     }
 
