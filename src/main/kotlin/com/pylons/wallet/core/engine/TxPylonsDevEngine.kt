@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.types.Backend
+import com.pylons.wallet.core.types.HttpWire
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.TxJson
 
@@ -19,4 +20,6 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
     override fun createRecipe(id: String, cookbookName: String, desc: String, inputs: Map<String, Int>, outputs: Map<String, Int>, time: Int): Transaction =
             basicTxHandlerFlow { TxJson.createRecipe(id, cookbookName, desc, inputs, outputs, time,
                     it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
+
+    fun queryTxBuilder(msgType : String) : String = HttpWire.get("$url/pylons/$msgType/tx_build/")
 }

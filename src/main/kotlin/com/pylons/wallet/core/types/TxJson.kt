@@ -62,7 +62,7 @@ object TxJson {
         return sb.toString()
     }
 
-    private fun getInputOutputListForSigning(map : Map<String, Int>) : String {
+    fun getInputOutputListForSigning(map : Map<String, Int>) : String {
         var sb = StringBuilder("[")
         map.forEach {
             sb.append("""{"Count":${it.value},"Item":"${it.key}"},""")
@@ -72,20 +72,20 @@ object TxJson {
         return sb.toString()
     }
 
-    private fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
+    fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
             """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
 
-    private fun msgTemplate_SignComponent_SendPylons (amount: Int, sender : String, receiver: String) : String =
+    fun msgTemplate_SignComponent_SendPylons (amount: Int, sender : String, receiver: String) : String =
             """[{"Amount":[{"amount":"$amount","denom":"pylon"}],"Receiver":"$receiver","Sender":"$sender"}]"""
 
-    private fun msgTemplate_SignComponent_CreateCookbook (name : String, devel : String, desc : String, version : String,
+    fun msgTemplate_SignComponent_CreateCookbook (name : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, level : Int, sender : String) : String =
             """[{"Description":"$desc","Developer":"$devel","Level":$level,"Name":"$name","Sender":"$sender","SupportEmail":"$supportEmail","Version":"$version"}]"""
 
-    private fun msgTemplate_SignComponent_CreateRecipe (cookbookName: String, desc: String, time: Int, id: String, inputs: String, outputs: String, sender: String) =
-            """[{"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"ID":"$id","Inputs":$inputs,"Outputs":$outputs,"Sender":$sender}]"""
+    fun msgTemplate_SignComponent_CreateRecipe (cookbookName: String, desc: String, time: Int, id: String, inputs: String, outputs: String, sender: String) =
+            """[{"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"ID":"$id","Inputs":$inputs,"Outputs":$outputs,"Sender":"$sender"}]"""
 
-    private fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
+    fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, sender : String) : String =
             """[{"Description":"$desc","Developer":"$devel","ID":"$id","Sender":"$sender","SupportEmail":"$supportEmail","Version":"$version"}]"""
 
@@ -97,7 +97,7 @@ object TxJson {
 
     private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())
 
-    private fun msgTemplate_Signable (msg : String, sequence: Int, accountNumber: Int) =
+    fun msgTemplate_Signable (msg : String, sequence: Int, accountNumber: Int) =
             """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
 
     private fun msgTemplate_CreateCookbook (name : String, devel : String, desc : String, version : String,

@@ -36,11 +36,19 @@ internal class TxPylonsDevTest {
         return engine
     }
 
-    private fun basicTxTestFlow (txfun : (TxPylonsDevEngine) -> Transaction) {
+    private fun basicSignableTestFlow (msgType : String, signableFun : (TxPylonsDevEngine) -> String) {
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        engine.getOwnBalances()
+        val fixture = engine.queryTxBuilder(msgType)
+        val signable = TxJson.msgTemplate_Signable(signableFun(engine), 0, 0)
+        assertEquals(fixture, signable)
+    }
+
+    private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.getOwnBalances()
         var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        val tx = txfun(engine).submit()
+        val tx = txFun(engine).submit()
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         engine.getOwnBalances()
@@ -91,6 +99,41 @@ internal class TxPylonsDevTest {
         val engine = engineSetup(k_GaiaCli)
         val json = TxJson.getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
         assertEquals(fixture, json.trimIndent().replace(" ", ""))
+    }
+
+    @Test
+    fun createRecipeSignable () {
+        basicSignableTestFlow("create_recipe") { TxJson.msgTemplate_SignComponent_CreateRecipe(
+                "name", "this has to meet character limits lol", 0, "id001",
+                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1)),
+                Core.userProfile!!.credentials.address)
+        }
+    }
+
+    @Test
+    fun createsCookbookSignable () {
+        basicSignableTestFlow("create_cookbook") {
+            TxJson.msgTemplate_SignComponent_CreateCookbook(
+                    "name", "SketchyCo", "this has to meet character limits lol", "1.0.0",
+                    "example@example.com", 0, Core.userProfile!!.credentials.address
+            )
+        }
+    }
+
+    @Test
+    fun updatesCookbookSignable () {
+        basicSignableTestFlow("update_cookbook") {
+            TxJson.msgTemplate_SignComponent_UpdateCookbook("cookbook id", "SketchyCo", "this has to meet character limits lol",
+                    "1.0.0", "example@example.com", Core.userProfile!!.credentials.address)
+        }
+    }
+
+    @Test
+    fun sendsPylonsSignable () {
+        basicSignableTestFlow("send_pylons") {
+            TxJson.msgTemplate_SignComponent_SendPylons(5, Core.userProfile!!.credentials.address,
+                    "cosmos13rkt5rzf4gz8dvmwxxxn2kqy6p94hkpgluh8dj")
+        }
     }
 
     @Test
