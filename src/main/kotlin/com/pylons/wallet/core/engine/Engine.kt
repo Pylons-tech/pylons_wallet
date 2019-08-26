@@ -129,4 +129,10 @@ internal abstract class Engine {
      */
     abstract fun updateCookbook (id : String, devel : String, desc : String, version : String,
                                  supportEmail : String) : Transaction
+
+    /**
+     * Update-recipe message
+     */
+    abstract fun updateRecipe(name : String, cookbookName : String, id : String, desc : String, inputs : Map<String, Int>,
+                              outputs : Map<String, Int>, time : Int) : Transaction
 }

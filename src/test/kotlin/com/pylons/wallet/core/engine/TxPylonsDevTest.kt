@@ -111,6 +111,15 @@ internal class TxPylonsDevTest {
     }
 
     @Test
+    fun updateRecipeSignable () {
+        basicSignableTestFlow("update_recipe") { TxJson.msgTemplate_SignComponent_UpdateRecipe(
+                "recipeName", "name","id001", "this has to meet character limits lol", 0,
+                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1)),
+                Core.userProfile!!.credentials.address)
+        }
+    }
+
+    @Test
     fun createsCookbookSignable () {
         basicSignableTestFlow("create_cookbook") {
             TxJson.msgTemplate_SignComponent_CreateCookbook(
@@ -155,6 +164,14 @@ internal class TxPylonsDevTest {
     fun updatesCookbook () {
         basicTxTestFlow { it.updateCookbook("blah 1200783309", "tst",
                 "this is a description for updatescookbook test", "1.0.0", "example@example.com") }
+    }
+
+    @Test
+    fun updatesRecipe () {
+        basicTxTestFlow { it.updateRecipe("name","blah 1200783309", "",
+                "this is a test recipe description which must comply w/ character limits",
+                mapOf("wood" to 5), mapOf("chair" to 1),
+                0) }
     }
 
     @Test

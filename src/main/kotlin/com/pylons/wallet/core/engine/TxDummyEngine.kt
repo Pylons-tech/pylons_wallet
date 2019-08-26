@@ -162,4 +162,7 @@ internal class TxDummyEngine : Engine() {
         TODO("???")
     }
 
+    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Int>, outputs: Map<String, Int>, time: Int): Transaction {
+        TODO("???")
+    }
 }
