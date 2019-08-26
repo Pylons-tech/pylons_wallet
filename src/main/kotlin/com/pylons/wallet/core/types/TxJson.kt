@@ -26,11 +26,11 @@ object TxJson {
             baseJsonWeldFlow(msgTemplate_GetPylons(amount.toString(), address), msgTemplate_SignComponent_GetPylons(amount),
                     accountNumber, sequence, pubkey)
 
-    fun createRecipe (id : String, cookbookName : String, desc : String, inputs : Map<String, Int>, outputs : Map<String, Int>,
+    fun createRecipe (name: String, cookbookName : String, desc : String, inputs : Map<String, Int>, outputs : Map<String, Int>,
                       time : Int, sender : String,  pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
-            baseJsonWeldFlow(msgTemplate_CreateRecipe(id, cookbookName, desc, getInputOutputListForMessage(inputs),
+            baseJsonWeldFlow(msgTemplate_CreateRecipe(name, cookbookName, desc, getInputOutputListForMessage(inputs),
                     getInputOutputListForMessage(outputs), time, sender),
-                    msgTemplate_SignComponent_CreateRecipe(cookbookName, desc, time, id,
+                    msgTemplate_SignComponent_CreateRecipe(name, cookbookName, desc, time,
                     getInputOutputListForSigning(inputs), getInputOutputListForSigning(outputs), sender),
                     accountNumber, sequence, pubkey)
 
@@ -82,8 +82,8 @@ object TxJson {
                                                           supportEmail : String, level : Int, sender : String) : String =
             """[{"Description":"$desc","Developer":"$devel","Level":$level,"Name":"$name","Sender":"$sender","SupportEmail":"$supportEmail","Version":"$version"}]"""
 
-    fun msgTemplate_SignComponent_CreateRecipe (cookbookName: String, desc: String, time: Int, id: String, inputs: String, outputs: String, sender: String) =
-            """[{"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"ID":"$id","Inputs":$inputs,"Outputs":$outputs,"Sender":"$sender"}]"""
+    fun msgTemplate_SignComponent_CreateRecipe (name : String, cookbookName: String, desc: String, time: Int, inputs: String, outputs: String, sender: String) =
+            """[{"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"Inputs":$inputs,"Outputs":$outputs,"RecipeName":"$name","Sender":"$sender"}]"""
 
     fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
                                                           supportEmail : String, sender : String) : String =
@@ -118,13 +118,13 @@ object TxJson {
         ]
     """
 
-    private fun msgTemplate_CreateRecipe (id : String, cookbookName : String, desc : String, inputs : String, outputs : String,
+    private fun msgTemplate_CreateRecipe (name : String, cookbookName : String, desc : String, inputs : String, outputs : String,
                                           time : Int, sender : String) = """
         [
         {
             "type": "pylons/CreateRecipe",
             "value": {
-                "ID": "$id",
+                "RecipeName": "$name",
                 "CookbookName": "$cookbookName",
                 "Description": "$desc",
                 "Inputs": $inputs,

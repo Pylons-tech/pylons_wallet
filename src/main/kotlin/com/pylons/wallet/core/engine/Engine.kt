@@ -31,7 +31,7 @@ internal abstract class Engine {
     /**
      * Create-recipe message
      */
-    abstract fun createRecipe(id : String, cookbookName : String, desc : String, inputs : Map<String, Int>,
+    abstract fun createRecipe(name : String, cookbookName : String, desc : String, inputs : Map<String, Int>,
                               outputs : Map<String, Int>, time : Int) : Transaction
 
     /**

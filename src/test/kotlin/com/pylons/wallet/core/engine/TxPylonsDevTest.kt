@@ -104,7 +104,7 @@ internal class TxPylonsDevTest {
     @Test
     fun createRecipeSignable () {
         basicSignableTestFlow("create_recipe") { TxJson.msgTemplate_SignComponent_CreateRecipe(
-                "name", "this has to meet character limits lol", 0, "id001",
+                "name","id001", "this has to meet character limits lol", 0,
                 TxJson.getInputOutputListForSigning(mapOf("Wood" to 5)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1)),
                 Core.userProfile!!.credentials.address)
         }
@@ -138,7 +138,7 @@ internal class TxPylonsDevTest {
 
     @Test
     fun createsRecipe () {
-        basicTxTestFlow { it.createRecipe("tst_recipe ${Random().nextInt()}", "blah 1200783309",
+        basicTxTestFlow { it.createRecipe("name","blah 1200783309",
                 "this is a test recipe description which must comply w/ character limits",
                 mapOf("wood" to 5), mapOf("chair" to 1),
                 0) }
