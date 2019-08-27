@@ -9,7 +9,6 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.engine.OutsideWorldDummy
-import com.pylons.wallet.core.engine.TxDummyEngine
 import com.pylons.wallet.core.types.*
 
 internal class ActionResolutionTableTest {
@@ -19,13 +18,13 @@ internal class ActionResolutionTableTest {
     }
 
     private fun bootstrapCoreForBasicCases () {
-        Core.start(backend = Backend.DUMMY, json = "")
-        Core.userProfile = Profile(TxDummyEngine.Credentials("12345"), mutableMapOf(ReservedKeys.profileName to "fooBar"), mutableMapOf(), mutableListOf())
+        //Core.start(backend = Backend.DUMMY, json = "")
+        //Core.userProfile = Profile(TxDummyEngine.Credentials("12345"), mutableMapOf(ReservedKeys.profileName to "fooBar"), mutableMapOf(), mutableListOf())
     }
 
     @Test
     fun case_noAction () {
-        Core.start(backend = Backend.DUMMY, json = "")
+        //Core.start(backend = Backend.DUMMY, json = "")
         val noActionError = noAction()
         val actualResponse = actionResolutionTable("", MessageData.empty())
         assertEquals(noActionError.status, actualResponse.status)
@@ -34,7 +33,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_invalidAction () {
-        Core.start(backend = Backend.DUMMY, json = "")
+        //Core.start(backend = Backend.DUMMY, json = "")
         val badActionError = unrecognizedAction("not_a_real_action")
         val actualResponse = actionResolutionTable("not_a_real_action", MessageData.empty())
         assertEquals(badActionError.status, actualResponse.status)
@@ -43,7 +42,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_walletServiceTest () {
-        Core.start(backend = Backend.DUMMY, json = "")
+        //Core.start(backend = Backend.DUMMY, json = "")
         val svcTestResponse = walletServiceTest()
         val actualResponse = actionResolutionTable(Actions.WALLET_SERVICE_TEST, MessageData.empty())
         assertEquals(svcTestResponse.status, actualResponse.status)
@@ -52,7 +51,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_walletUiTest() {
-        Core.start(backend = Backend.DUMMY, json = "")
+        //Core.start(backend = Backend.DUMMY, json = "")
         val uiTestResponse = walletUiTest(MessageData.empty()) // ui test only checks that it _has_ args
         val noArgsResponse = requiresArgs(Actions.WALLET_UI_TEST, MessageData.empty(), null) { m -> walletUiTest(m) }
         val actualNoArgsResponse = actionResolutionTable(Actions.WALLET_UI_TEST, MessageData.empty())
@@ -65,7 +64,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_getUserDetailsNoProfile() {
-        Core.start(backend = Backend.DUMMY, json = "")
+        //Core.start(backend = Backend.DUMMY, json = "")
         val noProfileResponse = Response(MessageData(booleans = mutableMapOf(Keys.PROFILE_EXISTS to false)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.GET_USER_DETAILS, MessageData.empty())
         assertEquals(noProfileResponse.status, actualResponse.status)
@@ -94,7 +93,7 @@ internal class ActionResolutionTableTest {
 
     @Test
     fun case_registerProfile () {
-        Core.start(backend = Backend.DUMMY, json = "")
+        //Core.start(backend = Backend.DUMMY, json = "")
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.PROFILE_EXISTS to true)), Status.OK_TO_RETURN_TO_CLIENT)
         val actualResponse = actionResolutionTable(Actions.NEW_PROFILE, MessageData(strings = mutableMapOf(Keys.NAME to "fooBar")))
         assertEquals(successResponse.status, actualResponse.status)

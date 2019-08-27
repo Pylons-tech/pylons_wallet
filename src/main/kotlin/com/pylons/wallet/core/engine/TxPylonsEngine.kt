@@ -204,4 +204,9 @@ internal open class TxPylonsEngine : Engine() {
         Logger().log(response, "request_response")
         return response
     }
+
+    override fun listRecipes(cookbook: String): Array<Recipe> {
+        val json = HttpWire.get("$url/custom/$cookbook/list_recipe/")
+        TODO("not sure how this works")
+    }
 }

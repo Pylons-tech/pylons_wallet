@@ -3,6 +3,7 @@ package com.pylons.wallet.core.engine
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.sun.org.apache.xpath.internal.operations.Bool
+import com.sun.xml.internal.fastinfoset.util.StringArray
 
 /***
  * Generic interface for transaction-handling layers.
@@ -135,4 +136,9 @@ internal abstract class Engine {
      */
     abstract fun updateRecipe(name : String, cookbookName : String, id : String, desc : String, inputs : Map<String, Int>,
                               outputs : Map<String, Int>, time : Int) : Transaction
+
+    /**
+     * List recipes query
+     */
+    abstract fun listRecipes (cookbook : String) : Array<Recipe>
 }

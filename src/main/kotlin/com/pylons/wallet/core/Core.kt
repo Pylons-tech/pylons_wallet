@@ -82,7 +82,6 @@ object Core {
 
     fun start (backend: Backend, json : String) {
         engine = when (backend) {
-            Backend.DUMMY -> TxDummyEngine()
             Backend.LIVE -> TxPylonsEngine()
             Backend.LIVE_DEV -> TxPylonsDevEngine()
             Backend.NONE -> NoEngine()

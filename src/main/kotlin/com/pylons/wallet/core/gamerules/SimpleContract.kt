@@ -1,9 +1,6 @@
 package com.pylons.wallet.core.gamerules
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.internal.newItemFromPrototype
-import com.pylons.wallet.core.engine.OutsideWorldDummy
-import com.pylons.wallet.core.engine.TxDummyEngine
 import com.pylons.wallet.core.types.*
 
 open class SimpleContract (val preferredItemIds: Set<String>) : GameRule() {

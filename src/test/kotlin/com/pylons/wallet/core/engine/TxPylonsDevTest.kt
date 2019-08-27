@@ -15,13 +15,7 @@ import java.sql.Time
 import java.util.*
 
 internal class TxPylonsDevTest {
-    private val k_GaiaCli = "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330"
-    private val k_Self = "7e5c0ad3c8771ffe29cff8752da55859fe787f9677003bf8f78b78c6b87ea486"
-    private val k_Third = "0XmJ33XhHvQjTBv3eIItl307Q8AcDKxQo9iF2DA==yik8"
-    private val k_CompressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
-    private val k_ApacheSecret = "c85ef7d79691fe79573b1a7064c19c1a9819ebdbd1faaab1a8ec92344438aaf4"
-    private val k_Bullshit = "ddddf7d79691fe79573b1a7064c19c1a9819ebdbd1faaab1a8ec92344438aaf4"
-    private val k_Jack = "c651abedcf4b636b556d868b6b85376ec97e1be26a050adb1f1f7a2fbc1c7776"
+    private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         Core.start(Backend.LIVE_DEV, "")
@@ -96,7 +90,7 @@ internal class TxPylonsDevTest {
             "mode": "sync"
         }
         """.trimIndent().replace(" ", "")
-        val engine = engineSetup(k_GaiaCli)
+        val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
         val json = TxJson.getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
         assertEquals(fixture, json.trimIndent().replace(" ", ""))
     }
@@ -186,14 +180,16 @@ internal class TxPylonsDevTest {
 
     @Test
     fun addressFromPubkey() {
-        val pubkey = CryptoCosmos.getUncompressedPubkey(Base64().decode("Avz04VhtKJh8ACCVzlI8aTosGy0ikFXKIVHQ3jKMrosH"))
+        val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
+        engine.getOwnBalances()
+        val pubkey = engine.cryptoHandler.keyPair!!.publicKey()
         val addr = CryptoCosmos.getAddressFromPubkey(pubkey.bytes())
-        assertEquals("cosmos1g9ahr6xhht5rmqven628nklxluzyv8z9jqjcmc", TxPylonsEngine.getAddressString(addr.toArray()))
+        assertEquals(Core.userProfile!!.credentials.address, TxPylonsEngine.getAddressString(addr.toArray()))
     }
 
     @Test
     fun roundTripDecompressPubkey () {
-        val pubkeyAsBytes = Hex.decode(k_CompressedPubkey)
+        val pubkeyAsBytes = Hex.decode(compressedPubkey)
         val decompressed = CryptoCosmos.getUncompressedPubkey(pubkeyAsBytes)
         val recompressed = CryptoCosmos.getCompressedPubkey(decompressed)
         println(Hex.toHexString(recompressed.toArray()))
@@ -204,7 +200,7 @@ internal class TxPylonsDevTest {
     fun signature () {
         val data = Bytes.wrap("This is an example of a signed message.".toByteArray(Charsets.UTF_8))
         println("signing: \n" + data.toHexString())
-        val engine = engineSetup(k_ApacheSecret)
+        val engine = engineSetup(InternalPrivKeyStore.TUWENI_FIXTURES_SECRET)
         val signature = SECP256K1.sign(data, engine.cryptoHandler.keyPair)
         println("signature : \n" + Hex.toHexString(signature.bytes().toArray().slice(0 until 64).toByteArray()))
         assertTrue(SECP256K1.verify(data, signature, engine.cryptoHandler.keyPair!!.publicKey()))

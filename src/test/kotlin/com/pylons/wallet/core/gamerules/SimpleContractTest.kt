@@ -20,7 +20,7 @@ internal class SimpleContractTest {
     @Test
     fun parses () {
         OutsideWorldDummy.loadRuleJson = ::getJsonForRecipe
-        Core.start(Backend.DUMMY,"")
+        //Core.start(Backend.DUMMY,"")
         val rule = OutsideWorldDummy.loadExternalGameRuleDef("a", "b")
         assertNotNull(rule)
         assertNotNull(rule.coinsOut)
