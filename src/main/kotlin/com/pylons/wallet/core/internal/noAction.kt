@@ -8,5 +8,5 @@ import com.pylons.wallet.core.types.*
  * providing an action.
  */
 internal fun noAction(): Response {
-    return generateErrorMessageData(Error.NO_ACTION_FIELD, "The sent message didn't contain an action field, so the wallet was unable to resolve it.")
+    throw IllegalArgumentException("The sent message didn't contain an action field, so the wallet was unable to resolve it.")
 }

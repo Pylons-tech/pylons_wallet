@@ -8,6 +8,6 @@ import com.pylons.wallet.core.types.*
  * an unrecognized action.
  */
 internal fun unrecognizedAction(action : String): Response {
-    return generateErrorMessageData(Error.UNRECOGNIZED_ACTION_FIELD, "The sent message contained an unrecognized action ($action)," +
+    throw IllegalArgumentException("The sent message contained an unrecognized action ($action)," +
             " so the wallet was unable to resolve it.")
 }

@@ -144,15 +144,14 @@ object Core {
         try {
             inDoResolveMessage = true
             if (!sane) {
-                var msg = generateErrorMessageData(Error.CORE_IS_NOT_SANE, "Core state is not sane. Please call Core.start() before attempting to resolve messages.")
-                throw Exception(msg.msg!!.strings[Keys.INFO])
+                throw IllegalStateException("Core state is not sane. Please call Core.start() before attempting to resolve messages.")
             }
             val action = dat.msg.strings[ReservedKeys.wcAction].orEmpty()
             val out = actionResolutionTable(action, dat.msg)
             out.msg!!.strings[ReservedKeys.statusBlock] = statusBlock.toJson()
             Logger.implementation.log("Resolution of message ${dat.msg.getAction()} complete}", LogTag.info)
             inDoResolveMessage = false
-            println(out.msg!!.toString())
+            println(out.msg.toString())
             dat.callback?.invoke(out)
             onCompletedOperation?.invoke()
         }
