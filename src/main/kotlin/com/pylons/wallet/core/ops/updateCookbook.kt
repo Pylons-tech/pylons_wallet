@@ -6,11 +6,11 @@ import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
 
 internal fun updateCookbook(msg: MessageData): Response {
-    if (msg.strings[Keys.ADDRESS] == null) throw BadMessageException("createCookbook", Keys.ADDRESS, "String")
-    if (msg.strings[Keys.DEVELOPER] == null) throw BadMessageException("createCookbook", Keys.DEVELOPER, "String")
-    if (msg.strings[Keys.DESCRIPTION] == null) throw BadMessageException("createCookbook", Keys.DESCRIPTION, "String")
-    if (msg.strings[Keys.VERSION] == null) throw BadMessageException("createCookbook", Keys.VERSION, "String")
-    if (msg.strings[Keys.SUPPORT_EMAIL] == null) throw BadMessageException("createCookbook", Keys.SUPPORT_EMAIL, "String")
+    require (msg.strings.containsKey(Keys.ADDRESS)) { throw BadMessageException("createCookbook", Keys.ADDRESS, "String") }
+    require (msg.strings.containsKey(Keys.DEVELOPER)) { throw BadMessageException("createCookbook", Keys.DEVELOPER, "String") }
+    require (msg.strings.containsKey(Keys.DESCRIPTION)) { throw BadMessageException("createCookbook", Keys.DESCRIPTION, "String") }
+    require (msg.strings.containsKey(Keys.VERSION)) { throw BadMessageException("createCookbook", Keys.VERSION, "String") }
+    require (msg.strings.containsKey(Keys.SUPPORT_EMAIL)) { throw BadMessageException("createCookbook", Keys.SUPPORT_EMAIL, "String") }
 
     val tx = Core.updateCookbook(msg.strings[Keys.ADDRESS]!!, msg.strings["devel"]!!, msg.strings["desc"]!!,
             msg.strings["version"]!!, msg.strings["supportEmail"]!!)

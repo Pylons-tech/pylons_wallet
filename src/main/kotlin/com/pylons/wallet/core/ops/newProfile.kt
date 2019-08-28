@@ -8,14 +8,9 @@ import com.pylons.wallet.core.types.*
 import kotlin.NullPointerException
 
 internal fun newProfile (extraArgs : MessageData) : Response {
-    val name = try {
-        extraArgs.strings[Keys.NAME]
-    }
-    catch (e : NullPointerException) {
-        return badArgs()
-    }
+    require (extraArgs.strings.containsKey(Keys.NAME)) { badArgs() }
     val c = Core.engine.getNewCredentials()
-    Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to name!!), provisional = true,
+    Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to extraArgs.strings[Keys.NAME]!!), provisional = true,
             coins = mutableMapOf(), items = mutableListOf()))
     val tx = Core.newProfile(extraArgs.strings[Keys.NAME]!!)
     waitUntilCommitted(tx.id!!)

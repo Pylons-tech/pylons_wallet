@@ -14,8 +14,8 @@ internal fun applyRecipe (msg: MessageData) : Response {
 }
 
 private fun checkValid (msg : MessageData) {
-    if (!msg.strings.containsKey(Keys.COOKBOOK)) throw BadMessageException("applyRecipe", Keys.COOKBOOK, "String")
-    if (!msg.strings.containsKey(Keys.RECIPE)) throw BadMessageException("applyRecipe", Keys.RECIPE, "String")
+    require(msg.strings.containsKey(Keys.COOKBOOK)) { throw BadMessageException("applyRecipe", Keys.COOKBOOK, "String") }
+    require(msg.strings.containsKey(Keys.RECIPE)) { throw BadMessageException("applyRecipe", Keys.RECIPE, "String") }
 }
 
 fun Core.applyRecipe (cookbook : String, recipe : String, preferredItemIds : List<String>?) : Transaction =

@@ -7,10 +7,9 @@ import com.pylons.wallet.core.types.*
 
 fun performTransaction (msg : MessageData) : Response {
     Core.foreignProfilesBuffer = setOf()
-    if (!msg.strings.containsKey(Keys.OTHER_ADDRESS)) throw IllegalArgumentException("Did not provide an ID for remote profile involved in transaction.")
+    require(msg.strings.containsKey(Keys.OTHER_ADDRESS)) { "Did not provide an ID for remote profile involved in transaction." }
     if (bufferForeignProfile(msg.strings[Keys.OTHER_ADDRESS]!!) == null) throw Exception("No profile with provided ID exists.")
-    val txDesc = TransactionDescription.fromMessageData(msg)
-    return when (txDesc) {
+    return when (val txDesc = TransactionDescription.fromMessageData(msg)) {
         null -> throw Exception("Could not generate tx from supplied TX description")
         else -> {
             val tx = Transaction.build(txDesc) ?: throw Exception("Failed to build transaction from TransactionDescription. This shouldn't happen; debug it.")

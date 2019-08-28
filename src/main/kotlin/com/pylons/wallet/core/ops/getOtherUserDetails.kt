@@ -8,8 +8,7 @@ import com.pylons.wallet.core.types.*
 internal fun getOtherUserDetails (msg : MessageData) : Response {
     val id = msg.strings[Keys.OTHER_ADDRESS]
     if (id == null || id == "") throw BadMessageException("getOtherUserDetails", Keys.OTHER_ADDRESS, "String")
-    val prf = Core.getOtherUserDetails(id)
-    val msgOut = when (prf) {
+    val msgOut = when (val prf = Core.getOtherUserDetails(id)) {
         null -> MessageData(booleans = mutableMapOf(Keys.PROFILE_EXISTS to false))
         else -> MessageData(booleans = mutableMapOf(Keys.PROFILE_EXISTS to true)).merge(prf.detailsToMessageData())
     }
