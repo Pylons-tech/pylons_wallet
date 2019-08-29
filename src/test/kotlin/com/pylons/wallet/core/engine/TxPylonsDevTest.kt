@@ -140,10 +140,24 @@ internal class TxPylonsDevTest {
     }
 
     @Test
+    fun executeRecipeSignable () {
+        basicSignableTestFlow("execute_recipe") {
+            TxJson.msgTemplate_SignComponent_ExecuteRecipe("""[{"Count":5,"Item":"Wood"}]""", "",
+                    """cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
+        }
+    }
+
+    @Test
+    fun executesRecipe () {
+        basicTxTestFlow { it.applyRecipe("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c",
+                mapOf("pylon" to 2)) }
+    }
+
+    @Test
     fun createsRecipe () {
-        basicTxTestFlow { it.createRecipe("name","blah 1200783309",
+        basicTxTestFlow { it.createRecipe("more wood ${Random().nextInt()}","blah 1200783309",
                 "this is a test recipe description which must comply w/ character limits",
-                mapOf("wood" to 5), mapOf("chair" to 1),
+                mapOf("pylon" to 1), mapOf("wood" to 1234567890),
                 0) }
     }
 
@@ -162,9 +176,9 @@ internal class TxPylonsDevTest {
 
     @Test
     fun updatesRecipe () {
-        basicTxTestFlow { it.updateRecipe("name","blah 1200783309", "",
-                "this is a test recipe description which must comply w/ character limits",
-                mapOf("wood" to 5), mapOf("chair" to 1),
+        basicTxTestFlow { it.updateRecipe("wood!!!!!!!","blah 1200783309", "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c",
+                "behold, the wood economy. this is a recipe that outputs wood. it is very efficient.",
+                mapOf("pylon" to 2), mapOf("wood" to 1234567890),
                 0) }
     }
 

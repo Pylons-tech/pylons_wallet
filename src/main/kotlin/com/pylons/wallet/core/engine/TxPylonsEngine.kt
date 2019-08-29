@@ -65,10 +65,6 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Transaction {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Int): Transaction {
         throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
@@ -204,6 +200,10 @@ internal open class TxPylonsEngine : Engine() {
         Logger().log(response, "request_response")
         return response
     }
+
+    override fun applyRecipe(id: String, coinsIn: Map<String, Int>): Transaction =
+        basicTxHandlerFlow { TxJson.executeRecipe(id, Core.userProfile!!.credentials.address, coinsIn,
+                cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun listRecipes(cookbook: String): Array<Recipe> {
         val json = HttpWire.get("$url/custom/$cookbook/list_recipe/")

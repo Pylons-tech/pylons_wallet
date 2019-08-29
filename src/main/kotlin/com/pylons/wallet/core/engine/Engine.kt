@@ -21,13 +21,9 @@ internal abstract class Engine {
     abstract val isOffLineEngine : Boolean
 
     /**
-     * Calla apply recipe endpoint for given cookbook/recipe.
-     * When building the TX, the engine automatically finds items
-     * fitting the recipe's input set; if preferredItemIds aren't empty,
-     * we'll preferentially use those items to fill inputs that they
-     * fit the conditions for.
+     * Execute-recipe message
      */
-    abstract fun applyRecipe(cookbook: String, recipe: String, preferredItemIds : List<String>) : Transaction
+    abstract fun applyRecipe(id : String, coinsIn: Map<String, Int>) : Transaction
 
     /**
      * Create-recipe message

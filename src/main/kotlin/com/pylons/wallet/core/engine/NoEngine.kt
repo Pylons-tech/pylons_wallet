@@ -21,7 +21,7 @@ internal class NoEngine : Engine() {
     override fun getStatusBlock(): StatusBlock  =
             throw NoEngineException()
 
-    override fun applyRecipe(cookbook: String, recipe: String, preferredItemIds: List<String>): Transaction =
+    override fun applyRecipe(id : String, coinsIn: Map<String, Int>) : Transaction =
             throw NoEngineException()
 
     override fun commitTx(tx: Transaction): Transaction =

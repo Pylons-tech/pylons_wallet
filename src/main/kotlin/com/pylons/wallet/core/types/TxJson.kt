@@ -26,6 +26,12 @@ object TxJson {
             baseJsonWeldFlow(msgTemplate_GetPylons(amount.toString(), address), msgTemplate_SignComponent_GetPylons(amount),
                     accountNumber, sequence, pubkey)
 
+    fun executeRecipe (recipeId : String, sender: String, inputs : Map<String, Int>,
+                       pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+            baseJsonWeldFlow(msgTemplate_ExecuteRecipe(recipeId, getInputOutputListForMessage(inputs), sender),
+                    msgTemplate_SignComponent_ExecuteRecipe(getInputOutputListForSigning(inputs), recipeId, sender),
+                    accountNumber, sequence, pubkey)
+
     fun createRecipe (name: String, cookbookName : String, desc : String, inputs : Map<String, Int>, outputs : Map<String, Int>,
                       time : Int, sender : String,  pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
             baseJsonWeldFlow(msgTemplate_CreateRecipe(name, cookbookName, desc, getInputOutputListForMessage(inputs),
@@ -79,6 +85,9 @@ object TxJson {
         sb.append("]")
         return sb.toString()
     }
+
+    fun msgTemplate_SignComponent_ExecuteRecipe (inputs : String, id : String, sender: String) : String =
+            """[{"Inputs":$inputs,"RecipeID":"$id","Sender":"$sender"}]"""
 
     fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
             """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
@@ -160,6 +169,18 @@ object TxJson {
                 "Inputs": $inputs,
                 "Outputs": $outputs,
                 "ExecutionTime": "$time",
+                "Sender": "$sender"
+            }
+        }
+        ]     
+    """
+    private fun msgTemplate_ExecuteRecipe (id : String, inputs : String, sender : String) = """
+        [
+        {
+            "type": "pylons/ExecuteRecipe",
+            "value": {
+                "RecipeID":"$id",
+                "Inputs": $inputs,
                 "Sender": "$sender"
             }
         }
