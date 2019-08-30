@@ -33,8 +33,8 @@ internal open class TxPylonsEngine : Engine() {
     override val isDevEngine: Boolean = false
     override val isOffLineEngine: Boolean = false
     var cryptoHandler = CryptoCosmos()
-    protected open val url = """http://35.224.155.76:80"""
-    //protected open val url = """http://35.238.109.18:8080"""
+    //protected open val url = """http://35.224.155.76:80"""
+    protected open val url = """http://35.238.123.59:80"""
 
     companion object {
         val moshi = Moshi.Builder().build()

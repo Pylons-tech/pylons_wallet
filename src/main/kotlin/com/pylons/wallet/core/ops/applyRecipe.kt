@@ -4,20 +4,25 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.types.*
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 
 internal fun applyRecipe (msg: MessageData) : Response {
     checkValid(msg)
-    val preferredItemIds = msg.stringArrays[Keys.PREFERRED_ITEMS] ?: mutableListOf()
-    val tx = Core.applyRecipe(msg.strings[Keys.COOKBOOK]!!, msg.strings[Keys.RECIPE]!!, preferredItemIds)
+    val tx = Core.applyRecipe(msg.strings[Keys.RECIPE]!!, msg.strings[Keys.COINS_IN]!!)
     waitUntilCommitted(tx.id!!)
     return Response(MessageData(strings = mutableMapOf(Keys.TX to tx.id!!)), Status.OK_TO_RETURN_TO_CLIENT)
 }
 
 private fun checkValid (msg : MessageData) {
-    require(msg.strings.containsKey(Keys.COOKBOOK)) { throw BadMessageException("applyRecipe", Keys.COOKBOOK, "String") }
     require(msg.strings.containsKey(Keys.RECIPE)) { throw BadMessageException("applyRecipe", Keys.RECIPE, "String") }
+    require(msg.strings.containsKey(Keys.COINS_IN)) { throw BadMessageException("applyRecipe", Keys.COINS_IN, "String") }
 }
 
-fun Core.applyRecipe (cookbook : String, recipe : String, preferredItemIds : List<String>?) : Transaction =
-        TODO("rejigger!!!")
-        //Core.engine.applyRecipe(cookbook, recipe, preferredItemIds.orEmpty()).submit()
+fun Core.applyRecipe (recipe : String, coinsIn : String) : Transaction {
+    val moshi = Moshi.Builder().build()
+    val type = Types.newParameterizedType(Map::class.java, String::class.java, Int::class.java)
+    val adapter = moshi.adapter<Map<String, Int>>(type)
+    val map = adapter.fromJson(coinsIn)!!
+    return  engine.applyRecipe(recipe, map)
+}
