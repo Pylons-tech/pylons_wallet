@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.ops.*
-import com.pylons.wallet.core.engine.OutsideWorldDummy
 import com.pylons.wallet.core.types.*
 
 internal class ActionResolutionTableTest {

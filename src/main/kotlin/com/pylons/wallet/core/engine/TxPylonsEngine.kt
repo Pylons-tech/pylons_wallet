@@ -193,6 +193,12 @@ internal open class TxPylonsEngine : Engine() {
     override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Int>, outputs: Map<String, Int>, time: Int): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
+    override fun disableRecipe(id: String): Transaction =
+            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
+
+    override fun enableRecipe(id: String): Transaction =
+            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
+
     private fun postTxJson (json : String) : String {
         Logger().log(json, "request_json")
         Logger().log(url, "request_url")

@@ -18,6 +18,12 @@ internal class NoEngine : Engine() {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
+    override fun disableRecipe(id: String): Transaction  =
+            throw NoEngineException()
+
+    override fun enableRecipe(id: String): Transaction  =
+            throw NoEngineException()
+
     override fun getStatusBlock(): StatusBlock  =
             throw NoEngineException()
 

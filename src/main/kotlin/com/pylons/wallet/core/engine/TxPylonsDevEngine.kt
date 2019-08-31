@@ -25,5 +25,13 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
             basicTxHandlerFlow { TxJson.updateRecipe(name, cookbookName, id, desc, inputs, outputs, time,
                     it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
+    override fun disableRecipe(id: String): Transaction =
+            basicTxHandlerFlow { TxJson.disableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),
+                    it.accountNumber, it.sequence) }
+
+    override fun enableRecipe(id: String): Transaction =
+            basicTxHandlerFlow { TxJson.enableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),
+                    it.accountNumber, it.sequence) }
+
     fun queryTxBuilder(msgType : String) : String = HttpWire.get("$url/pylons/$msgType/tx_build/")
 }

@@ -2,7 +2,6 @@ package com.pylons.wallet.core.ops
 
 import com.squareup.moshi.Moshi
 import com.pylons.wallet.core.constants.Keys
-import com.pylons.wallet.core.engine.OutsideWorldDummy
 import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
 

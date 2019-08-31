@@ -21,6 +21,16 @@ internal abstract class Engine {
     abstract val isOffLineEngine : Boolean
 
     /**
+     * Enable-recipe message
+     */
+    abstract fun enableRecipe(id : String) : Transaction
+
+    /**
+     * Disable-recipe message
+     */
+    abstract fun disableRecipe(id : String) : Transaction
+
+    /**
      * Execute-recipe message
      */
     abstract fun applyRecipe(id : String, coinsIn: Map<String, Int>) : Transaction

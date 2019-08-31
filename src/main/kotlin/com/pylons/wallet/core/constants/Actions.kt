@@ -23,5 +23,7 @@ class Actions {
         const val UPDATE_COOKBOOK = "UPDATE_COOKBOOK"
         const val CREATE_RECIPE = "CREATE_RECIPE"
         const val UPDATE_RECIPE = "UPDATE_RECIPE"
+        const val ENABLE_RECIPE = "ENABLE_RECIPE"
+        const val DISABLE_RECIPE = "DISABLE_RECIPE"
     }
 }

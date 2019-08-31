@@ -3,10 +3,6 @@ package com.pylons.wallet.core.gamerules
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
-import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.engine.OutsideWorldDummy
-import com.pylons.wallet.core.types.Backend
-import com.pylons.wallet.core.types.UserData
 
 internal class SimpleContractTest {
 

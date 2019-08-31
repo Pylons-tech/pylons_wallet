@@ -22,6 +22,18 @@ object TxJson {
         return baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature)
     }
 
+    fun disableRecipe (recipeId : String, sender: String,
+                      pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+            baseJsonWeldFlow(msgTemplate_EnableRecipe(recipeId, sender),
+                    msgTemplate_SignComponent_EnableRecipe(recipeId, sender),
+                    accountNumber, sequence, pubkey)
+
+    fun enableRecipe (recipeId : String, sender: String,
+                       pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+            baseJsonWeldFlow(msgTemplate_EnableRecipe(recipeId, sender),
+                    msgTemplate_SignComponent_EnableRecipe(recipeId, sender),
+                    accountNumber, sequence, pubkey)
+
     fun getPylons (amount : Int, address: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
             baseJsonWeldFlow(msgTemplate_GetPylons(amount.toString(), address), msgTemplate_SignComponent_GetPylons(amount),
                     accountNumber, sequence, pubkey)
@@ -85,6 +97,12 @@ object TxJson {
         sb.append("]")
         return sb.toString()
     }
+
+    fun msgTemplate_SignComponent_DisableRecipe (id : String, sender: String) : String =
+            msgTemplate_SignComponent_EnableRecipe(id, sender)
+
+    fun msgTemplate_SignComponent_EnableRecipe (id : String, sender: String) : String =
+            """[{"RecipeID":"$id","Sender":"$sender"}]"""
 
     fun msgTemplate_SignComponent_ExecuteRecipe (inputs : String, id : String, sender: String) : String =
             """[{"Inputs":$inputs,"RecipeID":"$id","Sender":"$sender"}]"""
@@ -181,6 +199,30 @@ object TxJson {
             "value": {
                 "RecipeID":"$id",
                 "Inputs": $inputs,
+                "Sender": "$sender"
+            }
+        }
+        ]     
+    """
+
+    private fun msgTemplate_DisableRecipe (id : String, sender : String) = """
+        [
+        {
+            "type": "pylons/DisableRecipe",
+            "value": {
+                "RecipeID":"$id",
+                "Sender": "$sender"
+            }
+        }
+        ]     
+    """
+
+    private fun msgTemplate_EnableRecipe (id : String, sender : String) = """
+        [
+        {
+            "type": "pylons/EnableRecipe",
+            "value": {
+                "RecipeID":"$id",
                 "Sender": "$sender"
             }
         }
