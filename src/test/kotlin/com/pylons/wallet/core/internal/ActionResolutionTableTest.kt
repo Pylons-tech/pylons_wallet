@@ -123,16 +123,9 @@ internal class ActionResolutionTableTest {
         assertEquals("fooBar", actualResponse.msg!!.strings[Keys.NAME])
     }
 
-    private fun getJsonForRecipe (cookbook : String, recipe : String) : OutsideWorldDummy.GameRuleData {
-        return OutsideWorldDummy.GameRuleData(
-                type = "SimpleContract",
-                json = """{"address" : "test", "coinsOut" : [{"address" : "pylons", "count" : 1}]}"""
-        )
-    }
-
     @Test
     fun case_applyRecipe () {
-        OutsideWorldDummy.loadRuleJson = this::getJsonForRecipe
+        //OutsideWorldDummy.loadRuleJson = this::getJsonForRecipe
         bootstrapCoreForBasicCases()
         Core.userProfile!!.coins["pylons"] = 99
         val successResponse = Response(MessageData(booleans = mutableMapOf(Keys.SUCCESS to true)), Status.OK_TO_RETURN_TO_CLIENT)

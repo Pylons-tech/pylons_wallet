@@ -70,16 +70,6 @@ object Core {
 
     fun dumpUserProfile () : String = userProfile!!.dump()
 
-    fun dumpForeignProfiles () : String = OutsideWorldDummy.dumpProfiles()
-
-    fun dumpTx () : String = OutsideWorldDummy.dumpTransactions()
-
-    fun initializeFakeWorldState (dbgStateProfileJson : String, dbgStateWorldJson : String, dbgStateTxJson : String) {
-        OutsideWorldDummy.loadProfiles(dbgStateWorldJson)
-        userProfile = Profile.load(dbgStateProfileJson)
-        OutsideWorldDummy.loadTransactions(dbgStateTxJson)
-    }
-
     fun start (backend: Backend, json : String) {
         engine = when (backend) {
             Backend.LIVE -> TxPylonsEngine()

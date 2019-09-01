@@ -96,6 +96,20 @@ internal class TxPylonsDevTest {
     }
 
     @Test
+    fun disablesRecipeSignable () {
+        basicSignableTestFlow("disable_recipe") { TxJson.msgTemplate_SignComponent_DisableRecipe(
+                "id0001","cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
+        }
+    }
+
+    @Test
+    fun enablesRecipeSignable () {
+        basicSignableTestFlow("enable_recipe") { TxJson.msgTemplate_SignComponent_EnableRecipe(
+                "id0001","cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
+        }
+    }
+
+    @Test
     fun createRecipeSignable () {
         basicSignableTestFlow("create_recipe") { TxJson.msgTemplate_SignComponent_CreateRecipe(
                 "name","id001", "this has to meet character limits lol", 0,
@@ -142,7 +156,7 @@ internal class TxPylonsDevTest {
     @Test
     fun executeRecipeSignable () {
         basicSignableTestFlow("execute_recipe") {
-            TxJson.msgTemplate_SignComponent_ExecuteRecipe("""[{"Count":5,"Item":"Wood"}]""", "",
+            TxJson.msgTemplate_SignComponent_ExecuteRecipe("""[{"Count":5,"Item":"Wood"}]""", "id0001",
                     """cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
         }
     }
@@ -180,6 +194,16 @@ internal class TxPylonsDevTest {
                 "behold, the wood economy. this is a recipe that outputs wood. it is very efficient.",
                 mapOf("pylon" to 2), mapOf("wood" to 1234567890),
                 0) }
+    }
+
+    @Test
+    fun disablesRecipe () {
+        basicTxTestFlow { it.disableRecipe("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c") }
+    }
+
+    @Test
+    fun enablesRecipe () {
+        basicTxTestFlow { it.enableRecipe("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c") }
     }
 
     @Test
