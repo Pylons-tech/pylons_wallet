@@ -18,13 +18,13 @@ data class TransactionDescription (
                 val coinsIn = mutableListOf<Coin>()
                 if (coinsInCsv != null && coinsInCsv != "") {
                     val split = coinsInCsv.split(",")
-                    for (i in 0 until split.count()) if (i % 2 == 0) coinsIn.add(Coin(split[i], split[i+1].toInt()))
+                    for (i in 0 until split.count()) if (i % 2 == 0) coinsIn.add(Coin(split[i], split[i+1].toLong()))
                 }
                 val coinsOutCsv = msg.strings[Keys.COINS_OUT]
                 val coinsOut = mutableListOf<Coin>()
                 if (coinsOutCsv != null && coinsOutCsv != "") {
                     val split = coinsOutCsv.split(",")
-                    for (i in 0 until split.count()) if (i % 2 == 0) coinsOut.add(Coin(split[i], split[i+1].toInt()))
+                    for (i in 0 until split.count()) if (i % 2 == 0) coinsOut.add(Coin(split[i], split[i+1].toLong()))
                 }
                 // TODO: fetch full item descriptions from the ids
                 val itemsOutCsv = msg.strings[Keys.ITEMS_OUT]

@@ -33,13 +33,13 @@ internal abstract class Engine {
     /**
      * Execute-recipe message
      */
-    abstract fun applyRecipe(id : String, coinsIn: Map<String, Int>) : Transaction
+    abstract fun applyRecipe(id : String, coinsIn: Map<String, Long>) : Transaction
 
     /**
      * Create-recipe message
      */
-    abstract fun createRecipe(name : String, cookbookName : String, desc : String, inputs : Map<String, Int>,
-                              outputs : Map<String, Int>, time : Int) : Transaction
+    abstract fun createRecipe(name : String, cookbookName : String, desc : String, inputs : Map<String, Long>,
+                              outputs : Map<String, Long>, time : Long) : Transaction
 
     /**
      * Low-level commit TX function.
@@ -51,7 +51,7 @@ internal abstract class Engine {
      * Create-cookbook message
      */
     abstract fun createCookbook (name : String, devel : String, desc : String, version : String,
-                                 supportEmail : String, level : Int) : Transaction
+                                 supportEmail : String, level : Long) : Transaction
 
     /**
      * Copies some data from profile's credentials object to userdata
@@ -119,7 +119,7 @@ internal abstract class Engine {
      * but backend is locked to 500 right now.
      * TODO: payment integration???
      */
-    abstract fun getPylons (q : Int) : Transaction
+    abstract fun getPylons (q : Long) : Transaction
 
     /**
      * Gets initial userdata tables for the engine type.
@@ -129,7 +129,7 @@ internal abstract class Engine {
     /***
      * Calls send pylons endpoint.
      */
-    abstract fun sendPylons (q : Int, receiver : String) : Transaction
+    abstract fun sendPylons (q : Long, receiver : String) : Transaction
 
     /**
      * Update-cookbook message
@@ -140,8 +140,8 @@ internal abstract class Engine {
     /**
      * Update-recipe message
      */
-    abstract fun updateRecipe(name : String, cookbookName : String, id : String, desc : String, inputs : Map<String, Int>,
-                              outputs : Map<String, Int>, time : Int) : Transaction
+    abstract fun updateRecipe(name : String, cookbookName : String, id : String, desc : String, inputs : Map<String, Long>,
+                              outputs : Map<String, Long>, time : Long) : Transaction
 
     /**
      * List recipes query

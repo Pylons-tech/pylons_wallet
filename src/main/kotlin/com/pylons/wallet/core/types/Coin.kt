@@ -7,10 +7,10 @@ import com.squareup.moshi.Moshi
  */
 data class Coin(
     val id: String = "",
-    val count: Int = 0
+    val count: Long = 0
 )
 
-fun Map<String, Int>.addCoins (other : Set<Coin>, subtractValues : Boolean) : Map<String, Int> {
+fun Map<String, Long>.addCoins (other : Set<Coin>, subtractValues : Boolean) : Map<String, Long> {
     val multi = when (subtractValues) {
         true -> -1
         false -> 1
@@ -23,7 +23,7 @@ fun Map<String, Int>.addCoins (other : Set<Coin>, subtractValues : Boolean) : Ma
     return mutable.toMap()
 }
 
-fun Map<String, Int>.serializeCoins () : String {
+fun Map<String, Long>.serializeCoins () : String {
     val sb = StringBuilder()
     forEach{
         sb.append("${it.key},${it.value},")

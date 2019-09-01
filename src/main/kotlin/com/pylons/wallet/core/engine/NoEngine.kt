@@ -27,13 +27,13 @@ internal class NoEngine : Engine() {
     override fun getStatusBlock(): StatusBlock  =
             throw NoEngineException()
 
-    override fun applyRecipe(id : String, coinsIn: Map<String, Int>) : Transaction =
+    override fun applyRecipe(id : String, coinsIn: Map<String, Long>) : Transaction =
             throw NoEngineException()
 
     override fun commitTx(tx: Transaction): Transaction =
             throw NoEngineException()
 
-    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Int): Transaction =
+    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction =
             throw NoEngineException()
 
     override fun dumpCredentials(credentials: Profile.Credentials) =
@@ -63,22 +63,22 @@ internal class NoEngine : Engine() {
     override fun registerNewProfile(name : String): Transaction =
             throw NoEngineException()
 
-    override fun getPylons(q: Int): Transaction =
+    override fun getPylons(q: Long): Transaction =
             throw NoEngineException()
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
             throw NoEngineException()
 
-    override fun sendPylons(q: Int, receiver: String) =
+    override fun sendPylons(q: Long, receiver: String) =
             throw NoEngineException()
 
     override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
             throw NoEngineException()
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, inputs: Map<String, Int>, outputs: Map<String, Int>, time: Int): Transaction =
+    override fun createRecipe(name : String, cookbookName: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
             throw NoEngineException()
 
-    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Int>, outputs: Map<String, Int>, time: Int): Transaction =
+    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
             throw NoEngineException()
 
     override fun listRecipes(cookbook: String): Array<Recipe> =

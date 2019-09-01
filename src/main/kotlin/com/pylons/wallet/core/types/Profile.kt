@@ -10,7 +10,7 @@ import com.pylons.wallet.core.constants.*
 data class Profile (
         var credentials: Credentials,
         val strings : MutableMap<String, String>,
-        var coins : MutableMap<String, Int>,
+        var coins : MutableMap<String, Long>,
         val items : MutableList<Item>,
         /**
          * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
@@ -58,7 +58,7 @@ data class Profile (
         return msg
     }
 
-    fun countOfCoin (id : String) : Int {
+    fun countOfCoin (id : String) : Long {
         return when (coins[id]) {
             null -> 0
             else -> coins[id]!!

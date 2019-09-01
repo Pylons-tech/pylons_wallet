@@ -33,8 +33,9 @@ internal open class TxPylonsEngine : Engine() {
     override val isDevEngine: Boolean = false
     override val isOffLineEngine: Boolean = false
     var cryptoHandler = CryptoCosmos()
-    //protected open val url = """http://35.224.155.76:80"""
-    protected open val url = """http://35.238.123.59:80"""
+    internal val GIRISH_TEST_NODE_IP = """http://35.224.155.76:80"""
+    internal val MICHEAL_TEST_NODE_IP = """http://35.238.123.59:80"""
+    internal open val url = MICHEAL_TEST_NODE_IP
 
     companion object {
         val moshi = Moshi.Builder().build()
@@ -45,8 +46,8 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     class Credentials (address : String) : Profile.Credentials (address) {
-        var sequence : Int = 0
-        var accountNumber : Int = 0
+        var sequence : Long = 0
+        var accountNumber : Long = 0
 
         override fun dumpToMessageData(msg: MessageData) {
             msg.strings["address"] = address
@@ -65,7 +66,7 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Int): Transaction {
+    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction {
         throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
 
@@ -109,13 +110,13 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getOwnBalances(): Profile? {
         val json = HttpWire.get("$url/auth/accounts/${Core.userProfile!!.credentials.address}")
-        val sequence = JsonPath.read<String>(json, "$.value.sequence").toInt()
-        val accountNumber = JsonPath.read<String>(json, "$.value.account_number").toInt()
+        val sequence = JsonPath.read<String>(json, "$.value.sequence").toLong()
+        val accountNumber = JsonPath.read<String>(json, "$.value.account_number").toLong()
         val denoms = JsonPath.read<JSONArray>(json, "$.value.coins.*.denom")
         val amounts = JsonPath.read<JSONArray>(json, "$.value.coins.*.amount")
-        val coins = mutableMapOf<String, Int>()
+        val coins = mutableMapOf<String, Long>()
         for (i in 0 until denoms.size) {
-            coins[denoms[i].toString()] = amounts[i].toString().toInt()
+            coins[denoms[i].toString()] = amounts[i].toString().toLong()
         }
         (Core.userProfile?.credentials as Credentials?)?.accountNumber = accountNumber
         (Core.userProfile?.credentials as Credentials?)?.sequence = sequence
@@ -156,7 +157,7 @@ internal open class TxPylonsEngine : Engine() {
         return getPylons(500)
     }
 
-    override fun getPylons(q: Int): Transaction =
+    override fun getPylons(q: Long): Transaction =
             basicTxHandlerFlow { TxJson.getPylons(q, it.address, cryptoHandler.keyPair!!.publicKey(),
                     it.accountNumber, it.sequence) }
 
@@ -166,7 +167,7 @@ internal open class TxPylonsEngine : Engine() {
         return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 
-    override fun sendPylons(q: Int, receiver: String): Transaction =
+    override fun sendPylons(q: Long, receiver: String): Transaction =
         basicTxHandlerFlow { TxJson.sendPylons(q, it.address, receiver, cryptoHandler.keyPair!!.publicKey(),
                 it.accountNumber, it.sequence) }
 
@@ -174,7 +175,7 @@ internal open class TxPylonsEngine : Engine() {
         return Transaction(resolver =  {
             val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
             try {
-                val code = JsonPath.read<Int>(response, "$.code")
+                val code = JsonPath.read<Long>(response, "$.code")
                 if (code != null)
                     throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
             } catch (e : PathNotFoundException) {
@@ -187,10 +188,10 @@ internal open class TxPylonsEngine : Engine() {
     override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, inputs: Map<String, Int>, outputs: Map<String, Int>, time: Int): Transaction=
+    override fun createRecipe(name : String, cookbookName: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction=
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Int>, outputs: Map<String, Int>, time: Int): Transaction =
+    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun disableRecipe(id: String): Transaction =
@@ -207,7 +208,7 @@ internal open class TxPylonsEngine : Engine() {
         return response
     }
 
-    override fun applyRecipe(id: String, coinsIn: Map<String, Int>): Transaction =
+    override fun applyRecipe(id: String, coinsIn: Map<String, Long>): Transaction =
         basicTxHandlerFlow { TxJson.executeRecipe(id, Core.userProfile!!.credentials.address, coinsIn,
                 cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 

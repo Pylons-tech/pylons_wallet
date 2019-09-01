@@ -22,7 +22,7 @@ private fun checkValid (msg : MessageData) {
 fun Core.applyRecipe (recipe : String, coinsIn : String) : Transaction {
     val moshi = Moshi.Builder().build()
     val type = Types.newParameterizedType(Map::class.java, String::class.java, Int::class.java)
-    val adapter = moshi.adapter<Map<String, Int>>(type)
+    val adapter = moshi.adapter<Map<String, Long>>(type)
     val map = adapter.fromJson(coinsIn)!!
     return  engine.applyRecipe(recipe, map)
 }

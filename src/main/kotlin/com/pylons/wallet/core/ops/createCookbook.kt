@@ -14,10 +14,10 @@ internal fun createCookbook(msg: MessageData): Response {
     require (msg.ints.containsKey(Keys.LEVEL)) { throw BadMessageException("createCookbook", Keys.LEVEL, "Int") }
 
     val tx = Core.createCookbook(msg.strings[Keys.NAME]!!, msg.strings["devel"]!!, msg.strings["desc"]!!,
-            msg.strings["version"]!!, msg.strings["supportEmail"]!!, msg.ints["level"]!!)
+            msg.strings["version"]!!, msg.strings["supportEmail"]!!, msg.ints["level"]!!.toLong())
     waitUntilCommitted(tx.id!!)
     return Response(MessageData(strings = mutableMapOf(Keys.TX to tx.id!!)), Status.OK_TO_RETURN_TO_CLIENT)}
 
 fun Core.createCookbook (name : String, devel : String, desc : String, version : String,
-                         supportEmail : String, level : Int) : Transaction =
+                         supportEmail : String, level : Long) : Transaction =
         Core.engine.createCookbook(name, devel, desc, version, supportEmail, level).submit()

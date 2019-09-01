@@ -17,6 +17,15 @@ import java.util.*
 internal class TxPylonsDevTest {
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
+    private fun getRecipeTestId (engine: TxPylonsDevEngine) : String {
+        return when (engine.url) {
+            engine.MICHEAL_TEST_NODE_IP -> "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt33709e2bc6b-ac3c-4835-a8be-9d7a75b86f05"
+            engine.GIRISH_TEST_NODE_IP -> "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c"
+            else -> ""
+        }
+
+    }
+
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         Core.start(Backend.LIVE_DEV, "")
         val engine = Core.engine as TxPylonsDevEngine
@@ -113,7 +122,7 @@ internal class TxPylonsDevTest {
     fun createRecipeSignable () {
         basicSignableTestFlow("create_recipe") { TxJson.msgTemplate_SignComponent_CreateRecipe(
                 "name","id001", "this has to meet character limits lol", 0,
-                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1)),
+                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5L)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1L)),
                 Core.userProfile!!.credentials.address)
         }
     }
@@ -122,7 +131,7 @@ internal class TxPylonsDevTest {
     fun updateRecipeSignable () {
         basicSignableTestFlow("update_recipe") { TxJson.msgTemplate_SignComponent_UpdateRecipe(
                 "recipeName", "name","id001", "this has to meet character limits lol", 0,
-                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1)),
+                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5L)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1L)),
                 Core.userProfile!!.credentials.address)
         }
     }
@@ -163,15 +172,15 @@ internal class TxPylonsDevTest {
 
     @Test
     fun executesRecipe () {
-        basicTxTestFlow { it.applyRecipe("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c",
-                mapOf("pylon" to 2)) }
+        basicTxTestFlow { it.applyRecipe(getRecipeTestId(it),
+                mapOf("pylon" to 2L)) }
     }
 
     @Test
     fun createsRecipe () {
         basicTxTestFlow { it.createRecipe("more wood ${Random().nextInt()}","blah 1200783309",
                 "this is a test recipe description which must comply w/ character limits",
-                mapOf("pylon" to 1), mapOf("wood" to 1234567890),
+                mapOf("pylon" to 1L), mapOf("wood" to 1234567890L),
                 0) }
     }
 
@@ -190,20 +199,20 @@ internal class TxPylonsDevTest {
 
     @Test
     fun updatesRecipe () {
-        basicTxTestFlow { it.updateRecipe("wood!!!!!!!","blah 1200783309", "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c",
+        basicTxTestFlow { it.updateRecipe("wood!!!!!!!","blah 1200783309", getRecipeTestId(it),
                 "behold, the wood economy. this is a recipe that outputs wood. it is very efficient.",
-                mapOf("pylon" to 2), mapOf("wood" to 1234567890),
+                mapOf("pylon" to 2L), mapOf("wood" to 1234567890L),
                 0) }
     }
 
     @Test
     fun disablesRecipe () {
-        basicTxTestFlow { it.disableRecipe("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c") }
+        basicTxTestFlow { it.disableRecipe(getRecipeTestId(it)) }
     }
 
     @Test
     fun enablesRecipe () {
-        basicTxTestFlow { it.enableRecipe("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c") }
+        basicTxTestFlow { it.enableRecipe(getRecipeTestId(it)) }
     }
 
     @Test

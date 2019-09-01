@@ -11,7 +11,7 @@ object TxJson {
     val base64 = Base64.getEncoder()
     private fun removeWhitespace (input : String) = input.trimIndent().replace("\\s".toRegex(), "")
 
-    private fun baseJsonWeldFlow (msg : String, signComponent : String, accountNumber: Int, sequence: Int, pubkey: SECP256K1.PublicKey) : String {
+    private fun baseJsonWeldFlow (msg : String, signComponent : String, accountNumber: Long, sequence: Long, pubkey: SECP256K1.PublicKey) : String {
         val cryptoHandler = (Core.engine as TxPylonsEngine).cryptoHandler
         val signable = msgTemplate_Signable(signComponent, sequence, accountNumber)
         println("Signable:")
@@ -23,62 +23,62 @@ object TxJson {
     }
 
     fun disableRecipe (recipeId : String, sender: String,
-                      pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+                      pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
             baseJsonWeldFlow(msgTemplate_DisableRecipe(recipeId, sender),
                     msgTemplate_SignComponent_DisableRecipe(recipeId, sender),
                     accountNumber, sequence, pubkey)
 
     fun enableRecipe (recipeId : String, sender: String,
-                       pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+                       pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
             baseJsonWeldFlow(msgTemplate_EnableRecipe(recipeId, sender),
                     msgTemplate_SignComponent_EnableRecipe(recipeId, sender),
                     accountNumber, sequence, pubkey)
 
-    fun getPylons (amount : Int, address: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+    fun getPylons (amount : Long, address: String, pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
             baseJsonWeldFlow(msgTemplate_GetPylons(amount.toString(), address), msgTemplate_SignComponent_GetPylons(amount),
                     accountNumber, sequence, pubkey)
 
-    fun executeRecipe (recipeId : String, sender: String, inputs : Map<String, Int>,
-                       pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+    fun executeRecipe (recipeId : String, sender: String, inputs : Map<String, Long>,
+                       pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
             baseJsonWeldFlow(msgTemplate_ExecuteRecipe(recipeId, getInputOutputListForMessage(inputs), sender),
                     msgTemplate_SignComponent_ExecuteRecipe(getInputOutputListForSigning(inputs), recipeId, sender),
                     accountNumber, sequence, pubkey)
 
-    fun createRecipe (name: String, cookbookName : String, desc : String, inputs : Map<String, Int>, outputs : Map<String, Int>,
-                      time : Int, sender : String,  pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+    fun createRecipe (name: String, cookbookName : String, desc : String, inputs : Map<String, Long>, outputs : Map<String, Long>,
+                      time : Long, sender : String,  pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
             baseJsonWeldFlow(msgTemplate_CreateRecipe(name, cookbookName, desc, getInputOutputListForMessage(inputs),
                     getInputOutputListForMessage(outputs), time, sender),
                     msgTemplate_SignComponent_CreateRecipe(name, cookbookName, desc, time,
                     getInputOutputListForSigning(inputs), getInputOutputListForSigning(outputs), sender),
                     accountNumber, sequence, pubkey)
 
-    fun updateRecipe (name: String, cookbookName : String, id: String, desc : String, inputs : Map<String, Int>, outputs : Map<String, Int>,
-                      time : Int, sender : String,  pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) =
+    fun updateRecipe (name: String, cookbookName : String, id: String, desc : String, inputs : Map<String, Long>, outputs : Map<String, Long>,
+                      time : Long, sender : String,  pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
             baseJsonWeldFlow(msgTemplate_UpdateRecipe(name, cookbookName, id, desc, getInputOutputListForMessage(inputs),
                     getInputOutputListForMessage(outputs), time, sender),
                     msgTemplate_SignComponent_UpdateRecipe(name, cookbookName, id, desc, time,
                             getInputOutputListForSigning(inputs), getInputOutputListForSigning(outputs), sender),
                     accountNumber, sequence, pubkey)
 
-    fun sendPylons (amount : Int, sender: String, receiver: String, pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String =
+    fun sendPylons (amount : Long, sender: String, receiver: String, pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) : String =
             baseJsonWeldFlow(msgTemplate_SendPylons(amount.toString(), sender, receiver), msgTemplate_SignComponent_SendPylons(amount, sender, receiver),
                     accountNumber, sequence, pubkey)
 
     fun createCookbook (name : String, devel : String, desc : String, version : String,
-                        supportEmail : String, level : Int, sender : String,
-                        pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String =
+                        supportEmail : String, level : Long, sender : String,
+                        pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) : String =
             baseJsonWeldFlow(msgTemplate_CreateCookbook(name, devel, desc, version, supportEmail, level, sender),
                     msgTemplate_SignComponent_CreateCookbook(name, devel, desc, version, supportEmail, level, sender),
                     accountNumber, sequence, pubkey)
 
     fun updateCookbook (id : String, devel : String, desc : String, version : String,
                         supportEmail : String, sender : String,
-                        pubkey: SECP256K1.PublicKey, accountNumber: Int, sequence: Int) : String =
+                        pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) : String =
             baseJsonWeldFlow(msgTemplate_UpdateCookbook(id, devel, desc, version, supportEmail, sender),
                     msgTemplate_SignComponent_UpdateCookbook(id, devel, desc, version, supportEmail, sender),
                     accountNumber, sequence, pubkey)
 
-    private fun getInputOutputListForMessage(map : Map<String, Int>) : String {
+    private fun getInputOutputListForMessage(map : Map<String, Long>) : String {
         var sb = StringBuilder("[")
         map.forEach {
             sb.append("""{"Count":"${it.value}","Item":"${it.key}"},""")
@@ -88,7 +88,7 @@ object TxJson {
         return sb.toString()
     }
 
-    fun getInputOutputListForSigning(map : Map<String, Int>) : String {
+    fun getInputOutputListForSigning(map : Map<String, Long>) : String {
         var sb = StringBuilder("[")
         map.forEach {
             sb.append("""{"Count":${it.value},"Item":"${it.key}"},""")
@@ -107,20 +107,20 @@ object TxJson {
     fun msgTemplate_SignComponent_ExecuteRecipe (inputs : String, id : String, sender: String) : String =
             """[{"CoinInputs":$inputs,"RecipeID":"$id","Sender":"$sender"}]"""
 
-    fun msgTemplate_SignComponent_GetPylons (amount: Int) : String =
+    fun msgTemplate_SignComponent_GetPylons (amount: Long) : String =
             """{"Amount":[{"amount":"$amount","denom":"pylon"}]}"""
 
-    fun msgTemplate_SignComponent_SendPylons (amount: Int, sender : String, receiver: String) : String =
+    fun msgTemplate_SignComponent_SendPylons (amount: Long, sender : String, receiver: String) : String =
             """[{"Amount":[{"amount":"$amount","denom":"pylon"}],"Receiver":"$receiver","Sender":"$sender"}]"""
 
     fun msgTemplate_SignComponent_CreateCookbook (name : String, devel : String, desc : String, version : String,
-                                                          supportEmail : String, level : Int, sender : String) : String =
+                                                          supportEmail : String, level : Long, sender : String) : String =
             """[{"Description":"$desc","Developer":"$devel","Level":$level,"Name":"$name","Sender":"$sender","SupportEmail":"$supportEmail","Version":"$version"}]"""
 
-    fun msgTemplate_SignComponent_CreateRecipe (name : String, cookbookName: String, desc: String, time: Int, inputs: String, outputs: String, sender: String) =
+    fun msgTemplate_SignComponent_CreateRecipe (name : String, cookbookName: String, desc: String, time: Long, inputs: String, outputs: String, sender: String) =
             """[{"CoinInputs":$inputs,"CoinOutputs":$outputs,"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"RecipeName":"$name","Sender":"$sender"}]"""
 
-    fun msgTemplate_SignComponent_UpdateRecipe (name : String, cookbookName: String, id : String, desc: String, time: Int, inputs: String, outputs: String, sender: String) =
+    fun msgTemplate_SignComponent_UpdateRecipe (name : String, cookbookName: String, id : String, desc: String, time: Long, inputs: String, outputs: String, sender: String) =
             """[{"CoinInputs":$inputs,"CoinOutputs":$outputs,"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"ID":"$id","RecipeName":"$name","Sender":"$sender"}]"""
 
     fun msgTemplate_SignComponent_UpdateCookbook (id : String, devel : String, desc : String, version : String,
@@ -135,11 +135,11 @@ object TxJson {
 
     private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())
 
-    fun msgTemplate_Signable (msg : String, sequence: Int, accountNumber: Int) =
+    fun msgTemplate_Signable (msg : String, sequence: Long, accountNumber: Long) =
             """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
 
     private fun msgTemplate_CreateCookbook (name : String, devel : String, desc : String, version : String,
-                                            supportEmail : String, level : Int, sender : String) = """
+                                            supportEmail : String, level : Long, sender : String) = """
         [
         {
             "type": "pylons/CreateCookbook",
@@ -157,7 +157,7 @@ object TxJson {
     """
 
     private fun msgTemplate_CreateRecipe (name : String, cookbookName : String, desc : String, inputs : String, outputs : String,
-                                          time : Int, sender : String) = """
+                                          time : Long, sender : String) = """
         [
         {
             "type": "pylons/CreateRecipe",
@@ -175,7 +175,7 @@ object TxJson {
     """
 
     private fun msgTemplate_UpdateRecipe (name : String, cookbookName : String, id : String, desc : String, inputs : String, outputs : String,
-                                          time : Int, sender : String) = """
+                                          time : Long, sender : String) = """
         [
         {
             "type": "pylons/UpdateRecipe",
