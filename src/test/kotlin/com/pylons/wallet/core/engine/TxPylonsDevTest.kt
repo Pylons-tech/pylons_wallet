@@ -10,8 +10,8 @@ import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
+import com.pylons.wallet.core.types.txJson.*
 import org.bouncycastle.util.encoders.Hex
-import java.sql.Time
 import java.util.*
 
 internal class TxPylonsDevTest {
@@ -43,7 +43,7 @@ internal class TxPylonsDevTest {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.getOwnBalances()
         val fixture = engine.queryTxBuilder(msgType)
-        val signable = TxJson.msgTemplate_Signable(signableFun(engine), 0, 0)
+        val signable = baseSignTemplate(signableFun(engine), 0, 0)
         assertEquals(fixture, signable)
     }
 
@@ -100,38 +100,39 @@ internal class TxPylonsDevTest {
         }
         """.trimIndent().replace(" ", "")
         val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
-        val json = TxJson.getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
+        val json = getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
         assertEquals(fixture, json.trimIndent().replace(" ", ""))
     }
 
     @Test
     fun disablesRecipeSignable () {
-        basicSignableTestFlow("disable_recipe") { TxJson.msgTemplate_SignComponent_DisableRecipe(
+        basicSignableTestFlow("disable_recipe") { disableRecipeSignTemplate(
                 "id0001","cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
         }
     }
 
     @Test
     fun enablesRecipeSignable () {
-        basicSignableTestFlow("enable_recipe") { TxJson.msgTemplate_SignComponent_EnableRecipe(
-                "id0001","cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
+        basicSignableTestFlow("enable_recipe") {
+            enableRecipeSignTemplate(
+                    "id0001","cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
         }
     }
 
     @Test
     fun createRecipeSignable () {
-        basicSignableTestFlow("create_recipe") { TxJson.msgTemplate_SignComponent_CreateRecipe(
+        basicSignableTestFlow("create_recipe") { createRecipeSignTemplate(
                 "name","id001", "this has to meet character limits lol", 0,
-                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5L)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1L)),
+                getInputOutputListForSigning(mapOf("Wood" to 5L)), getInputOutputListForSigning(mapOf("Chair" to 1L)),
                 Core.userProfile!!.credentials.address)
         }
     }
 
     @Test
     fun updateRecipeSignable () {
-        basicSignableTestFlow("update_recipe") { TxJson.msgTemplate_SignComponent_UpdateRecipe(
+        basicSignableTestFlow("update_recipe") { updateRecipeSignTemplate(
                 "recipeName", "name","id001", "this has to meet character limits lol", 0,
-                TxJson.getInputOutputListForSigning(mapOf("Wood" to 5L)), TxJson.getInputOutputListForSigning(mapOf("Chair" to 1L)),
+                getInputOutputListForSigning(mapOf("Wood" to 5L)), getInputOutputListForSigning(mapOf("Chair" to 1L)),
                 Core.userProfile!!.credentials.address)
         }
     }
@@ -139,7 +140,7 @@ internal class TxPylonsDevTest {
     @Test
     fun createsCookbookSignable () {
         basicSignableTestFlow("create_cookbook") {
-            TxJson.msgTemplate_SignComponent_CreateCookbook(
+            createCookbookSignTemplate(
                     "name", "SketchyCo", "this has to meet character limits lol", "1.0.0",
                     "example@example.com", 0, Core.userProfile!!.credentials.address
             )
@@ -149,7 +150,7 @@ internal class TxPylonsDevTest {
     @Test
     fun updatesCookbookSignable () {
         basicSignableTestFlow("update_cookbook") {
-            TxJson.msgTemplate_SignComponent_UpdateCookbook("cookbook id", "SketchyCo", "this has to meet character limits lol",
+            updateCookbookSignTemplate("cookbook id", "SketchyCo", "this has to meet character limits lol",
                     "1.0.0", "example@example.com", Core.userProfile!!.credentials.address)
         }
     }
@@ -157,7 +158,7 @@ internal class TxPylonsDevTest {
     @Test
     fun sendsPylonsSignable () {
         basicSignableTestFlow("send_pylons") {
-            TxJson.msgTemplate_SignComponent_SendPylons(5, Core.userProfile!!.credentials.address,
+            sendPylonsSignTemplate(5, Core.userProfile!!.credentials.address,
                     "cosmos13rkt5rzf4gz8dvmwxxxn2kqy6p94hkpgluh8dj")
         }
     }
@@ -165,7 +166,7 @@ internal class TxPylonsDevTest {
     @Test
     fun executeRecipeSignable () {
         basicSignableTestFlow("execute_recipe") {
-            TxJson.msgTemplate_SignComponent_ExecuteRecipe("""[{"Count":5,"Item":"Wood"}]""", "id0001",
+            executeRecipeSignTemplate("""[{"Count":5,"Item":"Wood"}]""", "id0001",
                     """cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
         }
     }

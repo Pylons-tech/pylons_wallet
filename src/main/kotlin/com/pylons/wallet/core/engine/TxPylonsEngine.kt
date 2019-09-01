@@ -8,6 +8,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction
+import com.pylons.wallet.core.types.txJson.*
 import com.squareup.moshi.*
 import net.minidev.json.JSONArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -158,7 +159,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun getPylons(q: Long): Transaction =
-            basicTxHandlerFlow { TxJson.getPylons(q, it.address, cryptoHandler.keyPair!!.publicKey(),
+            basicTxHandlerFlow { getPylons(q, it.address, cryptoHandler.keyPair!!.publicKey(),
                     it.accountNumber, it.sequence) }
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
@@ -168,7 +169,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun sendPylons(q: Long, receiver: String): Transaction =
-        basicTxHandlerFlow { TxJson.sendPylons(q, it.address, receiver, cryptoHandler.keyPair!!.publicKey(),
+        basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoHandler.keyPair!!.publicKey(),
                 it.accountNumber, it.sequence) }
 
     protected fun basicTxHandlerFlow (func : (Credentials) -> String) : Transaction {
@@ -209,7 +210,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun applyRecipe(id: String, coinsIn: Map<String, Long>): Transaction =
-        basicTxHandlerFlow { TxJson.executeRecipe(id, Core.userProfile!!.credentials.address, coinsIn,
+        basicTxHandlerFlow { executeRecipe(id, Core.userProfile!!.credentials.address, coinsIn,
                 cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun listRecipes(cookbook: String): Array<Recipe> {
