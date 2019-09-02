@@ -10,8 +10,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object HttpWire {
-    const val RETRIES = 3
-    const val RETRY_DELAY = 1000.toLong()
+    private const val RETRIES = 3
+    private const val RETRY_DELAY = 1000.toLong()
 
     fun get (url : String) : String {
         var retryCount = 0

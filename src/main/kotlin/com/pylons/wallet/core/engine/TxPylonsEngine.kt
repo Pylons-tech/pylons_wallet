@@ -213,8 +213,8 @@ internal open class TxPylonsEngine : Engine() {
         basicTxHandlerFlow { executeRecipe(id, Core.userProfile!!.credentials.address, coinsIn,
                 cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
-    override fun listRecipes(cookbook: String): Array<Recipe> {
-        val json = HttpWire.get("$url/custom/$cookbook/list_recipe/")
-        TODO("not sure how this works")
+    override fun listRecipes(addr: String): Array<Recipe> {
+        val json = HttpWire.get("$url/pylons/list_recipies/$addr")
+        return Recipe.getArrayFromJson(json)
     }
 }
