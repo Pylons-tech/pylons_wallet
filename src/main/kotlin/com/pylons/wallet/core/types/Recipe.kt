@@ -26,7 +26,7 @@ data class Recipe(val id : String, val sender : String, val disabled : Boolean, 
                 }
                 val coinOutputs = doc.read<JSONArray>("$root.CoinOutputs")
                 val coinOutputsMap = mutableMapOf<String, Long>()
-                for (i2 in coinInputs.indices) {
+                for (i2 in coinOutputs.indices) {
                     coinInputsMap[doc.read<String>("$root.CoinOutputs[$i2].Item")] = doc.read<String>("$root.CoinOutputs[$i2].Count").toLong()
                 }
                 list.add(Recipe(id, sender, disabled, recipeName, cookbookName, description, time, coinInputsMap, coinOutputsMap))
