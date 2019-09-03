@@ -11,6 +11,7 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
 import com.pylons.wallet.core.types.txJson.*
+import com.squareup.moshi.Moshi
 import org.bouncycastle.util.encoders.Hex
 import java.util.*
 
@@ -57,6 +58,13 @@ internal class TxPylonsDevTest {
         engine.getOwnBalances()
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+    }
+
+    @Test
+    fun getsRecipes () {
+        var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        var a = engine.listRecipes("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
+        a.forEach { println("${it.id}, ${it.coinInputs.size}")}
     }
 
     @Test
