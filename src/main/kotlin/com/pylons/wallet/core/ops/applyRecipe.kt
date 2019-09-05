@@ -24,5 +24,5 @@ fun Core.applyRecipe (recipe : String, coinsIn : String) : Transaction {
     val type = Types.newParameterizedType(Map::class.java, String::class.java, Int::class.java)
     val adapter = moshi.adapter<Map<String, Long>>(type)
     val map = adapter.fromJson(coinsIn)!!
-    return  engine.applyRecipe(recipe, map)
+    return engine.applyRecipe(recipe)
 }

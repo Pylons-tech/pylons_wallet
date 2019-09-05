@@ -61,5 +61,6 @@ internal fun newItemFromPrototype (itemPrototype: ItemPrototype) : Item {
             else -> set.random()
         }
     }
-    return Item(id = id, strings = strings, longs = longs, doubles = doubles)
+    TODO("???")
+    //return Item(id = id, strings = strings, longs = longs, doubles = doubles)
 }

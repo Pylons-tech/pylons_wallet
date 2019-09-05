@@ -131,7 +131,9 @@ internal class TxPylonsDevTest {
         basicSignableTestFlow("create_recipe") { createRecipeSignTemplate(
                 "name","id001", "this has to meet character limits lol", 0,
                 getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
-                Core.userProfile!!.credentials.address)
+                getItemIOListForSigning(arrayOf(Item("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337e4acb5aa-e7cc-4b39-8118-798b493a6c61",
+                        mapOf("Name" to "Pickachu"), mapOf("HP" to 100L), mapOf("endurance" to 0.75), "id001",
+                        "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"))), "", Core.userProfile!!.credentials.address)
         }
     }
 
@@ -140,7 +142,7 @@ internal class TxPylonsDevTest {
         basicSignableTestFlow("update_recipe") { updateRecipeSignTemplate(
                 "recipeName", "name","id001", "this has to meet character limits lol", 0,
                 getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
-                Core.userProfile!!.credentials.address)
+                "", "", Core.userProfile!!.credentials.address)
         }
     }
 
@@ -173,22 +175,20 @@ internal class TxPylonsDevTest {
     @Test
     fun executeRecipeSignable () {
         basicSignableTestFlow("execute_recipe") {
-            executeRecipeSignTemplate("""[{"Count":5,"Item":"Wood"}]""", "id0001",
-                    """cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
+            executeRecipeSignTemplate("id0001","""cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
         }
     }
 
     @Test
     fun executesRecipe () {
-        basicTxTestFlow { it.applyRecipe(getRecipeTestId(it),
-                mapOf("pylon" to 2L)) }
+        basicTxTestFlow { it.applyRecipe(getRecipeTestId(it)) }
     }
 
     @Test
     fun createsRecipe () {
         basicTxTestFlow { it.createRecipe("more wood ${Random().nextInt()}","blah 1200783309",
                 "this is a test recipe description which must comply w/ character limits",
-                mapOf("pylon" to 1L), mapOf("wood" to 1234567890L),
+                mapOf("pylon" to 1L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
                 0) }
     }
 
@@ -209,7 +209,8 @@ internal class TxPylonsDevTest {
     fun updatesRecipe () {
         basicTxTestFlow { it.updateRecipe("wood!!!!!!!","blah 1200783309", getRecipeTestId(it),
                 "behold, the wood economy. this is a recipe that outputs wood. it is very efficient.",
-                mapOf("pylon" to 2L), mapOf("wood" to 1234567890L),
+                mapOf("pylon" to 2L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(Item("", mapOf("type" to "widget"), mapOf(),
+                mapOf(), "", "")),
                 0) }
     }
 

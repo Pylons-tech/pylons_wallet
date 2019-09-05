@@ -49,9 +49,9 @@ internal fun baseSignTemplate (msg : String, sequence: Long, accountNumber: Long
 internal fun getCoinIOListForMessage(map : Map<String, Long>) : String {
     var sb = StringBuilder("[")
     map.forEach {
-        sb.append("""{"Count":"${it.value}","Item":"${it.key}"},""")
+        sb.append("""{"Coin":"${it.key}","Count":"${it.value}"},""")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (map.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
     return sb.toString()
 }
@@ -59,9 +59,9 @@ internal fun getCoinIOListForMessage(map : Map<String, Long>) : String {
 internal fun getCoinIOListForSigning(map : Map<String, Long>) : String {
     var sb = StringBuilder("[")
     map.forEach {
-        sb.append("""{"Count":${it.value},"Item":"${it.key}"},""")
+        sb.append("""{"Coin":"${it.key}","Count":${it.value}},""")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (map.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
     return sb.toString()
 }
@@ -71,7 +71,7 @@ internal fun getItemIOListForMessage(array : Array<Item>) : String {
     array.forEach {
         sb.append("${exportItemJsonForMessage(it)},")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
     return sb.toString()
 }
@@ -82,7 +82,7 @@ internal fun getItemIOListForSigning(array : Array<Item>) : String {
     array.forEach {
         sb.append("${exportItemJsonForSigning(it)},")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
     return sb.toString()
 }
@@ -90,9 +90,9 @@ internal fun getItemIOListForSigning(array : Array<Item>) : String {
 private fun doublesArrayForMessage (item : Item) : String {
     var sb = StringBuilder("{")
     item.doubles.forEach {
-        sb.append("""${it.key}:"${it.value}"""")
+        sb.append(""""${it.key}":"${it.value}",""")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (item.doubles.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("}")
     return sb.toString()
 }
@@ -100,9 +100,9 @@ private fun doublesArrayForMessage (item : Item) : String {
 private fun doublesArrayForSigning (item : Item) : String {
     var sb = StringBuilder("{")
     item.doubles.forEach {
-        sb.append("""${it.key}:${it.value}""")
+        sb.append(""""${it.key}":${it.value},""")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (item.doubles.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("}")
     return sb.toString()
 }
@@ -110,9 +110,9 @@ private fun doublesArrayForSigning (item : Item) : String {
 private fun longsArrayForMessage (item : Item) : String {
     var sb = StringBuilder("{")
     item.longs.forEach {
-        sb.append("""${it.key}:"${it.value}"""")
+        sb.append(""""${it.key}"}:"${it.value}",""")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (item.longs.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("}")
     return sb.toString()
 }
@@ -120,9 +120,9 @@ private fun longsArrayForMessage (item : Item) : String {
 private fun longsArrayForSigning (item : Item) : String {
     var sb = StringBuilder("{")
     item.longs.forEach {
-        sb.append("""${it.key}:${it.value}""")
+        sb.append(""""${it.key}":${it.value},""")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (item.longs.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("}")
     return sb.toString()
 }
@@ -130,9 +130,9 @@ private fun longsArrayForSigning (item : Item) : String {
 private fun stringsArray (item : Item) : String {
     var sb = StringBuilder("{")
     item.strings.forEach {
-        sb.append("""${it.key}:"${it.value}"""")
+        sb.append(""""${it.key}":"${it.value}",""")
     }
-    sb.deleteCharAt(sb.length - 1)
+    if (item.strings.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("}")
     return sb.toString()
 }
@@ -146,19 +146,11 @@ private fun exportItemJsonForMessage (item : Item) : String {
             "Longs": ${longsArrayForMessage(item)},
             "Sender": "${item.sender}",
             "Strings": ${stringsArray(item)}
-        }""".trimIndent()
+        }"""
 }
 
-private fun exportItemJsonForSigning (item : Item) : String {
-    return """
-        {
-            "CookbookID": "${item.cookbook}",
-            "Doubles": ${doublesArrayForSigning(item)},
-            "ID": "${item.id}",
-            "Longs": ${longsArrayForSigning(item)},
-            "Sender": "${item.sender}",
-            "Strings": ${stringsArray(item)}
-        }""".trimIndent()
-}
+private fun exportItemJsonForSigning (item : Item) : String =
+    """{"CookbookID":"${item.cookbook}","Doubles":${doublesArrayForSigning(item)},"ID":"${item.id}",""" +
+            """"Longs":${longsArrayForSigning(item)},"Sender":"${item.sender}","Strings":${stringsArray(item)}}"""
 
 private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())

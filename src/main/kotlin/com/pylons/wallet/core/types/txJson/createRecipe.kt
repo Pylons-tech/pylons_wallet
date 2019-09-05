@@ -7,9 +7,11 @@ internal fun createRecipe (name: String, cookbookName : String, desc : String, c
                            itemInputs: Array<Item>, itemOutputs : Array<Item>, time : Long, sender : String, pubkey: SECP256K1.PublicKey,
                            accountNumber: Long, sequence: Long) =
         baseJsonWeldFlow(createRecipeMsgTemplate(name, cookbookName, desc, getCoinIOListForMessage(coinInputs),
-                getCoinIOListForMessage(coinOutputs), time, sender),
+                getCoinIOListForMessage(coinOutputs), getItemIOListForMessage(itemInputs), getItemIOListForMessage(itemOutputs),
+                time, sender),
                 createRecipeSignTemplate(name, cookbookName, desc, time,
-                        getCoinIOListForSigning(coinInputs), getCoinIOListForSigning(coinOutputs), sender),
+                        getCoinIOListForSigning(coinInputs), getCoinIOListForSigning(coinOutputs),
+                        getItemIOListForSigning(itemInputs), getItemIOListForSigning(itemOutputs), sender),
                 accountNumber, sequence, pubkey)
 
 private fun createRecipeMsgTemplate (name : String, cookbookName : String, desc : String, coinInputs : String, coinOutputs : String,
@@ -32,5 +34,7 @@ private fun createRecipeMsgTemplate (name : String, cookbookName : String, desc 
         ]     
     """
 
-internal fun createRecipeSignTemplate (name : String, cookbookName: String, desc: String, time: Long, inputs: String, outputs: String, sender: String) =
-        """[{"CoinInputs":$inputs,"CoinOutputs":$outputs,"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,"RecipeName":"$name","Sender":"$sender"}]"""
+internal fun createRecipeSignTemplate (name : String, cookbookName: String, desc: String, time: Long, coinInputs: String, coinOutputs: String,
+                                       itemInputs: String, itemOutputs: String, sender: String) =
+        """[{"CoinInputs":$coinInputs,"CoinOutputs":$coinOutputs,"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,""" +
+            """"ItemInputs":$itemInputs,"ItemOutputs":$itemOutputs,"RecipeName":"$name","Sender":"$sender"}]"""
