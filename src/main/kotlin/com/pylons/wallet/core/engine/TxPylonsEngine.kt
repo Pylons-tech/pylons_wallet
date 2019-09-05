@@ -36,7 +36,7 @@ internal open class TxPylonsEngine : Engine() {
     var cryptoHandler = CryptoCosmos()
     internal val GIRISH_TEST_NODE_IP = """http://35.224.155.76:80"""
     internal val MICHEAL_TEST_NODE_IP = """http://35.238.123.59:80"""
-    internal open val url = MICHEAL_TEST_NODE_IP
+    internal open val url = GIRISH_TEST_NODE_IP
 
     companion object {
         val moshi = Moshi.Builder().build()
@@ -45,6 +45,8 @@ internal open class TxPylonsEngine : Engine() {
             return Bech32Cosmos.convertAndEncode("cosmos1", AminoCompat.accAddress(addr))
         }
     }
+
+    // Credentials stuff
 
     class Credentials (address : String) : Profile.Credentials (address) {
         var sequence : Long = 0
@@ -67,20 +69,55 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction {
-        throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
+    // Wiring
+
+    protected fun basicTxHandlerFlow (func : (Credentials) -> String) : Transaction {
+        return Transaction(resolver =  {
+            val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
+            try {
+                val code = JsonPath.read<Long>(response, "$.code")
+                if (code != null)
+                    throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
+            } catch (e : PathNotFoundException) {
+                // swallow this - we only find an error code if there is in fact an error
+            }
+            it.id = JsonPath.read(response, "$.txhash")
+        })
     }
+
+    private fun postTxJson (json : String) : String {
+        Logger().log(json, "request_json")
+        Logger().log(url, "request_url")
+        val response = HttpWire.post("""$url/txs""", json)
+        Logger().log(response, "request_response")
+        return response
+    }
+
+    // Engine methods
+
+    override fun applyRecipe(id: String): Transaction =
+            basicTxHandlerFlow { executeRecipe(id, Core.userProfile!!.credentials.address,
+                    cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun commitTx(tx: Transaction): Transaction {
         //val response = HttpWire.post("$url/txs", getJsonForTx(tx))
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
+    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction {
+        throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
         UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoHandler.keyPair!!.secretKey().bytes().toHexString()
+    }
+
+    override fun generateCredentialsFromKeys() : Profile.Credentials {
+        val json = HttpWire.get("$url/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
+        val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
+        return Credentials(addrString)
     }
 
     override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): Profile.Credentials {
@@ -92,10 +129,14 @@ internal open class TxPylonsEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun generateCredentialsFromKeys() : Profile.Credentials {
-        val json = HttpWire.get("$url/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
-        val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
-        return Credentials(addrString)
+    override fun getForeignBalances(id: String): ForeignProfile? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
+        val cryptoTable = mutableMapOf<String, String>()
+        val engineTable = mutableMapOf<String, String>()
+        return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 
     override fun getNewCredentials(): Profile.Credentials {
@@ -105,9 +146,7 @@ internal open class TxPylonsEngine : Engine() {
         return Credentials(addrString)
     }
 
-    override fun getForeignBalances(id: String): ForeignProfile? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
     override fun getOwnBalances(): Profile? {
         val json = HttpWire.get("$url/auth/accounts/${Core.userProfile!!.credentials.address}")
@@ -125,7 +164,9 @@ internal open class TxPylonsEngine : Engine() {
         return Core.userProfile
     }
 
-    override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
+    override fun getPylons(q: Long): Transaction =
+            basicTxHandlerFlow { getPylons(q, it.address, cryptoHandler.keyPair!!.publicKey(),
+                    it.accountNumber, it.sequence) }
 
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("$url/blocks/latest")
@@ -152,47 +193,25 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
+    override fun listRecipes(addr: String): Array<Recipe> {
+        val json = HttpWire.get("$url/pylons/list_recipies/$addr")
+        return Recipe.getArrayFromJson(json)
+    }
+
     override fun registerNewProfile(name : String): Transaction {
         cryptoHandler.generateNewKeys()
         Core.userProfile = Profile(credentials = getNewCredentials(), coins = mutableMapOf(), items = mutableListOf(), strings = mutableMapOf())
         return getPylons(500)
     }
 
-    override fun getPylons(q: Long): Transaction =
-            basicTxHandlerFlow { getPylons(q, it.address, cryptoHandler.keyPair!!.publicKey(),
-                    it.accountNumber, it.sequence) }
-
-    override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> {
-        val cryptoTable = mutableMapOf<String, String>()
-        val engineTable = mutableMapOf<String, String>()
-        return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
-    }
-
     override fun sendPylons(q: Long, receiver: String): Transaction =
         basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoHandler.keyPair!!.publicKey(),
                 it.accountNumber, it.sequence) }
 
-    protected fun basicTxHandlerFlow (func : (Credentials) -> String) : Transaction {
-        return Transaction(resolver =  {
-            val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
-            try {
-                val code = JsonPath.read<Long>(response, "$.code")
-                if (code != null)
-                    throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
-            } catch (e : PathNotFoundException) {
-                // swallow this - we only find an error code if there is in fact an error
-            }
-            it.id = JsonPath.read(response, "$.txhash")
-        })
-    }
+    // Unimplemented engine method stubs
 
-    override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
-            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
-
-    override fun createRecipe(name : String, cookbookName: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction=
-            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
-
-    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
+    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
+                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun disableRecipe(id: String): Transaction =
@@ -201,20 +220,10 @@ internal open class TxPylonsEngine : Engine() {
     override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    private fun postTxJson (json : String) : String {
-        Logger().log(json, "request_json")
-        Logger().log(url, "request_url")
-        val response = HttpWire.post("""$url/txs""", json)
-        Logger().log(response, "request_response")
-        return response
-    }
+    override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
+            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun applyRecipe(id: String, coinsIn: Map<String, Long>): Transaction =
-        basicTxHandlerFlow { executeRecipe(id, Core.userProfile!!.credentials.address, coinsIn,
-                cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
-
-    override fun listRecipes(addr: String): Array<Recipe> {
-        val json = HttpWire.get("$url/pylons/list_recipies/$addr")
-        return Recipe.getArrayFromJson(json)
-    }
+    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
+                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
+            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 }

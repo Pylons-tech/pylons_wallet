@@ -4,10 +4,10 @@ import com.pylons.wallet.core.types.SECP256K1
 
 internal fun updateRecipe (name: String, cookbookName : String, id: String, desc : String, inputs : Map<String, Long>, outputs : Map<String, Long>,
                   time : Long, sender : String, pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
-        baseJsonWeldFlow(updateRecipeMsgTemplate(name, cookbookName, id, desc, getInputOutputListForMessage(inputs),
-                getInputOutputListForMessage(outputs), time, sender),
+        baseJsonWeldFlow(updateRecipeMsgTemplate(name, cookbookName, id, desc, getCoinIOListForMessage(inputs),
+                getCoinIOListForMessage(outputs), time, sender),
                 updateRecipeSignTemplate(name, cookbookName, id, desc, time,
-                        getInputOutputListForSigning(inputs), getInputOutputListForSigning(outputs), sender),
+                        getCoinIOListForSigning(inputs), getCoinIOListForSigning(outputs), sender),
                 accountNumber, sequence, pubkey)
 
 private fun updateRecipeMsgTemplate (name : String, cookbookName : String, id : String, desc : String, inputs : String, outputs : String,

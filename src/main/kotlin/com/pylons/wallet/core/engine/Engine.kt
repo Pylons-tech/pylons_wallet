@@ -33,13 +33,13 @@ internal abstract class Engine {
     /**
      * Execute-recipe message
      */
-    abstract fun applyRecipe(id : String, coinsIn: Map<String, Long>) : Transaction
+    abstract fun applyRecipe(id : String) : Transaction
 
     /**
      * Create-recipe message
      */
-    abstract fun createRecipe(name : String, cookbookName : String, desc : String, inputs : Map<String, Long>,
-                              outputs : Map<String, Long>, time : Long) : Transaction
+    abstract fun createRecipe(name : String, cookbookName : String, desc : String, coinInputs : Map<String, Long>,
+                              coinOutputs : Map<String, Long>, itemInputs: Array<Item>, itemOutputs : Array<Item>, time : Long) : Transaction
 
     /**
      * Low-level commit TX function.
@@ -140,8 +140,8 @@ internal abstract class Engine {
     /**
      * Update-recipe message
      */
-    abstract fun updateRecipe(name : String, cookbookName : String, id : String, desc : String, inputs : Map<String, Long>,
-                              outputs : Map<String, Long>, time : Long) : Transaction
+    abstract fun updateRecipe(name : String, cookbookName : String, id : String, desc : String, coinInputs : Map<String, Long>,
+                              coinOutputs : Map<String, Long>, itemInputs: Array<Item>, itemOutputs : Array<Item>, time : Long) : Transaction
 
     /**
      * List recipes query

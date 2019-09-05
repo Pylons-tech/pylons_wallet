@@ -4,8 +4,8 @@ import com.pylons.wallet.core.types.SECP256K1
 
 internal fun executeRecipe (recipeId : String, sender: String, inputs : Map<String, Long>,
                    pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
-        baseJsonWeldFlow(executeRecipeMsgTemplate(recipeId, getInputOutputListForMessage(inputs), sender),
-                executeRecipeSignTemplate(getInputOutputListForSigning(inputs), recipeId, sender),
+        baseJsonWeldFlow(executeRecipeMsgTemplate(recipeId, getCoinIOListForMessage(inputs), sender),
+                executeRecipeSignTemplate(getCoinIOListForSigning(inputs), recipeId, sender),
                 accountNumber, sequence, pubkey)
 
 private fun executeRecipeMsgTemplate (id : String, inputs : String, sender : String) = """

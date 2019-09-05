@@ -18,16 +18,7 @@ internal class NoEngine : Engine() {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
-    override fun disableRecipe(id: String): Transaction  =
-            throw NoEngineException()
-
-    override fun enableRecipe(id: String): Transaction  =
-            throw NoEngineException()
-
-    override fun getStatusBlock(): StatusBlock  =
-            throw NoEngineException()
-
-    override fun applyRecipe(id : String, coinsIn: Map<String, Long>) : Transaction =
+    override fun applyRecipe(id : String) : Transaction =
             throw NoEngineException()
 
     override fun commitTx(tx: Transaction): Transaction =
@@ -36,37 +27,53 @@ internal class NoEngine : Engine() {
     override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction =
             throw NoEngineException()
 
+    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
+                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
+            throw NoEngineException()
+
+    override fun disableRecipe(id: String): Transaction  =
+            throw NoEngineException()
+
     override fun dumpCredentials(credentials: Profile.Credentials) =
             throw NoEngineException()
 
-    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String) =
+    override fun enableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
     override fun generateCredentialsFromKeys(): Profile.Credentials =
             throw NoEngineException()
 
-    override fun getNewCredentials(): Profile.Credentials =
+    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String) =
             throw NoEngineException()
 
     override fun getForeignBalances(id: String): ForeignProfile? =
             throw NoEngineException()
 
-    override fun getOwnBalances(): Profile? =
+    override fun getNewCredentials(): Profile.Credentials =
+            throw NoEngineException()
+
+    override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
             throw NoEngineException()
 
     override fun getNewCryptoHandler(): CryptoHandler =
             throw NoEngineException()
 
-    override fun getTransaction(id: String): Transaction =
-            throw NoEngineException()
-
-    override fun registerNewProfile(name : String): Transaction =
+    override fun getOwnBalances(): Profile? =
             throw NoEngineException()
 
     override fun getPylons(q: Long): Transaction =
             throw NoEngineException()
 
-    override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
+    override fun getStatusBlock(): StatusBlock  =
+            throw NoEngineException()
+
+    override fun getTransaction(id: String): Transaction =
+            throw NoEngineException()
+
+    override fun listRecipes(cookbook: String): Array<Recipe> =
+            throw NoEngineException()
+
+    override fun registerNewProfile(name : String): Transaction =
             throw NoEngineException()
 
     override fun sendPylons(q: Long, receiver: String) =
@@ -75,12 +82,7 @@ internal class NoEngine : Engine() {
     override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
             throw NoEngineException()
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
-            throw NoEngineException()
-
-    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
-            throw NoEngineException()
-
-    override fun listRecipes(cookbook: String): Array<Recipe> =
+    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
+                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
             throw NoEngineException()
 }

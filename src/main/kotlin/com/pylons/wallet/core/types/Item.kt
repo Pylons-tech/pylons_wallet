@@ -13,7 +13,9 @@ data class Item(
         val id: String = "",
         val strings: Map<String, String> = mapOf(),
         val longs: Map<String, Long> = mapOf(),
-        val doubles: Map<String, Double> = mapOf()
+        val doubles: Map<String, Double> = mapOf(),
+        val cookbook : String,
+        val sender : String
 ) {
     companion object {
         fun fromJson (json : String) : Item {

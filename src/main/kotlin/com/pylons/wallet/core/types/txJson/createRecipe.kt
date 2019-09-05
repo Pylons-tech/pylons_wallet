@@ -1,17 +1,19 @@
 package com.pylons.wallet.core.types.txJson
 
+import com.pylons.wallet.core.types.Item
 import com.pylons.wallet.core.types.SECP256K1
 
-internal fun createRecipe (name: String, cookbookName : String, desc : String, inputs : Map<String, Long>, outputs : Map<String, Long>,
-                  time : Long, sender : String, pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
-        baseJsonWeldFlow(createRecipeMsgTemplate(name, cookbookName, desc, getInputOutputListForMessage(inputs),
-                getInputOutputListForMessage(outputs), time, sender),
+internal fun createRecipe (name: String, cookbookName : String, desc : String, coinInputs : Map<String, Long>, coinOutputs : Map<String, Long>,
+                           itemInputs: Array<Item>, itemOutputs : Array<Item>, time : Long, sender : String, pubkey: SECP256K1.PublicKey,
+                           accountNumber: Long, sequence: Long) =
+        baseJsonWeldFlow(createRecipeMsgTemplate(name, cookbookName, desc, getCoinIOListForMessage(coinInputs),
+                getCoinIOListForMessage(coinOutputs), time, sender),
                 createRecipeSignTemplate(name, cookbookName, desc, time,
-                        getInputOutputListForSigning(inputs), getInputOutputListForSigning(outputs), sender),
+                        getCoinIOListForSigning(coinInputs), getCoinIOListForSigning(coinOutputs), sender),
                 accountNumber, sequence, pubkey)
 
-private fun createRecipeMsgTemplate (name : String, cookbookName : String, desc : String, inputs : String, outputs : String,
-                                     time : Long, sender : String) = """
+private fun createRecipeMsgTemplate (name : String, cookbookName : String, desc : String, coinInputs : String, coinOutputs : String,
+                                     itemInputs : String, itemOutputs: String, time : Long, sender : String) = """
         [
         {
             "type": "pylons/CreateRecipe",
@@ -19,8 +21,10 @@ private fun createRecipeMsgTemplate (name : String, cookbookName : String, desc 
                 "RecipeName": "$name",
                 "CookbookName": "$cookbookName",
                 "Description": "$desc",
-                "CoinInputs": $inputs,
-                "CoinOutputs": $outputs,
+                "CoinInputs": $coinInputs,
+                "CoinOutputs": $coinOutputs,
+                "ItemInputs": $itemInputs,
+                "ItemOutputs": $itemOutputs,
                 "ExecutionTime": "$time",
                 "Sender": "$sender"
             }

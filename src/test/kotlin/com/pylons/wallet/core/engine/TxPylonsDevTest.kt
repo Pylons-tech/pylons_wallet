@@ -11,7 +11,6 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
 import com.pylons.wallet.core.types.txJson.*
-import com.squareup.moshi.Moshi
 import org.bouncycastle.util.encoders.Hex
 import java.util.*
 
@@ -131,7 +130,7 @@ internal class TxPylonsDevTest {
     fun createRecipeSignable () {
         basicSignableTestFlow("create_recipe") { createRecipeSignTemplate(
                 "name","id001", "this has to meet character limits lol", 0,
-                getInputOutputListForSigning(mapOf("Wood" to 5L)), getInputOutputListForSigning(mapOf("Chair" to 1L)),
+                getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
                 Core.userProfile!!.credentials.address)
         }
     }
@@ -140,7 +139,7 @@ internal class TxPylonsDevTest {
     fun updateRecipeSignable () {
         basicSignableTestFlow("update_recipe") { updateRecipeSignTemplate(
                 "recipeName", "name","id001", "this has to meet character limits lol", 0,
-                getInputOutputListForSigning(mapOf("Wood" to 5L)), getInputOutputListForSigning(mapOf("Chair" to 1L)),
+                getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
                 Core.userProfile!!.credentials.address)
         }
     }

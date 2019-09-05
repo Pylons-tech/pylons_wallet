@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types.txJson
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
+import com.pylons.wallet.core.types.Item
 import com.pylons.wallet.core.types.SECP256K1
 import java.util.*
 
@@ -45,7 +46,7 @@ private fun baseTemplate (msg : String, pubkey : String, accountNumber : String,
 internal fun baseSignTemplate (msg : String, sequence: Long, accountNumber: Long) =
         """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
 
-internal fun getInputOutputListForMessage(map : Map<String, Long>) : String {
+internal fun getCoinIOListForMessage(map : Map<String, Long>) : String {
     var sb = StringBuilder("[")
     map.forEach {
         sb.append("""{"Count":"${it.value}","Item":"${it.key}"},""")
@@ -55,7 +56,7 @@ internal fun getInputOutputListForMessage(map : Map<String, Long>) : String {
     return sb.toString()
 }
 
-internal fun getInputOutputListForSigning(map : Map<String, Long>) : String {
+internal fun getCoinIOListForSigning(map : Map<String, Long>) : String {
     var sb = StringBuilder("[")
     map.forEach {
         sb.append("""{"Count":${it.value},"Item":"${it.key}"},""")
@@ -63,6 +64,101 @@ internal fun getInputOutputListForSigning(map : Map<String, Long>) : String {
     sb.deleteCharAt(sb.length - 1)
     sb.append("]")
     return sb.toString()
+}
+
+internal fun getItemIOListForMessage(array : Array<Item>) : String {
+    var sb = StringBuilder("[")
+    array.forEach {
+        sb.append("${exportItemJsonForMessage(it)},")
+    }
+    sb.deleteCharAt(sb.length - 1)
+    sb.append("]")
+    return sb.toString()
+}
+
+
+internal fun getItemIOListForSigning(array : Array<Item>) : String {
+    var sb = StringBuilder("[")
+    array.forEach {
+        sb.append("${exportItemJsonForSigning(it)},")
+    }
+    sb.deleteCharAt(sb.length - 1)
+    sb.append("]")
+    return sb.toString()
+}
+
+private fun doublesArrayForMessage (item : Item) : String {
+    var sb = StringBuilder("{")
+    item.doubles.forEach {
+        sb.append("""${it.key}:"${it.value}"""")
+    }
+    sb.deleteCharAt(sb.length - 1)
+    sb.append("}")
+    return sb.toString()
+}
+
+private fun doublesArrayForSigning (item : Item) : String {
+    var sb = StringBuilder("{")
+    item.doubles.forEach {
+        sb.append("""${it.key}:${it.value}""")
+    }
+    sb.deleteCharAt(sb.length - 1)
+    sb.append("}")
+    return sb.toString()
+}
+
+private fun longsArrayForMessage (item : Item) : String {
+    var sb = StringBuilder("{")
+    item.longs.forEach {
+        sb.append("""${it.key}:"${it.value}"""")
+    }
+    sb.deleteCharAt(sb.length - 1)
+    sb.append("}")
+    return sb.toString()
+}
+
+private fun longsArrayForSigning (item : Item) : String {
+    var sb = StringBuilder("{")
+    item.longs.forEach {
+        sb.append("""${it.key}:${it.value}""")
+    }
+    sb.deleteCharAt(sb.length - 1)
+    sb.append("}")
+    return sb.toString()
+}
+
+private fun stringsArray (item : Item) : String {
+    var sb = StringBuilder("{")
+    item.strings.forEach {
+        sb.append("""${it.key}:"${it.value}"""")
+    }
+    sb.deleteCharAt(sb.length - 1)
+    sb.append("}")
+    return sb.toString()
+}
+
+private fun exportItemJsonForMessage (item : Item) : String {
+    return """
+        {
+            "CookbookID": "${item.cookbook}",
+            "Doubles": ${doublesArrayForMessage(item)},
+            "ID": "${item.id}",
+            "Longs": ${longsArrayForMessage(item)},
+            "Sender": "${item.sender}",
+            "Strings": ${stringsArray(item)}
+        }""".trimIndent()
+}
+
+private fun exportItemJsonForSigning (item : Item) : String {
+    return """
+        {
+            "CookbookID": "${item.cookbook}",
+            "Doubles": ${doublesArrayForSigning(item)},
+            "ID": "${item.id}",
+            "Longs": ${longsArrayForSigning(item)},
+            "Sender": "${item.sender}",
+            "Strings": ${stringsArray(item)}
+        }""".trimIndent()
 }
 
 private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())

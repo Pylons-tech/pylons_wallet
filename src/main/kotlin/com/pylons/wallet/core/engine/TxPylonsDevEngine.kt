@@ -2,6 +2,7 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.types.Backend
 import com.pylons.wallet.core.types.HttpWire
+import com.pylons.wallet.core.types.Item
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.txJson.*
 
@@ -13,16 +14,9 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
             basicTxHandlerFlow { createCookbook(name, devel, desc, version, supportEmail, level, it.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
-    override fun updateCookbook(id : String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
-            basicTxHandlerFlow { updateCookbook(id, devel, desc, version, supportEmail, it.address,
-                    cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
-
-    override fun createRecipe(name : String, cookbookName: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
-            basicTxHandlerFlow { createRecipe(name, cookbookName, desc, inputs, outputs, time,
-                    it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
-
-    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, inputs: Map<String, Long>, outputs: Map<String, Long>, time: Long): Transaction =
-            basicTxHandlerFlow { updateRecipe(name, cookbookName, id, desc, inputs, outputs, time,
+    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
+                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
+            basicTxHandlerFlow { createRecipe(name, cookbookName, desc, coinInputs, coinOutputs, itemInputs, itemOutputs, time,
                     it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun disableRecipe(id: String): Transaction =
@@ -32,6 +26,15 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
     override fun enableRecipe(id: String): Transaction =
             basicTxHandlerFlow { enableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),
                     it.accountNumber, it.sequence) }
+
+    override fun updateCookbook(id : String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
+            basicTxHandlerFlow { updateCookbook(id, devel, desc, version, supportEmail, it.address,
+                    cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
+
+    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
+                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
+            basicTxHandlerFlow { updateRecipe(name, cookbookName, id, desc, coinInputs, coinOutputs, itemInputs, itemOutputs, time,
+                    it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     fun queryTxBuilder(msgType : String) : String = HttpWire.get("$url/pylons/$msgType/tx_build/")
 }
