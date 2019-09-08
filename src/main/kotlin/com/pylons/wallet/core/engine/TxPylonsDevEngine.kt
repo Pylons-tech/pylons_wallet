@@ -1,9 +1,6 @@
 package com.pylons.wallet.core.engine
 
-import com.pylons.wallet.core.types.Backend
-import com.pylons.wallet.core.types.HttpWire
-import com.pylons.wallet.core.types.Item
-import com.pylons.wallet.core.types.Transaction
+import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.txJson.*
 
 internal class TxPylonsDevEngine : TxPylonsEngine () {
@@ -15,7 +12,7 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
-                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
+                              itemInputs : Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time: Long): Transaction =
             basicTxHandlerFlow { createRecipe(name, cookbookName, desc, coinInputs, coinOutputs, itemInputs, itemOutputs, time,
                     it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
@@ -32,7 +29,7 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
-                              itemInputs : Array<Item>, itemOutputs : Array<Item>, time: Long): Transaction =
+                              itemInputs : Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time: Long): Transaction =
             basicTxHandlerFlow { updateRecipe(name, cookbookName, id, desc, coinInputs, coinOutputs, itemInputs, itemOutputs, time,
                     it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
