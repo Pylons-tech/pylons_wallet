@@ -1,17 +1,18 @@
 package com.pylons.wallet.core.types.txJson
 
 import com.pylons.wallet.core.types.Item
+import com.pylons.wallet.core.types.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 
 internal fun createRecipe (name: String, cookbookName : String, desc : String, coinInputs : Map<String, Long>, coinOutputs : Map<String, Long>,
-                           itemInputs: Array<Item>, itemOutputs : Array<Item>, time : Long, sender : String, pubkey: SECP256K1.PublicKey,
+                           itemInputs: Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time : Long, sender : String, pubkey: SECP256K1.PublicKey,
                            accountNumber: Long, sequence: Long) =
         baseJsonWeldFlow(createRecipeMsgTemplate(name, cookbookName, desc, getCoinIOListForMessage(coinInputs),
-                getCoinIOListForMessage(coinOutputs), getItemIOListForMessage(itemInputs), getItemIOListForMessage(itemOutputs),
+                getCoinIOListForMessage(coinOutputs), getItemInputListForMessage(itemInputs), getItemOutputListForMessage(itemOutputs),
                 time, sender),
                 createRecipeSignTemplate(name, cookbookName, desc, time,
                         getCoinIOListForSigning(coinInputs), getCoinIOListForSigning(coinOutputs),
-                        getItemIOListForSigning(itemInputs), getItemIOListForSigning(itemOutputs), sender),
+                        getItemInputListForSigning(itemInputs), getItemOutputListForSigning(itemOutputs), sender),
                 accountNumber, sequence, pubkey)
 
 private fun createRecipeMsgTemplate (name : String, cookbookName : String, desc : String, coinInputs : String, coinOutputs : String,

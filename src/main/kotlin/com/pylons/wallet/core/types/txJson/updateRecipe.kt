@@ -1,6 +1,5 @@
 package com.pylons.wallet.core.types.txJson
 
-import com.pylons.wallet.core.types.Item
 import com.pylons.wallet.core.types.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 
@@ -8,9 +7,9 @@ internal fun updateRecipe (name: String, cookbookName : String, id: String, desc
                            coinOutputs : Map<String, Long>, itemInputs: Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>,
                            time : Long, sender : String, pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
         baseJsonWeldFlow(updateRecipeMsgTemplate(name, cookbookName, id, desc, getCoinIOListForMessage(coinInputs),
-                getCoinIOListForMessage(coinOutputs), getItemIOListForMessage(itemInputs), getItemIOListForMessage(itemOutputs), time, sender),
+                getCoinIOListForMessage(coinOutputs), getItemInputListForMessage(itemInputs), getItemOutputListForMessage(itemOutputs), time, sender),
                 updateRecipeSignTemplate(name, cookbookName, id, desc, time,
-                        getCoinIOListForSigning(coinInputs), getCoinIOListForSigning(coinOutputs), getItemIOListForSigning(itemInputs), getItemIOListForSigning(itemOutputs),
+                        getCoinIOListForSigning(coinInputs), getCoinIOListForSigning(coinOutputs), getItemInputListForSigning(itemInputs), getItemOutputListForSigning(itemOutputs),
                         sender),
                 accountNumber, sequence, pubkey)
 

@@ -131,7 +131,7 @@ internal class TxPylonsDevTest {
         basicSignableTestFlow("create_recipe") { createRecipeSignTemplate(
                 "name","id001", "this has to meet character limits lol", 0,
                 getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
-                getItemIOListForSigning(arrayOf(Item("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337e4acb5aa-e7cc-4b39-8118-798b493a6c61",
+                getItemInputListForSigning(arrayOf(Item("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337e4acb5aa-e7cc-4b39-8118-798b493a6c61",
                         mapOf("Name" to "Pickachu"), mapOf("HP" to 100L), mapOf("endurance" to 0.75), "id001",
                         "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"))), "", Core.userProfile!!.credentials.address)
         }

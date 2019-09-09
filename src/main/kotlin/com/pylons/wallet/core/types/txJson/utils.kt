@@ -4,6 +4,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.Item
+import com.pylons.wallet.core.types.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 import java.util.*
 
@@ -66,10 +67,10 @@ internal fun getCoinIOListForSigning(map : Map<String, Long>) : String {
     return sb.toString()
 }
 
-internal fun getItemIOListForMessage(array : Array<Item>) : String {
+internal fun getItemInputListForMessage(array : Array<ItemPrototype>) : String {
     var sb = StringBuilder("[")
     array.forEach {
-        sb.append("${exportItemJsonForMessage(it)},")
+        sb.append("${it.exportItemInput(true)},")
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
@@ -77,10 +78,31 @@ internal fun getItemIOListForMessage(array : Array<Item>) : String {
 }
 
 
-internal fun getItemIOListForSigning(array : Array<Item>) : String {
+internal fun getItemInputListForSigning(array : Array<ItemPrototype>) : String {
     var sb = StringBuilder("[")
     array.forEach {
-        sb.append("${exportItemJsonForSigning(it)},")
+        sb.append("${it.exportItemInput(false)},")
+    }
+    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
+    sb.append("]")
+    return sb.toString()
+}
+
+internal fun getItemOutputListForMessage(array : Array<ItemPrototype>) : String {
+    var sb = StringBuilder("[")
+    array.forEach {
+        sb.append("${it.exportItemOutput(true)},")
+    }
+    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
+    sb.append("]")
+    return sb.toString()
+}
+
+
+internal fun getItemOutputListForSigning(array : Array<ItemPrototype>) : String {
+    var sb = StringBuilder("[")
+    array.forEach {
+        sb.append("${it.exportItemOutput(false)},")
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
@@ -96,6 +118,8 @@ private fun doublesArrayForMessage (item : Item) : String {
     sb.append("}")
     return sb.toString()
 }
+
+
 
 private fun doublesArrayForSigning (item : Item) : String {
     var sb = StringBuilder("{")
