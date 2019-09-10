@@ -96,8 +96,8 @@ internal open class TxPylonsEngine : Engine() {
 
     // Engine methods
 
-    override fun applyRecipe(id: String): Transaction =
-            basicTxHandlerFlow { executeRecipe(id, Core.userProfile!!.credentials.address,
+    override fun applyRecipe(id: String, itemIds : Array<String>): Transaction =
+            basicTxHandlerFlow { executeRecipe(id, itemIds, Core.userProfile!!.credentials.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun commitTx(tx: Transaction): Transaction {

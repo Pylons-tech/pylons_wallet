@@ -32,7 +32,7 @@ internal abstract class Engine {
     /**
      * Execute-recipe message
      */
-    abstract fun applyRecipe(id : String) : Transaction
+    abstract fun applyRecipe(id : String, itemIds : Array<String>) : Transaction
 
     /**
      * Create-recipe message

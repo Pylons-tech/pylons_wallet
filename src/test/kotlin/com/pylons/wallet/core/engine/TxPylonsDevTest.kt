@@ -175,13 +175,13 @@ internal class TxPylonsDevTest {
     @Test
     fun executeRecipeSignable () {
         basicSignableTestFlow("execute_recipe") {
-            executeRecipeSignTemplate("id0001","""cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
+            executeRecipeSignTemplate("id0001", arrayOf(),"""cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
         }
     }
 
     @Test
     fun executesRecipe () {
-        basicTxTestFlow { it.applyRecipe(getRecipeTestId(it)) }
+        basicTxTestFlow { it.applyRecipe(getRecipeTestId(it), arrayOf()) }
     }
 
     @Test
