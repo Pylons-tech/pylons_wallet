@@ -1,7 +1,6 @@
 package com.pylons.wallet.core.types.txJson
 
-import com.pylons.wallet.core.types.Item
-import com.pylons.wallet.core.types.ItemPrototype
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 
 internal fun createRecipe (name: String, cookbookName : String, desc : String, coinInputs : Map<String, Long>, coinOutputs : Map<String, Long>,

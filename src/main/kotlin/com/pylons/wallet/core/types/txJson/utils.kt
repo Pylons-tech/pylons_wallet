@@ -3,8 +3,8 @@ package com.pylons.wallet.core.types.txJson
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.Item
-import com.pylons.wallet.core.types.ItemPrototype
+import com.pylons.wallet.core.types.item.Item
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 import java.util.*
 
@@ -18,10 +18,10 @@ internal fun baseJsonWeldFlow (msg : String, signComponent : String, accountNumb
     val signBytes = signable.toByteArray(Charsets.UTF_8)
     val signatureBytes = cryptoHandler.signature(signBytes)
     val signature = base64.encodeToString(signatureBytes)
-    return baseTemplate(msg, pubkeyToString(pubkey), accountNumber.toString(), sequence.toString(), signature)
+    return baseTemplate(msg, pubkeyToString(pubkey), signature)
 }
 
-private fun baseTemplate (msg : String, pubkey : String, accountNumber : String, sequence: String, signature : String) : String =
+private fun baseTemplate (msg : String, pubkey : String, signature : String) : String =
         """{
             "tx": {
                 "msg": $msg,
@@ -70,7 +70,7 @@ internal fun getCoinIOListForSigning(map : Map<String, Long>) : String {
 internal fun getItemInputListForMessage(array : Array<ItemPrototype>) : String {
     var sb = StringBuilder("[")
     array.forEach {
-        sb.append("${it.exportItemInput(true)},")
+        sb.append("${it.exportItemInputJson(true)},")
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
@@ -81,7 +81,7 @@ internal fun getItemInputListForMessage(array : Array<ItemPrototype>) : String {
 internal fun getItemInputListForSigning(array : Array<ItemPrototype>) : String {
     var sb = StringBuilder("[")
     array.forEach {
-        sb.append("${it.exportItemInput(false)},")
+        sb.append("${it.exportItemInputJson(false)},")
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
@@ -91,7 +91,7 @@ internal fun getItemInputListForSigning(array : Array<ItemPrototype>) : String {
 internal fun getItemOutputListForMessage(array : Array<ItemPrototype>) : String {
     var sb = StringBuilder("[")
     array.forEach {
-        sb.append("${it.exportItemOutput(true)},")
+        sb.append("${it.exportItemOutputJson(true)},")
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
@@ -102,7 +102,7 @@ internal fun getItemOutputListForMessage(array : Array<ItemPrototype>) : String 
 internal fun getItemOutputListForSigning(array : Array<ItemPrototype>) : String {
     var sb = StringBuilder("[")
     array.forEach {
-        sb.append("${it.exportItemOutput(false)},")
+        sb.append("${it.exportItemOutputJson(false)},")
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")

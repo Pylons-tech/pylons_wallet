@@ -2,8 +2,7 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
-import com.sun.org.apache.xpath.internal.operations.Bool
-import com.sun.xml.internal.fastinfoset.util.StringArray
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 
 /***
  * Generic interface for transaction-handling layers.

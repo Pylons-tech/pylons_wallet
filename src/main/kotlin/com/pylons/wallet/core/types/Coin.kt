@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.types.item.Item
 import com.squareup.moshi.Moshi
 
 /**

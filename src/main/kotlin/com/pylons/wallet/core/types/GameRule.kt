@@ -1,5 +1,8 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.types.item.Item
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
+
 abstract class GameRule (
         open val id : String? = "",
         open val coinsIn : List<Coin>? = listOf(),

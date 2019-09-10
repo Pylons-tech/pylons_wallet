@@ -1,5 +1,7 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.types.item.Item
+
 data class BoundAssetSet (
         val coinsIn : Set<Coin> = setOf(),
         val coinsOut : Set<Coin> = setOf(),

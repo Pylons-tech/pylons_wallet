@@ -8,6 +8,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.txJson.*
 import com.squareup.moshi.*
 import net.minidev.json.JSONArray
@@ -122,7 +123,7 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): Profile.Credentials {
         val bip39 = Bip39(EnglishDictionary.instance())
-        val seed = bip39.createSeed(mnemonic, passphrase)
+        //val seed = bip39.createSeed(mnemonic, passphrase)
         //SECP256K1.SecretKey.
 
         cryptoHandler.importKeysFromUserData()
@@ -193,8 +194,8 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    override fun listRecipes(addr: String): Array<Recipe> {
-        val json = HttpWire.get("$url/pylons/list_recipies/$addr")
+    override fun listRecipes(cookbook: String): Array<Recipe> {
+        val json = HttpWire.get("$url/pylons/list_recipies/$cookbook")
         return Recipe.getArrayFromJson(json)
     }
 

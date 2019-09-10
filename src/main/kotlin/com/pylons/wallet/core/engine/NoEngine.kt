@@ -2,6 +2,7 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 
 /**
  * Engine that throws NoEngineException on calling any function.

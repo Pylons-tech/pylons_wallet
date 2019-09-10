@@ -8,7 +8,7 @@ internal fun bufferForeignProfile (id : String) : ForeignProfile? {
     return when (prf) {
         null -> null
         else -> {
-            Core.foreignProfilesBuffer = Core.foreignProfilesBuffer + prf!!
+            Core.foreignProfilesBuffer = Core.foreignProfilesBuffer + prf
             return prf
         }
     }

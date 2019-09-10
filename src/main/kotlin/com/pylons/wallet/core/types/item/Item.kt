@@ -1,8 +1,11 @@
-package com.pylons.wallet.core.types
+package com.pylons.wallet.core.types.item
 
 import com.squareup.moshi.Moshi
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.ReservedKeys
+import com.pylons.wallet.core.types.ConstraintMode
+import com.pylons.wallet.core.types.ForeignProfile
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 
 /**
  * Local representation of an item-type resource, implemented as a
@@ -58,49 +61,6 @@ data class Item(
             true -> strings[ReservedKeys.itemName]!!
             false -> "Anonymous item|$id"
         }
-    }
-
-    fun matchesPrototype (prototype: ItemPrototype) : Boolean {
-        prototype.doubleConstraints.orEmpty().forEach { set ->
-            set.value.forEach {
-                if (!when (it.mode) {
-                            ConstraintMode.KEY_EXISTS -> doubles.containsKey(set.key)
-                            ConstraintMode.KEY_DOES_NOT_EXIST -> !doubles.containsKey(set.key)
-                            ConstraintMode.EXACT_MATCH -> doubles[set.key] == it.value
-                            ConstraintMode.NOT -> doubles[set.key] != null && doubles[set.key] != it.value
-                            ConstraintMode.NUM_MORE_THAN -> doubles[set.key] != null && doubles[set.key]!! > it.value
-                            ConstraintMode.NUM_LESS_THAN -> doubles[set.key] != null && doubles[set.key]!! < it.value
-                            else -> false
-                        }) return false
-            }
-        }
-        prototype.longConstraints.orEmpty().forEach { set ->
-            set.value.forEach {
-                if (!when (it.mode) {
-                            ConstraintMode.KEY_EXISTS -> longs.containsKey(set.key)
-                            ConstraintMode.KEY_DOES_NOT_EXIST -> !longs.containsKey(set.key)
-                            ConstraintMode.EXACT_MATCH -> longs[set.key] == it.value
-                            ConstraintMode.NOT -> longs[set.key] != null && longs[set.key] != it.value
-                            ConstraintMode.NUM_MORE_THAN -> longs[set.key] != null && longs[set.key]!! > it.value
-                            ConstraintMode.NUM_LESS_THAN -> longs[set.key] != null && longs[set.key]!! < it.value
-                            else -> false
-                        }) return false
-            }
-        }
-        prototype.stringConstraints.orEmpty().forEach { set ->
-            set.value.forEach {
-                if (!when (it.mode) {
-                            ConstraintMode.KEY_EXISTS -> strings.containsKey(set.key)
-                            ConstraintMode.KEY_DOES_NOT_EXIST -> !strings.containsKey(set.key)
-                            ConstraintMode.EXACT_MATCH -> strings[set.key] == it.value
-                            ConstraintMode.NOT -> strings[set.key] != null && strings[set.key] != it.value
-                            ConstraintMode.STRING_INCLUDES -> strings[set.key] != null && strings[set.key]!!.contains(it.value)
-                            ConstraintMode.STRING_EXCLUDES -> strings[set.key] != null && !strings[set.key]!!.contains(it.value)
-                            else -> false
-                        }) return false
-            }
-        }
-        return true
     }
 }
 

@@ -1,6 +1,6 @@
 package com.pylons.wallet.core.types.txJson
 
-import com.pylons.wallet.core.types.ItemPrototype
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 
 internal fun updateRecipe (name: String, cookbookName : String, id: String, desc : String, coinInputs : Map<String, Long>,

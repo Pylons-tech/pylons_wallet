@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.txJson.*
 
 internal class TxPylonsDevEngine : TxPylonsEngine () {

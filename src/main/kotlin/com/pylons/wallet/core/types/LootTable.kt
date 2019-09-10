@@ -1,5 +1,7 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.types.item.prototype.ItemPrototype
+
 data class LootTable (
         val entries : List<Entry>?
 ) {
