@@ -11,7 +11,7 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
 import com.pylons.wallet.core.types.item.Item
-import com.pylons.wallet.core.types.item.prototype.ItemPrototype
+import com.pylons.wallet.core.types.item.prototype.*
 import com.pylons.wallet.core.types.txJson.*
 import org.bouncycastle.util.encoders.Hex
 import java.util.*
@@ -43,16 +43,21 @@ internal class TxPylonsDevTest {
 
     private fun basicSignableTestFlow (msgType : String, signableFun : (TxPylonsDevEngine) -> String) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        println("getting profile state...")
         engine.getOwnBalances()
+        println("getting txbuilder output...")
         val fixture = engine.queryTxBuilder(msgType)
+        println("generating sign struct")
         val signable = baseSignTemplate(signableFun(engine), 0, 0)
         assertEquals(fixture, signable)
     }
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        println("getting profile state...")
         engine.getOwnBalances()
         var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
+        println("submitting tx...")
         val tx = txFun(engine).submit()
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
@@ -130,10 +135,14 @@ internal class TxPylonsDevTest {
 
     @Test
     fun createRecipeSignable () {
+        val prototype = ItemPrototype(mapOf("endurance" to DoubleParam(0.7, 1.0, 1.0, ParamType.INPUT_OUTPUT)),
+                mapOf("HP" to LongParam(100, 140, 1.0, ParamType.INPUT_OUTPUT)),
+                mapOf("Name" to StringParam("Raichu", 1.0, ParamType.INPUT_OUTPUT)))
         basicSignableTestFlow("create_recipe") { createRecipeSignTemplate(
                 "name","id001", "this has to meet character limits lol", 0,
                 getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
-                getItemInputListForSigning(arrayOf(ItemPrototype())), "", Core.userProfile!!.credentials.address)
+                getItemInputListForSigning(arrayOf(prototype)), getItemOutputListForSigning(arrayOf(prototype)),
+                Core.userProfile!!.credentials.address)
         }
     }
 
@@ -175,7 +184,7 @@ internal class TxPylonsDevTest {
     @Test
     fun executeRecipeSignable () {
         basicSignableTestFlow("execute_recipe") {
-            executeRecipeSignTemplate("id0001", arrayOf(),"""cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
+            executeRecipeSignTemplate("id0001", arrayOf("alpha", "beta", "gamma"),"""cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
         }
     }
 

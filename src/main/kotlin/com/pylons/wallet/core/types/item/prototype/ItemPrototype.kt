@@ -11,7 +11,7 @@ data class ItemPrototype (
         val dParams = StringBuilder("{")
         doubleParams.forEach {
             if (it.value.paramType == ParamType.INPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                dParams.append("${it.key}:{${it.value.toInputJson(quoteNumerals)}},")
+                dParams.append(""""${it.key}":${it.value.toInputJson(quoteNumerals)},""")
             }
         }
         if (dParams.length > 1) dParams.deleteCharAt(dParams.length - 1)
@@ -23,7 +23,7 @@ data class ItemPrototype (
         val lParams = StringBuilder("{")
         longParams.forEach {
             if (it.value.paramType == ParamType.INPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                lParams.append("${it.key}:{${it.value.toInputJson(quoteNumerals)}},")
+                lParams.append(""""${it.key}":${it.value.toInputJson(quoteNumerals)},""")
             }
         }
         if (lParams.length > 1) lParams.deleteCharAt(lParams.length - 1)
@@ -35,7 +35,7 @@ data class ItemPrototype (
         val sParams = StringBuilder("{")
         stringParams.forEach {
             if (it.value.paramType == ParamType.INPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                sParams.append("${it.key}:{${it.value.toInputJson(quoteNumerals)}},")
+                sParams.append(""""${it.key}":${it.value.toInputJson(quoteNumerals)},""")
             }
         }
         if (sParams.length > 1) sParams.deleteCharAt(sParams.length - 1)
@@ -59,7 +59,7 @@ data class ItemPrototype (
         val lParams = StringBuilder("{")
         longParams.forEach {
             if (it.value.paramType == ParamType.OUTPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                lParams.append("${it.key}:{${it.value.toOutputJson(quoteNumerals)}},")
+                lParams.append(""""${it.key}":${it.value.toOutputJson(quoteNumerals)},""")
             }
         }
         if (lParams.length > 1) lParams.deleteCharAt(lParams.length - 1)
@@ -71,7 +71,7 @@ data class ItemPrototype (
         val sParams = StringBuilder("{")
         stringParams.forEach {
             if (it.value.paramType == ParamType.OUTPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                sParams.append("${it.key}:{${it.value.toOutputJson(quoteNumerals)}},")
+                sParams.append(""""${it.key}":${it.value.toOutputJson(quoteNumerals)},""")
             }
         }
         if (sParams.length > 1) sParams.deleteCharAt(sParams.length - 1)

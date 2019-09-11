@@ -10,6 +10,6 @@ data class StringParam(
     }
 
     fun toInputJson (quoteNumerals : Boolean) : String {
-        return """{"Rate":"$rate","Value":"$value"}"""
+        return """{"Value":"$value"}"""
     }
 }

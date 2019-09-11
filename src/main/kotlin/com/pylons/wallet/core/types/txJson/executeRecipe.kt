@@ -26,7 +26,7 @@ internal fun executeRecipeSignTemplate (id : String, itemIds : Array<String>, se
 
 private fun itemIdListJson (itemIds: Array<String>) : String {
     val sb = StringBuilder("[")
-    itemIds.forEach { sb.append(it) }
+    itemIds.forEach { sb.append(""""$it",""") }
     if (sb.length > 1) sb.deleteCharAt(sb.length - 1)
     sb.append(']')
     return sb.toString()

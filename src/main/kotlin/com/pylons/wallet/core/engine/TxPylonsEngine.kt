@@ -37,7 +37,7 @@ internal open class TxPylonsEngine : Engine() {
     var cryptoHandler = CryptoCosmos()
     internal val GIRISH_TEST_NODE_IP = """http://35.224.155.76:80"""
     internal val MICHEAL_TEST_NODE_IP = """http://35.238.123.59:80"""
-    internal open val url = GIRISH_TEST_NODE_IP
+    internal open val url = MICHEAL_TEST_NODE_IP
 
     companion object {
         val moshi = Moshi.Builder().build()
