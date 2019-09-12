@@ -41,6 +41,9 @@ internal class TxPylonsDevTest {
         return engine
     }
 
+    private fun fixtureFloatSerializationHack (f : String) =
+            f.replace(".0,", "")
+
     private fun basicSignableTestFlow (msgType : String, signableFun : (TxPylonsDevEngine) -> String) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         println("getting profile state...")

@@ -1,5 +1,7 @@
 package com.pylons.wallet.core.types.item.prototype
 
+import com.pylons.wallet.core.types.txJson.s
+
 data class DoubleParam(
     val minValue : Double,
     val maxValue : Double,
@@ -8,19 +10,19 @@ data class DoubleParam(
 ) {
     fun toOutputJson (quoteNumerals : Boolean) : String {
         return if (quoteNumerals) {
-            """{"MaxValue":"$maxValue","MinValue":"$minValue","Rate":"$rate"}"""
+            """{"MaxValue":"${maxValue.s()}","MinValue":"${minValue.s()}","Rate":"${rate.s()}"}"""
         }
         else {
-            """{"MaxValue":$maxValue,"MinValue":$minValue,"Rate":$rate}"""
+            """{"MaxValue":${maxValue.s()},"MinValue":${minValue.s()},"Rate":${rate.s()}}"""
         }
     }
 
     fun toInputJson (quoteNumerals : Boolean) : String {
         return if (quoteNumerals) {
-            """{"MaxValue":"$maxValue","MinValue":"$minValue"}"""
+            """{"MaxValue":"${maxValue.s()}","MinValue":"${minValue.s()}"}"""
         }
         else {
-            """{"MaxValue":$maxValue,"MinValue":$minValue}"""
+            """{"MaxValue":${maxValue.s()},"MinValue":${minValue.s()}}"""
         }
     }
 }

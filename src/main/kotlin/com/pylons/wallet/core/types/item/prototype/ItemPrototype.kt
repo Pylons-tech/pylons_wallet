@@ -47,7 +47,7 @@ data class ItemPrototype (
         val dParams = StringBuilder("{")
         doubleParams.forEach {
             if (it.value.paramType == ParamType.OUTPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                dParams.append("${it.key}:{${it.value.toOutputJson(quoteNumerals)}},")
+                dParams.append(""""${it.key}":${it.value.toOutputJson(quoteNumerals)},""")
             }
         }
         if (dParams.length > 1) dParams.deleteCharAt(dParams.length - 1)

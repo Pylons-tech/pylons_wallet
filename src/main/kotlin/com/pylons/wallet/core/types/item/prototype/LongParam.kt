@@ -1,5 +1,7 @@
 package com.pylons.wallet.core.types.item.prototype
 
+import com.pylons.wallet.core.types.txJson.s
+
 data class LongParam(
     val minValue : Long,
     val maxValue : Long,
@@ -8,10 +10,10 @@ data class LongParam(
 ) {
     fun toOutputJson (quoteNumerals : Boolean) : String {
         return if (quoteNumerals) {
-            """{"MaxValue":"$maxValue","MinValue":"$minValue","Rate":"$rate"}"""
+            """{"MaxValue":"$maxValue","MinValue":"$minValue","Rate":"${rate.s()}"}"""
         }
         else {
-            """{"MaxValue":$maxValue,"MinValue":$minValue,"Rate":$rate}"""
+            """{"MaxValue":$maxValue,"MinValue":$minValue,"Rate":${rate.s()}}"""
         }
     }
 
