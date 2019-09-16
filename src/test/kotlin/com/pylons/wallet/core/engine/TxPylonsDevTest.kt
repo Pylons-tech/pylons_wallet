@@ -41,9 +41,6 @@ internal class TxPylonsDevTest {
         return engine
     }
 
-    private fun fixtureFloatSerializationHack (f : String) =
-            f.replace(".0,", "")
-
     private fun basicSignableTestFlow (msgType : String, signableFun : (TxPylonsDevEngine) -> String) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         println("getting profile state...")
@@ -53,6 +50,7 @@ internal class TxPylonsDevTest {
         println("generating sign struct")
         val signable = baseSignTemplate(signableFun(engine), 0, 0)
         assertEquals(fixture, signable)
+        println("ok!")
     }
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) {
@@ -67,6 +65,7 @@ internal class TxPylonsDevTest {
         engine.getOwnBalances()
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
+        println("ok!")
     }
 
     @Test
@@ -198,7 +197,7 @@ internal class TxPylonsDevTest {
 
     @Test
     fun createsRecipe () {
-        basicTxTestFlow { it.createRecipe("more wood ${Random().nextInt()}","blah 1200783309",
+        basicTxTestFlow { it.createRecipe("wood!!!","blah 1200783309",
                 "this is a test recipe description which must comply w/ character limits",
                 mapOf("pylon" to 1L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
                 0) }

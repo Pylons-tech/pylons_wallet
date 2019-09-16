@@ -11,7 +11,7 @@ internal fun createRecipe (name: String, cookbookName : String, desc : String, c
                 time, sender),
                 createRecipeSignTemplate(name, cookbookName, desc, time,
                         getCoinIOListForSigning(coinInputs), getCoinIOListForSigning(coinOutputs),
-                        getItemInputListForSigning(itemInputs), getItemOutputListForSigning(itemOutputs), sender),
+                        getItemInputListForMessage(itemInputs), getItemOutputListForMessage(itemOutputs), sender),
                 accountNumber, sequence, pubkey)
 
 private fun createRecipeMsgTemplate (name : String, cookbookName : String, desc : String, coinInputs : String, coinOutputs : String,

@@ -84,7 +84,10 @@ internal fun getItemInputListForMessage(array : Array<ItemPrototype>) : String {
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
-    return sb.toString()
+    return when (sb.length) {
+        2 -> "null"
+        else -> sb.toString()
+    }
 }
 
 
@@ -95,7 +98,10 @@ internal fun getItemInputListForSigning(array : Array<ItemPrototype>) : String {
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
-    return sb.toString()
+    return when (sb.length) {
+        2 -> "null"
+        else -> sb.toString()
+    }
 }
 
 internal fun getItemOutputListForMessage(array : Array<ItemPrototype>) : String {
@@ -105,7 +111,10 @@ internal fun getItemOutputListForMessage(array : Array<ItemPrototype>) : String 
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
-    return sb.toString()
+    return when (sb.length) {
+        2 -> "null"
+        else -> sb.toString()
+    }
 }
 
 
@@ -116,7 +125,10 @@ internal fun getItemOutputListForSigning(array : Array<ItemPrototype>) : String 
     }
     if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
     sb.append("]")
-    return sb.toString()
+    return when (sb.length) {
+        2 -> "null"
+        else -> sb.toString()
+    }
 }
 
 private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())
