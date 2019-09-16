@@ -197,7 +197,7 @@ internal class TxPylonsDevTest {
 
     @Test
     fun createsRecipe () {
-        basicTxTestFlow { it.createRecipe("wood!!!","blah 1200783309",
+        basicTxTestFlow { it.createRecipe("wood ${Random().nextInt()}","blah -888986945",
                 "this is a test recipe description which must comply w/ character limits",
                 mapOf("pylon" to 1L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
                 0) }
@@ -236,7 +236,7 @@ internal class TxPylonsDevTest {
 
     @Test
     fun getsPylons () {
-        basicTxTestFlow { it.getPylons(500) }
+        basicTxTestFlow { it.getPylons(500000) }
     }
 
     @Test
