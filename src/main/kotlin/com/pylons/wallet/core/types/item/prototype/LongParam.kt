@@ -13,7 +13,7 @@ data class LongParam(
             """{"MaxValue":"$maxValue","MinValue":"$minValue","Rate":"${rate.s()}"}"""
         }
         else {
-            """{"MaxValue":$maxValue,"MinValue":$minValue,"Rate":${rate.s()}}"""
+            """{"MaxValue":$maxValue,"MinValue":$minValue,"Rate":"${rate.s()}"}"""
         }
     }
 

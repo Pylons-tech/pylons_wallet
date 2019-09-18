@@ -10,7 +10,7 @@ data class StringParam(
     fun toOutputJson (quoteNumerals : Boolean) : String {
         return when (quoteNumerals) {
             true -> """{"Rate":"${rate.s()}","Value":"$value"}"""
-            false -> """{"Rate":${rate.s()},"Value":"$value"}"""
+            false -> """{"Rate":"${rate.s()}","Value":"$value"}"""
         }
     }
 

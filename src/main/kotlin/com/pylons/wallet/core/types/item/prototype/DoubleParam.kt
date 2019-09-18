@@ -8,21 +8,7 @@ data class DoubleParam(
     val rate : Double,
     val paramType : ParamType
 ) {
-    fun toOutputJson (quoteNumerals : Boolean) : String {
-        return if (quoteNumerals) {
-            """{"MaxValue":"${maxValue.s()}","MinValue":"${minValue.s()}","Rate":"${rate.s()}"}"""
-        }
-        else {
-            """{"MaxValue":${maxValue.s()},"MinValue":${minValue.s()},"Rate":${rate.s()}}"""
-        }
-    }
+    fun toOutputJson () : String = """{"MaxValue":"${maxValue.s()}","MinValue":"${minValue.s()}","Rate":"${rate.s()}"}"""
 
-    fun toInputJson (quoteNumerals : Boolean) : String {
-        return if (quoteNumerals) {
-            """{"MaxValue":"${maxValue.s()}","MinValue":"${minValue.s()}"}"""
-        }
-        else {
-            """{"MaxValue":${maxValue.s()},"MinValue":${minValue.s()}}"""
-        }
-    }
+    fun toInputJson () : String = """{"MaxValue":"${maxValue.s()}","MinValue":"${minValue.s()}"}"""
 }

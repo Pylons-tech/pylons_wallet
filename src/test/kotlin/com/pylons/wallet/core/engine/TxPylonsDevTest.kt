@@ -53,7 +53,22 @@ internal class TxPylonsDevTest {
         println("ok!")
     }
 
-    private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) {
+    private fun getCookbookIdFromTxHash (engine: TxPylonsDevEngine, txHash : String) : String {
+        //engine.getTransaction(txHash).msg.
+        TODO("how do we do this???")
+    }
+
+    private fun checkIfRecipeExists (engine: TxPylonsDevEngine, recipeName: String, cookbook : String) {
+        val recipes = engine.listRecipes(cookbook)
+        var recipe : Recipe? = null
+        for (it : Recipe in recipes) { if (it.name == recipeName) { recipe = it; break } }
+        assertNotNull(recipe, "could not find recipe $recipeName in cookbook $cookbook")
+        println(recipe?.name)
+    }
+
+    private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) = basicTxTestFlow(txFun, null)
+
+    private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine,  String) -> Unit)?) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         println("getting profile state...")
         engine.getOwnBalances()
@@ -66,6 +81,7 @@ internal class TxPylonsDevTest {
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
         println("ok!")
+        followUp?.invoke(engine, tx.id!!)
     }
 
     @Test
@@ -150,10 +166,13 @@ internal class TxPylonsDevTest {
 
     @Test
     fun updateRecipeSignable () {
+        val prototype = ItemPrototype(mapOf("endurance" to DoubleParam(0.7, 1.0, 1.0, ParamType.INPUT_OUTPUT)),
+                mapOf("HP" to LongParam(100, 140, 1.0, ParamType.INPUT_OUTPUT)),
+                mapOf("Name" to StringParam("Raichu", 1.0, ParamType.INPUT_OUTPUT)))
         basicSignableTestFlow("update_recipe") { updateRecipeSignTemplate(
                 "recipeName", "name","id001", "this has to meet character limits lol", 0,
                 getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
-                "", "", Core.userProfile!!.credentials.address)
+                getItemInputListForSigning(arrayOf(prototype)), getItemOutputListForSigning(arrayOf(prototype)), Core.userProfile!!.credentials.address)
         }
     }
 
@@ -197,10 +216,15 @@ internal class TxPylonsDevTest {
 
     @Test
     fun createsRecipe () {
-        basicTxTestFlow { it.createRecipe("wood ${Random().nextInt()}","blah -888986945",
-                "this is a test recipe description which must comply w/ character limits",
-                mapOf("pylon" to 1L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
-                0) }
+        val name = "wood ${Random().nextInt()}"
+        val cookbook = "blah -888986945" // todo: this should actually be an id!!!
+        basicTxTestFlow(
+                { it.createRecipe(name, cookbook,
+                        "this is a test recipe description which must comply w/ character limits",
+                        mapOf("pylon" to 1L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
+                        0) },
+                { it, _ -> checkIfRecipeExists(it, name, cookbook) }
+        )
     }
 
     @Test

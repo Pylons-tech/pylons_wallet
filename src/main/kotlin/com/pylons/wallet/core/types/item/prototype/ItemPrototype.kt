@@ -7,11 +7,11 @@ data class ItemPrototype (
         val longParams : Map<String, LongParam> = mapOf(),
         val stringParams : Map<String, StringParam> = mapOf()
 ) {
-    private fun getInputDoubleParamJson(quoteNumerals: Boolean) : String {
+    private fun getInputDoubleParamJson() : String {
         val dParams = StringBuilder("{")
         doubleParams.forEach {
             if (it.value.paramType == ParamType.INPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                dParams.append(""""${it.key}":${it.value.toInputJson(quoteNumerals)},""")
+                dParams.append(""""${it.key}":${it.value.toInputJson()},""")
             }
         }
         if (dParams.length > 1) dParams.deleteCharAt(dParams.length - 1)
@@ -43,11 +43,11 @@ data class ItemPrototype (
         return sParams.toString()
     }
 
-    private fun getOutputDoubleParamJson(quoteNumerals: Boolean) : String {
+    private fun getOutputDoubleParamJson() : String {
         val dParams = StringBuilder("{")
         doubleParams.forEach {
             if (it.value.paramType == ParamType.OUTPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                dParams.append(""""${it.key}":${it.value.toOutputJson(quoteNumerals)},""")
+                dParams.append(""""${it.key}":${it.value.toOutputJson()},""")
             }
         }
         if (dParams.length > 1) dParams.deleteCharAt(dParams.length - 1)
@@ -80,8 +80,8 @@ data class ItemPrototype (
     }
 
     fun exportItemOutputJson (quoteNumerals : Boolean) : String =
-            """{"Doubles":${getOutputDoubleParamJson(quoteNumerals)},"Longs":${getOutputLongParamJson(quoteNumerals)},"Strings":${getOutputStringParamJson(quoteNumerals)}}"""
+            """{"Doubles":${getOutputDoubleParamJson()},"Longs":${getOutputLongParamJson(quoteNumerals)},"Strings":${getOutputStringParamJson(quoteNumerals)}}"""
 
     fun exportItemInputJson (quoteNumerals : Boolean) : String =
-            """{"Doubles":${getInputDoubleParamJson(quoteNumerals)},"Longs":${getInputLongParamJson(quoteNumerals)},"Strings":${getInputStringParamJson(quoteNumerals)}}"""
+            """{"Doubles":${getInputDoubleParamJson()},"Longs":${getInputLongParamJson(quoteNumerals)},"Strings":${getInputStringParamJson(quoteNumerals)}}"""
 }
