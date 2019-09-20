@@ -145,5 +145,5 @@ internal abstract class Engine {
     /**
      * List recipes query
      */
-    abstract fun listRecipes (cookbook : String) : Array<Recipe>
+    abstract fun listRecipes () : Array<Recipe>
 }

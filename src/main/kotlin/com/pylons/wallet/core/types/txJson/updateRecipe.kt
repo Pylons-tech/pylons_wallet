@@ -21,21 +21,21 @@ private fun updateRecipeMsgTemplate (name : String, cookbookName : String, id : 
             "value": {
                 "RecipeName": "$name",
                 "ID":"$id",
-                "CookbookName": "$cookbookName",
+                "CookbookId": "$cookbookName",
                 "Description": "$desc",
                 "CoinInputs": $coinInputs,
                 "CoinOutputs": $coinOutputs,
                 "ItemInputs": $itemInputs,
                 "ItemOutputs": $itemOutputs,
-                "ExecutionTime": "$time",
+                "BlockInterval": "$time",
                 "Sender": "$sender"
             }
         }
         ]     
     """
 
-internal fun updateRecipeSignTemplate (name : String, cookbookName: String, id : String, desc: String, time: Long, coinInputs : String, coinOutputs : String,
+internal fun updateRecipeSignTemplate (name : String, cookbook: String, id : String, desc: String, time: Long, coinInputs : String, coinOutputs : String,
                                        itemInputs : String, itemOutputs: String, sender: String) =
-        """[{"CoinInputs":$coinInputs,"CoinOutputs":$coinOutputs,"CookbookName":"$cookbookName","Description":"$desc","ExecutionTime":$time,""" +
+        """[{"BlockInterval":$time,"CoinInputs":$coinInputs,"CoinOutputs":$coinOutputs,"CookbookId":"$cookbook","Description":"$desc",""" +
                 """"ID":"$id","ItemInputs":$itemInputs,"ItemOutputs":$itemOutputs,"RecipeName":"$name","Sender":"$sender"}]"""
 

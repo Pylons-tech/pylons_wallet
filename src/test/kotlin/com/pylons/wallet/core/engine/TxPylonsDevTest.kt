@@ -59,9 +59,9 @@ internal class TxPylonsDevTest {
     }
 
     private fun checkIfRecipeExists (engine: TxPylonsDevEngine, recipeName: String, cookbook : String) {
-        val recipes = engine.listRecipes(cookbook)
+        val recipes = engine.listRecipes()
         var recipe : Recipe? = null
-        for (it : Recipe in recipes) { if (it.name == recipeName) { recipe = it; break } }
+        for (it : Recipe in recipes) { if (it.name == recipeName  && it.cookbook == cookbook) { recipe = it; break } }
         assertNotNull(recipe, "could not find recipe $recipeName in cookbook $cookbook")
         println(recipe?.name)
     }
@@ -87,7 +87,7 @@ internal class TxPylonsDevTest {
     @Test
     fun getsRecipes () {
         var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
-        var a = engine.listRecipes("cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
+        var a = engine.listRecipes()
         a.forEach { println("${it.id}, ${it.coinInputs.size}")}
     }
 

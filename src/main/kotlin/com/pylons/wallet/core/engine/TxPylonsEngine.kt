@@ -195,8 +195,8 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    override fun listRecipes(cookbook: String): Array<Recipe> {
-        val json = HttpWire.get("$url/pylons/list_recipies/${cookbook.replace(" ", "%20")}")
+    override fun listRecipes(): Array<Recipe> {
+        val json = HttpWire.get("$url/pylons/list_recipies/${Core.userProfile!!.credentials.address}")
         return Recipe.getArrayFromJson(json)
     }
 
