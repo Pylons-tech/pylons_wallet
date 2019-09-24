@@ -196,7 +196,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun listRecipes(): Array<Recipe> {
-        val json = HttpWire.get("$url/pylons/list_recipies/${Core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("$url/pylons/list_recipes/${Core.userProfile!!.credentials.address}")
         return Recipe.getArrayFromJson(json)
     }
 

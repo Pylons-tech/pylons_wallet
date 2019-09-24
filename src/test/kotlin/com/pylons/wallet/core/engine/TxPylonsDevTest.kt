@@ -13,11 +13,13 @@ import com.pylons.wallet.core.types.SECP256K1
 import com.pylons.wallet.core.types.item.Item
 import com.pylons.wallet.core.types.item.prototype.*
 import com.pylons.wallet.core.types.txJson.*
+import com.squareup.moshi.Moshi
 import org.bouncycastle.util.encoders.Hex
 import java.util.*
 
 internal class TxPylonsDevTest {
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
+    private val moshi = Moshi.Builder().build()
 
     private fun getRecipeTestId (engine: TxPylonsDevEngine) : String {
         return when (engine.url) {
@@ -158,7 +160,7 @@ internal class TxPylonsDevTest {
                 mapOf("Name" to StringParam("Raichu", 1.0, ParamType.INPUT_OUTPUT)))
         basicSignableTestFlow("create_recipe") { createRecipeSignTemplate(
                 "name","id001", "this has to meet character limits lol", 0,
-                getCoinIOListForSigning(mapOf("Wood" to 5L)), getCoinIOListForSigning(mapOf("Chair" to 1L)),
+                getCoinIOListForSigning(mapOf("wood" to 5L)), getCoinIOListForSigning(mapOf("chair" to 1L)),
                 getItemInputListForSigning(arrayOf(prototype)), getItemOutputListForSigning(arrayOf(prototype)),
                 Core.userProfile!!.credentials.address)
         }
@@ -217,7 +219,7 @@ internal class TxPylonsDevTest {
     @Test
     fun createsRecipe () {
         val name = "wood ${Random().nextInt()}"
-        val cookbook = "blah -888986945" // todo: this should actually be an id!!!
+        val cookbook = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt33754d11433-80f3-4564-bb20-b2b0fdbea305"
         basicTxTestFlow(
                 { it.createRecipe(name, cookbook,
                         "this is a test recipe description which must comply w/ character limits",
@@ -229,7 +231,7 @@ internal class TxPylonsDevTest {
 
     @Test
     fun createsCookbook () {
-        basicTxTestFlow { it.createCookbook("blah ${Random().nextInt()}", "tst",
+        basicTxTestFlow { it.createCookbook("blyyah ${Random().nextInt()}", "tst",
                 "this is a description for a test flow cookbook i guess",
                 "1.0.0", "fake@example.com", 0) }
     }
