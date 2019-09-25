@@ -219,7 +219,7 @@ internal class TxPylonsDevTest {
     @Test
     fun createsRecipe () {
         val name = "wood ${Random().nextInt()}"
-        val cookbook = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt33754d11433-80f3-4564-bb20-b2b0fdbea305"
+        val cookbook = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt33736dd06ed-c069-431f-91e0-b5dd02aba4d2"
         basicTxTestFlow(
                 { it.createRecipe(name, cookbook,
                         "this is a test recipe description which must comply w/ character limits",
