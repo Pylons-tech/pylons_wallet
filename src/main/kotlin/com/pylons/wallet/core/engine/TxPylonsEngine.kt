@@ -200,6 +200,11 @@ internal open class TxPylonsEngine : Engine() {
         return Recipe.getArrayFromJson(json)
     }
 
+    override fun listCookbooks(): Array<Cookbook> {
+        val json = HttpWire.get("$url/pylons/list_cookbooks/${Core.userProfile!!.credentials.address}")
+        return Cookbook.getArrayFromJson(json)
+    }
+
     override fun registerNewProfile(name : String): Transaction {
         cryptoHandler.generateNewKeys()
         Core.userProfile = Profile(credentials = getNewCredentials(), coins = mutableMapOf(), items = mutableListOf(), strings = mutableMapOf())

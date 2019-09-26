@@ -74,6 +74,9 @@ internal class NoEngine : Engine() {
     override fun listRecipes(): Array<Recipe> =
             throw NoEngineException()
 
+    override fun listCookbooks(): Array<Cookbook> =
+            throw NoEngineException()
+
     override fun registerNewProfile(name : String): Transaction =
             throw NoEngineException()
 
