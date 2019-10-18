@@ -37,6 +37,9 @@ object Core {
 
     var onWipeUserData : (() -> Unit)? = null
 
+    var config : Config? = null
+        private set
+
     internal fun tearDown () {
         engine = NoEngine()
         userProfile = null
@@ -70,16 +73,17 @@ object Core {
 
     fun dumpUserProfile () : String = userProfile!!.dump()
 
-    fun start (backend: Backend, json : String) {
-        engine = when (backend) {
+    fun start (cfg: Config, userJson : String) {
+        config = cfg
+        engine = when (config!!.backend) {
             Backend.LIVE -> TxPylonsEngine()
             Backend.LIVE_DEV -> TxPylonsDevEngine()
             Backend.NONE -> NoEngine()
         }
         runBlocking {
             try {
-                UserData.parseFromJson(json)
-                userProfile = when (json) {
+                UserData.parseFromJson(userJson)
+                userProfile = when (userJson) {
                     "" -> null
                     else -> Profile.fromUserData()
                 }

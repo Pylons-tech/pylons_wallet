@@ -11,7 +11,7 @@ data class ItemPrototype (
         val dParams = StringBuilder("{")
         doubleParams.forEach {
             if (it.value.paramType == ParamType.INPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                dParams.append(""""${it.key}":${it.value.toInputJson()},""")
+                dParams.append(""""${it.key}":${it.value.toInputJson(false)},""")
             }
         }
         if (dParams.length > 1) dParams.deleteCharAt(dParams.length - 1)
@@ -47,7 +47,7 @@ data class ItemPrototype (
         val dParams = StringBuilder("{")
         doubleParams.forEach {
             if (it.value.paramType == ParamType.OUTPUT || it.value.paramType == ParamType.INPUT_OUTPUT) {
-                dParams.append(""""${it.key}":${it.value.toOutputJson()},""")
+                dParams.append(""""${it.key}":${it.value.toOutputJson(false)},""")
             }
         }
         if (dParams.length > 1) dParams.deleteCharAt(dParams.length - 1)

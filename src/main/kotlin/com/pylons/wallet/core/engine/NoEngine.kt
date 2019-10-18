@@ -28,8 +28,8 @@ internal class NoEngine : Engine() {
     override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction =
             throw NoEngineException()
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
-                              itemInputs : Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time: Long): Transaction =
+    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>,
+                              itemInputs : Array<ItemPrototype>, entries : ParamSet, time: Long): Transaction =
             throw NoEngineException()
 
     override fun disableRecipe(id: String): Transaction  =

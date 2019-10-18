@@ -37,8 +37,8 @@ internal abstract class Engine {
     /**
      * Create-recipe message
      */
-    abstract fun createRecipe(name : String, cookbookName : String, desc : String, coinInputs : Map<String, Long>,
-                              coinOutputs : Map<String, Long>, itemInputs: Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time : Long) : Transaction
+    abstract fun createRecipe(name : String, cookbookName : String, desc : String, coinInputs: Map<String, Long>,
+                              itemInputs : Array<ItemPrototype>, entries : ParamSet, time : Long) : Transaction
 
     /**
      * Low-level commit TX function.

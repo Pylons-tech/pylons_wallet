@@ -12,9 +12,9 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
             basicTxHandlerFlow { createCookbook(name, devel, desc, version, supportEmail, level, it.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
-                              itemInputs : Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time: Long): Transaction =
-            basicTxHandlerFlow { createRecipe(name, cookbookName, desc, coinInputs, coinOutputs, itemInputs, itemOutputs, time,
+    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>,
+                              itemInputs : Array<ItemPrototype>, entries : ParamSet, time: Long): Transaction =
+            basicTxHandlerFlow { createRecipe(name, cookbookName, desc, coinInputs, itemInputs, entries, time,
                     it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun disableRecipe(id: String): Transaction =
@@ -34,5 +34,5 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
             basicTxHandlerFlow { updateRecipe(name, cookbookName, id, desc, coinInputs, coinOutputs, itemInputs, itemOutputs, time,
                     it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
-    fun queryTxBuilder(msgType : String) : String = HttpWire.get("$url/pylons/$msgType/tx_build/")
+    fun queryTxBuilder(msgType : String) : String = HttpWire.get("$nodeUrl/pylons/$msgType/tx_build/")
 }

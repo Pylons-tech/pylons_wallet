@@ -29,5 +29,8 @@ private fun itemIdListJson (itemIds: Array<String>) : String {
     itemIds.forEach { sb.append(""""$it",""") }
     if (sb.length > 1) sb.deleteCharAt(sb.length - 1)
     sb.append(']')
-    return sb.toString()
+    return when (val output = sb.toString()) {
+        "[]" -> "null"
+        else -> output
+    }
 }

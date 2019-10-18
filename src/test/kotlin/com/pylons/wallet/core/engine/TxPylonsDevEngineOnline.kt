@@ -8,33 +8,30 @@ import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.item.prototype.*
 import org.junit.jupiter.api.MethodOrderer
 
 import java.util.*
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class TxPylonsDevEngineOnline {
-
-    private fun getRecipeTestId (engine: TxPylonsDevEngine) : String {
-        return when (engine.url) {
-            engine.MICHEAL_TEST_NODE_IP -> "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt33709e2bc6b-ac3c-4835-a8be-9d7a75b86f05"
-            engine.GIRISH_TEST_NODE_IP -> "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c59d30bc-ebf7-40d1-a322-3c727bfa580c"
-            else -> ""
-        }
-
-    }
-
-    private fun getCookbookIfOneExists (engine: TxPylonsDevEngine) : String? {
+    private fun getCookbookIfOneExists (engine: TxPylonsDevEngine) : String {
         val cb = engine.listCookbooks()
         return when (cb.isNotEmpty()) {
             true -> cb[0].id
-            false -> null
+            false -> fail("No cookbooks exist on chain belonging to current address. This test cannot continue.")
+        }
+    }
+
+    private fun getRecipeIfOneExists (engine: TxPylonsDevEngine) : String {
+        val r = engine.listRecipes()
+        return when (r.isNotEmpty()) {
+            true -> r[0].id
+            false -> fail("No recipes exist on chain belonging to current address. This test cannot continue.")
         }
     }
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
-        Core.start(Backend.LIVE_DEV, "")
+        Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
         val engine = Core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {
@@ -102,7 +99,7 @@ internal class TxPylonsDevEngineOnline {
     @Order(4)
     @Test
     fun updatesCookbook () {
-        basicTxTestFlow { it.updateCookbook(getCookbookIfOneExists(it)!!, "tst",
+        basicTxTestFlow { it.updateCookbook(getCookbookIfOneExists(it), "tst",
                 "this is a description for updatescookbook test", "1.0.0", "example@example.com") }
     }
 
@@ -111,11 +108,11 @@ internal class TxPylonsDevEngineOnline {
     fun createsRecipe () {
         val name = "wood ${Random().nextInt()}"
         basicTxTestFlow(
-                { it.createRecipe(name, getCookbookIfOneExists(it)!!,
+                { it.createRecipe(name, getCookbookIfOneExists(it),
                             "this is a test recipe description which must comply w/ character limits",
-                            mapOf("pylon" to 1L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
+                            mapOf("pylon" to 1L), arrayOf(), ParamSet(listOf(), mapOf("wood" to 1234567890L)),
                             0) },
-                { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)!!) }
+                { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }
 
@@ -123,34 +120,34 @@ internal class TxPylonsDevEngineOnline {
     @Test
     fun getsRecipes () {
         var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
-        var a = engine.listRecipes()
+        engine.listRecipes()
     }
 
     @Order(7)
     @Test
     fun updatesRecipe () {
-        basicTxTestFlow { it.updateRecipe("wood!!!!!!!", getCookbookIfOneExists(it)!!, getRecipeTestId(it),
+        basicTxTestFlow { it.updateRecipe("wood!!!!!!!", getCookbookIfOneExists(it), getRecipeIfOneExists(it),
                 "behold, the wood economy. this is a recipe that outputs wood. it is very efficient.",
-                mapOf("pylon" to 2L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(ItemPrototype()),
-                0) }
+                mapOf("pylon" to 2L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
+                60) }
     }
 
     @Order(8)
     @Test
     fun disablesRecipe () {
-        basicTxTestFlow { it.disableRecipe(getRecipeTestId(it)) }
+        basicTxTestFlow { it.disableRecipe(getRecipeIfOneExists(it)) }
     }
 
     @Order(9)
     @Test
     fun enablesRecipe () {
-        basicTxTestFlow { it.enableRecipe(getRecipeTestId(it)) }
+        basicTxTestFlow { it.enableRecipe(getRecipeIfOneExists(it)) }
     }
 
     @Order(10)
     @Test
     fun executesRecipe () {
-        basicTxTestFlow { it.applyRecipe(getRecipeTestId(it), arrayOf()) }
+        basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), arrayOf()) }
     }
 
 }

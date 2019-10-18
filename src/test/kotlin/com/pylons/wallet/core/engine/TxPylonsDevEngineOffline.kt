@@ -16,7 +16,7 @@ internal class TxPylonsDevEngineOffline {
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
-        Core.start(Backend.LIVE_DEV, "")
+        Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
         val engine = Core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {
