@@ -25,19 +25,18 @@ class TestObject {
     val inner2 = InnerObject("second")
 }
 
-class InnerObject (
-        @Json(name = "name")
-        val name : String) {
+class InnerObject constructor (
+        @property:[Json(name = "name")] val name : String) {
     @Json(name = "nested")
     val nested : Boolean = true
 }
 
 class JsonModelSerializerTest {
     @Test
-    fun a () {
+    fun serializes () {
         val stream = ByteArrayOutputStream()
         val expected =
-                """{"bleh_prop":"asdfjkl;","byte":3,"int_array":[1,2,3,4,5],"inner_1":{"name":"first","nested":true},"inner_2":{"name:"second","nested":true}}"""
+                """{"bleh_prop":"asdfjkl;","byte":3,"inner_1":{"name":"first","nested":true},"inner_2":{"name":"second","nested":true},"int_array":[1,2,3,4,5]}"""
         JsonModelSerializer.serialize(JsonWriter.of(Okio.buffer(Okio.sink(stream))), TestObject())
         val actual = stream.toString()
         println(actual)
