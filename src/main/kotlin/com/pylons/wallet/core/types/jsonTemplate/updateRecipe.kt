@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.types.txJson
+package com.pylons.wallet.core.types.jsonTemplate
 
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1

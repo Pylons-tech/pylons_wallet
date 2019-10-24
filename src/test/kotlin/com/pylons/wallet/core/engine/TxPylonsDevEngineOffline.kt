@@ -8,7 +8,7 @@ import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.SECP256K1
-import com.pylons.wallet.core.types.txJson.*
+import com.pylons.wallet.core.types.jsonTemplate.*
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
 

@@ -4,11 +4,10 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.Core.engine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.*
-import com.pylons.wallet.core.types.txJson.*
+import com.pylons.wallet.core.types.jsonTemplate.*
 
 internal class TxPylonsDevEngineSignables {
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {

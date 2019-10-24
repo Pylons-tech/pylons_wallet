@@ -1,11 +1,10 @@
 package com.pylons.wallet.core.types
 
-import com.pylons.wallet.core.types.item.Item
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.txJson.getCoinIOListForMessage
-import com.pylons.wallet.core.types.txJson.getCoinIOListForSigning
-import com.pylons.wallet.core.types.txJson.getItemInputListForMessage
-import com.pylons.wallet.core.types.txJson.getItemInputListForSigning
+import com.pylons.wallet.core.types.jsonTemplate.getCoinIOListForMessage
+import com.pylons.wallet.core.types.jsonTemplate.getCoinIOListForSigning
+import com.pylons.wallet.core.types.jsonTemplate.getItemInputListForMessage
+import com.pylons.wallet.core.types.jsonTemplate.getItemInputListForSigning
 
 data class ParamSet(
         val itemOutputs : List<ItemPrototype>,

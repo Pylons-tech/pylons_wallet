@@ -9,7 +9,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.txJson.*
+import com.pylons.wallet.core.types.jsonTemplate.*
 import com.squareup.moshi.*
 import net.minidev.json.JSONArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider

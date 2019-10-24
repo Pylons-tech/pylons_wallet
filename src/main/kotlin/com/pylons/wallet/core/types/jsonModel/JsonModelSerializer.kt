@@ -1,9 +1,8 @@
-package com.pylons.wallet.core.types.models
+package com.pylons.wallet.core.types.jsonModel
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonWriter
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 

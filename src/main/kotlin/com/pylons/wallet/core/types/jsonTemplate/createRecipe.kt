@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.types.txJson
+package com.pylons.wallet.core.types.jsonTemplate
 
 import com.pylons.wallet.core.types.ParamSet
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype

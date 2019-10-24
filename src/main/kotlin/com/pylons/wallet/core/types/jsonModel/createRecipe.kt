@@ -1,9 +1,6 @@
-package com.pylons.wallet.core.types.models
+package com.pylons.wallet.core.types.jsonModel
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.*
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
@@ -27,7 +24,8 @@ data class CreateRecipe (
 ) {
     val adapter: JsonAdapter<CreateRecipe> = moshi.adapter<CreateRecipe>(CreateRecipe::class.java)
 
-    // TODO: we need a custom tojson! it will have to make sure we don't have spaces. because cocaine.
+    @ToJson
+    fun toJson (writer: JsonWriter, value : CreateRecipe) = JsonModelSerializer.serialize(writer, value)
 
     fun toSignedTx () : String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

@@ -1,9 +1,8 @@
-package com.pylons.wallet.core.types.txJson
+package com.pylons.wallet.core.types.jsonTemplate
 
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.item.Item
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 import java.util.*

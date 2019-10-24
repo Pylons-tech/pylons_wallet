@@ -1,13 +1,9 @@
-package com.pylons.wallet.core.types.models
+package com.pylons.wallet.core.types.jsonModel
 
-import com.google.common.io.CharStreams
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonWriter
-import com.sun.org.apache.xpath.internal.operations.Bool
-import okio.BufferedSink
 import okio.Okio
 import java.io.*
-import java.util.stream.Stream
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 

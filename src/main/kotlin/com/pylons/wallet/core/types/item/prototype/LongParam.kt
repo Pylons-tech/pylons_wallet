@@ -1,6 +1,6 @@
 package com.pylons.wallet.core.types.item.prototype
 
-import com.pylons.wallet.core.types.txJson.s
+import com.pylons.wallet.core.types.jsonTemplate.s
 import java.lang.StringBuilder
 
 data class LongParam(

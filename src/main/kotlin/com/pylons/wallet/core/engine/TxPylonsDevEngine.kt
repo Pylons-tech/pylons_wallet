@@ -2,7 +2,7 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.txJson.*
+import com.pylons.wallet.core.types.jsonTemplate.*
 
 internal class TxPylonsDevEngine : TxPylonsEngine () {
     override val isDevEngine: Boolean = true

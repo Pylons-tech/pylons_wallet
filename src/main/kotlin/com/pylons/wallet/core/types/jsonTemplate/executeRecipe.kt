@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.types.txJson
+package com.pylons.wallet.core.types.jsonTemplate
 
 import com.pylons.wallet.core.types.SECP256K1
 import java.lang.StringBuilder

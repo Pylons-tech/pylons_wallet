@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.types.models
+package com.pylons.wallet.core.types.jsonModel
 
 import com.squareup.moshi.Moshi
 
