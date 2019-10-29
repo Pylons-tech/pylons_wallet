@@ -8,17 +8,17 @@ data class CreateRecipe (
         @Json(name = "BlockInterval")
         val blockInterval : Long,
         @Json(name = "CoinInputs")
-        val coinInputs : List<CoinInput>,
-        @Json(name = "CookbookId")
+        val coinInputs : CoinInputList,
+        @Json(name = "CookbookID")
         val cookbookId : String,
         @Json(name = "Description")
         val description: String,
         @Json(name = "Entries")
         val entries : List<WeightedParam>,
         @Json(name = "ItemInputs")
-        val itemInputs : List<ItemInput>,
-        @Json(name = "RecipeName")
-        val recipeName : String,
+        val itemInputs : ItemInputList,
+        @Json(name = "Name")
+        val name : String,
         @Json(name = "Sender")
         val sender : String
 ) {
