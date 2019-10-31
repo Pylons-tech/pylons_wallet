@@ -33,7 +33,7 @@ class JsonModelSerializerTest {
         val stream = ByteArrayOutputStream()
         val expected =
                 """{"bleh_prop":"asdfjkl;","byte":3,"inner_1":{"name":"first","nested":true},"inner_2":{"name":"second","nested":true},"int_array":[1,2,3,4,5]}"""
-        JsonModelSerializer.serialize(JsonWriter.of(Okio.buffer(Okio.sink(stream))), TestObject())
+        JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, JsonWriter.of(Okio.buffer(Okio.sink(stream))), TestObject())
         val actual = stream.toString()
         println(actual)
         assertEquals(expected, actual)

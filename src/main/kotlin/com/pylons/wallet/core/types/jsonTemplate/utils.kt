@@ -25,12 +25,12 @@ internal fun baseJsonWeldFlow (msg : String, signComponent : String, accountNumb
     val signBytes = signable.toByteArray(Charsets.UTF_8)
     val signatureBytes = cryptoHandler.signature(signBytes)
     val signature = base64.encodeToString(signatureBytes)
-    return baseTemplate(msg, pubkeyToString(pubkey), signature)
+    return baseTxTemplate(msg, pubkeyToString(pubkey), signature)
 }
 
 
 
-private fun baseTemplate (msg : String, pubkey : String, signature : String) : String =
+internal fun baseTxTemplate (msg : String, pubkey : String, signature : String) : String =
         """{
             "tx": {
                 "msg": $msg,

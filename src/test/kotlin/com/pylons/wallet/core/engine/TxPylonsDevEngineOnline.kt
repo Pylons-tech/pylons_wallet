@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 import org.junit.jupiter.api.MethodOrderer
 
 import java.util.*
@@ -58,8 +59,15 @@ internal class TxPylonsDevEngineOnline {
         println("getting profile state...")
         engine.getOwnBalances()
         var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
+        println("building tx...")
+        val tx = txFun(engine)
         println("submitting tx...")
-        val tx = txFun(engine).submit()
+        tx.submit()
+        println("waiting for tx to resolve")
+        while (true) {
+            if (tx.state == Transaction.State.TX_NOT_YET_SENT) Thread.sleep(5000)
+            else break
+        }
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         engine.getOwnBalances()
@@ -108,10 +116,8 @@ internal class TxPylonsDevEngineOnline {
     fun createsRecipe () {
         val name = "wood ${Random().nextInt()}"
         basicTxTestFlow(
-                { it.createRecipe(name, getCookbookIfOneExists(it),
-                            "this is a test recipe description which must comply w/ character limits",
-                            mapOf("pylon" to 1L), arrayOf(), ParamSet(listOf(), mapOf("wood" to 1234567890L)),
-                            0) },
+                { it.createRecipe("", "", getCookbookIfOneExists(it), "", 0,
+                        listOf(), listOf(), WeightedParamList(listOf(), listOf())) },
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }

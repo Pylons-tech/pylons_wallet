@@ -5,3 +5,10 @@ import com.squareup.moshi.Moshi
 internal val moshi = Moshi.Builder().add(CreateRecipeAdapter()).build()
 
 annotation class QuotedJsonNumeral
+
+annotation class ToSignStruct
+
+enum class SerializationMode {
+    FOR_BROADCAST,
+    FOR_SIGNING
+}

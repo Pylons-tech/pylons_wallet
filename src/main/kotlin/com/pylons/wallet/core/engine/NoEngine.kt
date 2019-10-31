@@ -3,6 +3,9 @@ package com.pylons.wallet.core.engine
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
+import com.pylons.wallet.core.types.jsonModel.CoinInput
+import com.pylons.wallet.core.types.jsonModel.ItemInput
+import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 
 /**
  * Engine that throws NoEngineException on calling any function.
@@ -28,8 +31,8 @@ internal class NoEngine : Engine() {
     override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction =
             throw NoEngineException()
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>,
-                              itemInputs : Array<ItemPrototype>, entries : ParamSet, time: Long): Transaction =
+    override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction =
             throw NoEngineException()
 
     override fun disableRecipe(id: String): Transaction  =

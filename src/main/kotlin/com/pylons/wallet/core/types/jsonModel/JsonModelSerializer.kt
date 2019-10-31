@@ -8,17 +8,19 @@ import kotlin.reflect.full.memberProperties
 
 object JsonModelSerializer {
 
-    fun serialize (p0: JsonWriter, p1: Any?) {
-        processObject(p0, p1)
+    fun serialize (mode : SerializationMode, p0: JsonWriter, p1: Any?) {
+        processObject(mode, p0, p1)
         p0.flush()
         p0.close()
     }
 
-    private fun processObject (p0: JsonWriter, p1: Any?) {
+    private fun processObject (mode : SerializationMode, p0: JsonWriter, p1: Any?) {
         if (p1 != null) {
+            if (mode == SerializationMode.FOR_BROADCAST) p0.indent = "        "
             val kClass = p1::class
             p0.beginObject()
             kClass.memberProperties.forEach { prop ->
+                println(prop.name)
                 val json = prop.findAnnotation<Json>()
                 if (json != null) {
                     var value = prop.getter.call(p1)
@@ -28,12 +30,12 @@ object JsonModelSerializer {
                         Byte::class -> p0.value(value as Byte)
                         Int::class -> {
                             val q = prop.findAnnotation<QuotedJsonNumeral>()
-                            if (q != null) p0.value((value as Int).toString())
+                            if (q != null || mode == SerializationMode.FOR_BROADCAST) p0.value((value as Int).toString())
                             else p0.value(value as Int)
                         }
                         Long::class -> {
                             val q = prop.findAnnotation<QuotedJsonNumeral>()
-                            if (q != null) p0.value((value as Long).toString())
+                            if (q != null || mode == SerializationMode.FOR_BROADCAST) p0.value((value as Long).toString())
                             else p0.value(value as Long)
                         }
                         Number::class -> p0.value(value as Number)
@@ -41,7 +43,7 @@ object JsonModelSerializer {
                         Double::class -> p0.value(value as Double)
                         Boolean::class -> p0.value(value as Boolean)
                         String::class -> p0.value(value as String)
-                        else -> handleComplexValues(prop, value, p0)
+                        else -> handleComplexValues(mode, prop, value, p0)
                     }
                 }
             }
@@ -50,19 +52,19 @@ object JsonModelSerializer {
         else p0.nullValue()
     }
 
-    private fun handleComplexValues (prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
+    private fun handleComplexValues (mode : SerializationMode, prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
         println(prop.returnType.toString())
         when {
             value == null -> p0.nullValue()
-            Regex("kotlin.Array<.*>").matches(prop.returnType.toString()) -> handleArrays(prop, value, p0)
-            Regex("kotlin.collections.List<.*>").matches(prop.returnType.toString()) -> handleLists(prop, value, p0)
+            Regex("kotlin.Array<.*>").matches(prop.returnType.toString()) -> handleArrays(mode, prop, value, p0)
+            Regex("kotlin.collections.List<.*>").matches(prop.returnType.toString()) -> handleLists(mode, prop, value, p0)
             // TODO: maps?
             else -> // serialize nested object
-                processObject(p0, value)
+                processObject(mode, p0, value)
         }
     }
 
-    private fun handleArrays (prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
+    private fun handleArrays (mode : SerializationMode, prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
         p0.beginArray()
         when (prop.returnType.toString()) {
             "kotlin.Array<kotlin.String>" -> (value as Array<String>).forEach { p0.value(it) }
@@ -73,12 +75,12 @@ object JsonModelSerializer {
             "kotlin.Array<kotlin.Float>" -> (value as Array<Float>).forEach { p0.value(it) }
             "kotlin.Array<kotlin.Double>" -> (value as Array<Double>).forEach { p0.value(it) }
             "kotlin.Array<kotlin.Boolean>" -> (value as Array<Boolean>).forEach { p0.value(it) }
-            else -> (value as Array<*>).forEach { processObject(p0, it) }
+            else -> (value as Array<*>).forEach { processObject(mode, p0, it) }
         }
         p0.endArray()
     }
 
-    private fun handleLists (prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
+    private fun handleLists (mode : SerializationMode, prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
         p0.beginArray()
         when (prop.returnType.toString()) {
             "kotlin.List<kotlin.String>" -> (value as List<String>).forEach { p0.value(it) }
@@ -89,7 +91,7 @@ object JsonModelSerializer {
             "kotlin.List<kotlin.Float>" -> (value as List<Float>).forEach { p0.value(it) }
             "kotlin.List<kotlin.Double>" -> (value as List<Double>).forEach { p0.value(it) }
             "kotlin.List<kotlin.Boolean>" -> (value as List<Boolean>).forEach { p0.value(it) }
-            else -> (value as List<*>).forEach { processObject(p0, it) }
+            else -> (value as List<*>).forEach { processObject(mode, p0, it) }
         }
         p0.endArray()
     }

@@ -3,6 +3,7 @@ package com.pylons.wallet.core.engine
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.jsonTemplate.*
+import com.pylons.wallet.core.types.jsonModel.*
 
 internal class TxPylonsDevEngine : TxPylonsEngine () {
     override val isDevEngine: Boolean = true
@@ -12,10 +13,9 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
             basicTxHandlerFlow { createCookbook(name, devel, desc, version, supportEmail, level, it.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>,
-                              itemInputs : Array<ItemPrototype>, entries : ParamSet, time: Long): Transaction =
-            basicTxHandlerFlow { createRecipe(name, cookbookName, desc, coinInputs, itemInputs, entries, time,
-                    it.address, cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
+    override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction =
+    basicTxHandlerFlow { CreateRecipe(blockInterval, coinInputs, cookbookId, description, entries, itemInputs, name, sender).toSignedTx() }
 
     override fun disableRecipe(id: String): Transaction =
             basicTxHandlerFlow { disableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),

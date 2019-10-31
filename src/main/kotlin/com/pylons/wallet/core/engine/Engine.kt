@@ -3,6 +3,9 @@ package com.pylons.wallet.core.engine
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
+import com.pylons.wallet.core.types.jsonModel.CoinInput
+import com.pylons.wallet.core.types.jsonModel.ItemInput
+import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 
 /***
  * Generic interface for transaction-handling layers.
@@ -37,8 +40,8 @@ internal abstract class Engine {
     /**
      * Create-recipe message
      */
-    abstract fun createRecipe(name : String, cookbookName : String, desc : String, coinInputs: Map<String, Long>,
-                              itemInputs : Array<ItemPrototype>, entries : ParamSet, time : Long) : Transaction
+    abstract fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction
 
     /**
      * Low-level commit TX function.

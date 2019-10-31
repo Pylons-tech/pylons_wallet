@@ -1,10 +1,9 @@
 package com.pylons.wallet.core.types.jsonModel
 
+import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.engine.TxPylonsEngine
+import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
 import com.squareup.moshi.*
-import okio.Okio
-import java.io.ByteArrayOutputStream
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 
 data class CreateRecipe (
         @property:[Json(name = "BlockInterval")]
@@ -25,29 +24,39 @@ data class CreateRecipe (
         val sender : String
 ) {
     companion object {
-        val adapter: JsonAdapter<CreateRecipe> = moshi.adapter<CreateRecipe>(CreateRecipe::class.java)
+        val msgAdapter = CreateRecipeAdapter(SerializationMode.FOR_BROADCAST)
+        val signingAdapter = CreateRecipeAdapter(SerializationMode.FOR_SIGNING)
     }
 
-    fun toJson (writer: JsonWriter, value : CreateRecipe) = JsonModelSerializer.serialize(writer, value)
+    private fun toMsgJson () : String = """
+        [
+        {
+            "type": "pylons/CreateRecipe",
+            "value": ${msgAdapter.toJson(this)}
+        }
+        ]"""
 
     fun toSignedTx () : String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
+        println("tosignedtx")
+        val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
+        val crypto = (Core.engine as TxPylonsEngine).cryptoHandler
+        return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
     }
 
     fun toSignStruct () : String {
-        return "[${adapter.toJson(this)}]"
+        println("tosignedtx")
+        return "[${signingAdapter.toJson(this)}]"
     }
 }
 
-class CreateRecipeAdapter : JsonAdapter<CreateRecipe>() {
+class CreateRecipeAdapter(val mode: SerializationMode = SerializationMode.FOR_BROADCAST) : JsonAdapter<CreateRecipe>() {
     override fun fromJson(p0: JsonReader): CreateRecipe? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     @ToJson
     override fun toJson(p0: JsonWriter, p1: CreateRecipe?) {
-        JsonModelSerializer.serialize(p0, p1)
+        JsonModelSerializer.serialize(mode, p0, p1)
     }
 
 }

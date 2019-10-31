@@ -9,6 +9,9 @@ import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
+import com.pylons.wallet.core.types.jsonModel.CoinInput
+import com.pylons.wallet.core.types.jsonModel.ItemInput
+import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.squareup.moshi.*
 import net.minidev.json.JSONArray
@@ -225,8 +228,8 @@ internal open class TxPylonsEngine : Engine() {
 
     // Unimplemented engine method stubs
 
-    override fun createRecipe(name : String, cookbookName: String, desc: String, coinInputs: Map<String, Long>,
-                              itemInputs : Array<ItemPrototype>, entries : ParamSet, time: Long): Transaction =
+    override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun disableRecipe(id: String): Transaction =
