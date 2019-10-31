@@ -17,6 +17,7 @@ object JsonModelSerializer {
     private fun processObject (mode : SerializationMode, p0: JsonWriter, p1: Any?) {
         if (p1 != null) {
             if (mode == SerializationMode.FOR_BROADCAST) p0.indent = "        "
+            p0.serializeNulls = true
             val kClass = p1::class
             p0.beginObject()
             kClass.memberProperties.forEach { prop ->
@@ -65,34 +66,40 @@ object JsonModelSerializer {
     }
 
     private fun handleArrays (mode : SerializationMode, prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
-        p0.beginArray()
-        when (prop.returnType.toString()) {
-            "kotlin.Array<kotlin.String>" -> (value as Array<String>).forEach { p0.value(it) }
-            "kotlin.Array<kotlin.Byte>" -> (value as Array<Byte>).forEach { p0.value(it) }
-            "kotlin.Array<kotlin.Int>" -> (value as Array<Int>).forEach { p0.value(it) }
-            "kotlin.Array<kotlin.Long>" -> (value as Array<Long>).forEach { p0.value(it) }
-            "kotlin.Array<kotlin.Number>" -> (value as Array<Number>).forEach { p0.value(it) }
-            "kotlin.Array<kotlin.Float>" -> (value as Array<Float>).forEach { p0.value(it) }
-            "kotlin.Array<kotlin.Double>" -> (value as Array<Double>).forEach { p0.value(it) }
-            "kotlin.Array<kotlin.Boolean>" -> (value as Array<Boolean>).forEach { p0.value(it) }
-            else -> (value as Array<*>).forEach { processObject(mode, p0, it) }
+        if ((value as Array<*>).size == 0) p0.nullValue()
+        else {
+            p0.beginArray()
+            when (prop.returnType.toString()) {
+                "kotlin.Array<kotlin.String>" -> (value as Array<String>).forEach { p0.value(it) }
+                "kotlin.Array<kotlin.Byte>" -> (value as Array<Byte>).forEach { p0.value(it) }
+                "kotlin.Array<kotlin.Int>" -> (value as Array<Int>).forEach { p0.value(it) }
+                "kotlin.Array<kotlin.Long>" -> (value as Array<Long>).forEach { p0.value(it) }
+                "kotlin.Array<kotlin.Number>" -> (value as Array<Number>).forEach { p0.value(it) }
+                "kotlin.Array<kotlin.Float>" -> (value as Array<Float>).forEach { p0.value(it) }
+                "kotlin.Array<kotlin.Double>" -> (value as Array<Double>).forEach { p0.value(it) }
+                "kotlin.Array<kotlin.Boolean>" -> (value as Array<Boolean>).forEach { p0.value(it) }
+                else -> value.forEach { processObject(mode, p0, it) }
+            }
+            p0.endArray()
         }
-        p0.endArray()
     }
 
     private fun handleLists (mode : SerializationMode, prop : KProperty1<out Any, Any?>, value : Any?, p0: JsonWriter) {
-        p0.beginArray()
-        when (prop.returnType.toString()) {
-            "kotlin.List<kotlin.String>" -> (value as List<String>).forEach { p0.value(it) }
-            "kotlin.List<kotlin.Byte>" -> (value as List<Byte>).forEach { p0.value(it) }
-            "kotlin.List<kotlin.Int>" -> (value as List<Int>).forEach { p0.value(it) }
-            "kotlin.List<kotlin.Long>" -> (value as List<Long>).forEach { p0.value(it) }
-            "kotlin.List<kotlin.Number>" -> (value as List<Number>).forEach { p0.value(it) }
-            "kotlin.List<kotlin.Float>" -> (value as List<Float>).forEach { p0.value(it) }
-            "kotlin.List<kotlin.Double>" -> (value as List<Double>).forEach { p0.value(it) }
-            "kotlin.List<kotlin.Boolean>" -> (value as List<Boolean>).forEach { p0.value(it) }
-            else -> (value as List<*>).forEach { processObject(mode, p0, it) }
+        if ((value as List<*>).size == 0) p0.nullValue()
+        else {
+            p0.beginArray()
+            when (prop.returnType.toString()) {
+                "kotlin.List<kotlin.String>" -> (value as List<String>).forEach { p0.value(it) }
+                "kotlin.List<kotlin.Byte>" -> (value as List<Byte>).forEach { p0.value(it) }
+                "kotlin.List<kotlin.Int>" -> (value as List<Int>).forEach { p0.value(it) }
+                "kotlin.List<kotlin.Long>" -> (value as List<Long>).forEach { p0.value(it) }
+                "kotlin.List<kotlin.Number>" -> (value as List<Number>).forEach { p0.value(it) }
+                "kotlin.List<kotlin.Float>" -> (value as List<Float>).forEach { p0.value(it) }
+                "kotlin.List<kotlin.Double>" -> (value as List<Double>).forEach { p0.value(it) }
+                "kotlin.List<kotlin.Boolean>" -> (value as List<Boolean>).forEach { p0.value(it) }
+                else -> (value).forEach { processObject(mode, p0, it) }
+            }
+            p0.endArray()
         }
-        p0.endArray()
     }
 }

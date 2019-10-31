@@ -116,8 +116,8 @@ internal class TxPylonsDevEngineOnline {
     fun createsRecipe () {
         val name = "wood ${Random().nextInt()}"
         basicTxTestFlow(
-                { it.createRecipe("", "", getCookbookIfOneExists(it), "", 0,
-                        listOf(), listOf(), WeightedParamList(listOf(), listOf())) },
+                { it.createRecipe(Core.userProfile!!.credentials.address, "test recipe", getCookbookIfOneExists(it),
+                        "fooBar description blahhhh", 0, listOf(), listOf(), WeightedParamList(listOf(), listOf())) },
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }
