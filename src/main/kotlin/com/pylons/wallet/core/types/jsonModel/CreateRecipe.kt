@@ -1,30 +1,33 @@
 package com.pylons.wallet.core.types.jsonModel
 
 import com.squareup.moshi.*
+import okio.Okio
+import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 
 data class CreateRecipe (
-        @Json(name = "BlockInterval")
+        @property:[Json(name = "BlockInterval")]
         val blockInterval : Long,
-        @Json(name = "CoinInputs")
-        val coinInputs : CoinInputList,
-        @Json(name = "CookbookID")
+        @property:[Json(name = "CoinInputs")]
+        val coinInputs : List<CoinInput>,
+        @property:[Json(name = "CookbookID")]
         val cookbookId : String,
-        @Json(name = "Description")
+        @property:[Json(name = "Description")]
         val description: String,
-        @Json(name = "Entries")
-        val entries : List<WeightedParam>,
-        @Json(name = "ItemInputs")
-        val itemInputs : ItemInputList,
-        @Json(name = "Name")
+        @property:[Json(name = "Entries")]
+        val entries : WeightedParamList,
+        @property:[Json(name = "ItemInputs")]
+        val itemInputs : List<ItemInput>,
+        @property:[Json(name = "Name")]
         val name : String,
-        @Json(name = "Sender")
+        @property:[Json(name = "Sender")]
         val sender : String
 ) {
-    val adapter: JsonAdapter<CreateRecipe> = moshi.adapter<CreateRecipe>(CreateRecipe::class.java)
+    companion object {
+        val adapter: JsonAdapter<CreateRecipe> = moshi.adapter<CreateRecipe>(CreateRecipe::class.java)
+    }
 
-    @ToJson
     fun toJson (writer: JsonWriter, value : CreateRecipe) = JsonModelSerializer.serialize(writer, value)
 
     fun toSignedTx () : String {
@@ -32,7 +35,9 @@ data class CreateRecipe (
 
     }
 
-    fun toSignStruct () : String = adapter.toJson(this)
+    fun toSignStruct () : String {
+        return "[${adapter.toJson(this)}]"
+    }
 }
 
 class CreateRecipeAdapter : JsonAdapter<CreateRecipe>() {
@@ -40,23 +45,9 @@ class CreateRecipeAdapter : JsonAdapter<CreateRecipe>() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    @ToJson
     override fun toJson(p0: JsonWriter, p1: CreateRecipe?) {
-        val sb = StringBuilder("{")
-
-        CreateRecipe::class.declaredMemberProperties.forEach {
-            val json = it.findAnnotation<Json>()
-            if (json != null && p1 != null) {
-                var value = it.get(p1)
-                // Because we have to strip the whitespaces from the string this spits out by hand,
-                // we're doing some Bullshit here to protect whitespaces within our data.
-                if (it.returnType == String::class.java) value = protectWhitespace(value.toString())
-                p0.name(json.name)
-                //p0.
-            }
-
-        }
-        if (sb.length > 1) sb.setLength(sb.length - 1)
-        //p0.
+        JsonModelSerializer.serialize(p0, p1)
     }
 
 }

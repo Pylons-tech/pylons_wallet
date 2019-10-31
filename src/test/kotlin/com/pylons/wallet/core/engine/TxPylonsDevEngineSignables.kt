@@ -7,7 +7,14 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.*
+import com.pylons.wallet.core.types.item.prototype.DoubleParam
+import com.pylons.wallet.core.types.item.prototype.LongParam
+import com.pylons.wallet.core.types.item.prototype.StringParam
+import com.pylons.wallet.core.types.jsonModel.*
 import com.pylons.wallet.core.types.jsonTemplate.*
+import com.pylons.wallet.core.types.jsonModel.DoubleParam as mDParam
+import com.pylons.wallet.core.types.jsonModel.LongParam as mLParam
+import com.pylons.wallet.core.types.jsonModel.StringParam as mSParam
 
 internal class TxPylonsDevEngineSignables {
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
@@ -32,6 +39,7 @@ internal class TxPylonsDevEngineSignables {
         println("generating sign struct")
         val signable = baseSignTemplate(signableFun(engine), 0, 0)
         assertEquals(fixture, signable)
+        println("FIXTURE\n$fixture\nGENERATED\n$signable")
         println("ok!")
     }
 
@@ -52,17 +60,58 @@ internal class TxPylonsDevEngineSignables {
 
     @Test
     fun createRecipeSignable () {
-        val prototype = ItemPrototype(mapOf("endurance" to DoubleParam(listOf(DoubleParam.WeightRange(0.7, 1.0, 1)),
-                1.0, ParamType.INPUT_OUTPUT)),
-                mapOf("HP" to LongParam(listOf(LongParam.WeightRange(100, 500, 6),
-                        LongParam.WeightRange(501, 800, 2)), 1.0, ParamType.INPUT_OUTPUT)),
-                mapOf("Name" to StringParam("Raichu", 1.0, ParamType.INPUT_OUTPUT)))
-        basicSignableTestFlow("create_recipe") { createRecipeSignTemplate(
-                "name","id001", "this has to meet character limits lol", 0,
-                getCoinIOListForSigning(mapOf("wood" to 5L)), getItemInputListForSigning(arrayOf(prototype)),
-                ParamSet(listOf(prototype), mapOf("chair" to 1L)).toJson(true),
-                Core.userProfile!!.credentials.address)
-        }
+        val model = CreateRecipe(
+                blockInterval = 0,
+                coinInputs = listOf(
+                        CoinInput("wood", 5)
+                ),
+                cookbookId = "id001",
+                description = "this has to meet character limits lol",
+                entries = WeightedParamList(
+                        coinOutputs = listOf(
+                                CoinOutput("chair", 1, 1)
+                        ),
+                        itemOutputs = listOf(
+                                ItemOutput(
+                                        doubles = listOf(mDParam("1.0", "endurance",
+                                                listOf(
+                                                        DoubleWeightRange("500.00", "100.00", 6),
+                                                        DoubleWeightRange("800.00","501.00", 2)
+                                                )
+                                        )
+                                        ),
+                                        longs = listOf(
+                                                mLParam("", "HP",
+                                                        listOf(
+                                                                LongWeightRange(500, 100, 6),
+                                                                LongWeightRange(800, 501, 2)
+                                                        )
+                                                )
+                                        ),
+                                        strings = listOf(
+                                                mSParam("1.0", "Name", "Raichu")
+                                        ),
+                                        weight = 1
+                                )
+                        )
+                ),
+                itemInputs = listOf(
+                    ItemInput(
+                            doubles = listOf(
+                                    DoubleInputParam("endurance", "100.00", "500.00")
+                            ),
+                            longs = listOf(
+                                    LongInputParam("HP", 100, 500)
+                            ),
+                            strings = listOf(
+                                    StringInputParam("Name", "Raichu")
+                            )
+                    )
+                ),
+                name = "name",
+                sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
+        )
+        basicSignableTestFlow("create_recipe") { model.toSignStruct() }
     }
 
     @Test

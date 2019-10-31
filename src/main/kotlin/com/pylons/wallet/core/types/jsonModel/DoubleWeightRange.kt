@@ -2,11 +2,11 @@ package com.pylons.wallet.core.types.jsonModel
 
 import com.squareup.moshi.Json
 
-data class DoubleWeightTable(
-        @Json(name = "Upper")
+data class DoubleWeightRange(
+        @property:[Json(name = "Upper")]
         val upper : String,
-        @Json(name = "Lower")
+        @property:[Json(name = "Lower")]
         val lower : String,
-        @Json(name = "weight")
+        @property:[Json(name = "Weight")]
         val weight : Int
 )

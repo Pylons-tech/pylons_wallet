@@ -3,10 +3,8 @@ package com.pylons.wallet.core.types.jsonModel
 import com.squareup.moshi.Json
 
 data class CoinInput (
-        @Json(name = "Coin")
+        @property:[Json(name = "Coin")]
         val coin : String,
-        @Json(name = "Count")
+        @property:[Json(name = "Count") QuotedJsonNumeral]
         val count : Long
 )
-
-typealias CoinInputList = List<CoinInput>

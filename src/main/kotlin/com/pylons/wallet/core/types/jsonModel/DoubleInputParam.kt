@@ -3,12 +3,10 @@ package com.pylons.wallet.core.types.jsonModel
 import com.squareup.moshi.Json
 
 data class DoubleInputParam(
-        @Json(name = "Key")
+        @property:[Json(name = "Key")]
         val key : String,
-        @Json(name = "MinValue")
+        @property:[Json(name = "MinValue")]
         val minValue : String,
-        @Json(name = "MaxValue")
+        @property:[Json(name = "MaxValue")]
         val maxValue : String
 )
-
-typealias DoubleInputParamList = List<DoubleInputParam>
