@@ -116,6 +116,7 @@ internal class TxPylonsDevEngineSignables {
 
     @Test
     fun updateRecipeSignable () {
+        fail<Unit>("update me!")
 //        val prototype = ItemPrototype(mapOf("endurance" to DoubleParam(0.7, 1.0, 1.0, ParamType.INPUT_OUTPUT)),
 //                mapOf("HP" to LongParam(listOf(LongParam.WeightRange(100, 500, 6),
 //                        LongParam.WeightRange(501, 800, 2)), 1.0, ParamType.INPUT_OUTPUT)),
@@ -132,7 +133,7 @@ internal class TxPylonsDevEngineSignables {
         basicSignableTestFlow("create_cookbook") {
             createCookbookSignTemplate(
                     "name", "SketchyCo", "this has to meet character limits lol", "1.0.0",
-                    "example@example.com", 0, Core.userProfile!!.credentials.address
+                    "example@example.com", 0, Core.userProfile!!.credentials.address, 50
             )
         }
     }

@@ -94,7 +94,7 @@ internal class TxPylonsDevEngineOnline {
     fun createsCookbook () {
         basicTxTestFlow { it.createCookbook("blyyah ${Random().nextInt()}", "tst",
                 "this is a description for a test flow cookbook i guess",
-                "1.0.0", "fake@example.com", 0) }
+                "1.0.0", "fake@example.com", 0, 50) }
     }
 
     @Order(3)
@@ -116,7 +116,7 @@ internal class TxPylonsDevEngineOnline {
     fun createsRecipe () {
         val name = "wood ${Random().nextInt()}"
         basicTxTestFlow(
-                { it.createRecipe(Core.userProfile!!.credentials.address, "test recipe", getCookbookIfOneExists(it),
+                { it.createRecipe(Core.userProfile!!.credentials.address, name, getCookbookIfOneExists(it),
                         "fooBar description blahhhh", 0, listOf(), listOf(), WeightedParamList(listOf(), listOf())) },
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )

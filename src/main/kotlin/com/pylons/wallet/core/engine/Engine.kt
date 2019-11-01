@@ -53,7 +53,7 @@ internal abstract class Engine {
      * Create-cookbook message
      */
     abstract fun createCookbook (name : String, devel : String, desc : String, version : String,
-                                 supportEmail : String, level : Long) : Transaction
+                                 supportEmail : String, level : Long, costPerBlock : Long) : Transaction
 
     /**
      * Copies some data from profile's credentials object to userdata

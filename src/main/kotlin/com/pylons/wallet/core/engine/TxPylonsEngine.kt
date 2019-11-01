@@ -117,10 +117,6 @@ internal open class TxPylonsEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long): Transaction {
-        throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
-    }
-
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
@@ -207,7 +203,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun listRecipes(): Array<Recipe> {
-        val json = HttpWire.get("$nodeUrl/pylons/list_recipes/${Core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("$nodeUrl/pylons/list_recipe/${Core.userProfile!!.credentials.address}")
         return Recipe.getArrayFromJson(json)
     }
 
@@ -237,6 +233,10 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
+
+    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
+        throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
+    }
 
     override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")

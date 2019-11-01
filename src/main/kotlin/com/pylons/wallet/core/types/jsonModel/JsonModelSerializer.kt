@@ -21,7 +21,6 @@ object JsonModelSerializer {
             val kClass = p1::class
             p0.beginObject()
             kClass.memberProperties.forEach { prop ->
-                println(prop.name)
                 val json = prop.findAnnotation<Json>()
                 if (json != null) {
                     var value = prop.getter.call(p1)

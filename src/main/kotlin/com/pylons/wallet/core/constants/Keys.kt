@@ -33,5 +33,6 @@ class Keys {
         const val VERSION = "version"
         const val LEVEL = "level"
         const val REQUESTER = "requester"
+        const val COSTPERBLOCK = "costPerBlock"
     }
 }
