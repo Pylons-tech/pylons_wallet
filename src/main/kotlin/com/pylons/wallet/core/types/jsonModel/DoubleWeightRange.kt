@@ -7,6 +7,6 @@ data class DoubleWeightRange(
         val upper : String,
         @property:[Json(name = "Lower")]
         val lower : String,
-        @property:[Json(name = "Weight")]
+        @property:[NeverQuoteWrap Json(name = "Weight")]
         val weight : Int
 )

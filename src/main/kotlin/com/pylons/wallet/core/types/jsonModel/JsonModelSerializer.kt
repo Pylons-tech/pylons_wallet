@@ -30,12 +30,14 @@ object JsonModelSerializer {
                         Byte::class -> p0.value(value as Byte)
                         Int::class -> {
                             val q = prop.findAnnotation<QuotedJsonNumeral>()
-                            if (q != null || mode == SerializationMode.FOR_BROADCAST) p0.value((value as Int).toString())
+                            val n = prop.findAnnotation<NeverQuoteWrap>()
+                            if ((q != null || mode == SerializationMode.FOR_BROADCAST) && n == null) p0.value((value as Int).toString())
                             else p0.value(value as Int)
                         }
                         Long::class -> {
                             val q = prop.findAnnotation<QuotedJsonNumeral>()
-                            if (q != null || mode == SerializationMode.FOR_BROADCAST) p0.value((value as Long).toString())
+                            val n = prop.findAnnotation<NeverQuoteWrap>()
+                            if ((q != null || mode == SerializationMode.FOR_BROADCAST) && n == null) p0.value((value as Long).toString())
                             else p0.value(value as Long)
                         }
                         Number::class -> p0.value(value as Number)

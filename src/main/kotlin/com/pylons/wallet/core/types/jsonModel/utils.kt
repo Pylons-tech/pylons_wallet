@@ -6,7 +6,7 @@ internal val moshi = Moshi.Builder().add(CreateRecipeAdapter()).build()
 
 annotation class QuotedJsonNumeral
 
-annotation class ToSignStruct
+annotation class NeverQuoteWrap
 
 enum class SerializationMode {
     FOR_BROADCAST,

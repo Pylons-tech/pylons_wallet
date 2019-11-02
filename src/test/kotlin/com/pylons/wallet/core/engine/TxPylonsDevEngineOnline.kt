@@ -7,7 +7,11 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
+import com.pylons.wallet.core.fixtures.basicItemOutput
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.jsonModel.CoinInput
+import com.pylons.wallet.core.types.jsonModel.CoinOutput
+import com.pylons.wallet.core.types.jsonModel.ItemOutput
 import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 import org.junit.jupiter.api.MethodOrderer
 
@@ -117,7 +121,8 @@ internal class TxPylonsDevEngineOnline {
         val name = "wood ${Random().nextInt()}"
         basicTxTestFlow(
                 { it.createRecipe(Core.userProfile!!.credentials.address, name, getCookbookIfOneExists(it),
-                        "fooBar description blahhhh", 0, listOf(), listOf(), WeightedParamList(listOf(), listOf())) },
+                        "fooBar description blahhhh", 0, listOf(CoinInput("pylon", 2)), listOf(),
+                        WeightedParamList(listOf(CoinOutput("wood", 999, 1)), listOf(basicItemOutput))) },
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }

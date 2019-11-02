@@ -9,6 +9,6 @@ data class ItemOutput(
         val longs : List<LongParam>,
         @property:[Json(name = "Strings")]
         val strings : List<StringParam>,
-        @property:[Json(name = "Weight")]
+        @property:[NeverQuoteWrap Json(name = "Weight")]
         val weight : Int
 )
