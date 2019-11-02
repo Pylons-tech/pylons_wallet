@@ -60,72 +60,14 @@ internal class TxPylonsDevEngineSignables {
 
     @Test
     fun createRecipeSignable () {
-        val model = CreateRecipe(
-                blockInterval = 0,
-                coinInputs = listOf(
-                        CoinInput("wood", 5)
-                ),
-                cookbookId = "id001",
-                description = "this has to meet character limits lol",
-                entries = WeightedParamList(
-                        coinOutputs = listOf(
-                                CoinOutput("chair", 1, 1)
-                        ),
-                        itemOutputs = listOf(
-                                ItemOutput(
-                                        doubles = listOf(mDParam("1.0", "endurance",
-                                                listOf(
-                                                        DoubleWeightRange("500.00", "100.00", 6),
-                                                        DoubleWeightRange("800.00","501.00", 2)
-                                                )
-                                        )
-                                        ),
-                                        longs = listOf(
-                                                mLParam("", "HP",
-                                                        listOf(
-                                                                LongWeightRange(500, 100, 6),
-                                                                LongWeightRange(800, 501, 2)
-                                                        )
-                                                )
-                                        ),
-                                        strings = listOf(
-                                                mSParam("1.0", "Name", "Raichu")
-                                        ),
-                                        weight = 1
-                                )
-                        )
-                ),
-                itemInputs = listOf(
-                    ItemInput(
-                            doubles = listOf(
-                                    DoubleInputParam("endurance", "100.00", "500.00")
-                            ),
-                            longs = listOf(
-                                    LongInputParam("HP", 100, 500)
-                            ),
-                            strings = listOf(
-                                    StringInputParam("Name", "Raichu")
-                            )
-                    )
-                ),
-                name = "name",
-                sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
-        )
+        val model = com.pylons.wallet.core.fixtures.createRecipeSignable
         basicSignableTestFlow("create_recipe") { model.toSignStruct() }
     }
 
     @Test
     fun updateRecipeSignable () {
-        fail<Unit>("update me!")
-//        val prototype = ItemPrototype(mapOf("endurance" to DoubleParam(0.7, 1.0, 1.0, ParamType.INPUT_OUTPUT)),
-//                mapOf("HP" to LongParam(listOf(LongParam.WeightRange(100, 500, 6),
-//                        LongParam.WeightRange(501, 800, 2)), 1.0, ParamType.INPUT_OUTPUT)),
-//                mapOf("Name" to StringParam("Raichu", 1.0, ParamType.INPUT_OUTPUT)))
-//        basicSignableTestFlow("update_recipe") { updateRecipeSignTemplate(
-//                "recipeName", "name","id001", "this has to meet character limits lol", 0,
-//                getCoinIOListForSigning(mapOf("wood" to 5L)), getCoinIOListForSigning(mapOf("chair" to 1L)),
-//                getItemInputListForSigning(arrayOf(prototype)), getItemOutputListForSigning(arrayOf(prototype)), Core.userProfile!!.credentials.address)
-//        }
+        val model = com.pylons.wallet.core.fixtures.updateRecipeSignable
+        basicSignableTestFlow("update_recipe") { model.toSignStruct() }
     }
 
     @Test

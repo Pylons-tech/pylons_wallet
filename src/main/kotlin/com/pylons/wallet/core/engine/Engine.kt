@@ -142,8 +142,8 @@ internal abstract class Engine {
     /**
      * Update-recipe message
      */
-    abstract fun updateRecipe(name : String, cookbookName : String, id : String, desc : String, coinInputs : Map<String, Long>,
-                              coinOutputs : Map<String, Long>, itemInputs: Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time : Long) : Transaction
+    abstract fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction
 
     /**
      * List recipes query

@@ -241,7 +241,7 @@ internal open class TxPylonsEngine : Engine() {
     override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun updateRecipe(name: String, cookbookName: String, id: String, desc: String, coinInputs: Map<String, Long>, coinOutputs: Map<String, Long>,
-                              itemInputs : Array<ItemPrototype>, itemOutputs : Array<ItemPrototype>, time: Long): Transaction =
+    override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 }

@@ -132,10 +132,11 @@ internal class TxPylonsDevEngineOnline {
     @Order(7)
     @Test
     fun updatesRecipe () {
-        basicTxTestFlow { it.updateRecipe("wood!!!!!!!", getCookbookIfOneExists(it), getRecipeIfOneExists(it),
-                "behold, the wood economy. this is a recipe that outputs wood. it is very efficient.",
-                mapOf("pylon" to 2L), mapOf("wood" to 1234567890L), arrayOf(), arrayOf(),
-                60) }
+        basicTxTestFlow(
+                { it.updateRecipe(getRecipeIfOneExists(it), Core.userProfile!!.credentials.address, "wood!!!!!!!", getCookbookIfOneExists(it),
+                        "fooBar description blahhhh", 0, listOf(), listOf(), WeightedParamList(listOf(), listOf())) },
+                { it, _ -> checkIfRecipeExists(it, "wood!!!!!!!", getCookbookIfOneExists(it)) }
+        )
     }
 
     @Order(8)
