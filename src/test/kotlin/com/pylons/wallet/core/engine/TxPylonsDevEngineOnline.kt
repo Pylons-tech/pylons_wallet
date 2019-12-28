@@ -40,6 +40,7 @@ internal class TxPylonsDevEngineOnline {
         val engine = Core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {
+            println("Key is not null")
             UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
             engine.cryptoHandler.importKeysFromUserData()
         }

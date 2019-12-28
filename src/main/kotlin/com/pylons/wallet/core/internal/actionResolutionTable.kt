@@ -10,29 +10,26 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         return when (action) {
             // Transactions
             Actions.APPLY_RECIPE -> retryOnError { applyRecipe(msg) }
-            Actions.PERFORM_TRANSACTION -> retryOnError { performTransaction(msg) }
             Actions.NEW_PROFILE -> retryOnError { newProfile(msg) }
             Actions.GET_PYLONS -> retryOnError { getPylons(msg) }
             Actions.SEND_PYLONS -> retryOnError { sendPylons(msg) }
+            Actions.CREATE_TRADE -> retryOnError { createTrade(msg) }
+            Actions.FULFILL_TRADE -> retryOnError { fulfillTrade(msg) }
 
             // State queries
-            Actions.GET_USER_DETAILS -> getUserDetails()
-            Actions.GET_OTHER_USER_DETAILS -> getOtherUserDetails(msg)
+            Actions.GET_PROFILE -> getProfile(msg)
+            Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions(msg)
             Actions.GET_TRANSACTION -> getTransaction(msg)
-
-            // Wallet management
-            Actions.GET_FRIENDS -> getFriends()
-            Actions.SET_FRIENDS -> setFriends(msg)
-            Actions.WIPE_USER_DATA -> wipeUserData()
 
             // Dev
             Actions.WALLET_SERVICE_TEST -> devOnly(::walletServiceTest)
             Actions.WALLET_UI_TEST -> devOnly{ requiresArgs(action, msg, extraArgs, ::walletUiTest) }
-            Actions.SET_USER_PROFILE_STATE -> devOnly { setUserProfileState(msg) }
-            Actions.SET_OTHER_USER_PROFILE_STATE -> devOnly { setOtherUserProfileState(msg) }
-            Actions.DUMP_USER_PROFILE_STATE -> devOnly { dumpUserProfileState(msg) }
             Actions.CREATE_COOKBOOK -> devOnly { createCookbook(msg) }
             Actions.UPDATE_COOKBOOK -> devOnly { updateCookbook(msg) }
+            Actions.CREATE_RECIPE -> devOnly { createRecipe(msg) }
+            Actions.UPDATE_RECIPE -> devOnly { updateRecipe(msg) }
+            Actions.ENABLE_RECIPE -> devOnly { enableRecipe(msg) }
+            Actions.DISABLE_RECIPE -> devOnly { disableRecipe(msg) }
 
             // Invalid inputs
             "" -> noAction()
@@ -42,7 +39,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
         var msg = MessageData()
         msg.strings[Keys.EXCEPTION] = e::class.qualifiedName.toString()
         msg.strings[Keys.MESSAGE] = e.message.orEmpty()
-        msg.strings[Keys.STACK_TRACE] = e.stackTrace.toString()
+        msg.strings[Keys.STACK_TRACE] = e.stackTrace!!.contentToString()
         return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
     }
 

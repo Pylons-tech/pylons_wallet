@@ -55,10 +55,15 @@ object Core {
      * backupUserData() and storing the results in local storage on their own.
      */
     fun backupUserData () : String? {
-        engine.dumpCredentials(userProfile!!.credentials)
-        println(UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"])
-        println( UserData.exportAsJson())
-        return UserData.exportAsJson()
+        return when (userProfile) {
+            null -> null
+            else -> {
+                engine.dumpCredentials(userProfile!!.credentials)
+                println(UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"])
+                println(UserData.exportAsJson())
+                UserData.exportAsJson()
+            }
+        }
     }
 
     fun setProfile (profile: Profile) {
@@ -90,6 +95,8 @@ object Core {
             } catch (e : Exception) { // Eventually: we should recover properly from bad data
                 Logger.implementation.log(LogTag.info, "Saved data was bad; generating new credentials." +
                         "(This behavior should not exist in production)")
+                Logger.implementation.log(e.stackTrace.contentDeepToString(), LogTag.info)
+                Logger.implementation.log(e.message.orEmpty(), LogTag.info)
                 UserData.dataSets = engine.getInitialDataSets()
                 userProfile = null
             }
@@ -142,10 +149,11 @@ object Core {
             }
             val action = dat.msg.strings[ReservedKeys.wcAction].orEmpty()
             val out = actionResolutionTable(action, dat.msg)
-            out.msg!!.strings[ReservedKeys.statusBlock] = statusBlock.toJson()
+            println(out.status)
+            out.msg?.strings?.set(ReservedKeys.statusBlock, statusBlock.toJson())
             Logger.implementation.log("Resolution of message ${dat.msg.getAction()} complete}", LogTag.info)
             inDoResolveMessage = false
-            println(out.msg.toString())
+            //println(out.msg.toString())
             dat.callback?.invoke(out)
             onCompletedOperation?.invoke()
         }

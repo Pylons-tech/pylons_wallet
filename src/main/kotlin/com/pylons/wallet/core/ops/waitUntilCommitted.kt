@@ -5,7 +5,7 @@ import java.lang.Exception
 
 internal fun waitUntilCommitted (txHash : String) {
     var tries = 0
-    val maxTries = 4
+    val maxTries = 32
     try {
         Core.engine.getTransaction(txHash)
     } catch (e : Exception) {

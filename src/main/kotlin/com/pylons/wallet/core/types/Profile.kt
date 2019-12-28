@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types
 import com.squareup.moshi.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
+import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.item.Item
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.item.serialize
@@ -29,7 +30,7 @@ data class Profile (
     companion object {
         fun fromUserData () : Profile? {
             val data = UserData.dataSets.getValue(Core.engine.prefix)
-            val credentials = Core.engine.getNewCredentials()
+            val credentials = Core.engine.generateCredentialsFromKeys()
             return when (val name = data.getOrDefault("name", "")) {
                 "" -> Profile(credentials = credentials, provisional = true,
                         coins = mutableMapOf(), strings = mutableMapOf(), items = mutableListOf())
@@ -49,7 +50,6 @@ data class Profile (
 
     fun detailsToMessageData () : MessageData {
         val msg = MessageData()
-        msg.booleans[Keys.PROFILE_EXISTS] = true
         val name = getName()
         if (name != null) msg.strings[Keys.NAME] = name
         credentials.dumpToMessageData(msg)

@@ -121,6 +121,7 @@ internal open class TxPylonsEngine : Engine() {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
         UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoHandler.keyPair!!.secretKey().bytes().toHexString()
+        println("Dumped credentials")
     }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
