@@ -3,9 +3,7 @@ package com.pylons.wallet.core.types
 import com.squareup.moshi.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
-import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.item.Item
-import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.item.serialize
 
 /**
@@ -52,12 +50,11 @@ data class Profile (
         val msg = MessageData()
         val name = getName()
         if (name != null) msg.strings[Keys.NAME] = name
+        else msg.strings[Keys.NAME] = ""
+        msg.strings[Keys.ADDRESS]
         credentials.dumpToMessageData(msg)
-        msg.strings[Keys.COINS] = coins.serializeCoins()
+        coins.serializeCoinsToMessageData(msg)
         msg.stringArrays[Keys.ITEMS] = items.serialize()
-        msg.stringArrays["singletonGameRules"] = singletonGameRules
-
-        // and extras!
         return msg
     }
 

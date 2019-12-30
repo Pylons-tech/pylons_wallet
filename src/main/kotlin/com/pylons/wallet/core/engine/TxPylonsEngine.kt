@@ -4,6 +4,7 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.PathNotFoundException
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Logger
+import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
@@ -11,6 +12,7 @@ import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.jsonModel.CoinInput
 import com.pylons.wallet.core.types.jsonModel.ItemInput
+import com.pylons.wallet.core.types.jsonModel.ItemUpgradeParams
 import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.squareup.moshi.*
@@ -66,7 +68,7 @@ internal open class TxPylonsEngine : Engine() {
         var accountNumber : Long = 0
 
         override fun dumpToMessageData(msg: MessageData) {
-            msg.strings["address"] = address
+            msg.strings[Keys.ADDRESS] = address
         }
     }
 
@@ -131,11 +133,11 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): Profile.Credentials {
-        val bip39 = Bip39(EnglishDictionary.instance())
+        //val bip39 = Bip39(EnglishDictionary.instance())
         //val seed = bip39.createSeed(mnemonic, passphrase)
         //SECP256K1.SecretKey.
 
-        cryptoHandler.importKeysFromUserData()
+        //cryptoHandler.importKeysFromUserData()
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -226,7 +228,8 @@ internal open class TxPylonsEngine : Engine() {
     // Unimplemented engine method stubs
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction =
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList,
+                              rType : Long, toUpgrade : ItemUpgradeParams) : Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun disableRecipe(id: String): Transaction =

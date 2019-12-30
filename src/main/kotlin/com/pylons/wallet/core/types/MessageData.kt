@@ -29,14 +29,14 @@ data class MessageData(
     val strings: MutableMap<String, String> = mutableMapOf(),
     val stringArrays: MutableMap<String, MutableList<String>> = mutableMapOf()
 ) { companion object {
-        @JvmStatic
-        fun deleteProfile() = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.WIPE_USER_DATA))
+        //@JvmStatic
+        //fun deleteProfile() = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.WIPE_USER_DATA))
 
         @JvmStatic
         fun empty() = MessageData()
 
-        @JvmStatic
-        fun getUserDetails () = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.GET_USER_DETAILS))
+        //@JvmStatic
+        //fun getUserDetails () = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.GET_USER_DETAILS))
     }
 
     fun isError () : Boolean = strings.containsKey(Keys.ERROR)

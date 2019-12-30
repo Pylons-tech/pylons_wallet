@@ -21,9 +21,8 @@ data class ForeignProfile (
         val name = getName()
         if (name != null) msg.strings[Keys.NAME] = name
         msg.strings[Keys.ADDRESS] = id
-        msg.strings[Keys.COINS] = knownCoins.serialize()
+        knownCoins.serializeCoinsToMessageData(msg)
         msg.stringArrays[Keys.ITEMS] = knownItems.serialize()
-        // and extras!
         return msg
     }
 

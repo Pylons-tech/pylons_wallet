@@ -13,12 +13,12 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             Actions.NEW_PROFILE -> retryOnError { newProfile(msg) }
             Actions.GET_PYLONS -> retryOnError { getPylons(msg) }
             Actions.SEND_PYLONS -> retryOnError { sendPylons(msg) }
-            Actions.CREATE_TRADE -> retryOnError { createTrade(msg) }
-            Actions.FULFILL_TRADE -> retryOnError { fulfillTrade(msg) }
+            //Actions.CREATE_TRADE -> retryOnError { createTrade(msg) }
+            //Actions.FULFILL_TRADE -> retryOnError { fulfillTrade(msg) }
 
             // State queries
             Actions.GET_PROFILE -> getProfile(msg)
-            Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions(msg)
+            //Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions(msg)
             Actions.GET_TRANSACTION -> getTransaction(msg)
 
             // Dev
@@ -26,10 +26,10 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             Actions.WALLET_UI_TEST -> devOnly{ requiresArgs(action, msg, extraArgs, ::walletUiTest) }
             Actions.CREATE_COOKBOOK -> devOnly { createCookbook(msg) }
             Actions.UPDATE_COOKBOOK -> devOnly { updateCookbook(msg) }
-            Actions.CREATE_RECIPE -> devOnly { createRecipe(msg) }
-            Actions.UPDATE_RECIPE -> devOnly { updateRecipe(msg) }
-            Actions.ENABLE_RECIPE -> devOnly { enableRecipe(msg) }
-            Actions.DISABLE_RECIPE -> devOnly { disableRecipe(msg) }
+            //Actions.CREATE_RECIPE -> devOnly { createRecipe(msg) }
+            //Actions.UPDATE_RECIPE -> devOnly { updateRecipe(msg) }
+            //Actions.ENABLE_RECIPE -> devOnly { enableRecipe(msg) }
+            //Actions.DISABLE_RECIPE -> devOnly { disableRecipe(msg) }
 
             // Invalid inputs
             "" -> noAction()

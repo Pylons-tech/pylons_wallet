@@ -153,7 +153,6 @@ object Core {
             out.msg?.strings?.set(ReservedKeys.statusBlock, statusBlock.toJson())
             Logger.implementation.log("Resolution of message ${dat.msg.getAction()} complete}", LogTag.info)
             inDoResolveMessage = false
-            //println(out.msg.toString())
             dat.callback?.invoke(out)
             onCompletedOperation?.invoke()
         }

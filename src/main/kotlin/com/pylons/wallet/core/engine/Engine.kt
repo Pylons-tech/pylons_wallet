@@ -5,6 +5,7 @@ import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.jsonModel.CoinInput
 import com.pylons.wallet.core.types.jsonModel.ItemInput
+import com.pylons.wallet.core.types.jsonModel.ItemUpgradeParams
 import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 
 /***
@@ -41,7 +42,8 @@ internal abstract class Engine {
      * Create-recipe message
      */
     abstract fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList,
+                              rType : Long, toUpgrade : ItemUpgradeParams) : Transaction
 
     /**
      * Low-level commit TX function.

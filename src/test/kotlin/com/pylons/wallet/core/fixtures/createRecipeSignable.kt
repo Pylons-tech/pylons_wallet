@@ -51,5 +51,7 @@ val createRecipeSignable = CreateRecipe(
                 )
         ),
         name = "name",
-        sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
+        sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
+        rType = 0,
+        toUpgrade = ItemUpgradeParams(listOf(), listOf(), listOf())
 )

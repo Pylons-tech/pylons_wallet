@@ -5,6 +5,7 @@ import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.jsonModel.CoinInput
 import com.pylons.wallet.core.types.jsonModel.ItemInput
+import com.pylons.wallet.core.types.jsonModel.ItemUpgradeParams
 import com.pylons.wallet.core.types.jsonModel.WeightedParamList
 
 /**
@@ -32,7 +33,8 @@ internal class NoEngine : Engine() {
             throw NoEngineException()
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction =
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList,
+                              rType : Long, toUpgrade : ItemUpgradeParams) : Transaction =
             throw NoEngineException()
 
     override fun disableRecipe(id: String): Transaction  =

@@ -14,8 +14,9 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence, costPerBlock) }
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction =
-    basicTxHandlerFlow { CreateRecipe(blockInterval, coinInputs, cookbookId, description, entries, itemInputs, name, sender).toSignedTx() }
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList,
+                              rType : Long, toUpgrade : ItemUpgradeParams) : Transaction =
+    basicTxHandlerFlow { CreateRecipe(blockInterval, coinInputs, cookbookId, description, entries, itemInputs, name, sender, rType, toUpgrade).toSignedTx() }
 
     override fun disableRecipe(id: String): Transaction =
             basicTxHandlerFlow { disableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),

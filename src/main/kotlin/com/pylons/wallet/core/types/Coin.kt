@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.item.Item
 import com.squareup.moshi.Moshi
 
@@ -24,26 +25,24 @@ fun Map<String, Long>.addCoins (other : Set<Coin>, subtractValues : Boolean) : M
     return mutable.toMap()
 }
 
-fun Map<String, Long>.serializeCoins () : String {
-    val sb = StringBuilder()
+fun Map<String, Long>.serializeCoinsToMessageData (msg : MessageData) {
+    val denoms = mutableListOf<String>()
+    val counts = mutableListOf<Long>()
     forEach{
-        sb.append("${it.key},${it.value},")
+        denoms.add(it.key)
+        counts.add(it.value)
     }
-    return when (sb.isNotEmpty()) {
-        true -> sb.delete(sb.lastIndex, sb.length).toString()
-        false -> ""
-    }
+    msg.longArrays[Keys.COIN_COUNTS] = counts.toLongArray()
+    msg.stringArrays[Keys.COIN_DENOMS] = denoms
 }
 
-fun List<Coin>.serialize () : String {
-    val moshi = Moshi.Builder().build()
-    val jsonAdapter = moshi.adapter<Coin>(Item::class.java)
-    val sb = StringBuilder()
+fun List<Coin>.serializeCoinsToMessageData (msg : MessageData)  {
+    val denoms = mutableListOf<String>()
+    val counts = mutableListOf<Long>()
     forEach{
-        sb.append("${jsonAdapter.toJson(it)},")
+        denoms.add(it.id)
+        counts.add(it.count)
     }
-    return when (sb.isNotEmpty()) {
-        true -> sb.delete(sb.lastIndex, sb.length).toString()
-        false -> ""
-    }
+    msg.longArrays[Keys.COIN_COUNTS] = counts.toLongArray()
+    msg.stringArrays[Keys.COIN_DENOMS] = denoms
 }

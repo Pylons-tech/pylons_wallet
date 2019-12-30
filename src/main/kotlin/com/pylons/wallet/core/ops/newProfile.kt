@@ -5,16 +5,32 @@ import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.constants.ReservedKeys
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.types.*
-import kotlin.NullPointerException
 
-internal fun newProfile (extraArgs : MessageData) : Response {
-    require (extraArgs.strings.containsKey(Keys.NAME)) { badArgs() }
+internal fun newProfile (msg : MessageData) : Response {
+    // Ensure we have required keys - strings["NAME"]
+    require (msg.strings.containsKey(Keys.NAME)) {  throw BadMessageException("newProfile", Keys.NAME, "String") }
+    // Generate new credentials and configure user profile for them
     val c = Core.engine.getNewCredentials()
-    Core.setProfile(Profile(credentials =  c, strings = mutableMapOf(ReservedKeys.profileName to extraArgs.strings[Keys.NAME]!!), provisional = true,
-            coins = mutableMapOf(), items = mutableListOf()))
-    val tx = Core.newProfile(extraArgs.strings[Keys.NAME]!!)
+    Core.setProfile(
+            Profile(
+                    credentials =  c,
+                    strings = mutableMapOf(ReservedKeys.profileName to msg.strings[Keys.NAME]!!),
+                    provisional = true,
+                    coins = mutableMapOf(),
+                    items = mutableListOf()
+            )
+    )
+    // Give the supplied arguments to the core and run newprofile command, then wait on tx commit
+    val tx = Core.newProfile(msg.strings[Keys.NAME]!!)
     waitUntilCommitted(tx.id!!)
-    return Response(MessageData(booleans = mutableMapOf(Keys.SUCCESS to true)), Status.OK_TO_RETURN_TO_CLIENT)
+    // Build outgoing message
+    val outgoingMessage = MessageData(
+            strings = mutableMapOf(
+                    Keys.TX to tx.id!!
+            )
+    )
+    // Return to client
+    return Response(outgoingMessage, Status.OK_TO_RETURN_TO_CLIENT)
 }
 
-fun Core.newProfile (name : String) : Transaction = Core.engine.registerNewProfile(name).submit()
+fun Core.newProfile (name : String) : Transaction = engine.registerNewProfile(name).submit()

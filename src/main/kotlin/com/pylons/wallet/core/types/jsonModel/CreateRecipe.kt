@@ -21,7 +21,11 @@ data class CreateRecipe (
         @property:[Json(name = "Name")]
         val name : String,
         @property:[Json(name = "Sender")]
-        val sender : String
+        val sender : String,
+        @property:[Json(name = "RType")]
+        val rType : Long,
+        @property:[Json(name = "ToUpgrade")]
+        val toUpgrade : ItemUpgradeParams
 ) {
     companion object {
         val msgAdapter = CreateRecipeAdapter(SerializationMode.FOR_BROADCAST)
