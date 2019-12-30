@@ -8,12 +8,10 @@ import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.jsonModel.CoinInput
-import com.pylons.wallet.core.types.jsonModel.ItemInput
-import com.pylons.wallet.core.types.jsonModel.ItemUpgradeParams
-import com.pylons.wallet.core.types.jsonModel.WeightedParamList
+import com.pylons.wallet.core.types.jsonModel.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.squareup.moshi.*
 import net.minidev.json.JSONArray
@@ -174,6 +172,11 @@ internal open class TxPylonsEngine : Engine() {
         (Core.userProfile?.credentials as Credentials?)?.sequence = sequence
         Core.userProfile?.coins = coins
         return Core.userProfile
+    }
+
+    override fun getPendingExecutions(): Array<Execution> {
+        val json = HttpWire.get("$nodeUrl/pylons/list_executions/${Core.userProfile!!.credentials.address}")
+        return Execution.getArrayFromJson(json)
     }
 
     override fun getPylons(q: Long): Transaction =

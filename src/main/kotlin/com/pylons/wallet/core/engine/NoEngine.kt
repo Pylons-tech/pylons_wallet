@@ -2,11 +2,9 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.jsonModel.CoinInput
-import com.pylons.wallet.core.types.jsonModel.ItemInput
-import com.pylons.wallet.core.types.jsonModel.ItemUpgradeParams
-import com.pylons.wallet.core.types.jsonModel.WeightedParamList
+import com.pylons.wallet.core.types.jsonModel.*
 
 /**
  * Engine that throws NoEngineException on calling any function.
@@ -65,6 +63,9 @@ internal class NoEngine : Engine() {
             throw NoEngineException()
 
     override fun getOwnBalances(): Profile? =
+            throw NoEngineException()
+
+    override fun getPendingExecutions(): Array<Execution> =
             throw NoEngineException()
 
     override fun getPylons(q: Long): Transaction =

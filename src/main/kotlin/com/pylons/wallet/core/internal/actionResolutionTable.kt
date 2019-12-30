@@ -18,7 +18,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
 
             // State queries
             Actions.GET_PROFILE -> getProfile(msg)
-            //Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions(msg)
+            Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions(msg)
             Actions.GET_TRANSACTION -> getTransaction(msg)
 
             // Dev

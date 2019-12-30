@@ -2,11 +2,9 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.jsonModel.CoinInput
-import com.pylons.wallet.core.types.jsonModel.ItemInput
-import com.pylons.wallet.core.types.jsonModel.ItemUpgradeParams
-import com.pylons.wallet.core.types.jsonModel.WeightedParamList
+import com.pylons.wallet.core.types.jsonModel.*
 
 /***
  * Generic interface for transaction-handling layers.
@@ -91,6 +89,8 @@ internal abstract class Engine {
      * Get the balances of the user account.
      */
     abstract fun getOwnBalances () : Profile?
+
+    abstract fun getPendingExecutions () : Array<Execution>
 
     /**
      * Get a new instance of a CryptoHandler object appropriate for

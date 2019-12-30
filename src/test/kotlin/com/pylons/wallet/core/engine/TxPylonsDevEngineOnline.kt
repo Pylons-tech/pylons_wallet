@@ -135,6 +135,13 @@ internal class TxPylonsDevEngineOnline {
 
     @Order(7)
     @Test
+    fun getsExecutions () {
+        var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        engine.getPendingExecutions()
+    }
+
+    @Order(8)
+    @Test
     fun updatesRecipe () {
         basicTxTestFlow(
                 { it.updateRecipe(getRecipeIfOneExists(it), Core.userProfile!!.credentials.address, "wood!!!!!!!", getCookbookIfOneExists(it),
@@ -143,19 +150,19 @@ internal class TxPylonsDevEngineOnline {
         )
     }
 
-    @Order(8)
+    @Order(9)
     @Test
     fun disablesRecipe () {
         basicTxTestFlow { it.disableRecipe(getRecipeIfOneExists(it)) }
     }
 
-    @Order(9)
+    @Order(10)
     @Test
     fun enablesRecipe () {
         basicTxTestFlow { it.enableRecipe(getRecipeIfOneExists(it)) }
     }
 
-    @Order(10)
+    @Order(11)
     @Test
     fun executesRecipe () {
         basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), arrayOf()) }
