@@ -3,9 +3,7 @@ package com.pylons.wallet.core.types.item
 import com.squareup.moshi.Moshi
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.ReservedKeys
-import com.pylons.wallet.core.types.ConstraintMode
 import com.pylons.wallet.core.types.ForeignProfile
-import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 
 /**
  * Local representation of an item-type resource, implemented as a

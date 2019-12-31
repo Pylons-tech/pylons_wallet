@@ -5,9 +5,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import java.lang.NullPointerException
 
-/**
- * Models a transaction. Internally, transactions are just sets of inputs and outputs
- */
+
 data class Transaction(
         val requester : String? = null,
         val msg : Message? = null,
@@ -51,29 +49,6 @@ data class Transaction(
         TX_NOT_YET_SENT(0),
         TX_NOT_YET_COMMITTED(1),
         TX_ACCEPTED(2),
-    }
-
-    companion object {
-        fun build (txDescription: TransactionDescription) : Transaction? {
-            TODO("????????")
-//            return try {
-//                val itemsIn = mutableListOf<Item>()
-//                val itemsOut = mutableListOf<Item>()
-//                txDescription.itemsInIds.forEach {
-//                    itemsIn.add(Item.findInLocalProfile(it)!!)
-//                }
-//                txDescription.itemsOutIds.forEach {
-//                    itemsOut.add(Item.findInBufferedForeignProfile(txDescription.otherProfileId, it)!!)
-//                }
-//                Transaction(Core.engine.getNewTransactionId(), Core.userProfile!!.credentials.address,
-//                        txDescription.otherProfileId, txDescription.coinsIn, txDescription.coinsOut,
-//                        itemsIn.toList(), itemsOut.toList())
-//            } catch (e : NullPointerException) {
-//                return null
-//            }
-        }
-
-
     }
 
     fun submit() : Transaction {
