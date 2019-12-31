@@ -10,10 +10,11 @@ import java.lang.Exception
 
 internal fun applyRecipe (msg: MessageData) : Response {
     checkValid(msg)
-    val recipe = msg.strings[Keys.RECIPE]!!
-    val cookbook = msg.strings[Keys.COOKBOOK]!!
-    val itemInputs = msg.stringArrays[Keys.ITEM_INPUTS]!!
-    val tx = Core.applyRecipe(recipe, cookbook, itemInputs)
+    val tx = Core.applyRecipe(
+            recipe = msg.strings[Keys.RECIPE]!!,
+            cookbook = msg.strings[Keys.COOKBOOK]!!,
+            itemInputs = msg.stringArrays[Keys.ITEM_INPUTS]!!
+    )
     waitUntilCommitted(tx.id!!)
     val outgoingMessage = MessageData(
             strings = mutableMapOf(

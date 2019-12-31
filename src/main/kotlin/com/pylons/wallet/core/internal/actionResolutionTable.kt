@@ -18,7 +18,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
 
             // State queries
             Actions.GET_PROFILE -> getProfile(msg)
-            Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions(msg)
+            Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions()
             Actions.GET_TRANSACTION -> getTransaction(msg)
 
             // Dev
@@ -26,8 +26,8 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             Actions.WALLET_UI_TEST -> devOnly{ requiresArgs(action, msg, extraArgs, ::walletUiTest) }
             Actions.CREATE_COOKBOOK -> devOnly { createCookbook(msg) }
             Actions.UPDATE_COOKBOOK -> devOnly { updateCookbook(msg) }
-            //Actions.CREATE_RECIPE -> devOnly { createRecipe(msg) }
-            //Actions.UPDATE_RECIPE -> devOnly { updateRecipe(msg) }
+            Actions.CREATE_RECIPE -> devOnly { createRecipe(msg) }
+            Actions.UPDATE_RECIPE -> devOnly { updateRecipe(msg) }
             //Actions.ENABLE_RECIPE -> devOnly { enableRecipe(msg) }
             //Actions.DISABLE_RECIPE -> devOnly { disableRecipe(msg) }
 

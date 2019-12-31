@@ -6,10 +6,14 @@ import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
 
 internal fun getTransaction(msg : MessageData): Response {
-    require (msg.strings.containsKey("txId")) { throw BadMessageException("getTransaction", "txId", "String") }
-    val tx = Core.getTransaction(msg.strings["txId"]!!)
-    val msg = tx.detailsToMessageData().merge(MessageData(booleans = mutableMapOf(Keys.SUCCESS to true)))
-    return Response(msg, Status.OK_TO_RETURN_TO_CLIENT)
+    checkValid(msg)
+    val tx = Core.getTransaction(msg.strings[Keys.TX]!!)
+    val outgoingMsg = tx.detailsToMessageData()
+    return Response(outgoingMsg, Status.OK_TO_RETURN_TO_CLIENT)
+}
+
+private fun checkValid (msg: MessageData) {
+    require (msg.strings.containsKey(Keys.TX)) { throw BadMessageException("getTransaction", Keys.TX, "String") }
 }
 
 fun Core.getTransaction(txHash : String): Transaction = engine.getTransaction(txHash)

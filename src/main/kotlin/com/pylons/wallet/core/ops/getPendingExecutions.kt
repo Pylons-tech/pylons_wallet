@@ -5,7 +5,7 @@ import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.*
 import com.squareup.moshi.Moshi
 
-internal fun getPendingExecutions(msg : MessageData): Response {
+internal fun getPendingExecutions(): Response {
     val moshi = Moshi.Builder().build()
     val adapter = moshi.adapter(Execution::class.java)
     val executions = Core.getPendingExecutions()
