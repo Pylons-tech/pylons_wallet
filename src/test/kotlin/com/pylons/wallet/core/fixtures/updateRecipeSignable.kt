@@ -1,6 +1,6 @@
 package com.pylons.wallet.core.fixtures
 
-import com.pylons.wallet.core.types.jsonModel.*
+import com.pylons.wallet.core.types.tx.recipe.*
 
 val updateRecipeSignable = UpdateRecipe(
         id = "id001",

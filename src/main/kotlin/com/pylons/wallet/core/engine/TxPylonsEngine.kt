@@ -11,7 +11,7 @@ import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.jsonModel.*
+import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.squareup.moshi.*
 import net.minidev.json.JSONArray
@@ -19,8 +19,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
 import java.security.Security
-import org.nightcode.bip39.*
-import org.nightcode.bip39.dictionary.*
 
 internal open class TxPylonsEngine : Engine() {
     init {

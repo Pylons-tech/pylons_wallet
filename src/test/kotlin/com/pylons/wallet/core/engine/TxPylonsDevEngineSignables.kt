@@ -10,11 +10,7 @@ import com.pylons.wallet.core.types.item.prototype.*
 import com.pylons.wallet.core.types.item.prototype.DoubleParam
 import com.pylons.wallet.core.types.item.prototype.LongParam
 import com.pylons.wallet.core.types.item.prototype.StringParam
-import com.pylons.wallet.core.types.jsonModel.*
 import com.pylons.wallet.core.types.jsonTemplate.*
-import com.pylons.wallet.core.types.jsonModel.DoubleParam as mDParam
-import com.pylons.wallet.core.types.jsonModel.LongParam as mLParam
-import com.pylons.wallet.core.types.jsonModel.StringParam as mSParam
 
 internal class TxPylonsDevEngineSignables {
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {

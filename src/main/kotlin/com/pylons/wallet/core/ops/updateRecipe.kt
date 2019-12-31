@@ -4,14 +4,11 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.jsonModel.CoinInput
-import com.pylons.wallet.core.types.jsonModel.ItemInput
-import com.pylons.wallet.core.types.jsonModel.ItemUpgradeParams
-import com.pylons.wallet.core.types.jsonModel.WeightedParamList
+import com.pylons.wallet.core.types.tx.recipe.CoinInput
+import com.pylons.wallet.core.types.tx.recipe.ItemInput
+import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.sun.xml.internal.fastinfoset.util.StringArray
-import java.lang.Exception
 
 internal fun updateRecipe (msg: MessageData) : Response {
     checkValid(msg)

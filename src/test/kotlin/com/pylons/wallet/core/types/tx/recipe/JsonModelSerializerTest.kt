@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.types.jsonModel
+package com.pylons.wallet.core.types.tx.recipe
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonWriter

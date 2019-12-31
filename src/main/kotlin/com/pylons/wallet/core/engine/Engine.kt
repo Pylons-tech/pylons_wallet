@@ -4,7 +4,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.item.prototype.ItemPrototype
-import com.pylons.wallet.core.types.jsonModel.*
+import com.pylons.wallet.core.types.tx.recipe.*
 
 /***
  * Generic interface for transaction-handling layers.

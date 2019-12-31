@@ -1,9 +1,9 @@
 package com.pylons.wallet.core.types
 
 import com.jayway.jsonpath.JsonPath
-import com.pylons.wallet.core.types.jsonModel.CoinInput
-import com.pylons.wallet.core.types.jsonModel.ItemInput
-import com.pylons.wallet.core.types.jsonModel.WeightedParamList
+import com.pylons.wallet.core.types.tx.recipe.CoinInput
+import com.pylons.wallet.core.types.tx.recipe.ItemInput
+import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
 import net.minidev.json.JSONArray
 
 data class Recipe(val id : String, val sender : String, val disabled : Boolean, val name : String, val cookbook : String, val desc : String, val executionTime : Long,

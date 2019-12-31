@@ -1,8 +1,8 @@
-package com.pylons.wallet.core.types.jsonModel
+package com.pylons.wallet.core.types.tx.recipe
 
 import com.squareup.moshi.Json
 
-data class ItemUpgradeParams(
+data class ItemInput(
         @property:[Json(name = "Doubles")]
         val doubles : List<DoubleInputParam>,
         @property:[Json(name = "Longs")]

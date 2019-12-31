@@ -9,7 +9,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.fixtures.basicItemOutput
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.jsonModel.*
+import com.pylons.wallet.core.types.tx.recipe.*
 import org.junit.jupiter.api.MethodOrderer
 
 import java.util.*
