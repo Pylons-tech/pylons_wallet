@@ -3,13 +3,12 @@ package com.pylons.wallet.core.types
 import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
+import com.pylons.wallet.core.types.tx.StdTx
 import java.lang.NullPointerException
 
 
 data class Transaction(
-        val requester : String? = null,
-        val msg : Message? = null,
-        val msgType : String? = null,
+        val stdTx: StdTx? = null,
         val _id : String? = null,
         val resolver : ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT
@@ -19,30 +18,6 @@ data class Transaction(
             if (field == null) println("Warning: got tx id, but tx id was unset. Was the transaction submitted?")
             field
         }()
-
-
-
-    abstract class Message
-
-    data class MsgGetPylons(val amount : Long = 0): Message() {
-        companion object {
-            fun fromResponse (json : String) : MsgGetPylons {
-                val amount = JsonPath.read<Long>(json, "$.tx.msg.value.Amount.amount")
-                return MsgGetPylons(amount)
-            }
-        }
-    }
-
-    data class MsgSendPylons(val amount : Long = 0, val sender : String = "", val receiver : String = ""): Message() {
-        companion object {
-            fun fromResponse (json : String) : MsgSendPylons {
-                val amount = JsonPath.read<Long>(json, "$.tx.msg.value.Amount.amount")
-                val sender = JsonPath.read<String>(json, "\$.tx.msg.value.Sender")
-                val receiver = JsonPath.read<String>(json, "\$.tx.msg.value.Receiver")
-                return MsgSendPylons(amount)
-            }
-        }
-    }
 
     enum class State(val value: Int) {
         TX_REFUSED(-1),
@@ -66,6 +41,7 @@ data class Transaction(
     }
 
     fun detailsToMessageData() : MessageData {
+        // TODO: use stdtx lol
         val msg = MessageData()
 //        msg.strings["txId"] = txId
 //        msg.strings[Keys.otherProfileId] = addressOut

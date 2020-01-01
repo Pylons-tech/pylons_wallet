@@ -17,7 +17,6 @@ data class ForeignProfile (
 ) {
     fun detailsToMessageData () : MessageData {
         val msg = MessageData()
-        msg.booleans[Keys.PROFILE_EXISTS] = true
         val name = getName()
         if (name != null) msg.strings[Keys.NAME] = name
         msg.strings[Keys.ADDRESS] = id

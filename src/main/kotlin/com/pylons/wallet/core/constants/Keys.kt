@@ -34,24 +34,8 @@ class Keys {
         const val ERROR = "error"
         const val ERROR_CODE = "errorCode"
 
-
-        const val PROFILE_EXISTS = "profileExists"
-
-        const val OTHER_ADDRESS = "otherProfileId"
-        const val COINS_IN = "coinsIn"
-        const val COINS_OUT = "coinsOut"
-        const val ITEMS_IN = "itemsIn"
-        const val ITEMS_OUT = "itemsOut"
-
-        const val PREFERRED_ITEMS = "preferredItemIds"
-        const val STRINGS = "strings"
-        const val JSON = "json"
-        const val FRIENDS = "friends"
-
         const val EXCEPTION = "exception"
         const val MESSAGE = "message"
         const val STACK_TRACE = "stackTrace"
-        const val REQUESTER = "requester"
-        const val COSTPERBLOCK = "costPerBlock"
     }
 }

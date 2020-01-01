@@ -1,9 +1,9 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.pylons.wallet.core.types.tx.msg.CreateRecipe
+import com.pylons.wallet.core.types.tx.msg.UpdateRecipe
 import com.pylons.wallet.core.types.tx.recipe.*
 
 internal class TxPylonsDevEngine : TxPylonsEngine () {

@@ -42,21 +42,17 @@ data class CreateRecipe (
         ]"""
 
     fun toSignedTx () : String {
-        println("tosignedtx")
         val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
         val crypto = (Core.engine as TxPylonsEngine).cryptoHandler
         return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
     }
 
-    fun toSignStruct () : String {
-        println("tosignedtx")
-        return "[${signingAdapter.toJson(this)}]"
-    }
+    fun toSignStruct () : String = "[${signingAdapter.toJson(this)}]"
 }
 
 class CreateRecipeAdapter(val mode: SerializationMode = SerializationMode.FOR_BROADCAST) : JsonAdapter<CreateRecipe>() {
     override fun fromJson(p0: JsonReader): CreateRecipe? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw NotImplementedError("This adapter does not support deserialization operations")
     }
 
     @ToJson

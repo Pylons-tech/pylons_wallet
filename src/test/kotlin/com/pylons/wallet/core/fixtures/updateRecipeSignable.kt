@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.fixtures
 
+import com.pylons.wallet.core.types.tx.msg.UpdateRecipe
 import com.pylons.wallet.core.types.tx.recipe.*
 
 val updateRecipeSignable = UpdateRecipe(
@@ -19,7 +20,7 @@ val updateRecipeSignable = UpdateRecipe(
                                 doubles = listOf(DoubleParam("1.0", "endurance",
                                         listOf(
                                                 DoubleWeightRange("500.00", "100.00", 6),
-                                                DoubleWeightRange("800.00","501.00", 2)
+                                                DoubleWeightRange("800.00", "501.00", 2)
                                         )
                                 )
                                 ),

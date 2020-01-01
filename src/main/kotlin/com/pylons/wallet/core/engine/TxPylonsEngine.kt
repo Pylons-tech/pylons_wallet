@@ -10,7 +10,6 @@ import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.Transaction
-import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.squareup.moshi.*

@@ -23,7 +23,6 @@ object Core {
     internal var engine: Engine = NoEngine()
         private set
     internal var userProfile: Profile? = null
-    internal var friends: List<Friend> = listOf()
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
     var sane : Boolean = false
         private set
