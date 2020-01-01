@@ -12,6 +12,7 @@ import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
+import com.pylons.wallet.core.types.tx.StdTx
 import com.squareup.moshi.*
 import net.minidev.json.JSONArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -189,20 +190,10 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getTransaction(id: String): Transaction {
         val response = HttpWire.get("$nodeUrl/txs/$id")
-        return when (val msgType =JsonPath.read<String>(response, "$.tx.value.msg[0].type")) {
-            "pylons/GetPylons" -> {
-                val requester = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Requester")
-                val pylons = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Amount[0].amount")
-                Transaction(requester, Transaction.MsgGetPylons(pylons.toLong()), msgType, id)
-            }
-            "pylons/SendPylons" -> {
-                val pylons = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Amount[0].amount")
-                val sender = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Sender")
-                val receiver = JsonPath.read<String>(response, "$.tx.value.msg[0].value.Receiver")
-                Transaction(sender, Transaction.MsgSendPylons(pylons.toLong(), sender, receiver), msgType, id)
-            }
-            else -> throw Exception("Unrecognized message type")
-        }
+        return Transaction(
+                stdTx = StdTx.fromJson(JsonPath.read<String>(response, "$.tx.value")),
+                _id = id
+        )
     }
 
     override fun listRecipes(): Array<Recipe> {

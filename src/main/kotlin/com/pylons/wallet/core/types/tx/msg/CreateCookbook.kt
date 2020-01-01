@@ -3,7 +3,8 @@ package com.pylons.wallet.core.types.tx.msg
 import com.pylons.wallet.core.types.tx.Msg
 import com.squareup.moshi.Json
 
-data class CreateCookbook(
+@MsgType("pylons/CreateCookbook")
+sealed class CreateCookbook(
         @property:[Json(name = "Name")]
         val name : String,
         @property:[Json(name = "Description")]
