@@ -3,7 +3,6 @@ package com.pylons.wallet.core.types.tx.msg
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
-import com.pylons.wallet.core.types.tx.Msg
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.squareup.moshi.*
 
@@ -26,7 +25,7 @@ data class UpdateRecipe (
         val name : String,
         @property:[Json(name = "Sender")]
         val sender : String
-):Msg() {
+): Msg() {
     companion object {
         val msgAdapter = UpdateRecipeAdapter(SerializationMode.FOR_BROADCAST)
         val signingAdapter = UpdateRecipeAdapter(SerializationMode.FOR_SIGNING)

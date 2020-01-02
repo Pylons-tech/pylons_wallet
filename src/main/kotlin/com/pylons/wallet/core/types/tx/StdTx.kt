@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.types.tx
 
 import com.jayway.jsonpath.JsonPath
+import com.pylons.wallet.core.types.tx.msg.Msg
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Json
 import net.minidev.json.JSONArray
