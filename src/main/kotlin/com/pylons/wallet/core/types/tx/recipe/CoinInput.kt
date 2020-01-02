@@ -7,4 +7,10 @@ data class CoinInput (
         val coin : String,
         @property:[Json(name = "Count") QuotedJsonNumeral]
         val count : Long
-)
+)  {
+        companion object {
+                fun fromJson (json : String) : List<CoinInput> {
+
+                }
+        }
+}

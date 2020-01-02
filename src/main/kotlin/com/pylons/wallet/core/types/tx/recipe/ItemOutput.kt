@@ -11,4 +11,10 @@ data class ItemOutput(
         val strings : List<StringParam>,
         @property:[NeverQuoteWrap Json(name = "Weight")]
         val weight : Int
-)
+) {
+        companion object {
+                fun fromJson (json : String) : List<ItemOutput> {
+
+                }
+        }
+}

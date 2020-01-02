@@ -9,4 +9,10 @@ data class ItemInput(
         val longs : List<LongInputParam>,
         @property:[Json(name = "Strings")]
         val strings : List<StringInputParam>
-)
+) {
+        companion object {
+                fun fromJson (json : String) : List<ItemInput> {
+
+                }
+        }
+}

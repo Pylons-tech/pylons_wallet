@@ -9,4 +9,10 @@ data class CoinOutput(
         val count : Long,
         @property:[NeverQuoteWrap Json(name = "Weight")]
         val weight : Int
-)
+)  {
+        companion object {
+                fun fromJson (json : String) : List<CoinOutput> {
+
+                }
+        }
+}
