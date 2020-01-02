@@ -42,7 +42,6 @@ object Core {
     internal fun tearDown () {
         engine = NoEngine()
         userProfile = null
-        friends = listOf()
         sane = false
         inDoResolveMessage = false
         started = false

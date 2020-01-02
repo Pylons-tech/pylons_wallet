@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types.tx.recipe
 
+import com.pylons.wallet.core.types.*
 import com.squareup.moshi.Json
 
 data class ItemUpgradeParams(
@@ -11,8 +12,8 @@ data class ItemUpgradeParams(
         val strings : List<StringInputParam>
 ) {
         companion object {
-                fun fromJson (json : String) : ItemUpgradeParams {
-                        
-                }
+                val adapter = moshi.adapter<ItemUpgradeParams>(ItemUpgradeParams::class.java)
+
+                fun fromJson (json : String) : ItemUpgradeParams? = adapter.fromJson(json)
         }
 }

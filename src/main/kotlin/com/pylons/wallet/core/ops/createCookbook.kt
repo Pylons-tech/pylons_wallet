@@ -32,7 +32,7 @@ private fun checkValid(msg : MessageData) {
     require (msg.strings.containsKey(Keys.VERSION)) { throw BadMessageException("createCookbook", Keys.VERSION, "String") }
     require (msg.strings.containsKey(Keys.SUPPORT_EMAIL)) { throw BadMessageException("createCookbook", Keys.SUPPORT_EMAIL, "String") }
     require (msg.longs.containsKey(Keys.LEVEL)) { throw BadMessageException("createCookbook", Keys.LEVEL, "Long") }
-    require (msg.longs.containsKey(Keys.COST_PER_BLOCK)) { throw BadMessageException("createCookbook", Keys.COSTPERBLOCK, "Long") }
+    require (msg.longs.containsKey(Keys.COST_PER_BLOCK)) { throw BadMessageException("createCookbook", Keys.COST_PER_BLOCK, "Long") }
 }
 
 fun Core.createCookbook (name : String, developer : String, description : String, version : String,

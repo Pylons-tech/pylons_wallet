@@ -3,7 +3,6 @@ package com.pylons.wallet.core.types.jsonTemplate
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.item.prototype.ItemPrototype
 import com.pylons.wallet.core.types.SECP256K1
 import java.util.*
 
@@ -55,79 +54,5 @@ internal fun baseTxTemplate (msg : String, pubkey : String, signature : String) 
 
 internal fun baseSignTemplate (msg : String, sequence: Long, accountNumber: Long) =
         """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
-
-internal fun getCoinIOListForMessage(map : Map<String, Long>) : String {
-    var sb = StringBuilder("[")
-    map.forEach {
-        sb.append("""{"Coin":"${it.key}","Count":"${it.value}"},""")
-    }
-    if (map.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
-    sb.append("]")
-    return sb.toString()
-}
-
-internal fun getCoinIOListForSigning(map : Map<String, Long>) : String {
-    var sb = StringBuilder("[")
-    map.forEach {
-        sb.append("""{"Coin":"${it.key}","Count":${it.value}},""")
-    }
-    if (map.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
-    sb.append("]")
-    return sb.toString()
-}
-
-internal fun getItemInputListForMessage(array : Array<ItemPrototype>) : String {
-    var sb = StringBuilder("[")
-    array.forEach {
-        sb.append("${it.exportItemInputJson(true)},")
-    }
-    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
-    sb.append("]")
-    return when (sb.length) {
-        2 -> "null"
-        else -> sb.toString()
-    }
-}
-
-
-internal fun getItemInputListForSigning(array : Array<ItemPrototype>) : String {
-    var sb = StringBuilder("[")
-    array.forEach {
-        sb.append("${it.exportItemInputJson(false)},")
-    }
-    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
-    sb.append("]")
-    return when (sb.length) {
-        2 -> "null"
-        else -> sb.toString()
-    }
-}
-
-internal fun getItemOutputListForMessage(array : Array<ItemPrototype>) : String {
-    var sb = StringBuilder("[")
-    array.forEach {
-        sb.append("${it.exportItemOutputJson(true)},")
-    }
-    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
-    sb.append("]")
-    return when (sb.length) {
-        2 -> "null"
-        else -> sb.toString()
-    }
-}
-
-
-internal fun getItemOutputListForSigning(array : Array<ItemPrototype>) : String {
-    var sb = StringBuilder("[")
-    array.forEach {
-        sb.append("${it.exportItemOutputJson(false)},")
-    }
-    if (array.isNotEmpty()) sb.deleteCharAt(sb.length - 1)
-    sb.append("]")
-    return when (sb.length) {
-        2 -> "null"
-        else -> sb.toString()
-    }
-}
 
 private fun pubkeyToString (pubkey: SECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())

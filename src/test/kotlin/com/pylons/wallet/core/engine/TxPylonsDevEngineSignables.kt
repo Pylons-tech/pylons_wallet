@@ -6,10 +6,6 @@ import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.item.prototype.*
-import com.pylons.wallet.core.types.item.prototype.DoubleParam
-import com.pylons.wallet.core.types.item.prototype.LongParam
-import com.pylons.wallet.core.types.item.prototype.StringParam
 import com.pylons.wallet.core.types.jsonTemplate.*
 
 internal class TxPylonsDevEngineSignables {

@@ -4,19 +4,22 @@ import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
+import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.squareup.moshi.*
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
 
+private annotation class MsgParser
+private annotation class MsgType (
+        val serializedAs : String
+)
 
 sealed class Msg {
     abstract fun serializeForIpc() : String
-    protected val moshi = Moshi.Builder().build()
 
     companion object {
-
         fun fromJson (json : String) : Msg? {
             val identifier = JsonPath.read<String>("$.type", json)
             val msgType = findMsgType(identifier)
@@ -130,10 +133,12 @@ data class CreateRecipe (
                     sender = JsonPath.read<String>(json, "$.Sender"),
                     rType = JsonPath.read<Long>(json, "$.RType"),
                     blockInterval = JsonPath.read<Long>(json, "$.BlockInterval"),
-                    coinInputs = CoinInput.fromJson(JsonPath.read<String>(json, "$.CoinInputs")),
-                    itemInputs = ItemInput.fromJson(JsonPath.read<String>(json, "$.ItemInputs")),
-                    entries = WeightedParamList.fromJson(JsonPath.read<String>(json, "$.Entries")),
-                    toUpgrade = ItemUpgradeParams.fromJson(JsonPath.read<String>(json, "$.ToUpgrade"))
+                    coinInputs = CoinInput.fromJson(JsonPath.read<String>(json, "$.CoinInputs")).orEmpty(),
+                    itemInputs = ItemInput.fromJson(JsonPath.read<String>(json, "$.ItemInputs")).orEmpty(),
+                    entries = WeightedParamList.fromJson(JsonPath.read<String>(json, "$.Entries"))?:
+                        WeightedParamList(listOf(), listOf()),
+                    toUpgrade = ItemUpgradeParams.fromJson(JsonPath.read<String>(json, "$.ToUpgrade"))?:
+                            ItemUpgradeParams(listOf(), listOf(), listOf())
             )
         }
     }
@@ -297,9 +302,10 @@ data class UpdateRecipe (
                     cookbookId = JsonPath.read<String>(json, "$.CookbookID"),
                     sender = JsonPath.read<String>(json, "$.Sender"),
                     blockInterval = JsonPath.read<Long>(json, "$.BlockInterval"),
-                    coinInputs = CoinInput.fromJson(JsonPath.read<String>(json, "$.CoinInputs")),
-                    itemInputs = ItemInput.fromJson(JsonPath.read<String>(json, "$.ItemInputs")),
-                    entries = WeightedParamList.fromJson(JsonPath.read<String>(json, "$.Entries"))
+                    coinInputs = CoinInput.fromJson(JsonPath.read<String>(json, "$.CoinInputs")).orEmpty(),
+                    itemInputs = ItemInput.fromJson(JsonPath.read<String>(json, "$.ItemInputs")).orEmpty(),
+                    entries = WeightedParamList.fromJson(JsonPath.read<String>(json, "$.Entries"))?:
+                        WeightedParamList(listOf(), listOf())
             )
         }
     }
