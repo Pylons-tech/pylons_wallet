@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types.tx.msg
 
+import com.beust.klaxon.JsonObject
 import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
@@ -20,14 +21,14 @@ sealed class Msg {
     abstract fun serializeForIpc() : String
 
     companion object {
-        fun fromJson (json : String) : Msg? {
-            val identifier = JsonPath.read<String>("$.type", json)
+        fun fromJson (jsonObject: JsonObject) : Msg? {
+            val identifier = jsonObject["type"] as String
             val msgType = findMsgType(identifier)
                     ?:
                 throw Exception("No type matches message type $identifier")
             val parser = findParser(msgType) ?:
                 throw Exception("No parser defined for message type $identifier")
-            return parser(json)
+            return parser(jsonObject)
         }
 
         private fun findMsgType(type : String) : KClass<out Msg>? {
@@ -38,10 +39,10 @@ sealed class Msg {
             return null
         }
 
-        private fun findParser (type: KClass<out Msg>) : ((String) -> Msg?)? {
+        private fun findParser (type: KClass<out Msg>) : ((JsonObject) -> Msg?)? {
             type.companionObject?.declaredFunctions?.forEach {
                 if (it.findAnnotation<MsgParser>() != null) {
-                    return { s : String ->  it.call(s) as Msg? }
+                    return { o : JsonObject ->  it.call(type.companionObjectInstance, o) as Msg? }
                 }
             }
             return null
@@ -186,7 +187,7 @@ data class ExecuteRecipe(
 @MsgType("pylons/GetPylons")
 data class GetPylons(
         @property:[Json(name = "Amount")]
-        val amount : Long,
+        val amount : List<Coin>,
         @property:[Json(name = "Requester")]
         val requester : String
 ) : Msg() {
@@ -194,10 +195,12 @@ data class GetPylons(
 
     companion object {
         @MsgParser
-        fun parse (json : String) : GetPylons {
+        fun parse (jsonObject: JsonObject) : GetPylons {
+            println(jsonObject.toJsonString())
+            val value = jsonObject.obj("value")!!
             return GetPylons(
-                    amount = JsonPath.read<Long>(json, "$.Amount"),
-                    requester = JsonPath.read<String>(json, "$.Requester")
+                    amount = Coin.listFromJson(value.array("Amount")!!),
+                    requester = value.string("Requester")!!
             )
         }
     }

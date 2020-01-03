@@ -14,10 +14,13 @@ import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.pylons.wallet.core.types.tx.StdTx
 import com.squareup.moshi.*
+import com.beust.klaxon.*
+import com.beust.klaxon.JsonReader
 import net.minidev.json.JSONArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
+import java.lang.StringBuilder
 import java.security.Security
 
 internal open class TxPylonsEngine : Engine() {
@@ -190,8 +193,9 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getTransaction(id: String): Transaction {
         val response = HttpWire.get("$nodeUrl/txs/$id")
+        val doc = Parser.default().parse(StringBuilder(response)) as JsonObject
         return Transaction(
-                stdTx = StdTx.fromJson(JsonPath.read<String>(response, "$.tx.value")),
+                stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                 _id = id
         )
     }

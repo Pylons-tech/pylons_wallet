@@ -1,10 +1,8 @@
 package com.pylons.wallet.core.types.tx
 
-import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.types.tx.msg.Msg
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Json
-import net.minidev.json.JSONArray
+import com.beust.klaxon.*
+import com.pylons.wallet.core.types.klaxon
 
 data class StdTx(
         @property:[Json(name = "msg")]
@@ -12,19 +10,22 @@ data class StdTx(
         @property:[Json(name = "fee")]
         val fee : StdFee,
         @property:[Json(name = "signatures")]
-        val signatures : List<StdSignature>,
+        val signatures : List<StdSignature>?,
         @property:[Json(name = "memo")]
         val memo : String
 ) {
         companion object {
-                private val moshi = Moshi.Builder().build()
-
-                fun fromJson (json : String) : StdTx? {
-                        val msgArray = JsonPath.read<JSONArray>("$.msg", json)
+                fun fromJson (jsonObject: JsonObject) : StdTx? {
+                        val msgArray = jsonObject.array<JsonObject>("msg")!!
                         val mList = mutableListOf<Msg>()
-                        msgArray.forEach { mList.add(Msg.fromJson(it.toString())?:
-                                throw Exception("Failed to parse message:\n $it")) }
-                        return moshi.adapter<StdTx>(StdTx::class.java).fromJson(json)
+                        msgArray.forEach { mList.add(Msg.fromJson(it)?:
+                               throw Exception("Failed to parse message:\n ${it.toJsonString()}")) }
+                        return StdTx(
+                                msg = mList,
+                                fee = StdFee.fromJson(jsonObject.obj("fee")!!),
+                                memo = jsonObject.string("memo")!!,
+                                signatures = StdSignature.fromJson(jsonObject.array("signatures"))
+                        )
                 }
         }
 }

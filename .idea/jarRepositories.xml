@@ -16,5 +16,10 @@
       <option name="name" value="764f4be8-a5bf-48a0-9426-c6a2a5d7839d" />
       <option name="url" value="https://dl.bintray.com/novacrypto/BIP/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="dd11c4cd-54c2-4440-9dc1-ed94cbc01d91" />
+      <option name="name" value="dd11c4cd-54c2-4440-9dc1-ed94cbc01d91" />
+      <option name="url" value="https://dl.bintray.com/cbeust/maven" />
+    </remote-repository>
   </component>
 </project>

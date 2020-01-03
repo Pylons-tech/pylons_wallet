@@ -68,7 +68,7 @@ data class Profile (
     fun canPayCoins (coinsOut : List<Coin>) : Boolean {
         var ok = true
         coinsOut.forEach{
-            if (countOfCoin(it.id) < it.count) ok = false
+            if (countOfCoin(it.denom) < it.amount) ok = false
         }
         return ok
     }

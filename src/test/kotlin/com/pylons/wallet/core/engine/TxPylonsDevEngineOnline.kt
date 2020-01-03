@@ -76,6 +76,8 @@ internal class TxPylonsDevEngineOnline {
         assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
         println("ok!")
+        val a = engine.getTransaction(tx.id!!)
+        println(a.stdTx!!.msg.size)
         followUp?.invoke(engine, tx.id!!)
     }
 

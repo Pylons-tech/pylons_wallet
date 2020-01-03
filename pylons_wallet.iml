@@ -85,5 +85,14 @@
     <orderEntry type="library" name="tuweni-io-0.8.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="com.github.alanverbner:bip39_2.12:1.0" level="project" />
     <orderEntry type="library" name="org.nightcode:jbip39:0.1" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/klaxon-5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
