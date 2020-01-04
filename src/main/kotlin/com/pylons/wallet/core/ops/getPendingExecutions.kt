@@ -3,15 +3,12 @@ package com.pylons.wallet.core.ops
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.*
-import com.squareup.moshi.Moshi
 
 internal fun getPendingExecutions(): Response {
-    val moshi = Moshi.Builder().build()
-    val adapter = moshi.adapter(Execution::class.java)
     val executions = Core.getPendingExecutions()
     val list = mutableListOf<String>()
     executions.forEach {
-        list.add(adapter.toJson(it))
+        list.add(klaxon.toJsonString(it))
     }
     val outgoingMsg = MessageData(
             stringArrays = mutableMapOf(Keys.EXECUTIONS to list)

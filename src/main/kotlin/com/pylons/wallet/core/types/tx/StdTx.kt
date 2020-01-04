@@ -2,7 +2,6 @@ package com.pylons.wallet.core.types.tx
 
 import com.pylons.wallet.core.types.tx.msg.Msg
 import com.beust.klaxon.*
-import com.pylons.wallet.core.types.klaxon
 
 data class StdTx(
         @property:[Json(name = "msg")]
@@ -18,7 +17,7 @@ data class StdTx(
                 fun fromJson (jsonObject: JsonObject) : StdTx? {
                         val msgArray = jsonObject.array<JsonObject>("msg")!!
                         val mList = mutableListOf<Msg>()
-                        msgArray.forEach { mList.add(Msg.fromJson(it)?:
+                        msgArray.forEach { mList.add(Msg.fromJson(it.obj("value")!!)?:
                                throw Exception("Failed to parse message:\n ${it.toJsonString()}")) }
                         return StdTx(
                                 msg = mList,

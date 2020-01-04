@@ -1,7 +1,5 @@
 package com.pylons.wallet.core.engine
 
-import com.jayway.jsonpath.JsonPath
-import com.jayway.jsonpath.PathNotFoundException
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Logger
 import com.pylons.wallet.core.constants.Keys
@@ -13,10 +11,7 @@ import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.pylons.wallet.core.types.tx.StdTx
-import com.squareup.moshi.*
 import com.beust.klaxon.*
-import com.beust.klaxon.JsonReader
-import net.minidev.json.JSONArray
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -53,8 +48,6 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     companion object {
-        val moshi = Moshi.Builder().build()
-
         fun getAddressString (addr : ByteArray) : String {
             return Bech32Cosmos.convertAndEncode("cosmos1", AminoCompat.accAddress(addr))
         }
@@ -71,31 +64,17 @@ internal open class TxPylonsEngine : Engine() {
         }
     }
 
-    class CredentialsAdapter {
-        @FromJson
-        fun fromJson (json : String) : Profile.Credentials {
-            return moshi.adapter<Credentials>(Credentials::class.java).fromJson(json)!!
-        }
-
-        @ToJson
-        fun toJson (credentials : Profile.Credentials) : String {
-            return moshi.adapter<Credentials>(Credentials::class.java).toJson(credentials as Credentials)!!
-        }
-    }
-
     // Wiring
 
     protected fun basicTxHandlerFlow (func : (Credentials) -> String) : Transaction {
         return Transaction(resolver =  {
             val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
-            try {
-                val code = JsonPath.read<Long>(response, "$.code")
-                if (code != null)
-                    throw Exception("Node returned error code $code for message - ${JsonPath.read<String>(response, "$.raw_log.message")}")
-            } catch (e : PathNotFoundException) {
-                // swallow this - we only find an error code if there is in fact an error
-            }
-            it.id = JsonPath.read(response, "$.txhash")
+            val jsonObject = klaxon.parse<JsonObject>(response)!!
+            val code = jsonObject.long("code")
+            if (code != null)
+                throw Exception("Node returned error code $code for message - " +
+                        "${jsonObject.obj("raw_log")!!.string("message")}")
+            it.id = jsonObject.string("txhash")
         })
     }
 
@@ -127,7 +106,7 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
         val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
-        val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
+        val addrString = klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
         return Credentials(addrString)
     }
 
@@ -153,7 +132,7 @@ internal open class TxPylonsEngine : Engine() {
     override fun getNewCredentials(): Profile.Credentials {
         cryptoHandler.generateNewKeys()
         val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
-        val addrString = moshi.adapter<AddressResponse>(AddressResponse::class.java).fromJson(json)!!.Bech32Addr!!
+        val addrString = klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
         return Credentials(addrString)
     }
 
@@ -161,23 +140,19 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getOwnBalances(): Profile? {
         val json = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
-        val sequence = JsonPath.read<String>(json, "$.value.sequence").toLong()
-        val accountNumber = JsonPath.read<String>(json, "$.value.account_number").toLong()
-        val denoms = JsonPath.read<JSONArray>(json, "$.value.coins.*.denom")
-        val amounts = JsonPath.read<JSONArray>(json, "$.value.coins.*.amount")
-        val coins = mutableMapOf<String, Long>()
-        for (i in 0 until denoms.size) {
-            coins[denoms[i].toString()] = amounts[i].toString().toLong()
-        }
+        val value = klaxon.parse<JsonObject>(json)!!.obj("value")!!
+        val sequence = value.string("sequence")!!.toLong()
+        val accountNumber = value.string("account_number")!!.toLong()
+        val coins = Coin.listFromJson(value.array("coins"))
         (Core.userProfile?.credentials as Credentials?)?.accountNumber = accountNumber
         (Core.userProfile?.credentials as Credentials?)?.sequence = sequence
         Core.userProfile?.coins = coins
         return Core.userProfile
     }
 
-    override fun getPendingExecutions(): Array<Execution> {
+    override fun getPendingExecutions(): List<Execution> {
         val json = HttpWire.get("$nodeUrl/pylons/list_executions/${Core.userProfile!!.credentials.address}")
-        return Execution.getArrayFromJson(json)
+        return Execution.getListFromJson(json)
     }
 
     override fun getPylons(q: Long): Transaction =
@@ -186,7 +161,8 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("$nodeUrl/blocks/latest")
-        val height = JsonPath.read<Long>(response, "$.block_meta.header.height")
+        val jsonObject = klaxon.parse<JsonObject>(response)!!
+        val height = jsonObject.obj("block_meta")!!.obj("header")!!.long("height")!!
         // TODO: calculate block time (this will be Gross)
         return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = Core.VERSION_STRING)
     }
@@ -212,7 +188,7 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun registerNewProfile(name : String): Transaction {
         cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(credentials = getNewCredentials(), coins = mutableMapOf(), items = mutableListOf(), strings = mutableMapOf())
+        Core.userProfile = Profile(credentials = getNewCredentials(), coins = listOf(), items = mutableListOf(), strings = mutableMapOf())
         return getPylons(500)
     }
 

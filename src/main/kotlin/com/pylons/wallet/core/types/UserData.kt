@@ -1,6 +1,5 @@
 package com.pylons.wallet.core.types
 
-import com.squareup.moshi.Moshi
 import com.pylons.wallet.core.Core
 
 /**
@@ -13,7 +12,7 @@ internal object UserData {
         val version : String? = null
     }
     var dataSets : MutableMap<String, MutableMap<String, String>> = mutableMapOf()
-    //var friends : List<Friend>? = listOf()
+
     /**
      * UserData.version exists for forwards compatibility reasons.
      * Since we just serialize the object directly as JSON, it'd be easy
@@ -29,9 +28,7 @@ internal object UserData {
         when (json) {
             "" -> initializeUserData()
             else -> {
-                val moshi = Moshi.Builder().build()
-                val jsonAdapter = moshi.adapter<Model>(Model::class.java)
-                val d=  jsonAdapter.fromJson(json)
+                val d =  klaxon.parse<Model>(json)
                 dataSets = d?.dataSets.orEmpty().toMutableMap()
             }
         }
@@ -42,10 +39,8 @@ internal object UserData {
     }
 
     fun exportAsJson () : String {
-        val moshi = Moshi.Builder().build()
         val model = Model()
         model.dataSets = dataSets
-        val jsonAdapter = moshi.adapter<Model>(Model::class.java)
-        return jsonAdapter.toJson(model)
+        return klaxon.toJsonString(model)
     }
 }

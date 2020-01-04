@@ -4,8 +4,6 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.types.*
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import java.lang.Exception
 
 internal fun applyRecipe (msg: MessageData) : Response {

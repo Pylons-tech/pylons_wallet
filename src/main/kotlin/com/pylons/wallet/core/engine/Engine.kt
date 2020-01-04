@@ -89,7 +89,7 @@ internal abstract class Engine {
      */
     abstract fun getOwnBalances () : Profile?
 
-    abstract fun getPendingExecutions () : Array<Execution>
+    abstract fun getPendingExecutions () : List<Execution>
 
     /**
      * Get a new instance of a CryptoHandler object appropriate for

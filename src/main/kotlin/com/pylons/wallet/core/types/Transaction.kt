@@ -1,6 +1,5 @@
 package com.pylons.wallet.core.types
 
-import com.jayway.jsonpath.JsonPath
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.tx.StdTx

@@ -64,7 +64,7 @@ internal class NoEngine : Engine() {
     override fun getOwnBalances(): Profile? =
             throw NoEngineException()
 
-    override fun getPendingExecutions(): Array<Execution> =
+    override fun getPendingExecutions(): List<Execution> =
             throw NoEngineException()
 
     override fun getPylons(q: Long): Transaction =

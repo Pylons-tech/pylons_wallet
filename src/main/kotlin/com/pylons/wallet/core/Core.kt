@@ -1,5 +1,6 @@
 package com.pylons.wallet.core
 
+import com.beust.klaxon.Klaxon
 import kotlinx.coroutines.*
 
 import com.pylons.wallet.core.constants.*
@@ -31,6 +32,7 @@ object Core {
     var suspendedAction : String? = null
         internal set
     internal var suspendedMsg : MessageData? = null
+    internal val klaxon = Klaxon()
     const val VERSION_STRING = "0.0.1a"
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
 
@@ -71,7 +73,7 @@ object Core {
     fun forceKeys (keyString : String, address : String) {
         val engine = engine as TxPylonsEngine
         engine.cryptoHandler.keyPair = SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(keyString))))
-        userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), mutableMapOf(), mutableListOf())
+        userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf(), mutableListOf())
     }
 
     fun dumpUserProfile () : String = userProfile!!.dump()

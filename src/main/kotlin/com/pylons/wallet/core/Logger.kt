@@ -1,9 +1,10 @@
 package com.pylons.wallet.core
 
-import com.squareup.moshi.Moshi
+import com.beust.klaxon.Klaxon
 import java.util.*
 
 open class Logger {
+    private val klaxon = Klaxon()
     private data class Entry (
             val msg : String,
             val tag : String,
@@ -19,11 +20,9 @@ open class Logger {
     }
 
     fun getLogLine (msg : String, tag : String) : String {
-        val moshi = Moshi.Builder().build()
-        val jsonAdapter = moshi.adapter<Entry>(Entry::class.java)
         val sb = StringBuilder()
         val entry = Entry(msg, tag)
-        sb.append(jsonAdapter.toJson(entry))
+        sb.append(klaxon.toJsonString(entry))
         return sb.toString()
     }
 }

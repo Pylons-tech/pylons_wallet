@@ -1,9 +1,8 @@
 package com.pylons.wallet.core.types.tx.recipe
 
-import com.pylons.wallet.core.types.*
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Types
+import com.beust.klaxon.Json
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 
 data class CoinOutput(
         @property:[Json(name = "Coin")]
@@ -12,11 +11,19 @@ data class CoinOutput(
         val count : Long,
         @property:[NeverQuoteWrap Json(name = "Weight")]
         val weight : Int
-)  {
+) {
         companion object {
-                val adapter : JsonAdapter<List<CoinOutput>> =
-                        moshi.adapter(Types.newParameterizedType(List::class.java, CoinOutput::class.java))
+                fun fromJson (jsonObject: JsonObject) : CoinOutput =
+                        CoinOutput (
+                                coin = jsonObject.string("Coin")!!,
+                                count = jsonObject.long("Count")!!,
+                                weight = jsonObject.int("Weight")!!
+                        )
 
-                fun fromJson (json : String) : List<CoinOutput>? = adapter.fromJson(json)
+                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<CoinOutput> {
+                        val ls = mutableListOf<CoinOutput>()
+                        jsonArray.forEach { ls.add(fromJson(it)) }
+                        return ls
+                }
         }
 }

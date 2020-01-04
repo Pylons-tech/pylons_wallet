@@ -1,6 +1,5 @@
 package com.pylons.wallet.core.types
 
-import com.squareup.moshi.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.types.item.Item
@@ -12,7 +11,7 @@ import com.pylons.wallet.core.types.item.serialize
 data class Profile (
         var credentials: Credentials,
         val strings : MutableMap<String, String>,
-        var coins : MutableMap<String, Long>,
+        var coins : List<Coin>,
         val items : MutableList<Item>,
         /**
          * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
@@ -31,16 +30,10 @@ data class Profile (
             val credentials = Core.engine.generateCredentialsFromKeys()
             return when (val name = data.getOrDefault("name", "")) {
                 "" -> Profile(credentials = credentials, provisional = true,
-                        coins = mutableMapOf(), strings = mutableMapOf(), items = mutableListOf())
+                        coins = listOf(), strings = mutableMapOf(), items = mutableListOf())
                 else -> Profile(credentials = credentials, strings = mutableMapOf(ReservedKeys.profileName to name),
-                        provisional = true, coins = mutableMapOf(), items = mutableListOf())
+                        provisional = true, coins = listOf(), items = mutableListOf())
             }
-        }
-
-        fun load (str : String) : Profile {
-            val moshi = Moshi.Builder().build()
-            val adapter = moshi.adapter<Profile>(Profile::class.java)
-            return adapter.fromJson(str)!!
         }
     }
 
@@ -59,10 +52,10 @@ data class Profile (
     }
 
     fun countOfCoin (id : String) : Long {
-        return when (coins[id]) {
-            null -> 0
-            else -> coins[id]!!
+        coins.forEach {
+            if (it.denom == id) return it.amount
         }
+        return 0
     }
 
     fun canPayCoins (coinsOut : List<Coin>) : Boolean {
@@ -73,9 +66,5 @@ data class Profile (
         return ok
     }
 
-    fun dump () : String {
-        val moshi = Moshi.Builder().build()
-        val adapter = moshi.adapter<Profile>(Profile::class.java)
-        return adapter.toJson(this)
-    }
+    fun dump () : String = klaxon.toJsonString(this)
 }

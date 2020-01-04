@@ -1,7 +1,8 @@
 package com.pylons.wallet.core.types.tx.recipe
 
+import com.beust.klaxon.Json
+import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.types.*
-import com.squareup.moshi.Json
 
 data class WeightedParamList(
         @property:[Json(name = "CoinOutputs")]
@@ -10,8 +11,12 @@ data class WeightedParamList(
         val itemOutputs : List<ItemOutput>)  {
 
         companion object {
-                val adapter = moshi.adapter<WeightedParamList>(WeightedParamList::class.java)
-
-                fun fromJson (json : String) : WeightedParamList? = adapter.fromJson(json)
+                fun fromJson (jsonObject : JsonObject?) : WeightedParamList? = when (jsonObject) {
+                        null -> null
+                        else -> WeightedParamList(
+                                coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")!!),
+                                itemOutputs = ItemOutput.listFromJson(jsonObject.array("ItemOutputs")!!)
+                        )
+                }
         }
 }

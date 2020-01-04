@@ -1,6 +1,8 @@
 package com.pylons.wallet.core.types.tx.recipe
 
-import com.squareup.moshi.Json
+import com.beust.klaxon.Json
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 
 data class DoubleInputParam(
         @property:[Json(name = "Key")]
@@ -9,4 +11,19 @@ data class DoubleInputParam(
         val minValue : String,
         @property:[Json(name = "MaxValue")]
         val maxValue : String
-)
+) {
+        companion object {
+                fun fromJson (jsonObject: JsonObject) : DoubleInputParam =
+                        DoubleInputParam (
+                                key = jsonObject.string("Key")!!,
+                                minValue = jsonObject.string("MinValue")!!,
+                                maxValue = jsonObject.string("MaxValue")!!
+                        )
+
+                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<DoubleInputParam> {
+                        val ls = mutableListOf<DoubleInputParam>()
+                        jsonArray.forEach { ls.add(fromJson(it)) }
+                        return ls
+                }
+        }
+}

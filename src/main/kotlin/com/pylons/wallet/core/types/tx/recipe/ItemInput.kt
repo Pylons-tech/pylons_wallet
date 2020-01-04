@@ -1,9 +1,8 @@
 package com.pylons.wallet.core.types.tx.recipe
 
-import com.pylons.wallet.core.types.*
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Types
+import com.beust.klaxon.Json
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 
 data class ItemInput(
         @property:[Json(name = "Doubles")]
@@ -14,9 +13,18 @@ data class ItemInput(
         val strings : List<StringInputParam>
 ) {
         companion object {
-                val adapter : JsonAdapter<List<ItemInput>> =
-                        moshi.adapter(Types.newParameterizedType(List::class.java, ItemInput::class.java))
+                fun fromJson (jsonObject: JsonObject) : ItemInput =
+                        ItemInput (
+                                doubles = DoubleInputParam.listFromJson(jsonObject.array<JsonObject>("Doubles")!!),
+                                longs = LongInputParam.listFromJson(jsonObject.array<JsonObject>("Long")!!),
+                                strings = StringInputParam.listFromJson(jsonObject.array<JsonObject>("Strings")!!)
+                        )
 
-                fun fromJson (json : String) : List<ItemInput>? = adapter.fromJson(json)
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<ItemInput> {
+                        if (jsonArray == null) return listOf()
+                        val ls = mutableListOf<ItemInput>()
+                        jsonArray.forEach { ls.add(fromJson(it)) }
+                        return ls
+                }
         }
 }

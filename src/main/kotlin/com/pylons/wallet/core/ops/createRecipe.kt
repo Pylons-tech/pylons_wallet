@@ -8,8 +8,6 @@ import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
 import com.pylons.wallet.core.types.tx.recipe.ItemUpgradeParams
 import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 
 internal fun createRecipe (msg: MessageData) : Response {
     checkValid(msg)
@@ -43,7 +41,6 @@ private fun checkValid (msg : MessageData) {
 
 fun Core.createRecipe (name : String, cookbook : String, description : String, blockInterval : Long,
                        coinInputs : String, itemInputs : String, outputTables : String) : Transaction {
-    val moshi = Moshi.Builder().build()
     val mCoinInputs = moshi.adapter<List<CoinInput>>(
             Types.newParameterizedType(List::class.java, CoinInput::class.java)).fromJson(coinInputs)!!
     val mItemInputs = moshi.adapter<List<ItemInput>>(

@@ -1,7 +1,5 @@
 package com.pylons.wallet.core.types
 
-import com.squareup.moshi.Moshi
-import com.pylons.wallet.core.constants.Actions
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.constants.ReservedKeys
 import kotlin.jvm.JvmStatic
@@ -67,8 +65,5 @@ data class MessageData(
         return this
     }
 
-    override fun toString(): String {
-        val moshi = Moshi.Builder().build()
-        return moshi.adapter<MessageData>(MessageData::class.java).toJson(this)
-    }
+    override fun toString(): String = klaxon.toJsonString(this)
 }

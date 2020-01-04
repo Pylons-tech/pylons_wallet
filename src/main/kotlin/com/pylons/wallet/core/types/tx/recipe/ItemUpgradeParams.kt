@@ -1,7 +1,7 @@
 package com.pylons.wallet.core.types.tx.recipe
 
-import com.pylons.wallet.core.types.*
-import com.squareup.moshi.Json
+import com.beust.klaxon.Json
+import com.beust.klaxon.JsonObject
 
 data class ItemUpgradeParams(
         @property:[Json(name = "Doubles")]
@@ -12,8 +12,11 @@ data class ItemUpgradeParams(
         val strings : List<StringInputParam>
 ) {
         companion object {
-                val adapter = moshi.adapter<ItemUpgradeParams>(ItemUpgradeParams::class.java)
 
-                fun fromJson (json : String) : ItemUpgradeParams? = adapter.fromJson(json)
+                fun fromJson (jsonObject: JsonObject) : ItemUpgradeParams = ItemUpgradeParams(
+                        doubles = DoubleInputParam.listFromJson(jsonObject.array<JsonObject>("Doubles")!!),
+                        longs = LongInputParam.listFromJson(jsonObject.array<JsonObject>("Long")!!),
+                        strings = StringInputParam.listFromJson(jsonObject.array<JsonObject>("Strings")!!)
+                )
         }
 }

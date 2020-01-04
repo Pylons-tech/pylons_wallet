@@ -1,9 +1,8 @@
 package com.pylons.wallet.core.types.tx
 
+import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.beust.klaxon.json
-import com.squareup.moshi.Json
 
 data class StdSignature(
         @property:[Json(name = "signature")]

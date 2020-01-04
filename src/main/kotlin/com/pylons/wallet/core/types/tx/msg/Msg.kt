@@ -1,13 +1,12 @@
 package com.pylons.wallet.core.types.tx.msg
 
 import com.beust.klaxon.JsonObject
-import com.jayway.jsonpath.JsonPath
+import com.beust.klaxon.Json
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.*
-import com.squareup.moshi.*
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
@@ -69,20 +68,20 @@ data class CreateCookbook(
         @property:[Json(name = "CostPerBlock")]
         val costPerBlock : Long
 ): Msg() {
-    override fun serializeForIpc(): String = moshi.adapter<CreateCookbook>(CreateCookbook::class.java).toJson(this)
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
-        fun parse (json : String) : CreateCookbook {
+        fun parse (jsonObject: JsonObject) : CreateCookbook {
             return CreateCookbook(
-                    name = JsonPath.read<String>(json, "$.Name"),
-                    description = JsonPath.read<String>(json, "$.Description"),
-                    developer = JsonPath.read<String>(json, "$.Developer"),
-                    version = JsonPath.read<String>(json, "$.Version"),
-                    supportEmail = JsonPath.read<String>(json, "$.SupportEmail"),
-                    sender = JsonPath.read<String>(json, "$.Sender"),
-                    level = JsonPath.read<Long>(json, "$.Level"),
-                    costPerBlock = JsonPath.read<Long>(json, "$.CostPerBlock")
+                    name = jsonObject.string("Name")!!,
+                    description = jsonObject.string("Description")!!,
+                    developer = jsonObject.string("Developer")!!,
+                    version = jsonObject.string("Version")!!,
+                    supportEmail = jsonObject.string("SupportEmail")!!,
+                    sender = jsonObject.string("Sender")!!,
+                    level = jsonObject.long("level")!!,
+                    costPerBlock = jsonObject.long("CostPerBlock")!!
             )
         }
     }
@@ -119,27 +118,26 @@ data class CreateRecipe (
         override fun toJson(p0: JsonWriter, p1: CreateRecipe?) = JsonModelSerializer.serialize(mode, p0, p1)
     }
 
-    override fun serializeForIpc(): String = moshi.adapter<CreateRecipe>(CreateRecipe::class.java).toJson(this)
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         private val msgAdapter = CreateRecipeAdapter(SerializationMode.FOR_BROADCAST)
         private val signingAdapter = CreateRecipeAdapter(SerializationMode.FOR_SIGNING)
 
         @MsgParser
-        fun parse (json : String) : CreateRecipe {
+        fun parse (jsonObject: JsonObject) : CreateRecipe {
             return CreateRecipe(
-                    name = JsonPath.read<String>(json, "$.Name"),
-                    description = JsonPath.read<String>(json, "$.Description"),
-                    cookbookId = JsonPath.read<String>(json, "$.CookbookID"),
-                    sender = JsonPath.read<String>(json, "$.Sender"),
-                    rType = JsonPath.read<Long>(json, "$.RType"),
-                    blockInterval = JsonPath.read<Long>(json, "$.BlockInterval"),
-                    coinInputs = CoinInput.fromJson(JsonPath.read<String>(json, "$.CoinInputs")).orEmpty(),
-                    itemInputs = ItemInput.fromJson(JsonPath.read<String>(json, "$.ItemInputs")).orEmpty(),
-                    entries = WeightedParamList.fromJson(JsonPath.read<String>(json, "$.Entries"))?:
+                    name = jsonObject.string("Name")!!,
+                    description = jsonObject.string("Description")!!,
+                    cookbookId = jsonObject.string("CookbookID")!!,
+                    sender = jsonObject.string("Sender")!!,
+                    rType = jsonObject.long("RType")!!,
+                    blockInterval = jsonObject.long("BlockInterval")!!,
+                    coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")!!),
+                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")!!),
+                    entries = WeightedParamList.fromJson(jsonObject.obj("Entries"))?:
                         WeightedParamList(listOf(), listOf()),
-                    toUpgrade = ItemUpgradeParams.fromJson(JsonPath.read<String>(json, "$.ToUpgrade"))?:
-                            ItemUpgradeParams(listOf(), listOf(), listOf())
+                    toUpgrade = ItemUpgradeParams.fromJson(jsonObject.obj("ToUpgrade")!!)
             )
         }
     }
@@ -170,15 +168,15 @@ data class ExecuteRecipe(
         @property:[Json(name = "ItemIDs")]
         val itemIds : List<String>?
 ) : Msg() {
-    override fun serializeForIpc(): String = moshi.adapter<ExecuteRecipe>(ExecuteRecipe::class.java).toJson(this)
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
-        fun parse (json : String) : ExecuteRecipe {
+        fun parse (jsonObject: JsonObject) : ExecuteRecipe {
             return ExecuteRecipe(
-                    recipeId = JsonPath.read<String>(json, "$.RecipeID"),
-                    sender = JsonPath.read<String>(json, "$.Sender"),
-                    itemIds = JsonPath.read<List<String>>(json, "$.ItemIDs")
+                    recipeId = jsonObject.string("RecipeID")!!,
+                    sender = jsonObject.string("Sender")!!,
+                    itemIds = jsonObject.array("ItemIDs")!!
             )
         }
     }
@@ -191,16 +189,14 @@ data class GetPylons(
         @property:[Json(name = "Requester")]
         val requester : String
 ) : Msg() {
-    override fun serializeForIpc(): String = moshi.adapter<GetPylons>(GetPylons::class.java).toJson(this)
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
         fun parse (jsonObject: JsonObject) : GetPylons {
-            println(jsonObject.toJsonString())
-            val value = jsonObject.obj("value")!!
             return GetPylons(
-                    amount = Coin.listFromJson(value.array("Amount")!!),
-                    requester = value.string("Requester")!!
+                    amount = Coin.listFromJson(jsonObject.array("Amount")!!),
+                    requester = jsonObject.string("Requester")!!
             )
         }
     }
@@ -215,15 +211,15 @@ data class SendPylons(
         @property:[Json(name = "Sender")]
         val sender : String
 ) : Msg() {
-    override fun serializeForIpc(): String = moshi.adapter<SendPylons>(SendPylons::class.java).toJson(this)
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
-        fun parse (json : String) : SendPylons {
+        fun parse (jsonObject: JsonObject) : SendPylons {
             return SendPylons(
-                    amount = JsonPath.read<Long>(json, "$.Amount"),
-                    receiver = JsonPath.read<String>(json, "$.Receiver"),
-                    sender = JsonPath.read<String>(json, "$.Sender")
+                    amount = jsonObject.long("Amount")!!,
+                    receiver = jsonObject.string("Receiver")!!,
+                    sender = jsonObject.string("Sender")!!
             )
         }
     }
@@ -244,18 +240,18 @@ data class UpdateCookbook(
         @property:[Json(name = "Sender")]
         val sender : String
 ): Msg() {
-    override fun serializeForIpc(): String = moshi.adapter<UpdateCookbook>(UpdateCookbook::class.java).toJson(this)
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
-        fun parse (json : String) : UpdateCookbook {
+        fun parse (jsonObject: JsonObject) : UpdateCookbook {
             return UpdateCookbook(
-                    id = JsonPath.read<String>(json, "$.ID"),
-                    description = JsonPath.read<String>(json, "$.Description"),
-                    developer = JsonPath.read<String>(json, "$.Developer"),
-                    version = JsonPath.read<String>(json, "$.Version"),
-                    supportEmail = JsonPath.read<String>(json, "$.SupportEmail"),
-                    sender = JsonPath.read<String>(json, "$.Sender")
+                    id = jsonObject.string("ID")!!,
+                    description = jsonObject.string("Description")!!,
+                    developer = jsonObject.string("Developer")!!,
+                    version = jsonObject.string("Version")!!,
+                    supportEmail = jsonObject.string("SupportEmail")!!,
+                    sender = jsonObject.string("Sender")!!
             )
         }
     }
@@ -290,25 +286,25 @@ data class UpdateRecipe (
         override fun toJson(p0: JsonWriter, p1: UpdateRecipe?) = JsonModelSerializer.serialize(mode, p0, p1)
     }
 
-    override fun serializeForIpc(): String = moshi.adapter<UpdateRecipe>(UpdateRecipe::class.java).toJson(this)
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         val msgAdapter = UpdateRecipeAdapter(SerializationMode.FOR_BROADCAST)
         val signingAdapter = UpdateRecipeAdapter(SerializationMode.FOR_SIGNING)
 
         @MsgParser
-        fun parse (json : String) : UpdateRecipe {
+        fun parse (jsonObject: JsonObject) : UpdateRecipe {
             return UpdateRecipe(
-                    id = JsonPath.read<String>(json, "$.ID"),
-                    name = JsonPath.read<String>(json, "$.Name"),
-                    description = JsonPath.read<String>(json, "$.Description"),
-                    cookbookId = JsonPath.read<String>(json, "$.CookbookID"),
-                    sender = JsonPath.read<String>(json, "$.Sender"),
-                    blockInterval = JsonPath.read<Long>(json, "$.BlockInterval"),
-                    coinInputs = CoinInput.fromJson(JsonPath.read<String>(json, "$.CoinInputs")).orEmpty(),
-                    itemInputs = ItemInput.fromJson(JsonPath.read<String>(json, "$.ItemInputs")).orEmpty(),
-                    entries = WeightedParamList.fromJson(JsonPath.read<String>(json, "$.Entries"))?:
-                        WeightedParamList(listOf(), listOf())
+                    id = jsonObject.string("ID")!!,
+                    name = jsonObject.string("Name")!!,
+                    description = jsonObject.string("Description")!!,
+                    cookbookId = jsonObject.string("CookbookID")!!,
+                    sender = jsonObject.string("Sender")!!,
+                    blockInterval = jsonObject.long("BlockInterval")!!,
+                    coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")!!),
+                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")!!),
+                    entries = WeightedParamList.fromJson(jsonObject.obj("Entries")!!)?:
+                            WeightedParamList(listOf(), listOf())
             )
         }
     }

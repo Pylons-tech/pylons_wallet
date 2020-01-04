@@ -21,7 +21,8 @@ data class Coin(
                         amount = jsonObject.string("amount")!!.toLong()
                 )
 
-        fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<Coin> {
+        fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<Coin> {
+            if (jsonArray == null) return listOf()
             val ls = mutableListOf<Coin>()
             jsonArray.forEach { ls.add(fromJson(it)) }
             return ls

@@ -1,9 +1,9 @@
 package com.pylons.wallet.core.types.item
 
-import com.squareup.moshi.Moshi
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.ReservedKeys
 import com.pylons.wallet.core.types.ForeignProfile
+import com.pylons.wallet.core.types.klaxon
 
 /**
  * Local representation of an item-type resource, implemented as a
@@ -19,11 +19,7 @@ data class Item(
         val sender : String
 ) {
     companion object {
-        fun fromJson (json : String) : Item {
-            val moshi = Moshi.Builder().build()
-            val jsonAdapter = moshi.adapter<Item>(Item::class.java)
-            return jsonAdapter.fromJson(json)!!
-        }
+        fun fromJson (json : String) : Item = klaxon.parse(json)!!
 
         fun findInBufferedForeignProfile (profileId : String, itemId : String) : Item? {
             var prf : ForeignProfile? = null
@@ -72,18 +68,10 @@ fun Set<Item>.exclude (other : Set<Item>) : Set<Item> {
     return mutable.toSet()
 }
 
-fun Item.toJson () : String {
-    val moshi = Moshi.Builder().build()
-    val jsonAdapter = moshi.adapter<Item>(Item::class.java)
-    return jsonAdapter.toJson(this)
-}
-
 fun List<Item>.serialize () : MutableList<String> {
-    val moshi = Moshi.Builder().build()
-    val jsonAdapter = moshi.adapter<Item>(Item::class.java)
     val ls = mutableListOf<String>()
     forEach{
-        ls.add(jsonAdapter.toJson(it))
+        ls.add(klaxon.toJsonString(it))
     }
     return ls
 }
