@@ -5,7 +5,7 @@ import java.util.*
 
 open class Logger {
     private val klaxon = Klaxon()
-    private data class Entry (
+    data class Entry (
             val msg : String,
             val tag : String,
             val timestamp : Long = Date().time
