@@ -17,13 +17,14 @@ data class ItemOutput(
         companion object {
                 fun fromJson (jsonObject: JsonObject) : ItemOutput =
                         ItemOutput (
-                                doubles = DoubleParam.listFromJson(jsonObject.array<JsonObject>("Doubles")!!),
-                                longs = LongParam.listFromJson(jsonObject.array<JsonObject>("Long")!!),
-                                strings = StringParam.listFromJson(jsonObject.array<JsonObject>("Strings")!!),
+                                doubles = DoubleParam.listFromJson(jsonObject.array<JsonObject>("Doubles")),
+                                longs = LongParam.listFromJson(jsonObject.array<JsonObject>("Long")),
+                                strings = StringParam.listFromJson(jsonObject.array<JsonObject>("Strings")),
                                 weight = jsonObject.int("Weight")!!
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<ItemOutput> {
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<ItemOutput> {
+                        if (jsonArray == null) return listOf()
                         val ls = mutableListOf<ItemOutput>()
                         jsonArray.forEach { ls.add(fromJson(it)) }
                         return ls

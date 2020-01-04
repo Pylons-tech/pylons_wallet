@@ -14,8 +14,8 @@ data class WeightedParamList(
                 fun fromJson (jsonObject : JsonObject?) : WeightedParamList? = when (jsonObject) {
                         null -> null
                         else -> WeightedParamList(
-                                coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")!!),
-                                itemOutputs = ItemOutput.listFromJson(jsonObject.array("ItemOutputs")!!)
+                                coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")),
+                                itemOutputs = ItemOutput.listFromJson(jsonObject.array("ItemOutputs"))
                         )
                 }
         }

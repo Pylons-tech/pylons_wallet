@@ -19,7 +19,8 @@ data class DoubleParam (
                                 weightRanges = DoubleWeightRange.listFromJson(jsonObject.array("WeightRanges")!!)
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<DoubleParam> {
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<DoubleParam> {
+                        if (jsonArray == null) return listOf()
                         val ls = mutableListOf<DoubleParam>()
                         jsonArray.forEach { ls.add(fromJson(it)) }
                         return ls

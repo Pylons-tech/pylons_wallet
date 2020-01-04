@@ -19,7 +19,8 @@ data class LongParam (
                                 weightRanges = LongWeightRange.listFromJson(jsonObject.array("WeightRanges")!!)
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<LongParam> {
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<LongParam> {
+                        if (jsonArray == null) return listOf()
                         val ls = mutableListOf<LongParam>()
                         jsonArray.forEach { ls.add(fromJson(it)) }
                         return ls

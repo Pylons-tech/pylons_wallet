@@ -19,7 +19,8 @@ data class StringParam (
                                 value = jsonObject.string("Value")!!
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<StringParam> {
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<StringParam> {
+                        if (jsonArray == null) return listOf()
                         val ls = mutableListOf<StringParam>()
                         jsonArray.forEach { ls.add(fromJson(it)) }
                         return ls

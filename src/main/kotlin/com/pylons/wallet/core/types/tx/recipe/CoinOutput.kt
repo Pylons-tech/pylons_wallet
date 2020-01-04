@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import com.beust.klaxon.json
 
 data class CoinOutput(
         @property:[Json(name = "Coin")]
@@ -20,7 +21,8 @@ data class CoinOutput(
                                 weight = jsonObject.int("Weight")!!
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<CoinOutput> {
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {
+                        if (jsonArray == null) return listOf()
                         val ls = mutableListOf<CoinOutput>()
                         jsonArray.forEach { ls.add(fromJson(it)) }
                         return ls
