@@ -1,5 +1,7 @@
 package com.pylons.wallet.core.ops
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.BadMessageException
@@ -41,12 +43,9 @@ private fun checkValid (msg : MessageData) {
 
 fun Core.createRecipe (name : String, cookbook : String, description : String, blockInterval : Long,
                        coinInputs : String, itemInputs : String, outputTables : String) : Transaction {
-    val mCoinInputs = moshi.adapter<List<CoinInput>>(
-            Types.newParameterizedType(List::class.java, CoinInput::class.java)).fromJson(coinInputs)!!
-    val mItemInputs = moshi.adapter<List<ItemInput>>(
-            Types.newParameterizedType(List::class.java, ItemInput::class.java)).fromJson(itemInputs)!!
-    val mOutputTables = moshi.adapter<WeightedParamList>(
-            WeightedParamList::class.java).fromJson(outputTables)!!
+    val mItemInputs = ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(itemInputs))
+    val mCoinInputs = CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(coinInputs))
+    val mOutputTables = WeightedParamList.fromJson(klaxon.parse<JsonObject>(outputTables))!!
     return engine.createRecipe(
             sender = userProfile!!.credentials.address,
             name = name,

@@ -16,4 +16,4 @@ internal fun getPendingExecutions(): Response {
     return Response(outgoingMsg, Status.OK_TO_RETURN_TO_CLIENT)
 }
 
-fun Core.getPendingExecutions () : Array<Execution> = engine.getPendingExecutions()
+fun Core.getPendingExecutions () : List<Execution> = engine.getPendingExecutions()

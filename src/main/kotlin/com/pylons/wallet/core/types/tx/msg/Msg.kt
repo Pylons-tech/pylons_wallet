@@ -110,20 +110,10 @@ data class CreateRecipe (
         @property:[Json(name = "ToUpgrade")]
         val toUpgrade : ItemUpgradeParams
 ):Msg() {
-    private class CreateRecipeAdapter(val mode: SerializationMode = SerializationMode.FOR_BROADCAST) : JsonAdapter<CreateRecipe>() {
-        override fun fromJson(p0: JsonReader): CreateRecipe? =
-                throw NotImplementedError("This adapter does not support deserialization operations")
-
-        @ToJson
-        override fun toJson(p0: JsonWriter, p1: CreateRecipe?) = JsonModelSerializer.serialize(mode, p0, p1)
-    }
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
-        private val msgAdapter = CreateRecipeAdapter(SerializationMode.FOR_BROADCAST)
-        private val signingAdapter = CreateRecipeAdapter(SerializationMode.FOR_SIGNING)
-
         @MsgParser
         fun parse (jsonObject: JsonObject) : CreateRecipe {
             return CreateRecipe(
@@ -146,7 +136,7 @@ data class CreateRecipe (
         [
         {
             "type": "pylons/CreateRecipe",
-            "value": ${msgAdapter.toJson(this)}
+            "value": ${JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)}
         }
         ]"""
 
@@ -156,7 +146,7 @@ data class CreateRecipe (
         return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
     }
 
-    fun toSignStruct () : String = "[${signingAdapter.toJson(this)}]"
+    fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
 @MsgType("pylons/ExecuteRecipe")
@@ -277,21 +267,10 @@ data class UpdateRecipe (
         @property:[Json(name = "Sender")]
         val sender : String
 ): Msg() {
-    class UpdateRecipeAdapter(val mode: SerializationMode = SerializationMode.FOR_BROADCAST) : JsonAdapter<UpdateRecipe>() {
-        @FromJson
-        override fun fromJson(p0: JsonReader): UpdateRecipe? =
-                throw NotImplementedError("This adapter does not support deserialization operations")
-
-        @ToJson
-        override fun toJson(p0: JsonWriter, p1: UpdateRecipe?) = JsonModelSerializer.serialize(mode, p0, p1)
-    }
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
-        val msgAdapter = UpdateRecipeAdapter(SerializationMode.FOR_BROADCAST)
-        val signingAdapter = UpdateRecipeAdapter(SerializationMode.FOR_SIGNING)
-
         @MsgParser
         fun parse (jsonObject: JsonObject) : UpdateRecipe {
             return UpdateRecipe(
@@ -313,7 +292,7 @@ data class UpdateRecipe (
         [
         {
             "type": "pylons/UpdateRecipe",
-            "value": ${msgAdapter.toJson(this)}
+            "value": ${JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)}
         }
         ]"""
 
@@ -323,6 +302,6 @@ data class UpdateRecipe (
         return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
     }
 
-    fun toSignStruct () : String = "[${signingAdapter.toJson(this)}]"
+    fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 

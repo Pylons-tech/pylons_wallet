@@ -1,5 +1,7 @@
 package com.pylons.wallet.core.ops
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.BadMessageException
@@ -7,8 +9,6 @@ import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
 import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 
 internal fun updateRecipe (msg: MessageData) : Response {
     checkValid(msg)
@@ -44,13 +44,9 @@ private fun checkValid (msg : MessageData) {
 
 fun Core.updateRecipe (id : String, name : String, cookbook : String, description : String, blockInterval : Long,
                        coinInputs : String, itemInputs : String, outputTables : String) : Transaction {
-    val moshi = Moshi.Builder().build()
-    val mCoinInputs = moshi.adapter<List<CoinInput>>(
-            Types.newParameterizedType(List::class.java, CoinInput::class.java)).fromJson(coinInputs)!!
-    val mItemInputs = moshi.adapter<List<ItemInput>>(
-            Types.newParameterizedType(List::class.java, ItemInput::class.java)).fromJson(itemInputs)!!
-    val mOutputTables = moshi.adapter<WeightedParamList>(
-            WeightedParamList::class.java).fromJson(outputTables)!!
+    val mItemInputs = ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(itemInputs))
+    val mCoinInputs = CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(coinInputs))
+    val mOutputTables = WeightedParamList.fromJson(klaxon.parse<JsonObject>(outputTables))!!
     return engine.updateRecipe(
             sender = userProfile!!.credentials.address,
             name = name,

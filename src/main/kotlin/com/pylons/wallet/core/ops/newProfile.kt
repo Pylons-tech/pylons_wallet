@@ -16,7 +16,7 @@ internal fun newProfile (msg : MessageData) : Response {
                     credentials =  c,
                     strings = mutableMapOf(ReservedKeys.profileName to msg.strings[Keys.NAME]!!),
                     provisional = true,
-                    coins = mutableMapOf(),
+                    coins = listOf(),
                     items = mutableListOf()
             )
     )
