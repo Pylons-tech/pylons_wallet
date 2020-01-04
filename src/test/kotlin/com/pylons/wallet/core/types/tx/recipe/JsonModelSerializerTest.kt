@@ -1,8 +1,6 @@
 package com.pylons.wallet.core.types.tx.recipe
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonWriter
-import okio.Okio
+import com.beust.klaxon.Json
 import java.io.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -30,11 +28,10 @@ class InnerObject constructor (
 class JsonModelSerializerTest {
     @Test
     fun serializes () {
-        val stream = ByteArrayOutputStream()
         val expected =
                 """{"bleh_prop":"asdfjkl;","byte":3,"inner_1":{"name":"first","nested":true},"inner_2":{"name":"second","nested":true},"int_array":[1,2,3,4,5]}"""
-        JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, JsonWriter.of(Okio.buffer(Okio.sink(stream))), TestObject())
-        val actual = stream.toString()
+
+        val actual = JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, TestObject())
         println(actual)
         assertEquals(expected, actual)
     }

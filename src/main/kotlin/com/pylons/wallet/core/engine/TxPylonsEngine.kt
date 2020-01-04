@@ -140,7 +140,7 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getOwnBalances(): Profile? {
         val json = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
-        val value = klaxon.parse<JsonObject>(json)!!.obj("value")!!
+        val value = (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("value")!!
         val sequence = value.string("sequence")!!.toLong()
         val accountNumber = value.string("account_number")!!.toLong()
         val coins = Coin.listFromJson(value.array("coins"))
@@ -161,7 +161,7 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("$nodeUrl/blocks/latest")
-        val jsonObject = klaxon.parse<JsonObject>(response)!!
+        val jsonObject = (Parser.default().parse(StringBuilder(response)) as JsonObject)
         val height = jsonObject.obj("block_meta")!!.obj("header")!!.long("height")!!
         // TODO: calculate block time (this will be Gross)
         return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = Core.VERSION_STRING)

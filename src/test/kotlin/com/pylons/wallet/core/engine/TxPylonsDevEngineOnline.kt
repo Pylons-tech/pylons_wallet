@@ -42,7 +42,7 @@ internal class TxPylonsDevEngineOnline {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), mutableMapOf(), mutableListOf())
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), mutableListOf())
         return engine
     }
 
