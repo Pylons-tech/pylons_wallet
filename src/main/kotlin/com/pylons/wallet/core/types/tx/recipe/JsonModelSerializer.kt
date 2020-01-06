@@ -19,8 +19,6 @@ object JsonModelSerializer {
 
     private fun processObject (mode : SerializationMode, obj: Any?) : JsonObject? {
         if (obj != null) {
-            //if (mode == SerializationMode.FOR_BROADCAST) p0.indent = "        "
-            //p0.serializeNulls = true
             val kClass = obj::class
             val o = JsonObject()
             kClass.memberProperties.forEach { prop ->
@@ -29,7 +27,10 @@ object JsonModelSerializer {
                     var value = prop.getter.call(obj)
                     if (prop.returnType == String::class.java) value = value.toString()
                     when (prop.returnType.classifier) {
-                        Byte::class -> o[json.name] = value
+                        // HACK: klaxon's serialization of byte values is actually broken!
+                        // We have to do this b/c if we just set value w/o doing the Bullshit
+                        // it'll be serialized as... an empty object. Thanks, klaxon!
+                        Byte::class -> o[json.name] = (value as Byte).toInt()
                         Int::class -> {
                             val q = prop.findAnnotation<QuotedJsonNumeral>()
                             val n = prop.findAnnotation<NeverQuoteWrap>()

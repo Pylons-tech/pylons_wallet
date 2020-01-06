@@ -64,6 +64,4 @@ data class MessageData(
         stringArrays.putAll(other.stringArrays)
         return this
     }
-
-    override fun toString(): String = klaxon.toJsonString(this)
 }
