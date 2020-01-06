@@ -20,7 +20,8 @@ data class DoubleInputParam(
                                 maxValue = jsonObject.string("MaxValue")!!
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<DoubleInputParam> {
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<DoubleInputParam> {
+                        if (jsonArray == null) return listOf()
                         val ls = mutableListOf<DoubleInputParam>()
                         jsonArray.forEach { ls.add(fromJson(it)) }
                         return ls

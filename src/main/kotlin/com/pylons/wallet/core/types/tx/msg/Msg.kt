@@ -27,7 +27,7 @@ sealed class Msg {
                 throw Exception("No type matches message type $identifier")
             val parser = findParser(msgType) ?:
                 throw Exception("No parser defined for message type $identifier")
-            return parser(jsonObject)
+            return parser(jsonObject.obj("value")!!)
         }
 
         private fun findMsgType(type : String) : KClass<out Msg>? {
@@ -73,6 +73,7 @@ data class CreateCookbook(
     companion object {
         @MsgParser
         fun parse (jsonObject: JsonObject) : CreateCookbook {
+            println(jsonObject.toJsonString())
             return CreateCookbook(
                     name = jsonObject.string("Name")!!,
                     description = jsonObject.string("Description")!!,
@@ -80,8 +81,8 @@ data class CreateCookbook(
                     version = jsonObject.string("Version")!!,
                     supportEmail = jsonObject.string("SupportEmail")!!,
                     sender = jsonObject.string("Sender")!!,
-                    level = jsonObject.long("level")!!,
-                    costPerBlock = jsonObject.long("CostPerBlock")!!
+                    level = jsonObject.string("Level")!!.toLong(),
+                    costPerBlock = jsonObject.string("CostPerBlock")!!.toLong()
             )
         }
     }
@@ -121,10 +122,10 @@ data class CreateRecipe (
                     description = jsonObject.string("Description")!!,
                     cookbookId = jsonObject.string("CookbookID")!!,
                     sender = jsonObject.string("Sender")!!,
-                    rType = jsonObject.long("RType")!!,
-                    blockInterval = jsonObject.long("BlockInterval")!!,
-                    coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")!!),
-                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")!!),
+                    rType = jsonObject.string("RType")!!.toLong(),
+                    blockInterval = jsonObject.string("BlockInterval")!!.toLong(),
+                    coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
+                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = WeightedParamList.fromJson(jsonObject.obj("Entries"))?:
                         WeightedParamList(listOf(), listOf()),
                     toUpgrade = ItemUpgradeParams.fromJson(jsonObject.obj("ToUpgrade")!!)
@@ -149,6 +150,40 @@ data class CreateRecipe (
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
+@MsgType("pylons/DisableRecipe")
+data class DisableRecipe(
+        @property:[Json(name = "RecipeID")]
+        val recipeId : String
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : DisableRecipe {
+            return DisableRecipe(
+                    recipeId = jsonObject.string("RecipeID")!!
+            )
+        }
+    }
+}
+
+@MsgType("pylons/EnableRecipe")
+data class EnableRecipe(
+        @property:[Json(name = "RecipeID")]
+        val recipeId : String
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : EnableRecipe {
+            return EnableRecipe(
+                    recipeId = jsonObject.string("RecipeID")!!
+            )
+        }
+    }
+}
+
 @MsgType("pylons/ExecuteRecipe")
 data class ExecuteRecipe(
         @property:[Json(name = "RecipeID")]
@@ -166,7 +201,7 @@ data class ExecuteRecipe(
             return ExecuteRecipe(
                     recipeId = jsonObject.string("RecipeID")!!,
                     sender = jsonObject.string("Sender")!!,
-                    itemIds = jsonObject.array("ItemIDs")!!
+                    itemIds = jsonObject.array("ItemIDs")
             )
         }
     }
@@ -195,7 +230,7 @@ data class GetPylons(
 @MsgType("pylons/SendPylons")
 data class SendPylons(
         @property:[Json(name = "Amount")]
-        val amount : Long,
+        val amount : List<Coin>,
         @property:[Json(name = "Receiver")]
         val receiver : String,
         @property:[Json(name = "Sender")]
@@ -207,7 +242,7 @@ data class SendPylons(
         @MsgParser
         fun parse (jsonObject: JsonObject) : SendPylons {
             return SendPylons(
-                    amount = jsonObject.long("Amount")!!,
+                    amount = Coin.listFromJson(jsonObject.array("Amount")!!),
                     receiver = jsonObject.string("Receiver")!!,
                     sender = jsonObject.string("Sender")!!
             )
@@ -247,6 +282,7 @@ data class UpdateCookbook(
     }
 }
 
+@MsgType("pylons/UpdateRecipe")
 data class UpdateRecipe (
         @property:[Json(name = "BlockInterval")]
         val blockInterval : Long,
@@ -279,10 +315,10 @@ data class UpdateRecipe (
                     description = jsonObject.string("Description")!!,
                     cookbookId = jsonObject.string("CookbookID")!!,
                     sender = jsonObject.string("Sender")!!,
-                    blockInterval = jsonObject.long("BlockInterval")!!,
-                    coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")!!),
-                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")!!),
-                    entries = WeightedParamList.fromJson(jsonObject.obj("Entries")!!)?:
+                    blockInterval = jsonObject.string("BlockInterval")!!.toLong(),
+                    coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
+                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
+                    entries = WeightedParamList.fromJson(jsonObject.obj("Entries"))?:
                             WeightedParamList(listOf(), listOf())
             )
         }

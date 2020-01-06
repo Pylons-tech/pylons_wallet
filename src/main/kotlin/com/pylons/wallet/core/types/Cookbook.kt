@@ -1,6 +1,8 @@
 package com.pylons.wallet.core.types
 
 import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
+import java.lang.StringBuilder
 
 data class Cookbook (
     val id : String,
@@ -14,7 +16,8 @@ data class Cookbook (
 ) {
     companion object {
         fun getArrayFromJson(json : String) : Array<Cookbook> {
-            val jsonArray = klaxon.parse<JsonObject>(json)!!.array<JsonObject>("Cookbooks")
+            val jsonArray =
+                    (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Cookbooks")
             val list = mutableListOf<Cookbook>()
             for (i in jsonArray!!.indices) {
                 val obj = jsonArray[i]

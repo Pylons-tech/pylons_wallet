@@ -69,7 +69,7 @@ internal open class TxPylonsEngine : Engine() {
     protected fun basicTxHandlerFlow (func : (Credentials) -> String) : Transaction {
         return Transaction(resolver =  {
             val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
-            val jsonObject = klaxon.parse<JsonObject>(response)!!
+            val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
             val code = jsonObject.long("code")
             if (code != null)
                 throw Exception("Node returned error code $code for message - " +

@@ -20,7 +20,8 @@ data class LongInputParam(
                                 maxValue = jsonObject.long("MaxValue")!!
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<LongInputParam> {
+                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<LongInputParam> {
+                        if (jsonArray == null) return listOf()
                         val ls = mutableListOf<LongInputParam>()
                         jsonArray.forEach { ls.add(fromJson(it)) }
                         return ls

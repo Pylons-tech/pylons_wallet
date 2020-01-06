@@ -2,6 +2,8 @@ package com.pylons.wallet.core.types
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
+import java.lang.StringBuilder
 
 data class Execution (
         @property:[Json(name = "ID")]
@@ -24,9 +26,9 @@ data class Execution (
         companion object {
                 fun getListFromJson(json : String) : List<Execution> {
                         val jsonArray =
-                                klaxon.parse<JsonObject>(json)!!.array<JsonObject>("Executions")
+                                (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Executions")
                         val list = mutableListOf<Execution>()
-                        for (i in jsonArray!!.indices) {
+                        if (jsonArray != null && jsonArray.size > 0) for (i in jsonArray.indices) {
                                 val entry = jsonArray[i]
                                 list.add(
                                         Execution(

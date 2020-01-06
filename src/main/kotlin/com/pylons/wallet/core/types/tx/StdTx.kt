@@ -17,7 +17,7 @@ data class StdTx(
                 fun fromJson (jsonObject: JsonObject) : StdTx? {
                         val msgArray = jsonObject.array<JsonObject>("msg")!!
                         val mList = mutableListOf<Msg>()
-                        msgArray.forEach { mList.add(Msg.fromJson(it.obj("value")!!)?:
+                        msgArray.forEach { mList.add(Msg.fromJson(it)?:
                                throw Exception("Failed to parse message:\n ${it.toJsonString()}")) }
                         return StdTx(
                                 msg = mList,

@@ -14,9 +14,9 @@ data class ItemUpgradeParams(
         companion object {
 
                 fun fromJson (jsonObject: JsonObject) : ItemUpgradeParams = ItemUpgradeParams(
-                        doubles = DoubleInputParam.listFromJson(jsonObject.array<JsonObject>("Doubles")!!),
-                        longs = LongInputParam.listFromJson(jsonObject.array<JsonObject>("Long")!!),
-                        strings = StringInputParam.listFromJson(jsonObject.array<JsonObject>("Strings")!!)
+                        doubles = DoubleInputParam.listFromJson(jsonObject.array<JsonObject>("Doubles")),
+                        longs = LongInputParam.listFromJson(jsonObject.array<JsonObject>("Long")),
+                        strings = StringInputParam.listFromJson(jsonObject.array<JsonObject>("Strings"))
                 )
         }
 }
