@@ -23,10 +23,7 @@ internal class NoEngine : Engine() {
     override fun applyRecipe(id : String, itemIds : Array<String>) : Transaction =
             throw NoEngineException()
 
-    override fun commitTx(tx: Transaction): Transaction =
-            throw NoEngineException()
-
-    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
+    override fun createCookbook(name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
             throw NoEngineException()
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
@@ -88,7 +85,7 @@ internal class NoEngine : Engine() {
     override fun sendPylons(q: Long, receiver: String) =
             throw NoEngineException()
 
-    override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
+    override fun updateCookbook(id: String, developer: String, description: String, version: String, supportEmail: String): Transaction =
             throw NoEngineException()
 
     override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,

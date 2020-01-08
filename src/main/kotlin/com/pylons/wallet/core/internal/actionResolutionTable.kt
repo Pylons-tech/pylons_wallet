@@ -28,8 +28,14 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             Actions.UPDATE_COOKBOOK -> devOnly { updateCookbook(msg) }
             Actions.CREATE_RECIPE -> devOnly { createRecipe(msg) }
             Actions.UPDATE_RECIPE -> devOnly { updateRecipe(msg) }
-            //Actions.ENABLE_RECIPE -> devOnly { enableRecipe(msg) }
-            //Actions.DISABLE_RECIPE -> devOnly { disableRecipe(msg) }
+            Actions.ENABLE_RECIPE -> devOnly { enableRecipe(msg) }
+            Actions.DISABLE_RECIPE -> devOnly { disableRecipe(msg) }
+            Actions.BATCH_CREATE_COOKBOOK -> devOnly { batchCreateCookbook(msg) }
+            Actions.BATCH_UPDATE_COOKBOOK -> devOnly { batchUpdateCookbook(msg) }
+            Actions.BATCH_CREATE_RECIPE -> devOnly { batchCreateRecipe(msg) }
+            Actions.BATCH_UPDATE_RECIPE -> devOnly { batchUpdateRecipe(msg) }
+            Actions.BATCH_ENABLE_RECIPE -> devOnly { batchEnableRecipe(msg) }
+            Actions.BATCH_DISABLE_RECIPE -> devOnly { batchDisableRecipe(msg) }
 
             // Invalid inputs
             "" -> noAction()

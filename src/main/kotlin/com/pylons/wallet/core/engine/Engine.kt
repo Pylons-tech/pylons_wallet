@@ -26,9 +26,27 @@ internal abstract class Engine {
     abstract fun enableRecipe(id : String) : Transaction
 
     /**
+     * Batch enable-recipe message
+     */
+    fun enableRecipes(recipes : List<String>) : List<Transaction> {
+        val txs = mutableListOf<Transaction>()
+        recipes.forEach { txs.add(enableRecipe(it)) }
+        return txs
+    }
+
+    /**
      * Disable-recipe message
      */
     abstract fun disableRecipe(id : String) : Transaction
+
+    /**
+     * Batch enable-recipe message
+     */
+    fun disableRecipes(recipes : List<String>) : List<Transaction> {
+        val txs = mutableListOf<Transaction>()
+        recipes.forEach { txs.add(disableRecipe(it)) }
+        return txs
+    }
 
     /**
      * Execute-recipe message
@@ -43,16 +61,62 @@ internal abstract class Engine {
                               rType : Long, toUpgrade : ItemUpgradeParams) : Transaction
 
     /**
-     * Low-level commit TX function.
-     * TODO: determine if this should even exist; sendPylons suggests 'no'
+     * Batch create-recipe message
      */
-    abstract fun commitTx(tx: Transaction) : Transaction
+    fun createRecipes(sender : String, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
+                      blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
+                      itemInputs : List<List<ItemInput>>, entries : List<WeightedParamList>,
+                      rTypes : List<Long>, toUpgrade : List<ItemUpgradeParams>) : List<Transaction> {
+        val count = names.size
+        val txs = mutableListOf<Transaction>()
+        for (i in 0..count) {
+            txs.add(
+                    createRecipe(
+                            sender = sender,
+                            name = names[i],
+                            cookbookId = cookbookIds[i],
+                            description = descriptions[i],
+                            blockInterval = blockIntervals[i],
+                            coinInputs = coinInputs[i],
+                            itemInputs = itemInputs[i],
+                            entries = entries[i],
+                            rType = rTypes[i],
+                            toUpgrade = toUpgrade[i]
+                    )
+            )
+        }
+        return txs
+    }
 
     /**
      * Create-cookbook message
      */
-    abstract fun createCookbook (name : String, devel : String, desc : String, version : String,
+    abstract fun createCookbook (name : String, developer : String, description : String, version : String,
                                  supportEmail : String, level : Long, costPerBlock : Long) : Transaction
+
+    /**
+     * Batch create-cookbook message
+     */
+    fun createCookbooks(names : List<String>, developers: List<String>, descriptions: List<String>,
+                        versions : List<String>, supportEmails: List<String>, levels : List<Long>,
+                        costsPerBlock : List<Long>) : List<Transaction> {
+        val count = names.size
+        val txs = mutableListOf<Transaction>()
+        for (i in 0..count) {
+            txs.add(
+                    createCookbook(
+                            name = names[i],
+                            developer = developers[i],
+                            description = descriptions[i],
+                            version = versions[i],
+                            supportEmail = supportEmails[i],
+                            level = levels[i],
+                            costPerBlock = costsPerBlock[i]
+                    )
+            )
+        }
+        return txs
+    }
 
     /**
      * Copies some data from profile's credentials object to userdata
@@ -137,14 +201,61 @@ internal abstract class Engine {
     /**
      * Update-cookbook message
      */
-    abstract fun updateCookbook (id : String, devel : String, desc : String, version : String,
+    abstract fun updateCookbook (id : String, developer : String, description : String, version : String,
                                  supportEmail : String) : Transaction
+
+    /**
+     * Batch update-cookbook message
+     */
+    fun updateCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
+                        versions : List<String>, supportEmails: List<String>) : List<Transaction> {
+        val count = names.size
+        val txs = mutableListOf<Transaction>()
+        for (i in 0..count) {
+            txs.add(
+                    updateCookbook(
+                            id = ids[i],
+                            developer = developers[i],
+                            description = descriptions[i],
+                            version = versions[i],
+                            supportEmail = supportEmails[i]
+                    )
+            )
+        }
+        return txs
+    }
 
     /**
      * Update-recipe message
      */
     abstract fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList) : Transaction
+
+    /**
+     * Batch update-recipe message
+     */
+    fun updateRecipes (sender : String, ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
+                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
+                       entries : List<WeightedParamList>) : List<Transaction> {
+        val count = names.size
+        val txs = mutableListOf<Transaction>()
+        for (i in 0..count) {
+            txs.add(
+                    updateRecipe(
+                            id = ids[i],
+                            sender = sender,
+                            name = names[i],
+                            cookbookId = cookbookIds[i],
+                            description = descriptions[i],
+                            blockInterval = blockIntervals[i],
+                            coinInputs = coinInputs[i],
+                            itemInputs = itemInputs[i],
+                            entries = entries[i]
+                    )
+            )
+        }
+        return txs
+    }
 
     /**
      * List recipes query

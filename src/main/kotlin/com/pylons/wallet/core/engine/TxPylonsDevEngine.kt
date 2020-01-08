@@ -10,8 +10,8 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
     override val isDevEngine: Boolean = true
     override val backendType: Backend = Backend.LIVE_DEV
 
-    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
-            basicTxHandlerFlow { createCookbook(name, devel, desc, version, supportEmail, level, it.address,
+    override fun createCookbook(name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
+            basicTxHandlerFlow { createCookbook(name, developer, description, version, supportEmail, level, it.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence, costPerBlock) }
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
@@ -27,8 +27,8 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
             basicTxHandlerFlow { enableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),
                     it.accountNumber, it.sequence) }
 
-    override fun updateCookbook(id : String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
-            basicTxHandlerFlow { updateCookbook(id, devel, desc, version, supportEmail, it.address,
+    override fun updateCookbook(id : String, developer: String, description: String, version: String, supportEmail: String): Transaction =
+            basicTxHandlerFlow { updateCookbook(id, developer, description, version, supportEmail, it.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,

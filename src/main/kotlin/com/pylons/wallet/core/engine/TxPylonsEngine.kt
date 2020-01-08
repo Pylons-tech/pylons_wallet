@@ -92,11 +92,6 @@ internal open class TxPylonsEngine : Engine() {
             basicTxHandlerFlow { executeRecipe(id, itemIds, Core.userProfile!!.credentials.address,
                     cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
-    override fun commitTx(tx: Transaction): Transaction {
-        //val response = HttpWire.post("$url/txs", getJsonForTx(tx))
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
@@ -209,11 +204,11 @@ internal open class TxPylonsEngine : Engine() {
     override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun createCookbook(name: String, devel: String, desc: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
+    override fun createCookbook(name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
         throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
 
-    override fun updateCookbook(id: String, devel: String, desc: String, version: String, supportEmail: String): Transaction =
+    override fun updateCookbook(id: String, developer: String, description: String, version: String, supportEmail: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
