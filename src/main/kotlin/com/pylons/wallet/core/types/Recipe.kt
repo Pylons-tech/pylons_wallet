@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types
 
+import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
@@ -7,8 +8,27 @@ import com.pylons.wallet.core.types.tx.recipe.ItemInput
 import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
 import java.lang.StringBuilder
 
-data class Recipe(val id : String, val sender : String, val disabled : Boolean, val name : String, val cookbook : String, val desc : String, val executionTime : Long,
-                  val coinInputs : List<CoinInput>, val itemInputs : List<ItemInput>, val entries : WeightedParamList) {
+data class Recipe(
+        @property:[Json(name = "ID")]
+        val id : String,
+        @property:[Json(name = "Sender")]
+        val sender : String,
+        @property:[Json(name = "Disabled")]
+        val disabled : Boolean,
+        @property:[Json(name = "Name")]
+        val name : String,
+        @property:[Json(name = "Cookbook")]
+        val cookbook : String,
+        @property:[Json(name = "Description")]
+        val description : String,
+        @property:[Json(name = "BlockInterval")]
+        val blockInterval : Long,
+        @property:[Json(name = "CoinInputs")]
+        val coinInputs : List<CoinInput>,
+        @property:[Json(name = "ItemInputs")]
+        val itemInputs : List<ItemInput>,
+        @property:[Json(name = "Entries")]
+        val entries : WeightedParamList) {
     companion object {
         fun getListFromJson(json : String) : List<Recipe> {
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)
@@ -20,9 +40,9 @@ data class Recipe(val id : String, val sender : String, val disabled : Boolean, 
                                 cookbook = it.string("CookbookID")!!,
                                 name = it.string("Name")!!,
                                 id = it.string("ID")!!,
-                                desc = it.string("Description")!!,
+                                description = it.string("Description")!!,
                                 sender = it.string("Sender")!!,
-                                executionTime = it.string("BlockInterval")!!.toLong(),
+                                blockInterval = it.string("BlockInterval")!!.toLong(),
                                 disabled = it.boolean("Disabled")!!,
                                 coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
                                 itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),

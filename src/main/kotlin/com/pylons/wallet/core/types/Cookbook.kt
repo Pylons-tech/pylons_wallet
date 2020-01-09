@@ -1,18 +1,27 @@
 package com.pylons.wallet.core.types
 
+import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.lang.StringBuilder
 
 data class Cookbook (
-    val id : String,
-    val name : String,
-    val description : String,
-    val version : String,
-    val developer : String,
-    val level : Long,
-    val sender : String,
-    val supportEmail : String
+        @property:[Json(name = "ID")]
+        val id : String,
+        @property:[Json(name = "Name")]
+        val name : String,
+        @property:[Json(name = "Description")]
+        val description : String,
+        @property:[Json(name = "Version")]
+        val version : String,
+        @property:[Json(name = "Developer")]
+        val developer : String,
+        @property:[Json(name = "Level")]
+        val level : Long,
+        @property:[Json(name = "Sender")]
+        val sender : String,
+        @property:[Json(name = "SupportEmail")]
+        val supportEmail : String
 ) {
     companion object {
         fun getListFromJson(json : String) : List<Cookbook> {
