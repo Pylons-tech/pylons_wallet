@@ -10,7 +10,7 @@ import java.lang.StringBuilder
 data class Recipe(val id : String, val sender : String, val disabled : Boolean, val name : String, val cookbook : String, val desc : String, val executionTime : Long,
                   val coinInputs : List<CoinInput>, val itemInputs : List<ItemInput>, val entries : WeightedParamList) {
     companion object {
-        fun getArrayFromJson(json : String) : Array<Recipe> {
+        fun getListFromJson(json : String) : List<Recipe> {
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)
                     .array<JsonObject>("Recipes")!!
             val list = mutableListOf<Recipe>()
@@ -30,7 +30,7 @@ data class Recipe(val id : String, val sender : String, val disabled : Boolean, 
                         )
                 )
             }
-            return list.toTypedArray()
+            return list
         }
     }
 }

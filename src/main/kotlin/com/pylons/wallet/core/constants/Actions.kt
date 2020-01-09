@@ -6,6 +6,7 @@ class Actions {
         const val WALLET_UI_TEST = "WALLET_UI_TEST"
         const val GET_PROFILE = "GET_PROFILE"
         const val GET_TRANSACTION = "GET_TRANSACTION"
+        const val GET_RECIPES = "GET_RECIPES"
         const val GET_PENDING_EXECUTIONS = "GET_PENDING_EXECUTIONS"
         const val NEW_PROFILE = "NEW_PROFILE"
         const val GET_PYLONS = "GET_PYLONS"

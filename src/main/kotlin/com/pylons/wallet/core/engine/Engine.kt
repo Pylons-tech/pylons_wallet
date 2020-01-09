@@ -260,10 +260,10 @@ internal abstract class Engine {
     /**
      * List recipes query
      */
-    abstract fun listRecipes () : Array<Recipe>
+    abstract fun listRecipes () : List<Recipe>
 
     /**
      * List cookbooks query
      */
-    abstract fun listCookbooks () : Array<Cookbook>
+    abstract fun listCookbooks () : List<Cookbook>
 }

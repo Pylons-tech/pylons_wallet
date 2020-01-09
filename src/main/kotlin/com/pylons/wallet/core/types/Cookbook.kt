@@ -15,7 +15,7 @@ data class Cookbook (
     val supportEmail : String
 ) {
     companion object {
-        fun getArrayFromJson(json : String) : Array<Cookbook> {
+        fun getListFromJson(json : String) : List<Cookbook> {
             val jsonArray =
                     (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Cookbooks")
             val list = mutableListOf<Cookbook>()
@@ -34,7 +34,7 @@ data class Cookbook (
                         )
                 )
             }
-            return list.toTypedArray()
+            return list
         }
     }
 }

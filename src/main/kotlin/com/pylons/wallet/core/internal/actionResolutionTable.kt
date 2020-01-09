@@ -20,6 +20,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             Actions.GET_PROFILE -> getProfile(msg)
             Actions.GET_PENDING_EXECUTIONS -> getPendingExecutions()
             Actions.GET_TRANSACTION -> getTransaction(msg)
+            Actions.GET_RECIPES -> getRecipes()
 
             // Dev
             Actions.WALLET_SERVICE_TEST -> devOnly(::walletServiceTest)

@@ -171,14 +171,14 @@ internal open class TxPylonsEngine : Engine() {
         )
     }
 
-    override fun listRecipes(): Array<Recipe> {
+    override fun listRecipes(): List<Recipe> {
         val json = HttpWire.get("$nodeUrl/pylons/list_recipe/${Core.userProfile!!.credentials.address}")
-        return Recipe.getArrayFromJson(json)
+        return Recipe.getListFromJson(json)
     }
 
-    override fun listCookbooks(): Array<Cookbook> {
+    override fun listCookbooks(): List<Cookbook> {
         val json = HttpWire.get("$nodeUrl/pylons/list_cookbooks/${Core.userProfile!!.credentials.address}")
-        return Cookbook.getArrayFromJson(json)
+        return Cookbook.getListFromJson(json)
     }
 
     override fun registerNewProfile(name : String): Transaction {
