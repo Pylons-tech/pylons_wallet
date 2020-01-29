@@ -26,9 +26,9 @@ data class Cookbook (
     companion object {
         fun getListFromJson(json : String) : List<Cookbook> {
             val jsonArray =
-                    (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Cookbooks")
+                    (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Cookbooks").orEmpty()
             val list = mutableListOf<Cookbook>()
-            for (i in jsonArray!!.indices) {
+            for (i in jsonArray.indices) {
                 val obj = jsonArray[i]
                 list.add(
                         Cookbook(

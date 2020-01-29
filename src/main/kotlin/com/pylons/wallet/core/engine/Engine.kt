@@ -69,7 +69,7 @@ internal abstract class Engine {
                       rTypes : List<Long>, toUpgrade : List<ItemUpgradeParams>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
-        for (i in 0..count) {
+        for (i in 0  until count) {
             txs.add(
                     createRecipe(
                             sender = sender,
@@ -102,7 +102,7 @@ internal abstract class Engine {
                         costsPerBlock : List<Long>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
-        for (i in 0..count) {
+        for (i in 0 until count) {
             txs.add(
                     createCookbook(
                             name = names[i],
@@ -211,7 +211,7 @@ internal abstract class Engine {
                         versions : List<String>, supportEmails: List<String>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
-        for (i in 0..count) {
+        for (i in 0  until count) {
             txs.add(
                     updateCookbook(
                             id = ids[i],
@@ -239,7 +239,7 @@ internal abstract class Engine {
                        entries : List<WeightedParamList>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
-        for (i in 0..count) {
+        for (i in 0  until count) {
             txs.add(
                     updateRecipe(
                             id = ids[i],
