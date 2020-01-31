@@ -7,7 +7,7 @@ import com.pylons.wallet.core.types.*
 
 internal fun getPylons(msg: MessageData): Response {
     checkValid(msg)
-    val tx = Core.getPylons(msg.ints[Keys.PYLONS]!!.toLong())
+    val tx = Core.getPylons(msg.longs[Keys.PYLONS]!!)
     waitUntilCommitted(tx.id!!)
     val outgoingMsg = MessageData(
             strings = mutableMapOf(
@@ -17,7 +17,7 @@ internal fun getPylons(msg: MessageData): Response {
     return Response(outgoingMsg, Status.OK_TO_RETURN_TO_CLIENT)}
 
 private fun checkValid (msg : MessageData) {
-    require(msg.ints.containsKey(Keys.PYLONS)) { throw BadMessageException("getPylons", Keys.PYLONS, "Int") }
+    require(msg.longs.containsKey(Keys.PYLONS)) { throw BadMessageException("getPylons", Keys.PYLONS, "Long") }
 }
 
 fun Core.getPylons (q : Long) : Transaction = engine.getPylons(q).submit()

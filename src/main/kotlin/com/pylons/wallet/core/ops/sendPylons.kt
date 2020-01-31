@@ -6,9 +6,9 @@ import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
 
 internal fun sendPylons(msg: MessageData): Response {
-    require (msg.longs.containsKey(Keys.PYLONS)) { throw BadMessageException("getPylons", Keys.PYLONS, "Int") }
+    require (msg.longs.containsKey(Keys.PYLONS)) { throw BadMessageException("getPylons", Keys.PYLONS, "Long") }
     require (msg.strings.containsKey(Keys.ADDRESS)) { throw BadMessageException("sendPylons", Keys.ADDRESS, "String") }
-    val pylons = msg.ints[Keys.PYLONS]!!.toLong()
+    val pylons = msg.longs[Keys.PYLONS]!!
     val address = msg.strings[Keys.ADDRESS]!!
     val tx = Core.sendPylons(pylons, address)
     waitUntilCommitted(tx.id!!)
