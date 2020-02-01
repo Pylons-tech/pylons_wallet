@@ -74,6 +74,10 @@ internal open class TxPylonsEngine : Engine() {
             if (code != null)
                 throw Exception("Node returned error code $code for message - " +
                         "${jsonObject.obj("raw_log")!!.string("message")}")
+            //exportDoubles.forEach { pair ->
+            //    val path = pair.key
+            //    jsonObject.
+            //}
             it.id = jsonObject.string("txhash")
         })
     }
@@ -204,7 +208,7 @@ internal open class TxPylonsEngine : Engine() {
     override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun createCookbook(name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
+    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
         throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
 

@@ -13,6 +13,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.internal.actionResolutionTable
 import com.pylons.wallet.core.types.*
 import org.junit.jupiter.api.MethodOrderer
+import kotlin.random.Random
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class ActionResolutionTableTest {
@@ -39,7 +40,9 @@ internal class ActionResolutionTableTest {
         val getPylonsMsg = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.GET_PYLONS),
                 longs = mutableMapOf(Keys.PYLONS to 90000L))
         val bCreateCookbookMsg = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.BATCH_CREATE_COOKBOOK),
-                stringArrays = mutableMapOf(Keys.NAME to mutableListOf("tst_cookbook_name"),
+                stringArrays = mutableMapOf(
+                        Keys.ID to mutableListOf("${Random.nextInt()}"),
+                        Keys.NAME to mutableListOf("tst_cookbook_name"),
                         Keys.DESCRIPTION to mutableListOf("addghjkllsdfdggdgjkkk"),
                         Keys.DEVELOPER to mutableListOf("asdfasdfasdf"),
                         Keys.VERSION to mutableListOf("1.0.0"),
@@ -47,5 +50,4 @@ internal class ActionResolutionTableTest {
                 longArrays = mutableMapOf(Keys.LEVEL to longArrayOf(0), Keys.COST_PER_BLOCK to longArrayOf(5)))
         basicMsgTestFlow(listOf(newPrfMsg, getPrfMsg, getPylonsMsg, getPrfMsg, bCreateCookbookMsg), listOf(null, null, null, null, null))
     }
-
 }

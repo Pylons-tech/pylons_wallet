@@ -25,12 +25,6 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             // Dev
             Actions.WALLET_SERVICE_TEST -> devOnly(::walletServiceTest)
             Actions.WALLET_UI_TEST -> devOnly{ requiresArgs(action, msg, extraArgs, ::walletUiTest) }
-            Actions.CREATE_COOKBOOK -> devOnly { createCookbook(msg) }
-            Actions.UPDATE_COOKBOOK -> devOnly { updateCookbook(msg) }
-            Actions.CREATE_RECIPE -> devOnly { createRecipe(msg) }
-            Actions.UPDATE_RECIPE -> devOnly { updateRecipe(msg) }
-            Actions.ENABLE_RECIPE -> devOnly { enableRecipe(msg) }
-            Actions.DISABLE_RECIPE -> devOnly { disableRecipe(msg) }
             Actions.BATCH_CREATE_COOKBOOK -> devOnly { batchCreateCookbook(msg) }
             Actions.BATCH_UPDATE_COOKBOOK -> devOnly { batchUpdateCookbook(msg) }
             Actions.BATCH_CREATE_RECIPE -> devOnly { batchCreateRecipe(msg) }

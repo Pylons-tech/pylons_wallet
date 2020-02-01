@@ -96,7 +96,7 @@ internal class TxPylonsDevEngineOnline {
     @Order(2)
     @Test
     fun createsCookbook () {
-        basicTxTestFlow { it.createCookbook("blyyah ${Random().nextInt()}", "tst",
+        basicTxTestFlow { it.createCookbook("${kotlin.random.Random.nextInt()}","blyyah ${Random().nextInt()}", "tst",
                 "this is a description for a test flow cookbook i guess",
                 "1.0.0", "fake@example.com", 0, 50) }
     }

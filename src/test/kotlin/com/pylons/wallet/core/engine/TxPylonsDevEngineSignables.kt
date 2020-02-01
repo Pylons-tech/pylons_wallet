@@ -66,7 +66,7 @@ internal class TxPylonsDevEngineSignables {
     fun createsCookbookSignable () {
         basicSignableTestFlow("create_cookbook") {
             createCookbookSignTemplate(
-                    "name", "SketchyCo", "this has to meet character limits lol", "1.0.0",
+                    "a","name", "SketchyCo", "this has to meet character limits lol", "1.0.0",
                     "example@example.com", 0, Core.userProfile!!.credentials.address, 50
             )
         }

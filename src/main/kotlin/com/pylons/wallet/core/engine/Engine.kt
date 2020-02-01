@@ -91,13 +91,13 @@ internal abstract class Engine {
     /**
      * Create-cookbook message
      */
-    abstract fun createCookbook (name : String, developer : String, description : String, version : String,
+    abstract fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
                                  supportEmail : String, level : Long, costPerBlock : Long) : Transaction
 
     /**
      * Batch create-cookbook message
      */
-    fun createCookbooks(names : List<String>, developers: List<String>, descriptions: List<String>,
+    fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
                         versions : List<String>, supportEmails: List<String>, levels : List<Long>,
                         costsPerBlock : List<Long>) : List<Transaction> {
         val count = names.size
@@ -105,6 +105,7 @@ internal abstract class Engine {
         for (i in 0 until count) {
             txs.add(
                     createCookbook(
+                            id = ids[i],
                             name = names[i],
                             developer = developers[i],
                             description = descriptions[i],
