@@ -2,6 +2,7 @@ package com.pylons.wallet.core.types
 
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
+import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.item.Item
 import com.pylons.wallet.core.types.item.serialize
 
@@ -27,6 +28,7 @@ data class Profile (
     companion object {
         fun fromUserData () : Profile? {
             val data = UserData.dataSets.getValue(Core.engine.prefix)
+            (Core.engine as TxPylonsEngine).cryptoHandler.importKeysFromUserData()
             val credentials = Core.engine.generateCredentialsFromKeys()
             return when (val name = data.getOrDefault("name", "")) {
                 "" -> Profile(credentials = credentials, provisional = true,

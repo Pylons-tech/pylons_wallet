@@ -23,7 +23,7 @@ internal class CryptoCosmos () : CryptoHandler() {
 
     override fun importKeysFromUserData() {
         println("Importing keys")
-        val bytes = Hex.decode(UserData.dataSets[getPrefix()]!!["key"]!!)
+        val bytes = Hex.decode(UserData.dataSets[getPrefix()]!!["key"]!!.removePrefix("0x"))
         keyPair =  SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(bytes)))
         println(getCompressedPubkey(keyPair!!.publicKey()).toHexString())
     }
