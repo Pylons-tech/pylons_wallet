@@ -20,7 +20,9 @@ internal fun batchCreateRecipe (msg: MessageData) : Response {
             blockIntervals = msg.longArrays[Keys.BLOCK_INTERVAL]!!.toList(),
             coinInputs = msg.stringArrays[Keys.COIN_INPUTS]!!,
             itemInputs = msg.stringArrays[Keys.ITEM_INPUTS]!!,
-            outputTables = msg.stringArrays[Keys.OUTPUT_TABLES]!!
+            outputTables = msg.stringArrays[Keys.OUTPUT_TABLES]!!,
+            rTypes = msg.longArrays[Keys.RECIPE_TYPE]!!.toList(),
+            upgradeParams = msg.stringArrays[Keys.UPGRADE_PARAM]!!
     )
     val txList = mutableListOf<String>()
     txs.forEach {
@@ -43,24 +45,21 @@ private fun checkValid (msg : MessageData) {
     require(msg.stringArrays.containsKey(Keys.COIN_INPUTS)) { throw BadMessageException("batchCreateRecipe", Keys.COIN_INPUTS, "StringArray") }
     require(msg.stringArrays.containsKey(Keys.ITEM_INPUTS)) { throw BadMessageException("batchCreateRecipe", Keys.ITEM_INPUTS, "StringArray") }
     require(msg.stringArrays.containsKey(Keys.OUTPUT_TABLES)) { throw BadMessageException("batchCreateRecipe", Keys.OUTPUT_TABLES, "StringArray") }
+    require(msg.longArrays.containsKey(Keys.RECIPE_TYPE)) { throw BadMessageException("batchCreateRecipe", Keys.RECIPE_TYPE, "LongArray") }
+    require(msg.stringArrays.containsKey(Keys.UPGRADE_PARAM)) { throw BadMessageException("batchCreateRecipe", Keys.UPGRADE_PARAM, "StringArray") }
 }
 
 fun Core.batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                             blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                            outputTables : List<String>) : List<Transaction> {
+                            outputTables : List<String>, rTypes : List<Long>, upgradeParams: List<String>) : List<Transaction> {
     val mItemInputs = mutableListOf<List<ItemInput>>()
     itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
     val mCoinInputs = mutableListOf<List<CoinInput>>()
     coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
     val mOutputTables = mutableListOf<WeightedParamList>()
     outputTables.forEach { mOutputTables.add(WeightedParamList.fromJson(klaxon.parse<JsonObject>(it))!!) }
-    // TODO: implement these properly
-    val rTypes = mutableListOf<Long>()
-    val toUpgrade = mutableListOf<ItemUpgradeParams>()
-    for (i in 0..names.size) {
-        rTypes[i] = 0
-        toUpgrade[i] = ItemUpgradeParams(listOf(), listOf(), listOf())
-    }
+    val mUpgradeParams = mutableListOf<ItemUpgradeParams>()
+    upgradeParams.forEach { mUpgradeParams.add(ItemUpgradeParams.fromJson(klaxon.parse<JsonObject>(it)!!)) }
     val txs =  engine.createRecipes(
             sender = userProfile!!.credentials.address,
             names = names,
@@ -71,7 +70,7 @@ fun Core.batchCreateRecipe (names : List<String>, cookbooks : List<String>, desc
             itemInputs = mItemInputs,
             entries = mOutputTables,
             rTypes = rTypes,
-            toUpgrade = toUpgrade
+            toUpgrade = mUpgradeParams
     ).toMutableList()
     txs.indices.forEach { txs[it] = txs[it].submit() }
     return txs

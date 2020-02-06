@@ -29,7 +29,8 @@ class Keys {
         const val OUTPUT_TABLES = "OUTPUT_TABLES"
         const val BLOCK_INTERVAL = "BLOCK_INTERVAL"
         const val ID = "ID"
-
+        const val RECIPE_TYPE = "RECIPE_TYPE"
+        const val UPGRADE_PARAM = "UPGRADE_PARAM"
         const val COINS = "coins"
         const val ERROR = "error"
         const val ERROR_CODE = "errorCode"
