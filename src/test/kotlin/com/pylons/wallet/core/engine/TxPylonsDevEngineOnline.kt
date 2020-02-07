@@ -106,6 +106,7 @@ internal class TxPylonsDevEngineOnline {
     fun getsCookbooks () {
         var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         var a = engine.listCookbooks()
+        assert(a.isNotEmpty())
     }
 
     @Order(4)

@@ -72,7 +72,8 @@ object Core {
 
     fun forceKeys (keyString : String, address : String) {
         val engine = engine as TxPylonsEngine
-        engine.cryptoHandler.keyPair = SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(keyString))))
+        engine.cryptoCosmos.keyPair =
+                SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(keyString))))
         userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf(), mutableListOf())
     }
 

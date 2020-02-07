@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
+import com.pylons.wallet.core.engine.crypto.CryptoNull
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.tx.recipe.*
@@ -13,7 +14,7 @@ import com.pylons.wallet.core.types.tx.recipe.*
 internal class NoEngine : Engine() {
     override val prefix: String = "__NOENGINE__"
     override val backendType: Backend = Backend.NONE
-    override val usesCrypto: Boolean = false
+    override var cryptoHandler: CryptoHandler = CryptoNull()
     override val usesMnemonic: Boolean = false
     override val isDevEngine: Boolean = false
     override val isOffLineEngine: Boolean = false

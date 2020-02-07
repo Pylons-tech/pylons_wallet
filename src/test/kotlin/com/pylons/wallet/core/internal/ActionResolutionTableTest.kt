@@ -49,6 +49,6 @@ internal class ActionResolutionTableTest {
                         Keys.SUPPORT_EMAIL to mutableListOf("a@example.com")),
                 longArrays = mutableMapOf(Keys.LEVEL to longArrayOf(0), Keys.COST_PER_BLOCK to longArrayOf(5)))
         basicMsgTestFlow(listOf(newPrfMsg, getPrfMsg, getPylonsMsg, getPrfMsg, bCreateCookbookMsg), listOf(null, null, null, null, null))
-        println("privkey:\n${(Core.engine as TxPylonsDevEngine).cryptoHandler.keyPair!!.secretKey().bytes().toHexString()}")
+        println("privkey:\n${(Core.engine as TxPylonsDevEngine).cryptoCosmos.keyPair!!.secretKey().bytes().toHexString()}")
     }
 }

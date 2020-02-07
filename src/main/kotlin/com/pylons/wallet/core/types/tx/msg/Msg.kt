@@ -143,7 +143,7 @@ data class CreateRecipe (
 
     fun toSignedTx () : String {
         val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
-        val crypto = (Core.engine as TxPylonsEngine).cryptoHandler
+        val crypto = (Core.engine as TxPylonsEngine).cryptoCosmos
         return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
     }
 
@@ -334,7 +334,7 @@ data class UpdateRecipe (
 
     fun toSignedTx () : String {
         val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
-        val crypto = (Core.engine as TxPylonsEngine).cryptoHandler
+        val crypto = (Core.engine as TxPylonsEngine).cryptoCosmos
         return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
     }
 

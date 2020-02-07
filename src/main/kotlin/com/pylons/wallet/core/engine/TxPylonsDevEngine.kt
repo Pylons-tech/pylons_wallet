@@ -12,7 +12,7 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
 
     override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
             basicTxHandlerFlow { createCookbook(id, name, developer, description, version, supportEmail, level, it.address,
-                    cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence, costPerBlock) }
+                    cryptoCosmos.keyPair!!.publicKey(), it.accountNumber, it.sequence, costPerBlock) }
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList,
@@ -20,16 +20,16 @@ internal class TxPylonsDevEngine : TxPylonsEngine () {
     basicTxHandlerFlow { CreateRecipe(blockInterval, coinInputs, cookbookId, description, entries, itemInputs, name, sender, rType, toUpgrade).toSignedTx() }
 
     override fun disableRecipe(id: String): Transaction =
-            basicTxHandlerFlow { disableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),
+            basicTxHandlerFlow { disableRecipe(id, it.address, cryptoCosmos.keyPair!!.publicKey(),
                     it.accountNumber, it.sequence) }
 
     override fun enableRecipe(id: String): Transaction =
-            basicTxHandlerFlow { enableRecipe(id, it.address, cryptoHandler.keyPair!!.publicKey(),
+            basicTxHandlerFlow { enableRecipe(id, it.address, cryptoCosmos.keyPair!!.publicKey(),
                     it.accountNumber, it.sequence) }
 
     override fun updateCookbook(id : String, developer: String, description: String, version: String, supportEmail: String): Transaction =
             basicTxHandlerFlow { updateCookbook(id, developer, description, version, supportEmail, it.address,
-                    cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
+                    cryptoCosmos.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList): Transaction =

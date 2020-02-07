@@ -15,10 +15,10 @@ import com.pylons.wallet.core.types.tx.recipe.*
 internal abstract class Engine {
     abstract val prefix : String
     abstract val backendType : Backend
-    abstract val usesCrypto : Boolean
     abstract val usesMnemonic : Boolean
     abstract val isDevEngine : Boolean
     abstract val isOffLineEngine : Boolean
+    abstract var cryptoHandler : CryptoHandler
 
     /**
      * Enable-recipe message

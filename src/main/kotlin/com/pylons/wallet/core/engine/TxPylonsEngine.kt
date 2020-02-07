@@ -30,13 +30,11 @@ internal open class TxPylonsEngine : Engine() {
 
     override val prefix : String = "__TXPYLONSALPHA__"
     override val backendType: Backend = Backend.LIVE
-    override val usesCrypto: Boolean = true
     override val usesMnemonic: Boolean = true
     override val isDevEngine: Boolean = false
     override val isOffLineEngine: Boolean = false
-    var cryptoHandler = CryptoCosmos()
-    //internal val GIRISH_TEST_NODE_IP = """http://35.224.155.76:80"""
-    //internal val MICHEAL_TEST_NODE_IP = """http://35.238.123.59:80"""
+    override var cryptoHandler: CryptoHandler = CryptoCosmos()
+    val cryptoCosmos get() = cryptoHandler as CryptoCosmos
     private val local = """http://127.0.0.1:1317"""
     internal val nodeUrl = getUrl()
 
@@ -74,10 +72,7 @@ internal open class TxPylonsEngine : Engine() {
             if (code != null)
                 throw Exception("Node returned error code $code for message - " +
                         "${jsonObject.obj("raw_log")!!.string("message")}")
-            //exportDoubles.forEach { pair ->
-            //    val path = pair.key
-            //    jsonObject.
-            //}
+            // TODO: we should be doing smth else w/ this jsonobject?
             it.id = jsonObject.string("txhash")
         })
     }
@@ -94,17 +89,18 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun applyRecipe(id: String, itemIds : Array<String>): Transaction =
             basicTxHandlerFlow { executeRecipe(id, itemIds, Core.userProfile!!.credentials.address,
-                    cryptoHandler.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
+                    cryptoCosmos.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
-        UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoHandler.keyPair!!.secretKey().bytes().toHexString()
+        UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes().toHexString()
         println("Dumped credentials")
     }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
-        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
+        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
+                Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoCosmos.keyPair!!.publicKey()).toArray()))
         val addrString = klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
         return Credentials(addrString)
     }
@@ -130,7 +126,8 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun getNewCredentials(): Profile.Credentials {
         cryptoHandler.generateNewKeys()
-        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/${Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoHandler.keyPair!!.publicKey()).toArray())}")
+        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
+                Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoCosmos.keyPair!!.publicKey()).toArray()))
         val addrString = klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
         return Credentials(addrString)
     }
@@ -155,7 +152,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun getPylons(q: Long): Transaction =
-            basicTxHandlerFlow { getPylons(q, it.address, cryptoHandler.keyPair!!.publicKey(),
+            basicTxHandlerFlow { getPylons(q, it.address, cryptoCosmos.keyPair!!.publicKey(),
                     it.accountNumber, it.sequence) }
 
     override fun getStatusBlock(): StatusBlock {
@@ -192,7 +189,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun sendPylons(q: Long, receiver: String): Transaction =
-        basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoHandler.keyPair!!.publicKey(),
+        basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoCosmos.keyPair!!.publicKey(),
                 it.accountNumber, it.sequence) }
 
     // Unimplemented engine method stubs

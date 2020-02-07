@@ -62,7 +62,7 @@ internal class TxPylonsDevEngineOffline {
     fun addressFromPubkey() {
         val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
         engine.getOwnBalances()
-        val pubkey = engine.cryptoHandler.keyPair!!.publicKey()
+        val pubkey = engine.cryptoCosmos.keyPair!!.publicKey()
         val addr = CryptoCosmos.getAddressFromPubkey(pubkey.bytes())
         assertEquals(Core.userProfile!!.credentials.address, TxPylonsEngine.getAddressString(addr.toArray()))
     }
@@ -81,9 +81,9 @@ internal class TxPylonsDevEngineOffline {
         val data = Bytes.wrap("This is an example of a signed message.".toByteArray(Charsets.UTF_8))
         println("signing: \n" + data.toHexString())
         val engine = engineSetup(InternalPrivKeyStore.TUWENI_FIXTURES_SECRET)
-        val signature = SECP256K1.sign(data, engine.cryptoHandler.keyPair)
+        val signature = SECP256K1.sign(data, engine.cryptoCosmos.keyPair)
         println("signature : \n" + Hex.toHexString(signature.bytes().toArray().slice(0 until 64).toByteArray()))
-        assertTrue(SECP256K1.verify(data, signature, engine.cryptoHandler.keyPair!!.publicKey()))
+        assertTrue(SECP256K1.verify(data, signature, engine.cryptoCosmos.keyPair!!.publicKey()))
     }
 
     @Test
@@ -127,7 +127,7 @@ internal class TxPylonsDevEngineOffline {
         }
         """.trimIndent().replace(" ", "")
         val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
-        val json = getPylons(500, "DUMMYADDR", engine.cryptoHandler.keyPair!!.publicKey(), 4, 0)
+        val json = getPylons(500, "DUMMYADDR", engine.cryptoCosmos.keyPair!!.publicKey(), 4, 0)
         assertEquals(fixture, json.trimIndent().replace(" ", ""))
     }
 }
