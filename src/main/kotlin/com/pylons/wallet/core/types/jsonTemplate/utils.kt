@@ -36,7 +36,7 @@ internal fun baseTxTemplate (msg : String, pubkey : String, signature : String) 
     
                 "fee": {
                 "amount": null,
-                "gas": "200000"
+                "gas": "20000000"
             },
                 "signatures": [
                 {

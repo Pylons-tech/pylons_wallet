@@ -14,6 +14,6 @@ internal fun wipeUserData () : Response {
 }
 
 fun Core.wipeUserData () {
-    Core.tearDown()
-    Core.onWipeUserData?.invoke()
+    tearDown()
+    onWipeUserData?.invoke()
 }

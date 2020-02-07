@@ -42,6 +42,7 @@ data class Transaction(
     fun detailsToMessageData() : MessageData {
         // TODO: use stdtx lol
         val msg = MessageData()
+        msg.strings[Keys.INFO] = "Transaction.detailsToMessageData is stubbed!!! Write this shit"
 //        msg.strings["txId"] = txId
 //        msg.strings[Keys.otherProfileId] = addressOut
 //        msg.strings[Keys.coinsIn] = coinsIn.serialize()

@@ -17,6 +17,9 @@
       <element id="library" level="project" name="com.google.guava:guava:27.1-jre" />
       <element id="library" level="project" name="org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1" />
       <element id="file-copy" path="$PROJECT_DIR$/lib/klaxon-5.2.jar" />
+      <element id="library" level="project" name="tuweni-io-0.8.0-SNAPSHOT" />
+      <element id="library" level="project" name="com.github.alanverbner:bip39_2.12:1.0" />
+      <element id="library" level="project" name="org.nightcode:jbip39:0.1" />
     </root>
   </artifact>
 </component>

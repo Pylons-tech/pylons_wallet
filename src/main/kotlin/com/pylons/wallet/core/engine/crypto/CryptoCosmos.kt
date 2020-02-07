@@ -12,7 +12,7 @@ import org.bouncycastle.util.encoders.Hex
 import java.security.MessageDigest
 
 
-internal class CryptoCosmos () : CryptoHandler() {
+internal class CryptoCosmos : CryptoHandler() {
     override fun getPrefix() : String = "__CRYPTO_COSMOS__"
 //    private val adapter = Moshi.Builder().build().adapter<SECP256K1.KeyPair>(SECP256K1.KeyPair::class.java)
     var keyPair : SECP256K1.KeyPair? = null
@@ -45,7 +45,7 @@ internal class CryptoCosmos () : CryptoHandler() {
     companion object {
 
         fun getUncompressedPubkey (bytes : ByteArray) : SECP256K1.PublicKey {
-            val SPEC = ECNamedCurveTable.getParameterSpec("secp256k1");
+            val SPEC = ECNamedCurveTable.getParameterSpec("secp256k1")
             val point = SPEC.curve.decodePoint(bytes)
             val x = point.xCoord.encoded
             val y = point.yCoord.encoded

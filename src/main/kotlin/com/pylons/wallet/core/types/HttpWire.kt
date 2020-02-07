@@ -14,6 +14,7 @@ object HttpWire {
     private const val RETRY_DELAY = 1000.toLong()
 
     fun get (url : String) : String {
+        println(url)
         var retryCount = 0
         while (true) {
             with(URL(url).openConnection() as HttpURLConnection) {
@@ -48,13 +49,14 @@ object HttpWire {
 
     fun post (url : String, input : String) : String {
         println(input)
+        println(url)
         var retryCount = 0
         while (true) {
             with(URL(url).openConnection() as HttpURLConnection) {
                 try {
                     doOutput = true
                     requestMethod = "POST"
-                    val wr = OutputStreamWriter(outputStream);
+                    val wr = OutputStreamWriter(outputStream)
                     wr.write(input)
                     wr.flush()
                     BufferedReader(InputStreamReader(inputStream)).use {
