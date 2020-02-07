@@ -184,7 +184,7 @@ internal open class TxPylonsEngine : Engine() {
 
     override fun registerNewProfile(name : String): Transaction {
         cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(credentials = getNewCredentials(), coins = listOf(), items = mutableListOf(), strings = mutableMapOf())
+        Core.userProfile = Profile(credentials = getNewCredentials(), coins = listOf(), strings = mutableMapOf())
         return getPylons(500)
     }
 

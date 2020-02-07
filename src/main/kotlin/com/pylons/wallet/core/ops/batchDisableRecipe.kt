@@ -1,15 +1,9 @@
 package com.pylons.wallet.core.ops
 
-import com.beust.klaxon.JsonArray
-import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.recipe.CoinInput
-import com.pylons.wallet.core.types.tx.recipe.ItemInput
-import com.pylons.wallet.core.types.tx.recipe.ItemUpgradeParams
-import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
 
 internal fun batchDisableRecipe (msg: MessageData) : Response {
     checkValid(msg)

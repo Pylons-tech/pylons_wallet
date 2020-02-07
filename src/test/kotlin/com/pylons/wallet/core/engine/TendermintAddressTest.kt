@@ -3,13 +3,9 @@ package com.pylons.wallet.core.engine
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
-import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.crypto.SECP256K1
-import org.bouncycastle.jcajce.provider.symmetric.ARC4
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import java.security.Provider
 
 internal class TendermintAddressTest {
     private val dsPrivate = "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330"
@@ -19,7 +15,7 @@ internal class TendermintAddressTest {
     @Test
     fun generatesAddress () {
         java.security.Security.addProvider(BouncyCastleProvider())
-        System.out.println("registered")
+        println("registered")
         val privateKey = SECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(dsPrivate))
         val keyPair = SECP256K1.KeyPair.create(privateKey, SECP256K1.PublicKey.fromSecretKey(privateKey))
         fail<Exception>("Update this test")

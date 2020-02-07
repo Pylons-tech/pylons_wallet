@@ -44,8 +44,8 @@ internal class CryptoCosmos : CryptoHandler() {
     companion object {
 
         fun getUncompressedPubkey (bytes : ByteArray) : SECP256K1.PublicKey {
-            val SPEC = ECNamedCurveTable.getParameterSpec("secp256k1")
-            val point = SPEC.curve.decodePoint(bytes)
+            val spec = ECNamedCurveTable.getParameterSpec("secp256k1")
+            val point = spec.curve.decodePoint(bytes)
             val x = point.xCoord.encoded
             val y = point.yCoord.encoded
             // concat 0x04, x, and y, make sure x and y has 32-bytes:
@@ -54,7 +54,7 @@ internal class CryptoCosmos : CryptoHandler() {
 
         fun getCompressedPubkey (key: SECP256K1.PublicKey) : Bytes {
             val ecPoint = key.asEcPoint()
-            var xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()
+            val xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()
             val yStr = ecPoint.yCoord.toBigInteger().toString()
             val xStr = ecPoint.xCoord.toBigInteger().toString()
             println("$xStr $yStr")
@@ -62,7 +62,7 @@ internal class CryptoCosmos : CryptoHandler() {
                 true -> 0x02
                 false -> 0x03
             }
-            var bytes = MutableBytes.wrap(ByteArray(33))
+            val bytes = MutableBytes.wrap(ByteArray(33))
             bytes[0] = prefix.toByte()
             xBytes.copyTo(bytes, 1)
             println(bytes.toHexString())

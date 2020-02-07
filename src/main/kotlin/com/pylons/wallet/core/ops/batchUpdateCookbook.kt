@@ -39,7 +39,7 @@ private fun checkValid (msg : MessageData) {
 
 fun Core.batchUpdateCookbook (names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
                               supportEmails : List<String>, ids : List<String>) : List<Transaction> {
-    var txs = engine.updateCookbooks(
+    val txs = engine.updateCookbooks(
             ids = ids,
             names = names,
             developers = developers,

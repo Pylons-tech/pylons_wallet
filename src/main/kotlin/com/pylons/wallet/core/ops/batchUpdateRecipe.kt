@@ -8,7 +8,6 @@ import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
-import com.pylons.wallet.core.types.tx.recipe.ItemUpgradeParams
 import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
 
 internal fun batchUpdateRecipe (msg: MessageData) : Response {

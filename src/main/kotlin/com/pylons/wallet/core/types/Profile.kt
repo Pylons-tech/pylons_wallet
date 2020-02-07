@@ -3,8 +3,6 @@ package com.pylons.wallet.core.types
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.engine.TxPylonsEngine
-import com.pylons.wallet.core.types.item.Item
-import com.pylons.wallet.core.types.item.serialize
 
 /**
  * Internal state representation of the user's own userProfile.
@@ -13,7 +11,6 @@ data class Profile (
         var credentials: Credentials,
         val strings : MutableMap<String, String>,
         var coins : List<Coin>,
-        val items : MutableList<Item>,
         /**
          * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
          * from the network.
@@ -32,9 +29,9 @@ data class Profile (
             val credentials = Core.engine.generateCredentialsFromKeys()
             return when (val name = data.getOrDefault("name", "")) {
                 "" -> Profile(credentials = credentials, provisional = true,
-                        coins = listOf(), strings = mutableMapOf(), items = mutableListOf())
+                        coins = listOf(), strings = mutableMapOf())
                 else -> Profile(credentials = credentials, strings = mutableMapOf(ReservedKeys.profileName to name),
-                        provisional = true, coins = listOf(), items = mutableListOf())
+                        provisional = true, coins = listOf())
             }
         }
     }
@@ -49,7 +46,7 @@ data class Profile (
         msg.strings[Keys.ADDRESS]
         credentials.dumpToMessageData(msg)
         coins.serializeCoinsToMessageData(msg)
-        msg.stringArrays[Keys.ITEMS] = items.serialize()
+        msg.stringArrays[Keys.ITEMS] = mutableListOf()
         return msg
     }
 

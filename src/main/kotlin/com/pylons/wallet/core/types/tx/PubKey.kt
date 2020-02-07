@@ -1,9 +1,7 @@
 package com.pylons.wallet.core.types.tx
 
 import com.beust.klaxon.Json
-import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.pylons.wallet.core.types.klaxon
 
 data class PubKey(
         @property:[Json(name = "type")]

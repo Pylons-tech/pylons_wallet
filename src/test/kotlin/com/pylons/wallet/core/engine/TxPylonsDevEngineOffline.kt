@@ -24,24 +24,8 @@ internal class TxPylonsDevEngineOffline {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), mutableListOf())
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf())
         return engine
-    }
-
-    private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine,  String) -> Unit)?) {
-        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
-        println("getting profile state...")
-        engine.getOwnBalances()
-        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        println("submitting tx...")
-        val tx = txFun(engine).submit()
-        println("Waiting 5 seconds to allow chain to catch up")
-        Thread.sleep(5000)
-        engine.getOwnBalances()
-        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-        assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
-        println("ok!")
-        followUp?.invoke(engine, tx.id!!)
     }
 
     @Test

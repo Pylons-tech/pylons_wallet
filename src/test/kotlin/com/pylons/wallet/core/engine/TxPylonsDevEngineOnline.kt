@@ -42,7 +42,7 @@ internal class TxPylonsDevEngineOnline {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), mutableListOf())
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf())
         return engine
     }
 
@@ -60,7 +60,7 @@ internal class TxPylonsDevEngineOnline {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         println("getting profile state...")
         engine.getOwnBalances()
-        var oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
+        val oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
         println("building tx...")
         val tx = txFun(engine)
         println("submitting tx...")
@@ -104,8 +104,8 @@ internal class TxPylonsDevEngineOnline {
     @Order(3)
     @Test
     fun getsCookbooks () {
-        var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
-        var a = engine.listCookbooks()
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        val a = engine.listCookbooks()
         assert(a.isNotEmpty())
     }
 
@@ -132,14 +132,14 @@ internal class TxPylonsDevEngineOnline {
     @Order(6)
     @Test
     fun getsRecipes () {
-        var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.listRecipes()
     }
 
     @Order(7)
     @Test
     fun getsExecutions () {
-        var engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.getPendingExecutions()
     }
 

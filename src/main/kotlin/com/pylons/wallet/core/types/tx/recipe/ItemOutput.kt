@@ -17,9 +17,9 @@ data class ItemOutput(
         companion object {
                 fun fromJson (jsonObject: JsonObject) : ItemOutput =
                         ItemOutput (
-                                doubles = DoubleParam.listFromJson(jsonObject.array<JsonObject>("Doubles")),
-                                longs = LongParam.listFromJson(jsonObject.array<JsonObject>("Long")),
-                                strings = StringParam.listFromJson(jsonObject.array<JsonObject>("Strings")),
+                                doubles = DoubleParam.listFromJson(jsonObject.array("Doubles")),
+                                longs = LongParam.listFromJson(jsonObject.array("Long")),
+                                strings = StringParam.listFromJson(jsonObject.array("Strings")),
                                 weight = jsonObject.int("Weight")!!
                         )
 

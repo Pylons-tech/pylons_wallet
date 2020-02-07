@@ -1,7 +1,6 @@
 package com.pylons.wallet.core.types
 
 import org.bitcoinj.core.AddressFormatException
-import com.pylons.wallet.core.types.Bech32CosmosExtensions
 
 internal class Bech32Cosmos {
     class Bech32Data(
@@ -107,7 +106,7 @@ internal class Bech32Cosmos {
             sb.append(hrp)
             sb.append('1')
             for (b in combined) {
-                sb.append(CHARSET.get(b.toInt()))
+                sb.append(CHARSET[b.toInt()])
             }
             return sb.toString()
         }

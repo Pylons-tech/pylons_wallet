@@ -1,10 +1,7 @@
 package com.pylons.wallet.core.types
 
-import org.bouncycastle.jcajce.provider.asymmetric.edec.KeyPairGeneratorSpi
-import org.bouncycastle.math.ec.rfc8032.Ed25519
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import java.security.KeyPair
 import java.security.KeyPairGenerator
 
 internal class AccAddressTest {

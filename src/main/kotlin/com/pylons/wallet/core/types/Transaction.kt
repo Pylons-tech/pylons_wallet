@@ -1,10 +1,7 @@
 package com.pylons.wallet.core.types
 
-import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.tx.StdTx
-import java.lang.NullPointerException
-
 
 data class Transaction(
         val stdTx: StdTx? = null,

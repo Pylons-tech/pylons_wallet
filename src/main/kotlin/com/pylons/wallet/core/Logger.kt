@@ -16,7 +16,7 @@ open class Logger {
     }
 
     open fun log (msg : String, tag : String) {
-        System.out.println(getLogLine(msg, tag))
+        println(getLogLine(msg, tag))
     }
 
     fun getLogLine (msg : String, tag : String) : String {

@@ -18,7 +18,7 @@ internal class TxPylonsDevEngineSignables {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), mutableListOf())
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf())
         return engine
     }
 

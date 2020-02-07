@@ -1,7 +1,6 @@
 package com.pylons.wallet.core.types.tx.recipe
 
 import com.beust.klaxon.Json
-import java.io.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 

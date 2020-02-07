@@ -74,7 +74,7 @@ object Core {
         val engine = engine as TxPylonsEngine
         engine.cryptoCosmos.keyPair =
                 SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(keyString))))
-        userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf(), mutableListOf())
+        userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf())
     }
 
     fun dumpUserProfile () : String = userProfile!!.dump()
@@ -96,7 +96,7 @@ object Core {
             } catch (e : Exception) { // Eventually: we should recover properly from bad data
                 Logger.implementation.log(LogTag.info, "Saved data was bad; generating new credentials." +
                         "(This behavior should not exist in production)")
-                Logger.implementation.log(e.stackTrace.contentDeepToString(), LogTag.info)
+                Logger.implementation.log(e.stackTrace!!.contentDeepToString(), LogTag.info)
                 Logger.implementation.log(e.message.orEmpty(), LogTag.info)
                 UserData.dataSets = engine.getInitialDataSets()
                 userProfile = null
@@ -113,8 +113,6 @@ object Core {
     }
 
     private class MessageWithCallback (val msg : MessageData, val callback: ((Response?) -> Unit)?)
-
-    private val messageResolutionQueue : LinkedBlockingQueue<MessageWithCallback> = LinkedBlockingQueue<MessageWithCallback>()
     private var inDoResolveMessage = false
 
     var onCompletedOperation : (() -> Unit)? = null

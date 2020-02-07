@@ -16,8 +16,7 @@ internal fun newProfile (msg : MessageData) : Response {
                     credentials =  c,
                     strings = mutableMapOf(ReservedKeys.profileName to msg.strings[Keys.NAME]!!),
                     provisional = true,
-                    coins = listOf(),
-                    items = mutableListOf()
+                    coins = listOf()
             )
     )
     // Give the supplied arguments to the core and run newprofile command, then wait on tx commit

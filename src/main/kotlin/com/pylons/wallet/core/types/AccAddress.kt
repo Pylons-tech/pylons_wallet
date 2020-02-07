@@ -90,8 +90,7 @@ class AccAddress (val bytes : ByteArray = byteArrayOf()) {
          */
         fun getAccPubKeyBech32Ed25519(pubkey : String) : ByteArray {
             val bz = getFromBech32(pubkey, bech32PrefixAccPub)
-            val pk = AminoCompat.stripPrefixBytes(bz)
-            return pk
+            return AminoCompat.stripPrefixBytes(bz)
         }
 
         /**
@@ -102,18 +101,18 @@ class AccAddress (val bytes : ByteArray = byteArrayOf()) {
          */
         fun getAccPubKeyBech32Secp256k1(pubkey : String) : ByteArray {
             val bz = getFromBech32(pubkey, bech32PrefixAccPub)
-            val pk = AminoCompat.stripPrefixBytes(bz)
-            return pk
+            return AminoCompat.stripPrefixBytes(bz)
         }
     }
 
     /**
      * Returns boolean for whether two AccAddresses are Equal
      */
-    fun equals(aa2 : AccAddress) : Boolean {
+    override fun equals(other : Any?) : Boolean {
+        val aa2 = other as AccAddress? ?: return false
         return when (empty() && aa2.empty()) {
             true -> true
-            false -> bytes.contentEquals(aa2.bytes)
+            false -> bytes.contentEquals(aa2!!.bytes)
         }
     }
 

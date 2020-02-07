@@ -45,7 +45,7 @@ private fun checkValid (msg : MessageData) {
 
 fun Core.batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
                               supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction> {
-    var txs = engine.createCookbooks(
+    val txs = engine.createCookbooks(
             ids = ids,
             names = names,
             developers = developers,

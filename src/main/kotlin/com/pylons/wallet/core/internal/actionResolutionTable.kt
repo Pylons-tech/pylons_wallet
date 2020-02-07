@@ -37,7 +37,7 @@ internal fun actionResolutionTable (action : String, msg : MessageData, extraArg
             else -> unrecognizedAction(action)
         }
     } catch (e : Exception) {
-        var msg = MessageData()
+        val msg = MessageData()
         msg.strings[Keys.EXCEPTION] = e::class.qualifiedName.toString()
         msg.strings[Keys.MESSAGE] = e.message.orEmpty()
         msg.strings[Keys.STACK_TRACE] = e.stackTrace!!.contentToString()

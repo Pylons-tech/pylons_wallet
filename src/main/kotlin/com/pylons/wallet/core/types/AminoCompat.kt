@@ -1,9 +1,7 @@
 package com.pylons.wallet.core.types
 
-import org.apache.tuweni.crypto.sodium.SHA256Hash
 import org.bouncycastle.jcajce.provider.digest.SHA256
 import org.bouncycastle.util.encoders.Hex
-import java.nio.charset.Charset
 
 class AminoCompat {
     companion object {
