@@ -58,6 +58,7 @@ internal class TxPylonsDevEngineOnline {
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine,  String) -> Unit)?) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        println("pubkey: ${CryptoCosmos.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
         println("getting profile state...")
         engine.getOwnBalances()
         val oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence

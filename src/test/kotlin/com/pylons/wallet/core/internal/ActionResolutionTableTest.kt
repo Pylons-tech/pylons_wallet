@@ -12,6 +12,7 @@ import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
 import org.junit.jupiter.api.MethodOrderer
+import java.util.*
 import kotlin.random.Random
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -24,6 +25,7 @@ internal class ActionResolutionTableTest {
             val msg = msgs[i]
             val func = followUp[i]
             val action = msg.getAction()!!
+            println("pubkey: ${engine.cryptoCosmos.keyPair?.publicKey()?.toHexString()}")
             println("submitting msg w/ action $action")
             val r = actionResolutionTable(action, msg)
             println("${Core.userProfile?.credentials?.address}")
@@ -40,7 +42,7 @@ internal class ActionResolutionTableTest {
                 longs = mutableMapOf(Keys.PYLONS to 90000L))
         val bCreateCookbookMsg = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.BATCH_CREATE_COOKBOOK),
                 stringArrays = mutableMapOf(
-                        Keys.ID to mutableListOf("${Random.nextInt()}"),
+                        Keys.ID to mutableListOf(Calendar.getInstance().time.toInstant().toString()),
                         Keys.NAME to mutableListOf("tst_cookbook_name"),
                         Keys.DESCRIPTION to mutableListOf("addghjkllsdfdggdgjkkk"),
                         Keys.DEVELOPER to mutableListOf("asdfasdfasdf"),
