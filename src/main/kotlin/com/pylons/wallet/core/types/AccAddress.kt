@@ -1,10 +1,17 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.engine.TxPylonsEngine
+import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import org.bouncycastle.util.encoders.Hex
 
 class AccAddress (val bytes : ByteArray = byteArrayOf()) {
-
     companion object {
+        fun getAddressFromNode (nodeUrl : String, keyPair: SECP256K1.KeyPair) : String {
+            val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
+                    Hex.toHexString(CryptoCosmos.getCompressedPubkey(keyPair.publicKey()).toArray()))
+            return klaxon.parse<TxPylonsEngine.AddressResponse>(json)!!.Bech32Addr!!
+        }
+
         // AddrLen defines a valid address length
         const val addrLen = 20
         // Bech32PrefixAccAddr defines the Bech32 prefix of an account's address

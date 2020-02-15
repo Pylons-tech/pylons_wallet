@@ -99,9 +99,7 @@ internal open class TxPylonsEngine : Engine() {
     }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
-        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
-                Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoCosmos.keyPair!!.publicKey()).toArray()))
-        val addrString = klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
+        val addrString = AccAddress.getAddressFromNode(nodeUrl, cryptoCosmos.keyPair!!)
         return Credentials(addrString)
     }
 

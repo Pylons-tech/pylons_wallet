@@ -2,6 +2,8 @@ package com.pylons.wallet.core.types.tx.msg
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Json
+import com.beust.klaxon.Klaxon
+import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
@@ -20,6 +22,8 @@ sealed class Msg {
     abstract fun serializeForIpc() : String
 
     companion object {
+        fun fromJson (json : String) : Msg? = fromJson(Parser.default().parse(json) as JsonObject)
+
         fun fromJson (jsonObject: JsonObject) : Msg? {
             val identifier = jsonObject["type"] as String
             val msgType = findMsgType(identifier)
@@ -47,10 +51,29 @@ sealed class Msg {
             return null
         }
     }
+
+    private fun toMsgJson () : String {
+        val msgType = this::class.annotations.find { it is MsgType } as? MsgType
+        return """
+            [
+            {
+                "type": "${msgType?.serializedAs.orEmpty()}",
+                "value": ${JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)}
+            }
+            ]"""
+    }
+
+    fun toSignedTx () : String {
+        val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
+        val crypto = (Core.engine as TxPylonsEngine).cryptoCosmos
+        return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
+    }
+
+    fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
 @MsgType("pylons/CreateCookbook")
-data class CreateCookbook(
+data class CreateCookbook (
         @property:[Json(name = "Name")]
         val name : String,
         @property:[Json(name = "Description")]
@@ -132,22 +155,6 @@ data class CreateRecipe (
             )
         }
     }
-
-    private fun toMsgJson () : String = """
-        [
-        {
-            "type": "pylons/CreateRecipe",
-            "value": ${JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)}
-        }
-        ]"""
-
-    fun toSignedTx () : String {
-        val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
-        val crypto = (Core.engine as TxPylonsEngine).cryptoCosmos
-        return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
-    }
-
-    fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
 @MsgType("pylons/DisableRecipe")
@@ -323,21 +330,5 @@ data class UpdateRecipe (
             )
         }
     }
-
-    private fun toMsgJson () : String = """
-        [
-        {
-            "type": "pylons/UpdateRecipe",
-            "value": ${JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)}
-        }
-        ]"""
-
-    fun toSignedTx () : String {
-        val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
-        val crypto = (Core.engine as TxPylonsEngine).cryptoCosmos
-        return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
-    }
-
-    fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
