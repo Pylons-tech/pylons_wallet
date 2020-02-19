@@ -1,0 +1,19 @@
+*nix:
+
+sh txutil.sh <op> <privkey> <account number> <sequence> <msg>
+
+
+
+windows:
+
+txutil <op> <privkey> <account number> <sequence> <msg> 
+
+
+
+privkey is hex string, no 0x prefix
+
+msg is filename of file containing message, as json - see included msg.json
+
+op is either SIGN_BYTES, SIGNED_TX, or AUTO_CREATE_COOKBOOK. 
+the former two need all arguments to be surprised b/c they're using the low-level interface to generate the data structures manually. 
+AUTO_CREATE_COOKBOOK ignores everything after privkey, and you don't need to supply them.
