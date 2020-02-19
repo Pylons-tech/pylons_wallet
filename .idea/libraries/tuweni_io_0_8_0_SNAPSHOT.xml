@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="tuweni-io-0.8.0-SNAPSHOT">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/tuweni-io-0.8.0-SNAPSHOT.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
