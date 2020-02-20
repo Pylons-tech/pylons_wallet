@@ -74,6 +74,8 @@ sealed class Msg {
 
 @MsgType("pylons/CreateCookbook")
 data class CreateCookbook (
+        @property:[Json(name = "CookbookID")]
+        val cookbookId : String,
         @property:[Json(name = "Name")]
         val name : String,
         @property:[Json(name = "Description")]
@@ -98,6 +100,7 @@ data class CreateCookbook (
         fun parse (jsonObject: JsonObject) : CreateCookbook {
             println(jsonObject.toJsonString())
             return CreateCookbook(
+                    cookbookId = jsonObject.string("CookbookID")!!,
                     name = jsonObject.string("Name")!!,
                     description = jsonObject.string("Description")!!,
                     developer = jsonObject.string("Developer")!!,
