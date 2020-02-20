@@ -9,7 +9,6 @@
         <element id="file-copy" path="$PROJECT_DIR$/../lib/bcpg-jdk15on-162.jar" />
         <element id="file-copy" path="$PROJECT_DIR$/../lib/bcpkix-jdk15on-162.jar" />
         <element id="file-copy" path="$PROJECT_DIR$/../lib/bcprov-ext-jdk15on-162.jar" />
-        <element id="library" level="project" name="com.github.alanverbner:bip39_2.12:1.0" />
         <element id="library" level="project" name="com.google.guava:guava:27.1-jre" />
         <element id="file-copy" path="$PROJECT_DIR$/../lib/commons-codec-1.12.jar" />
         <element id="file-copy" path="$PROJECT_DIR$/../lib/klaxon-5.2.jar" />

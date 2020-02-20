@@ -12,7 +12,6 @@ import com.pylons.wallet.core.types.Backend
 import com.pylons.wallet.core.types.Config
 import com.pylons.wallet.core.types.SECP256K1
 import com.pylons.wallet.core.types.klaxon
-import org.apache.commons.codec.binary.Hex
 import org.apache.tuweni.bytes.Bytes32
 import java.lang.Exception
 import java.util.*
@@ -26,17 +25,17 @@ object Main {
             Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
             println(when (op) {
                 "SIGN_BYTES" -> try {
-                    val accountNumber = args[1].toLong()
-                    val sequence = args[2].toLong()
-                    val msgJson = args[3]
+                    val accountNumber = args[2].toLong()
+                    val sequence = args[3].toLong()
+                    val msgJson = args[4]
                     LowLevel.getSignBytes(privkeyHex, accountNumber, sequence, msgJson)
                 } catch (e : Exception) {
                     error(e, "Exception occurred in walletcore")
                 }
                 "SIGNED_TX" -> try {
-                    val accountNumber = args[1].toLong()
-                    val sequence = args[2].toLong()
-                    val msgJson = args[3]
+                    val accountNumber = args[2].toLong()
+                    val sequence = args[3].toLong()
+                    val msgJson = args[4]
                     LowLevel.getSignedTx(privkeyHex, accountNumber, sequence, msgJson)
                 } catch (e : Exception) {
                     error(e, "Exception occurred in walletcore")
@@ -79,6 +78,8 @@ object Main {
         val outObj = JsonObject()
         outObj["exception"] = eSerialized
         outObj["info"] = info
+        outObj["stackTrace"] = e.stackTrace!!.contentDeepToString()
+        outObj["exceptionType"] = e.javaClass.name
         return outObj.toJsonString()
     }
 }
