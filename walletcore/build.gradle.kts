@@ -23,10 +23,16 @@ dependencies {
     implementation("com.beust:klaxon:4.0.2")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.6.0")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "1.8"
+        sourceCompatibility = "1.8"
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
