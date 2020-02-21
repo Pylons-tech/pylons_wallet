@@ -3,7 +3,6 @@ package com.pylons.txutil
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.LowLevel
-import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.ops.batchCreateCookbook
 import com.pylons.wallet.core.ops.getProfile
 import com.pylons.wallet.core.ops.getPylons

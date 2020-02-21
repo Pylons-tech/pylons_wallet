@@ -2,7 +2,6 @@ package com.pylons.wallet.core.types.tx.msg
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Json
-import com.beust.klaxon.Klaxon
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
