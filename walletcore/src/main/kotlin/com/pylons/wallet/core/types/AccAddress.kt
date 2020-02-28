@@ -4,6 +4,7 @@ import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import org.bouncycastle.util.encoders.Hex
 
+@ExperimentalUnsignedTypes
 class AccAddress (val bytes : ByteArray = byteArrayOf()) {
     companion object {
         fun getAddressFromNode (nodeUrl : String, keyPair: SECP256K1.KeyPair) : String {
@@ -119,7 +120,7 @@ class AccAddress (val bytes : ByteArray = byteArrayOf()) {
         val aa2 = other as AccAddress? ?: return false
         return when (empty() && aa2.empty()) {
             true -> true
-            false -> bytes.contentEquals(aa2!!.bytes)
+            false -> bytes.contentEquals(aa2.bytes)
         }
     }
 
@@ -142,5 +143,9 @@ class AccAddress (val bytes : ByteArray = byteArrayOf()) {
             true -> ""
             false -> Bech32Cosmos.convertAndEncode(bech32PrefixAccAddr, bytes)
         }
+    }
+
+    override fun hashCode(): Int {
+        return bytes.contentHashCode()
     }
 }

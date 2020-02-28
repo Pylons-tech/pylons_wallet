@@ -7,6 +7,7 @@ import com.pylons.wallet.core.engine.TxPylonsEngine
 /**
  * Internal state representation of the user's own userProfile.
  */
+@ExperimentalUnsignedTypes
 data class Profile (
         var credentials: Credentials,
         val strings : MutableMap<String, String>,

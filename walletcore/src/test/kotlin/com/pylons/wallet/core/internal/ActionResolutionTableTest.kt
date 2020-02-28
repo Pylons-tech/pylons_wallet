@@ -15,12 +15,18 @@ import org.junit.jupiter.api.MethodOrderer
 import java.util.*
 import kotlin.random.Random
 
+@ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class ActionResolutionTableTest {
     private fun basicMsgTestFlow (msgs : List<MessageData>, followUp : List<((TxPylonsDevEngine, Response) -> Unit)?>) {
         Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
         val engine = Core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
+        engine.cryptoCosmos.generateNewKeys()
+        Core.userProfile = Profile(
+                credentials = engine.getNewCredentials(),
+                coins = listOf(),
+                strings = mutableMapOf())
         for (i in msgs.indices) {
             val msg = msgs[i]
             val func = followUp[i]

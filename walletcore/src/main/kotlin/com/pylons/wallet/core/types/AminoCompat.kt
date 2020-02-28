@@ -20,8 +20,8 @@ class AminoCompat {
         private fun prependPrefixBytes (prefix : ByteArray, raw : ByteArray) = prefix + raw
 
         fun accAddress (raw : ByteArray) = prependPrefixBytes(calculatePrefixBytes("AccAddress"), raw)
-        fun pubKeyEd25519 (raw : ByteArray) = prependPrefixBytes(Hex.decode("0x1624DE64"), raw)
-        fun pubKeySecp256k1 (raw : ByteArray) = prependPrefixBytes(Hex.decode("0xEB5AE987"), raw)
+        fun pubKeyEd25519 (raw : ByteArray) = prependPrefixBytes(Hex.decode("1624DE6420"), raw)
+        fun pubKeySecp256k1 (raw : ByteArray) = prependPrefixBytes(Hex.decode("EB5AE98721"), raw)
 
         fun stripPrefixBytes (raw : ByteArray) : ByteArray {
             val output = ByteArray(raw.size - PREFIX_LENGTH)

@@ -17,6 +17,7 @@ private annotation class MsgType (
         val serializedAs : String
 )
 
+@ExperimentalUnsignedTypes
 sealed class Msg {
     abstract fun serializeForIpc() : String
 

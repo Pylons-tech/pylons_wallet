@@ -10,6 +10,7 @@ import com.pylons.wallet.core.types.*
 import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.util.encoders.Hex
 
+@ExperimentalUnsignedTypes
 object Core {
     /**
      * The number of times the core will retry valid-but-rejected transactions.

@@ -10,7 +10,11 @@ import com.pylons.wallet.core.types.SECP256K1
 import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.util.encoders.Hex
 import java.security.MessageDigest
+import org.kethereum.bip32.*
+import org.kethereum.bip39.*
+import org.komputing.kbip44.*
 
+import org.kethereum.bip39.wordlists.WORDLIST_ENGLISH
 
 internal class CryptoCosmos : CryptoHandler() {
     override fun getPrefix() : String = "__CRYPTO_COSMOS__"
@@ -27,8 +31,14 @@ internal class CryptoCosmos : CryptoHandler() {
         println(getCompressedPubkey(keyPair!!.publicKey()).toHexString())
     }
 
+
+
     override fun generateNewKeys() {
-        keyPair = SECP256K1.KeyPair.random()
+        val mnemonic= dirtyPhraseToMnemonicWords(generateMnemonic(128, WORDLIST_ENGLISH))
+        val seed = mnemonic.toSeed("")
+        val key = seed.toKey("m/44'/118'/0'/0/0")
+        val rawPrivKey = key.keyPair.privateKey.key
+        keyPair = SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromInteger(rawPrivKey))
         Logger.implementation.log("Generated new keys: \n" +
                 "public key: ${Hex.toHexString(getCompressedPubkey(keyPair!!.publicKey()).toArray())}",
                 "INFO")
@@ -58,10 +68,7 @@ internal class CryptoCosmos : CryptoHandler() {
             val yStr = ecPoint.yCoord.toBigInteger().toString()
             val xStr = ecPoint.xCoord.toBigInteger().toString()
             println("$xStr $yStr")
-            val prefix = when (yStr > xStr) {
-                true -> 0x02
-                false -> 0x03
-            }
+            val prefix = 0x02
             val bytes = MutableBytes.wrap(ByteArray(33))
             bytes[0] = prefix.toByte()
             xBytes.copyTo(bytes, 1)

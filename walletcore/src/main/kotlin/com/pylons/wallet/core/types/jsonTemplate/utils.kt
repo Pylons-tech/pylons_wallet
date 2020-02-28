@@ -16,6 +16,7 @@ internal fun Double.s() : String {
     }
 }
 
+@ExperimentalUnsignedTypes
 internal fun baseJsonWeldFlow (msg : String, signComponent : String, accountNumber: Long, sequence: Long, pubkey: SECP256K1.PublicKey) : String {
     val cryptoHandler = (Core.engine as TxPylonsEngine).cryptoHandler
     val signable = baseSignTemplate(signComponent, sequence, accountNumber)

@@ -14,6 +14,7 @@ internal class Bech32Cosmos {
     )
 
 
+    @ExperimentalUnsignedTypes
     companion object {
         /** The Bech32 character set for encoding.  */
         private const val CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"

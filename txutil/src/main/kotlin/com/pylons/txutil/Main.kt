@@ -15,6 +15,7 @@ import org.apache.tuweni.bytes.Bytes32
 import java.lang.Exception
 import java.util.*
 
+@ExperimentalUnsignedTypes
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {

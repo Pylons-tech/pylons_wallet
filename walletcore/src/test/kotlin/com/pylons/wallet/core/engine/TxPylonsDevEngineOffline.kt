@@ -12,6 +12,7 @@ import com.pylons.wallet.core.types.jsonTemplate.*
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
 
+@ExperimentalUnsignedTypes
 internal class TxPylonsDevEngineOffline {
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 

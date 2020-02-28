@@ -6,6 +6,7 @@ import com.pylons.wallet.core.Core
  * Object representing persistent data stored on local storage.
  * Used to configure com.pylons.wallet.core's initial state when starting.
  */
+@ExperimentalUnsignedTypes
 internal object UserData {
     class Model {
         var dataSets : Map<String, MutableMap<String, String>>? = mutableMapOf()

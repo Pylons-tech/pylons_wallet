@@ -7,6 +7,7 @@ import com.pylons.wallet.core.types.tx.msg.Msg
 import org.apache.commons.codec.binary.Hex.*
 import org.apache.tuweni.bytes.Bytes32
 
+@ExperimentalUnsignedTypes
 object LowLevel {
     private val local = """http://127.0.0.1:1317"""
     private val nodeUrl = getUrl()
