@@ -22,6 +22,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
     implementation("commons-codec:commons-codec:1.14")
+    implementation("org.apache.commons:commons-lang3:3.9")
     implementation("org.apache.tuweni:tuweni-crypto:0.10.0")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
     implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")

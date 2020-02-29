@@ -40,12 +40,8 @@ val createRecipeSignable = CreateRecipe(
         ),
         itemInputs = listOf(
                 ItemInput(
-                        doubles = listOf(
-                                DoubleInputParam("endurance", "100.00", "500.00")
-                        ),
-                        longs = listOf(
-                                LongInputParam("HP", 100, 500)
-                        ),
+                        doubles = listOf(),
+                        longs = listOf(),
                         strings = listOf(
                                 StringInputParam("Name", "Raichu")
                         )

@@ -7,6 +7,8 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.jsonTemplate.*
+import org.opentest4j.AssertionFailedError
+import org.apache.commons.lang3.StringUtils.*
 
 internal class TxPylonsDevEngineSignables {
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
@@ -30,7 +32,14 @@ internal class TxPylonsDevEngineSignables {
         val fixture = engine.queryTxBuilder(msgType)
         println("generating sign struct")
         val signable = baseSignTemplate(signableFun(engine), 0, 0)
-        assertEquals(fixture, signable)
+        try {
+            assertEquals(fixture, signable)
+        } catch (e : AssertionFailedError) {
+            println("-------------------\n" +
+                    "DIFFERENCE: \n\n${difference(fixture, signable)}" +
+                    "\n-------------------")
+            throw e
+        }
         println("FIXTURE\n$fixture\nGENERATED\n$signable")
         println("ok!")
     }
@@ -66,8 +75,8 @@ internal class TxPylonsDevEngineSignables {
     fun createsCookbookSignable () {
         basicSignableTestFlow("create_cookbook") {
             createCookbookSignTemplate(
-                    "a","name", "SketchyCo", "this has to meet character limits lol", "1.0.0",
-                    "example@example.com", 0, Core.userProfile!!.credentials.address, 50
+                    "","name", "SketchyCo", "this has to meet character limits lol", "1.0.0",
+                    "example@example.com", 0, "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337", 50
             )
         }
     }
@@ -76,14 +85,14 @@ internal class TxPylonsDevEngineSignables {
     fun updatesCookbookSignable () {
         basicSignableTestFlow("update_cookbook") {
             updateCookbookSignTemplate("cookbook id", "SketchyCo", "this has to meet character limits lol",
-                    "1.0.0", "example@example.com", Core.userProfile!!.credentials.address)
+                    "1.0.0", "example@example.com", "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
         }
     }
 
     @Test
     fun sendsPylonsSignable () {
         basicSignableTestFlow("send_pylons") {
-            sendPylonsSignTemplate(5, Core.userProfile!!.credentials.address,
+            sendPylonsSignTemplate(5, "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
                     "cosmos13rkt5rzf4gz8dvmwxxxn2kqy6p94hkpgluh8dj")
         }
     }
@@ -91,7 +100,7 @@ internal class TxPylonsDevEngineSignables {
     @Test
     fun executeRecipeSignable () {
         basicSignableTestFlow("execute_recipe") {
-            executeRecipeSignTemplate("id0001", arrayOf("alpha", "beta", "gamma"),"""cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337""")
+            executeRecipeSignTemplate("id0001", arrayOf("alpha", "beta", "gamma"), "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
         }
     }
 }
