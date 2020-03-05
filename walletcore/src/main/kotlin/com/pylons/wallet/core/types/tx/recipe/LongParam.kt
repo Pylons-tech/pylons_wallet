@@ -10,13 +10,16 @@ data class LongParam (
         @property:[Json(name = "Key")]
         val key : String,
         @property:[Json(name = "WeightRanges")]
-        val weightRanges : List<LongWeightRange>) {
+        val weightRanges : List<LongWeightRange>,
+        @property:[Json(name = "Program")]
+        val program : String) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : LongParam =
                         LongParam (
                                 rate = jsonObject.string("Rate")!!,
                                 key = jsonObject.string("Key")!!,
-                                weightRanges = LongWeightRange.listFromJson(jsonObject.array("WeightRanges")!!)
+                                weightRanges = LongWeightRange.listFromJson(jsonObject.array("WeightRanges")!!),
+                                program = jsonObject.string("Program")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<LongParam> {

@@ -10,13 +10,16 @@ data class StringParam (
         @property:[Json(name = "Key")]
         val key : String,
         @property:[Json(name = "Value")]
-        val value : String) {
+        val value : String,
+        @property:[Json(name = "Program")]
+        val program : String) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : StringParam =
                         StringParam (
                                 rate = jsonObject.string("Rate")!!,
                                 key = jsonObject.string("Key")!!,
-                                value = jsonObject.string("Value")!!
+                                value = jsonObject.string("Value")!!,
+                                program = jsonObject.string("Program")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<StringParam> {
