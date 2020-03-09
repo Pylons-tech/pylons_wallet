@@ -125,7 +125,7 @@ internal class TxPylonsDevEngineOnline {
         basicTxTestFlow(
                 { it.createRecipe(Core.userProfile!!.credentials.address, name, getCookbookIfOneExists(it),
                         "fooBar description blahhhh", 0, listOf(CoinInput("pylon", 2)), listOf(),
-                        WeightedParamList(listOf(CoinOutput("wood", 999, 1)), listOf(basicItemOutput)), 0,
+                        WeightedParamList(listOf(CoinOutput("wood", 999, 1, "")), listOf(basicItemOutput)), 0,
                         ItemUpgradeParams(listOf(), listOf(), listOf())) },
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )

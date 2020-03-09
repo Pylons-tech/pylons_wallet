@@ -9,4 +9,12 @@
 
 rootProject.name = "pylons_wallet"
 
-include(":txutil", ":walletcore")
+include(":txutil", ":walletcore", ":devwallet")
+
+pluginManagement {
+    repositories {
+        jcenter()
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}

@@ -1,6 +1,6 @@
 plugins {
     java
-    kotlin("jvm") version ("1.3.61")
+    kotlin("jvm")
 }
 
 group = "com.pylons"
@@ -9,13 +9,6 @@ val ketheriumVer = "0.81.2"
 val bouncycastleVer = "1.64"
 val junitVer = "5.6.0"
 //sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-    jcenter()
-    google()
-    maven(url = "https://jitpack.io")
-}
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

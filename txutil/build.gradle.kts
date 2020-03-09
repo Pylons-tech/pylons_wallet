@@ -1,6 +1,6 @@
 plugins {
     java
-    kotlin("jvm") version ("1.3.61")
+    kotlin("jvm")
 }
 
 group = "com.pylons"
