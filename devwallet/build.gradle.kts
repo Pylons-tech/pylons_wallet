@@ -30,7 +30,12 @@ javafx {
 }
 
 application {
-    mainClassName = "com.pylons.devwallet.HelloWorldApp"
+    mainClassName = "com.pylons.devwallet.DevWalletApp"
+}
+
+dependencies {
+    implementation(project(":walletcore"))
+    implementation("org.apache.commons:commons-lang3:3.9")
 }
 
 val jar by tasks.getting(Jar::class) {
