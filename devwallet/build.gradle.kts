@@ -36,6 +36,7 @@ application {
 dependencies {
     implementation(project(":walletcore"))
     implementation("org.apache.commons:commons-lang3:3.9")
+    implementation("com.google.protobuf:protobuf-java:3.11.4")
 }
 
 val jar by tasks.getting(Jar::class) {

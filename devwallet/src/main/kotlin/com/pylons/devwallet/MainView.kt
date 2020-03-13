@@ -2,7 +2,7 @@ package com.pylons.devwallet
 
 import com.pylons.devwallet.controllers.CoreStateController
 import com.pylons.devwallet.controllers.CoreStateEvent
-import com.pylons.devwallet.controllers.BeginRefreshingCoreStateEvent
+import com.pylons.devwallet.controllers.BeginCoreUpdateTicksEvent
 import com.pylons.devwallet.views.StatusView
 import com.pylons.wallet.core.Core
 import javafx.scene.layout.BorderPane
@@ -15,23 +15,34 @@ class MainView : View() {
     override val root = BorderPane()
 
     override fun onDock() {
-        fire(BeginRefreshingCoreStateEvent)
-        subscribe<CoreStateEvent> {
-            title = getTitleStatus()
+        coreStateController
+        fire(BeginCoreUpdateTicksEvent)
+        subscribe<CoreStateEvent> {event ->
+            getCoreStatusString(event.version, event.started, event.sane, event.suspendedAction)
         }
         println("foobar")
     }
 
     companion object {
-        private fun getTitleStatus () : String =
-                ("pylons devwallet core v${Core.VERSION_STRING} " +
-                "started: ${Core.started}, sane: ${Core.sane}")
+        private fun getCoreStatusString (version: String, started : Boolean, sane : Boolean,
+        suspendedAction : String) : String =
+                ("pylons devwallet core v$version " +
+                        "started: $started, sane: $sane " +
+                        "[suspended action: " +
+                        "${if (suspendedAction == "") "none" else suspendedAction}]")
+
+        private fun getChainStateString (height: String) : String =
+                "pylonschain height $height"
     }
 
     init {
-        title = getTitleStatus()
+        title = getCoreStatusString(Core.VERSION_STRING, Core.started,
+                Core.sane, Core.suspendedAction.orEmpty())
         statusView.master = this
-        root.bottom = statusView.root
-
+        with (root) {
+            prefWidth = 800.0
+            prefHeight = 600.0
+            bottom = statusView.root
+        }
     }
 }

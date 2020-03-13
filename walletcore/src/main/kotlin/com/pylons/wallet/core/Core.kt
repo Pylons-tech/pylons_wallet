@@ -112,7 +112,7 @@ object Core {
         return actionResolutionTable(action, msg, args)
     }
 
-    private class MessageWithCallback (val msg : MessageData, val callback: ((Response?) -> Unit)?)
+    private class MessageWithCallback (val msg : MessageData, val callback: ((Response) -> Unit)?)
     private var inDoResolveMessage = false
 
     var onCompletedOperation : (() -> Unit)? = null
@@ -139,7 +139,7 @@ object Core {
      * the core to a single thread of execution ensures consistent state and deterministic
      * behavior - resolveMessage should not be called from the main thread of any wallet app.
      */
-    fun resolveMessage(msg: MessageData, callback : ((Response?) -> Unit)?) {
+    fun resolveMessage(msg: MessageData, callback : ((Response) -> Unit)?) {
         val dat = MessageWithCallback(msg, callback)
         try {
             inDoResolveMessage = true
