@@ -8,7 +8,6 @@ version = "1.0-SNAPSHOT"
 val ketheriumVer = "0.81.2"
 val bouncycastleVer = "1.64"
 val junitVer = "5.6.0"
-//sourceCompatibility = 1.8
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -33,8 +32,8 @@ dependencies {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
-        sourceCompatibility = "1.8"
+        jvmTarget = "11"
+        sourceCompatibility = "11"
     }
 }
 

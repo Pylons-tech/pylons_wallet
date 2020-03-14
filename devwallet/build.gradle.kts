@@ -1,13 +1,16 @@
+import kotlin.collections.*
+
 plugins {
     java
     kotlin("jvm")
     id("org.openjfx.javafxplugin") version "0.0.8"
+    id("org.beryx.jlink") version "2.17.2"
     application
 }
 
 group = "com.pylons"
 version = "0.1a"
-
+val embeddedJRE = true
 
 dependencies {
     implementation("no.tornado", "tornadofx", "1.7.17")
@@ -16,20 +19,36 @@ dependencies {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+        sourceCompatibility = "11"
     }
 }
 
 javafx {
-    modules("javafx.base", "javafx.controls", "javafx.fxml")
+    modules("javafx.base", "javafx.controls", "javafx.graphics", "javafx.fxml")
+    configuration = "implementation"
+}
+
+jlink {
+    addExtraDependencies("javafx")
+    launcher {
+        name = "Pylons DevWallet"
+    }
+
+    jpackage {
+        jpackageHome = "C:\\Program Files\\Java\\jdk-14"
+        skipInstaller = true
+        imageName = "Pylons DevWallet"
+    }
 }
 
 application {
+    applicationName = "Pylons DevWallet"
     mainClassName = "com.pylons.devwallet.DevWalletApp"
 }
 
@@ -53,4 +72,46 @@ val jar by tasks.getting(Jar::class) {
          exclude("META-INF/*.DSA")
          exclude("META-INF/*.RSA")
      }
+}
+
+val libsDir = property("libsDir") as File
+
+task<Copy>("copyDependencies") {
+    println(libsDir.absolutePath)
+    destinationDir = libsDir
+    from(configurations.runtime)
+}
+
+task<Exec>("javapackager") {
+    dependsOn("assemble", "copyDependencies")
+    var nativeType : String? = null
+    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        nativeType = "msi"
+    }
+    if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        nativeType = "dmg"
+    }
+    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+        nativeType = "rpm"
+    }
+    val dep = mutableListOf<String>()
+    for (file in configurations.runtime.get().all) {
+        dep.add("-srcfiles")
+        dep.add(file.name)
+    }
+    val paramEmbeddedJRE =
+            if (embeddedJRE) listOf("")
+            else listOf("-Bruntime=")
+    workingDir = project.projectDir
+    commandLine = listOf(
+            "jpackager",
+            "create-image",
+            "-i", buildDir.path + "/libs",
+            "-j", jar.archiveFileName.get(),
+            "-c", application.mainClassName,
+            "-n", application.applicationName,
+            "-o", "${buildDir}/distribution",
+            "--singleton"
+    )
+    println(commandLine)
 }
