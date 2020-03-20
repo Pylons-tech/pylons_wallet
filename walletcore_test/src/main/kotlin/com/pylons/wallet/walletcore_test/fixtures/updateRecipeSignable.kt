@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.fixtures
+package com.pylons.wallet.walletcore_test.fixtures
 
 import com.pylons.wallet.core.types.tx.msg.UpdateRecipe
 import com.pylons.wallet.core.types.tx.recipe.*

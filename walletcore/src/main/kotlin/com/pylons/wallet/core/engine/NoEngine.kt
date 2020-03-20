@@ -80,7 +80,7 @@ internal class NoEngine : Engine() {
     override fun listCookbooks(): List<Cookbook> =
             throw NoEngineException()
 
-    override fun registerNewProfile(name : String, kp : SECP256K1.KeyPair?): Transaction =
+    override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction =
             throw NoEngineException()
 
     override fun sendPylons(q: Long, receiver: String) =

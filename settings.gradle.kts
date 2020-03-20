@@ -9,7 +9,7 @@
 
 rootProject.name = "pylons_wallet"
 
-include(":txutil", ":walletcore", ":devwallet")
+include(":txutil", ":walletcore", ":devwallet", ":walletcore_test")
 
 pluginManagement {
     repositories {

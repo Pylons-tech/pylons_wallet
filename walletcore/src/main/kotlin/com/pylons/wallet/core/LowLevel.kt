@@ -2,7 +2,7 @@ package com.pylons.wallet.core
 
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.AccAddress
-import com.pylons.wallet.core.types.SECP256K1
+import com.pylons.wallet.core.types.PylonsSECP256K1
 import com.pylons.wallet.core.types.tx.msg.Msg
 import org.apache.commons.codec.binary.Hex.*
 import org.apache.tuweni.bytes.Bytes32
@@ -21,7 +21,7 @@ object LowLevel {
 
     private fun setup (privkeyHex : String, accountNumber : Long, sequence : Long) {
         Core.forceKeys(privkeyHex, AccAddress.getAddressFromNode(nodeUrl,
-                SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(decodeHex(privkeyHex))))))
+                PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(decodeHex(privkeyHex))))))
         (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).accountNumber = accountNumber
         (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence = sequence
     }

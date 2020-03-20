@@ -9,7 +9,7 @@ import com.pylons.wallet.core.ops.getPylons
 import com.pylons.wallet.core.ops.newProfile
 import com.pylons.wallet.core.types.Backend
 import com.pylons.wallet.core.types.Config
-import com.pylons.wallet.core.types.SECP256K1
+import com.pylons.wallet.core.types.PylonsSECP256K1
 import com.pylons.wallet.core.types.klaxon
 import org.apache.tuweni.bytes.Bytes32
 import java.lang.Exception
@@ -53,8 +53,8 @@ object Main {
 
     private fun doMessages (privkey : String) {
         Core.newProfile("foo",
-                SECP256K1.KeyPair.fromSecretKey(
-                        SECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(privkey))))
+                PylonsSECP256K1.KeyPair.fromSecretKey(
+                        PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(privkey))))
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         Core.getProfile()

@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.engine
+package com.pylons.wallet.walletcore_test.engine
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Order
@@ -6,8 +6,10 @@ import org.junit.jupiter.api.TestMethodOrder
 
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.engine.TxPylonsDevEngine
+import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.fixtures.basicItemOutput
+import com.pylons.wallet.walletcore_test.fixtures.basicItemOutput
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.*
 import org.junit.jupiter.api.MethodOrderer
@@ -57,7 +59,7 @@ internal class TxPylonsDevEngineOnline {
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) = basicTxTestFlow(txFun, null)
 
-    private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine,  String) -> Unit)?) {
+    private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine, String) -> Unit)?) {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         println("pubkey: ${CryptoCosmos.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
         println("getting profile state...")

@@ -1,9 +1,9 @@
 package com.pylons.wallet.core.types.jsonTemplate
 
-import com.pylons.wallet.core.types.SECP256K1
+import com.pylons.wallet.core.types.PylonsSECP256K1
 
 internal fun disableRecipe (recipeId : String, sender: String,
-                   pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
+                            pubkey: PylonsSECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
         baseJsonWeldFlow(disableRecipeMsgTemplate(recipeId, sender),
                 disableRecipeSignTemplate(recipeId, sender),
                 accountNumber, sequence, pubkey)
@@ -20,5 +20,5 @@ private fun disableRecipeMsgTemplate (id : String, sender : String) = """
         ]     
     """
 
-internal fun disableRecipeSignTemplate (id : String, sender: String) : String =
+fun disableRecipeSignTemplate (id : String, sender: String) : String =
         enableRecipeSignTemplate(id, sender)

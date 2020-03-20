@@ -12,7 +12,7 @@ import com.pylons.wallet.core.types.tx.recipe.*
  * will do the dirty work of binding that functionality to low-level blockchain
  * systems, in effect acting as "drivers."
  */
-internal abstract class Engine {
+abstract class Engine {
     abstract val prefix : String
     abstract val backendType : Backend
     abstract val usesMnemonic : Boolean
@@ -177,7 +177,7 @@ internal abstract class Engine {
     /**
      * Registers a new profile under given name.
      */
-    abstract fun registerNewProfile (name : String, kp : SECP256K1.KeyPair?) : Transaction
+    abstract fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
 
     /**
      * Calls get pylons endpoint.

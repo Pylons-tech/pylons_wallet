@@ -1,9 +1,10 @@
-package com.pylons.wallet.core.engine
+package com.pylons.wallet.walletcore_test.engine
 
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.jsonTemplate.*
@@ -61,13 +62,13 @@ internal class TxPylonsDevEngineSignables {
 
     @Test
     fun createRecipeSignable () {
-        val model = com.pylons.wallet.core.fixtures.createRecipeSignable
+        val model = com.pylons.wallet.walletcore_test.fixtures.createRecipeSignable
         basicSignableTestFlow("create_recipe") { model.toSignStruct() }
     }
 
     @Test
     fun updateRecipeSignable () {
-        val model = com.pylons.wallet.core.fixtures.updateRecipeSignable
+        val model = com.pylons.wallet.walletcore_test.fixtures.updateRecipeSignable
         basicSignableTestFlow("update_recipe") { model.toSignStruct() }
     }
 

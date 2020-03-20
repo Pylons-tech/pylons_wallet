@@ -1,13 +1,15 @@
-package com.pylons.wallet.core.engine
+package com.pylons.wallet.walletcore_test.engine
 
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.engine.TxPylonsDevEngine
+import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.newProfile
 import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
-import com.pylons.wallet.core.types.SECP256K1
+import com.pylons.wallet.core.types.PylonsSECP256K1
 import com.pylons.wallet.core.types.jsonTemplate.*
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
@@ -66,9 +68,9 @@ internal class TxPylonsDevEngineOffline {
         val data = Bytes.wrap("This is an example of a signed message.".toByteArray(Charsets.UTF_8))
         println("signing: \n" + data.toHexString())
         val engine = engineSetup(InternalPrivKeyStore.TUWENI_FIXTURES_SECRET)
-        val signature = SECP256K1.sign(data, engine.cryptoCosmos.keyPair)
+        val signature = PylonsSECP256K1.sign(data, engine.cryptoCosmos.keyPair)
         println("signature : \n" + Hex.toHexString(signature.bytes().toArray().slice(0 until 64).toByteArray()))
-        assertTrue(SECP256K1.verify(data, signature, engine.cryptoCosmos.keyPair!!.publicKey()))
+        assertTrue(PylonsSECP256K1.verify(data, signature, engine.cryptoCosmos.keyPair!!.publicKey()))
     }
 
     @Test

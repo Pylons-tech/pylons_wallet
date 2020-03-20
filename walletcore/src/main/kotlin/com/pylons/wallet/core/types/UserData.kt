@@ -7,7 +7,7 @@ import com.pylons.wallet.core.Core
  * Used to configure com.pylons.wallet.core's initial state when starting.
  */
 @ExperimentalUnsignedTypes
-internal object UserData {
+object UserData {
     class Model {
         var dataSets : Map<String, MutableMap<String, String>>? = mutableMapOf()
         val version : String? = null

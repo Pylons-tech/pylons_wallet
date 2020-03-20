@@ -7,6 +7,7 @@ import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.engine.*
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.util.encoders.Hex
 
@@ -21,9 +22,9 @@ object Core {
      * The amount of time (in milliseconds) to wait before retrying such operations.
      */
     internal const val retryDelay : Long = 500 // milliseconds
-    internal var engine: Engine = NoEngine()
+    var engine: Engine = NoEngine()
         private set
-    internal var userProfile: Profile? = null
+    var userProfile: Profile? = null
     internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
     var sane : Boolean = false
         private set
@@ -73,7 +74,9 @@ object Core {
     fun forceKeys (keyString : String, address : String) {
         val engine = engine as TxPylonsEngine
         engine.cryptoCosmos.keyPair =
-                SECP256K1.KeyPair.fromSecretKey(SECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(keyString))))
+                PylonsSECP256K1.KeyPair.fromSecretKey(
+                        PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(
+                                Hex.decode(keyString))))
         userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf())
     }
 

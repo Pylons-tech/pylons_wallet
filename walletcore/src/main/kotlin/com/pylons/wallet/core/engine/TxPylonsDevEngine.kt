@@ -6,7 +6,7 @@ import com.pylons.wallet.core.types.tx.msg.CreateRecipe
 import com.pylons.wallet.core.types.tx.msg.UpdateRecipe
 import com.pylons.wallet.core.types.tx.recipe.*
 
-internal class TxPylonsDevEngine : TxPylonsEngine () {
+class TxPylonsDevEngine : TxPylonsEngine () {
     override val isDevEngine: Boolean = true
     override val backendType: Backend = Backend.LIVE_DEV
 

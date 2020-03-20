@@ -1,5 +1,6 @@
-package com.pylons.wallet.core.types
+package com.pylons.wallet.walletcore_test.types
 
+import com.pylons.wallet.core.types.Bech32Cosmos
 import org.junit.jupiter.api.Test
 import org.bouncycastle.jcajce.provider.digest.SHA256
 

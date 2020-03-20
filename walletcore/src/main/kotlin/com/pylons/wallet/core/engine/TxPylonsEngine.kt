@@ -11,6 +11,7 @@ import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.pylons.wallet.core.types.tx.StdTx
+import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
@@ -19,7 +20,7 @@ import java.lang.StringBuilder
 import java.security.Security
 
 @ExperimentalUnsignedTypes
-internal open class TxPylonsEngine : Engine() {
+open class TxPylonsEngine : Engine() {
     init {
         Security.removeProvider("BC")
         Security.addProvider(BouncyCastleProvider())
@@ -180,7 +181,7 @@ internal open class TxPylonsEngine : Engine() {
         return Cookbook.getListFromJson(json)
     }
 
-    override fun registerNewProfile(name : String, kp : SECP256K1.KeyPair?): Transaction {
+    override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction {
         if (kp == null) cryptoHandler.generateNewKeys()
         else cryptoCosmos.keyPair = kp
         Core.userProfile = Profile(credentials = getNewCredentials(), coins = listOf(), strings = mutableMapOf())

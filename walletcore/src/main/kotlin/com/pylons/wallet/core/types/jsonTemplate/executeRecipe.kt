@@ -1,9 +1,9 @@
 package com.pylons.wallet.core.types.jsonTemplate
 
-import com.pylons.wallet.core.types.SECP256K1
+import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import java.lang.StringBuilder
 
-internal fun executeRecipe (recipeId : String, itemIds : Array<String>, sender: String, pubkey: SECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
+internal fun executeRecipe (recipeId : String, itemIds : Array<String>, sender: String, pubkey: PylonsSECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
         baseJsonWeldFlow(executeRecipeMsgTemplate(recipeId, itemIds, sender),
                 executeRecipeSignTemplate( recipeId, itemIds, sender),
                 accountNumber, sequence, pubkey)
@@ -21,7 +21,7 @@ private fun executeRecipeMsgTemplate (id : String, itemIds : Array<String>, send
         ]     
     """
 
-internal fun executeRecipeSignTemplate (id : String, itemIds : Array<String>, sender: String) : String =
+fun executeRecipeSignTemplate (id : String, itemIds : Array<String>, sender: String) : String =
         """[{"ItemIDs":${itemIdListJson(itemIds)},"RecipeID":"$id","Sender":"$sender"}]"""
 
 private fun itemIdListJson (itemIds: Array<String>) : String {

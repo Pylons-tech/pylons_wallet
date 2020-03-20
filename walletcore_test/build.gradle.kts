@@ -1,5 +1,3 @@
-import kotlin.collections.*
-
 plugins {
     java
     kotlin("jvm")
@@ -16,14 +14,10 @@ configure<JavaPluginConvention> {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-configurations {
-    all {
-        exclude("com.github.walleth.kethereum", "crypto_api")
-    }
-}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+
+    implementation(project(":walletcore"))
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.70")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
@@ -40,23 +34,20 @@ dependencies {
     implementation("com.github.walleth.kethereum:bip39_wordlist_en:$ketheriumVer")
     implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
+
+    implementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVer")
 }
 
-val jar by tasks.getting(Jar::class) {
-    manifest {
-        attributes["Class-Path"] = configurations.compile.get().joinToString { "$name " }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "11"
+        sourceCompatibility = "11"
     }
+}
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    for (it in configurations.runtimeClasspath.get().files) {
-        var f = it
-        if (f.isDirectory) f = zipTree(f).singleFile
-        exclude("META-INF/MANIFEST.MF")
-        exclude("META-INF/*.SF")
-        exclude("META-INF/*.DSA")
-        exclude("META-INF/*.RSA")
-    }
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 tasks.compileJava {
@@ -69,7 +60,7 @@ tasks.compileJava {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     doFirst {
-        destinationDir = tasks.compileJava.get().destinationDir
+        destinationDir = tasks.compileTestJava.get().destinationDir
     }
 
     kotlinOptions {

@@ -24,6 +24,8 @@ dependencies {
     testImplementation("junit:junit:4.12")
 }
 
+tasks.compileKotlin.get().destinationDir = tasks.compileJava.get().destinationDir
+
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = "11"

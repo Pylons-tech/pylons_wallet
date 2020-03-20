@@ -32,4 +32,4 @@ internal fun newProfile (msg : MessageData) : Response {
     return Response(outgoingMessage, Status.OK_TO_RETURN_TO_CLIENT)
 }
 
-fun Core.newProfile (name : String, kp : SECP256K1.KeyPair? = null) : Transaction = engine.registerNewProfile(name, kp).submit()
+fun Core.newProfile (name : String, kp : PylonsSECP256K1.KeyPair? = null) : Transaction = engine.registerNewProfile(name, kp).submit()

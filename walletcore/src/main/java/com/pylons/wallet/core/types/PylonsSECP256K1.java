@@ -80,8 +80,8 @@ import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
  * <p>
  * (This has been "fixed" to use the wrong hashing algorithm for compatibility with Cosmos backend.)
  */
-public final class SECP256K1 {
-    private SECP256K1() {}
+public final class PylonsSECP256K1 {
+    private PylonsSECP256K1() {}
 
     private static final String ALGORITHM = "ECDSA";
     private static final String CURVE_NAME = "secp256k1";
@@ -645,7 +645,7 @@ public final class SECP256K1 {
          */
         @Nullable
         public static PublicKey recoverFromHashAndSignature(Bytes32 hash, Signature signature) {
-            BigInteger publicKeyBI = SECP256K1.recoverFromSignature(signature.v(), signature.r(), signature.s(), hash);
+            BigInteger publicKeyBI = PylonsSECP256K1.recoverFromSignature(signature.v(), signature.r(), signature.s(), hash);
             return (publicKeyBI != null) ? fromInteger(publicKeyBI) : null;
         }
 

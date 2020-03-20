@@ -2,7 +2,7 @@ package com.pylons.wallet.core.types
 
 import org.bitcoinj.core.AddressFormatException
 
-internal class Bech32Cosmos {
+class Bech32Cosmos {
     class Bech32Data(
             val hrp: String,
             val data: ByteArray

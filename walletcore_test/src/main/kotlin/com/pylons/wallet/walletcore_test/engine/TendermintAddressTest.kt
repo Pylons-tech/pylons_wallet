@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.engine
+package com.pylons.wallet.walletcore_test.engine
 
 import org.junit.jupiter.api.Test
 
