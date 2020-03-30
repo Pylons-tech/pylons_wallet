@@ -10,6 +10,11 @@ class DevWalletApp : App(MainView::class, Styles::class) {
         // we want the initializer to run
         CoreThread.thread
     }
+
+    override fun stop() {
+        CoreThread.kill()
+        super.stop()
+    }
 }
 
 @ExperimentalUnsignedTypes

@@ -1,6 +1,7 @@
 plugins {
     java
     kotlin("jvm")
+    idea
 }
 
 group = "com.pylons"
@@ -19,7 +20,7 @@ dependencies {
 
     implementation(project(":walletcore"))
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.70")
+    implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
 
     implementation("commons-codec:commons-codec:1.14")
@@ -27,7 +28,7 @@ dependencies {
     implementation("org.apache.tuweni:tuweni-crypto:0.10.0")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
     implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
-    implementation("com.beust:klaxon:4.0.2")
+    implementation("com.beust:klaxon:5.0.12")
     implementation("com.github.komputing:kbip44:0.1")
     implementation("com.github.walleth.kethereum:bip32:$ketheriumVer")
     implementation("com.github.walleth.kethereum:bip39:$ketheriumVer")
@@ -53,7 +54,6 @@ tasks.withType<Test> {
 tasks.compileJava {
     dependsOn(":compileKotlin")
     doFirst {
-        options.compilerArgs = listOf("--module-path", classpath.asPath)
         classpath = files()
     }
 }

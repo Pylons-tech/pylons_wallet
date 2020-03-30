@@ -20,6 +20,13 @@ object CoreThread {
     private val coreCfg = Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))
     private val persistentDir = getPersistentDirectory()
 
+    fun kill () {
+        thread.run {
+            Logger.implementation.log("killing core thread", LogTag.info)
+            stop()
+        }
+    }
+
     private fun bootstrapCore () : Thread {
         return thread {
             val saveFile = getSaveFile()
