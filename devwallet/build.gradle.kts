@@ -1,9 +1,14 @@
 import kotlin.collections.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.openjfx.gradle.JavaFXModule
+import org.openjfx.gradle.JavaFXOptions
+import org.openjfx.gradle.JavaFXPlatform
 
 plugins {
     java
     kotlin("jvm")
     id("org.openjfx.javafxplugin") version "0.0.8"
+    id("com.github.johnrengelman.shadow") version "5.1.0"
     id("org.beryx.runtime") version "1.8.0"
     application
 }
@@ -11,99 +16,73 @@ plugins {
 group = "com.pylons"
 version = "0.1a"
 
+val compileKotlin: KotlinCompile by tasks
+val compileJava: JavaCompile by tasks
+val jfxModules = listOf("javafx.base", "javafx.controls", "javafx.graphics", "javafx.fxml")
+compileJava.destinationDir = compileKotlin.destinationDir
+
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
-
-dependencies {
-    implementation(project(":walletcore"))
-
-    implementation(kotlin("stdlib-jdk8"))
-
-    implementation("no.tornado", "tornadofx", "1.7.17")
-    implementation("org.apache.commons:commons-lang3:3.9")
-    implementation("com.google.protobuf:protobuf-java:3.11.4")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.70")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.5")
-
-    testCompile("junit", "junit", "4.12")
-}
-
-javafx {
-    //modules("javafx.base", "javafx.controls", "javafx.graphics", "javafx.fxml")
-    configuration = "implementation"
-}
-
-runtime {
-}
-
-//
-//jlink {
-//    addExtraDependencies("javafx")
-//    options.add("--ignore-signing-information")
-//    launcher {
-//        name = "Pylons DevWallet"
-//
-//    }
-//
-//    jpackage {
-//        jpackageHome = "C:\\Program Files\\Java\\jdk-14"
-//        skipInstaller = true
-//        imageName = "Pylons DevWallet"
-//
-//    }
-//
-//    mergedModule {
-//        requires ("javafx.graphics")
-//        requires ("javafx.controls")
-//        requires ("java.json")
-//        requires ("java.logging")
-//        requires ("java.prefs")
-//        requires ("java.desktop")
-//        requires ("java.compiler")
-//        requires ("javafx.base")
-//        requires ("javafx.fxml")
-//        requires ("jdk.unsupported")
-//        uses ("tornadofx.Stylesheet")
-//        uses ("tornadofx.ChildInterceptor")
-//        provides ("kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition").with( "kotlin.reflect.jvm.internal.impl.load.java.ErasedOverridabilityCondition",
-//                "kotlin.reflect.jvm.internal.impl.load.java.FieldOverridabilityCondition",
-//                "kotlin.reflect.jvm.internal.impl.load.java.JavaIncompatibilityRulesOverridabilityCondition")
-//        provides ("kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoader").with("kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins.BuiltInsLoaderImpl")
-//    }
-//}
 
 application {
     applicationName = "Pylons DevWallet"
     mainClassName = "com.pylons.devwallet.DevWalletApp"
 }
 
-val jar by tasks.getting(Jar::class) {
-    manifest {
-        attributes["Class-Path"] = configurations.compile.get().joinToString { "$name " }
-        attributes["Main-Class"] = application.mainClassName
+javafx {
+    modules = jfxModules
+    configuration = "implementation"
+}
+
+val javaFXOptions = the<JavaFXOptions>()
+
+dependencies {
+    implementation(project(":walletcore"))
+
+    implementation(kotlin("stdlib-jdk8"))
+
+    implementation("no.tornado", "tornadofx", "1.7.17") {
+        exclude("org.jetbrains.kotlin")
     }
+    implementation("org.apache.commons:commons-lang3:3.9")
+    implementation("com.google.protobuf:protobuf-java:3.11.4")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.70")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.5")
 
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    testCompile("junit", "junit", "4.12")
 
-    for (it in configurations.runtimeClasspath.get().files) {
-        var f = it
-        if (f.isDirectory) f = zipTree(f).singleFile
-        exclude("META-INF/MANIFEST.MF")
-        exclude("META-INF/*.SF")
-        exclude("META-INF/*.DSA")
-        exclude("META-INF/*.RSA")
+    JavaFXPlatform.values().forEach {platform ->
+        val cfg = configurations.create("javafx_" + platform.classifier)
+        JavaFXModule.getJavaFXModules(javaFXOptions.modules).forEach { m ->
+            project.dependencies.add(cfg.name,
+                    String.format("org.openjfx:%s:%s:%s", m.artifactName, javaFXOptions.version, platform.classifier));
+        }
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    doFirst {
-        destinationDir = tasks.compileJava.get().destinationDir
+
+runtime {
+
+    imageZip.set(project.file("${project.buildDir}/image-zip/hello-image.zip"))
+    jpackage {
+        jpackageHome = "C:\\Program Files\\Java\\jdk-14"
+        skipInstaller = true
+        imageName = "devwallet"
+        mainClass = application.mainClassName
     }
 
+    //additive.set(true)
+
+    //modules.set(listOf("org.openjfx:javafx-base-12.0.1"))
+    options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+
+}
+
+tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "11"
-        sourceCompatibility = "11"
+        jvmTarget = "1.8"
+        sourceCompatibility = "1.8"
     }
 }

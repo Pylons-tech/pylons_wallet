@@ -9,35 +9,35 @@ import com.pylons.wallet.core.constants.LogTag
 import com.pylons.wallet.core.types.MessageData
 import com.pylons.wallet.core.types.Response
 import com.pylons.wallet.core.types.Status
-import javafx.animation.Animation.INDEFINITE
+import javafx.animation.Animation
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.util.Duration
 import tornadofx.*
-import tornadofx.EventBus.RunOn.BackgroundThread
 import java.lang.Exception
 import java.net.ServerSocket
 import java.net.Socket
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
-object BeginCoreUpdateTicksEvent : FXEvent()
-object CoreUpdateTickRequest : FXEvent(BackgroundThread)
-class CoreStateEvent(val version : String, val started : Boolean, val sane : Boolean,
-                     val suspendedAction : String) : FXEvent()
 class GotIpcMessageEvent (val msg : String, val bytesDown : Long) : FXEvent()
 class MessageResolvedEvent(val pylonsAction: String, val messageData: MessageData,
                            val status: Status, val response: Response) : FXEvent()
 
+object BeginIPCPumpEvent : FXEvent()
+object IPCPumpTickRequest : FXEvent(EventBus.RunOn.BackgroundThread)
+class CoreStateEvent(val version : String, val started : Boolean, val sane : Boolean,
+                     val suspendedAction : String) : FXEvent()
 
 const val HEARTBEAT_INTERVAL = 1.0
 const val HANDSHAKE_MAGIC = "DEVWALLET_SERVER"
 const val HANDSHAKE_REPLY_MAGIC = "DEVWALLET_CLIENT"
 
 @ExperimentalUnsignedTypes
-class CoreStateController : Controller() {
+class IPCController  : Controller() {
+
     private enum class State {
         Error,
         WaitForHandshake,
@@ -51,19 +51,18 @@ class CoreStateController : Controller() {
     private val ascii = Charset.forName("US-ASCII")
     private var timeline : Timeline? = null
 
-    private val coreUpdateTick = EventHandler<ActionEvent> {
-        fire(CoreUpdateTickRequest)
-    }
-
     init {
         socket = ServerSocket(50001)
-        subscribe<BeginCoreUpdateTicksEvent> { startCoreUpdateTicks() }
-        subscribe<CoreUpdateTickRequest> {
+        subscribe<BeginIPCPumpEvent> { startCoreUpdateTicks() }
+        subscribe<IPCPumpTickRequest> {
             val started = Core.started
             val sane = Core.sane
             val suspendedAction = Core.suspendedAction.orEmpty()
             fire(CoreStateEvent(Core.VERSION_STRING, started, sane, suspendedAction))
             handleIpcMessages()
+        }
+        subscribe<CoreInteractEvent> { evt ->
+            CoreServer.run { evt.action }
         }
     }
 
@@ -348,7 +347,12 @@ class CoreStateController : Controller() {
                         coreUpdateTick
                 )
         )
-        timeline!!.cycleCount = INDEFINITE
+        timeline!!.cycleCount = Animation.INDEFINITE
         timeline!!.play()
     }
+
+    private val coreUpdateTick = EventHandler<ActionEvent> {
+        fire(IPCPumpTickRequest)
+    }
+
 }

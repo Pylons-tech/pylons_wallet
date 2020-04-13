@@ -8,11 +8,11 @@ class DevWalletApp : App(MainView::class, Styles::class) {
     init {
         // We don't need to do anything with CoreThread immediately, but
         // we want the initializer to run
-        CoreThread.thread
+
     }
 
     override fun stop() {
-        CoreThread.kill()
+        CoreServer.stop()
         super.stop()
     }
 }
