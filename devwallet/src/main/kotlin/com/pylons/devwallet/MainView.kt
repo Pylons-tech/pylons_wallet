@@ -1,13 +1,11 @@
 package com.pylons.devwallet
 
 import com.pylons.devwallet.controllers.WalletCoreController
-import com.pylons.devwallet.controllers.CoreStateEvent
-import com.pylons.devwallet.controllers.BeginIPCPumpEvent
+import com.pylons.devwallet.controllers.HeartbeatEvent
 import com.pylons.devwallet.views.StatusView
 import com.pylons.wallet.core.Core
 import javafx.scene.layout.BorderPane
 import tornadofx.*
-import kotlin.random.Random
 
 @ExperimentalUnsignedTypes
 class MainView : View() {
@@ -17,8 +15,8 @@ class MainView : View() {
 
     override fun onDock() {
         walletCoreController
-        fire(BeginIPCPumpEvent)
-        subscribe<CoreStateEvent> {event ->
+        //fire(BeginIPCPumpEvent)
+        subscribe<HeartbeatEvent> { event ->
             getCoreStatusString(event.version, event.started, event.sane, event.suspendedAction)
         }
         println("foobar")

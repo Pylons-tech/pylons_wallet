@@ -11,9 +11,9 @@ val updateRecipeSignable = UpdateRecipe(
         ),
         cookbookId = "name",
         description = "this has to meet character limits lol",
-        entries = WeightedParamList(
+        entries = EntriesList(
                 coinOutputs = listOf(
-                        CoinOutput("chair", 1, 1, "")
+                        CoinOutput("chair", 1)
                 ),
                 itemOutputs = listOf(
                         ItemOutput(
@@ -35,7 +35,7 @@ val updateRecipeSignable = UpdateRecipe(
                                 strings = listOf(
                                         StringParam("1.0", "Name", "Raichu", "")
                                 ),
-                                weight = 1
+                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf())
                         )
                 )
         ),

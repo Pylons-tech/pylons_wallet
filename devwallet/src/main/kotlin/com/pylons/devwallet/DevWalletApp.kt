@@ -12,7 +12,7 @@ class DevWalletApp : App(MainView::class, Styles::class) {
     }
 
     override fun stop() {
-        CoreServer.stop()
+        //CoreServer.stop()
         super.stop()
     }
 }

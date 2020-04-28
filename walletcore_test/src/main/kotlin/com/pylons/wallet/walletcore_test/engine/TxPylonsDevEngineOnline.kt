@@ -123,12 +123,12 @@ internal class TxPylonsDevEngineOnline {
     @Order(5)
     @Test
     fun createsRecipe () {
+        // needs proper weightedoutput
         val name = "wood ${Random().nextInt()}"
         basicTxTestFlow(
                 { it.createRecipe(Core.userProfile!!.credentials.address, name, getCookbookIfOneExists(it),
                         "fooBar description blahhhh", 0, listOf(CoinInput("pylon", 2)), listOf(),
-                        WeightedParamList(listOf(CoinOutput("wood", 999, 1, "")), listOf(basicItemOutput)), 0,
-                        ItemUpgradeParams(listOf(), listOf(), listOf())) },
+                        EntriesList(listOf(CoinOutput("wood", 999)), listOf(basicItemOutput)), listOf()) },
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }
@@ -152,7 +152,7 @@ internal class TxPylonsDevEngineOnline {
     fun updatesRecipe () {
         basicTxTestFlow(
                 { it.updateRecipe(getRecipeIfOneExists(it), Core.userProfile!!.credentials.address, "wood!!!!!!!", getCookbookIfOneExists(it),
-                        "fooBar description blahhhh", 0, listOf(), listOf(), WeightedParamList(listOf(), listOf())) },
+                        "fooBar description blahhhh", 0, listOf(), listOf(), EntriesList(listOf(), listOf())) },
                 { it, _ -> checkIfRecipeExists(it, "wood!!!!!!!", getCookbookIfOneExists(it)) }
         )
     }

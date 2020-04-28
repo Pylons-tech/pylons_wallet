@@ -125,17 +125,17 @@ data class CreateRecipe (
         @property:[Json(name = "Description")]
         val description: String,
         @property:[Json(name = "Entries")]
-        val entries : WeightedParamList,
+        val entries : EntriesList,
+        @property:[Json(name = "Outputs")]
+        val outputs : List<WeightedOutput>,
         @property:[Json(name = "ItemInputs")]
         val itemInputs : List<ItemInput>,
         @property:[Json(name = "Name")]
         val name : String,
         @property:[Json(name = "Sender")]
-        val sender : String,
-        @property:[Json(name = "RType")]
-        val rType : Long,
-        @property:[Json(name = "ToUpgrade")]
-        val toUpgrade : ItemUpgradeParams
+        val sender : String
+
+
 ):Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
@@ -148,13 +148,14 @@ data class CreateRecipe (
                     description = jsonObject.string("Description")!!,
                     cookbookId = jsonObject.string("CookbookID")!!,
                     sender = jsonObject.string("Sender")!!,
-                    rType = jsonObject.string("RType")!!.toLong(),
                     blockInterval = jsonObject.string("BlockInterval")!!.toLong(),
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
+                    //modifyItem = ItemUpgradeParams.fromJson(jsonObject.obj("ModifyItem")!!),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
-                    entries = WeightedParamList.fromJson(jsonObject.obj("Entries"))?:
-                        WeightedParamList(listOf(), listOf()),
-                    toUpgrade = ItemUpgradeParams.fromJson(jsonObject.obj("ToUpgrade")!!)
+                    entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
+                        EntriesList(listOf(), listOf()),
+                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
+
             )
         }
     }
@@ -303,7 +304,7 @@ data class UpdateRecipe (
         @property:[Json(name = "Description")]
         val description: String,
         @property:[Json(name = "Entries")]
-        val entries : WeightedParamList,
+        val entries : EntriesList,
         @property:[Json(name = "ID")]
         val id : String,
         @property:[Json(name = "ItemInputs")]
@@ -328,8 +329,8 @@ data class UpdateRecipe (
                     blockInterval = jsonObject.string("BlockInterval")!!.toLong(),
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
-                    entries = WeightedParamList.fromJson(jsonObject.obj("Entries"))?:
-                            WeightedParamList(listOf(), listOf())
+                    entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
+                            EntriesList(listOf(), listOf())
             )
         }
     }

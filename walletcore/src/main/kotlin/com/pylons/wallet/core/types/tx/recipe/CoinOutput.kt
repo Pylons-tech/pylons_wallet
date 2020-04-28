@@ -7,20 +7,14 @@ import com.beust.klaxon.JsonObject
 data class CoinOutput(
         @property:[Json(name = "Coin")]
         val coin : String,
-        @property:[NeverQuoteWrap Json(name = "Count")]
-        val count : Long,
-        @property:[NeverQuoteWrap Json(name = "Weight")]
-        val weight : Int,
-        @property:[Json(name = "Program")]
-        val program : String
+        @property:[Json(name = "Count") QuotedJsonNumeral]
+        val count : Long
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : CoinOutput =
                         CoinOutput (
                                 coin = jsonObject.string("Coin")!!,
-                                count = jsonObject.long("Count")!!,
-                                weight = jsonObject.int("Weight")!!,
-                                program = jsonObject.string("Program")!!
+                                count = jsonObject.long("Count")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {

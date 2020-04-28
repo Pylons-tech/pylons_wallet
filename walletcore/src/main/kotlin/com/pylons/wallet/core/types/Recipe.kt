@@ -6,7 +6,7 @@ import com.beust.klaxon.Parser
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
 import com.pylons.wallet.core.types.tx.recipe.ItemUpgradeParams
-import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
+import com.pylons.wallet.core.types.tx.recipe.EntriesList
 import java.lang.StringBuilder
 
 data class Recipe(
@@ -29,7 +29,7 @@ data class Recipe(
         @property:[Json(name = "ItemInputs")]
         val itemInputs : List<ItemInput>,
         @property:[Json(name = "Entries")]
-        val entries : WeightedParamList,
+        val entries : EntriesList,
         @property:[Json(name = "RType")]
         val recipeType : Long,
         @property:[Json(name = "ToUpgrade")]
@@ -52,7 +52,7 @@ data class Recipe(
                                 disabled = it.boolean("Disabled")!!,
                                 coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
                                 itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
-                                entries = WeightedParamList.fromJson(it.obj("Entries"))!!,
+                                entries = EntriesList.fromJson(it.obj("Entries"))!!,
                                 recipeType = it.string("RType")!!.toLong(),
                                 upgradeParam = ItemUpgradeParams.fromJson(it.obj("ToUpgrade")!!)
                         )

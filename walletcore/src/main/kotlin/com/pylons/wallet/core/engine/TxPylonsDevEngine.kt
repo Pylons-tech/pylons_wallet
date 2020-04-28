@@ -15,9 +15,9 @@ class TxPylonsDevEngine : TxPylonsEngine () {
                     cryptoCosmos.keyPair!!.publicKey(), it.accountNumber, it.sequence, costPerBlock) }
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList,
-                              rType : Long, toUpgrade : ItemUpgradeParams) : Transaction =
-    basicTxHandlerFlow { CreateRecipe(blockInterval, coinInputs, cookbookId, description, entries, itemInputs, name, sender, rType, toUpgrade).toSignedTx() }
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
+                              outputs : List<WeightedOutput>) : Transaction =
+    basicTxHandlerFlow { CreateRecipe(blockInterval, coinInputs, cookbookId, description, entries, outputs, itemInputs, name, sender).toSignedTx() }
 
     override fun disableRecipe(id: String): Transaction =
             basicTxHandlerFlow { disableRecipe(id, it.address, cryptoCosmos.keyPair!!.publicKey(),
@@ -32,7 +32,7 @@ class TxPylonsDevEngine : TxPylonsEngine () {
                     cryptoCosmos.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
 
     override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : WeightedParamList): Transaction =
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList): Transaction =
             basicTxHandlerFlow { UpdateRecipe(blockInterval, coinInputs, cookbookId, description, entries, id, itemInputs, name, sender).toSignedTx() }
 
     fun queryTxBuilder(msgType : String) : String = HttpWire.get("$nodeUrl/pylons/$msgType/tx_build/")

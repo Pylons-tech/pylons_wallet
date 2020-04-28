@@ -27,6 +27,7 @@ class Keys {
         const val COST_PER_BLOCK = "COST_PER_BLOCK"
         const val LEVEL = "LEVEL"
         const val OUTPUT_TABLES = "OUTPUT_TABLES"
+        const val OUTPUTS = "OUTPUTS"
         const val BLOCK_INTERVAL = "BLOCK_INTERVAL"
         const val ID = "ID"
         const val RECIPE_TYPE = "RECIPE_TYPE"

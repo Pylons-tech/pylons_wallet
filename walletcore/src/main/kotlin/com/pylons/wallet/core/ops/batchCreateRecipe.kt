@@ -6,10 +6,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.recipe.CoinInput
-import com.pylons.wallet.core.types.tx.recipe.ItemInput
-import com.pylons.wallet.core.types.tx.recipe.ItemUpgradeParams
-import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
+import com.pylons.wallet.core.types.tx.recipe.*
 
 internal fun batchCreateRecipe (msg: MessageData) : Response {
     checkValid(msg)
@@ -21,8 +18,7 @@ internal fun batchCreateRecipe (msg: MessageData) : Response {
             coinInputs = msg.stringArrays[Keys.COIN_INPUTS]!!,
             itemInputs = msg.stringArrays[Keys.ITEM_INPUTS]!!,
             outputTables = msg.stringArrays[Keys.OUTPUT_TABLES]!!,
-            rTypes = msg.longArrays[Keys.RECIPE_TYPE]!!.toList(),
-            upgradeParams = msg.stringArrays[Keys.UPGRADE_PARAM]!!
+            outputs = msg.stringArrays[Keys.OUTPUTS]!!
     )
     val txList = mutableListOf<String>()
     txs.forEach {
@@ -51,15 +47,15 @@ private fun checkValid (msg : MessageData) {
 
 fun Core.batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                             blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                            outputTables : List<String>, rTypes : List<Long>, upgradeParams: List<String>) : List<Transaction> {
+                            outputTables : List<String>, outputs : List<String>) : List<Transaction> {
     val mItemInputs = mutableListOf<List<ItemInput>>()
     itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
     val mCoinInputs = mutableListOf<List<CoinInput>>()
     coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
-    val mOutputTables = mutableListOf<WeightedParamList>()
-    outputTables.forEach { mOutputTables.add(WeightedParamList.fromJson(klaxon.parse<JsonObject>(it))!!) }
-    val mUpgradeParams = mutableListOf<ItemUpgradeParams>()
-    upgradeParams.forEach { mUpgradeParams.add(ItemUpgradeParams.fromJson(klaxon.parse<JsonObject>(it)!!)) }
+    val mOutputTables = mutableListOf<EntriesList>()
+    outputTables.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
+    val mOutputs = mutableListOf<List<WeightedOutput>>()
+    outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
     val txs =  engine.createRecipes(
             sender = userProfile!!.credentials.address,
             names = names,
@@ -69,8 +65,7 @@ fun Core.batchCreateRecipe (names : List<String>, cookbooks : List<String>, desc
             coinInputs = mCoinInputs,
             itemInputs = mItemInputs,
             entries = mOutputTables,
-            rTypes = rTypes,
-            toUpgrade = mUpgradeParams
+            outputs = mOutputs
     ).toMutableList()
     txs.indices.forEach { txs[it] = txs[it].submit() }
     return txs

@@ -26,9 +26,16 @@ class GotIpcMessageEvent (val msg : String, val bytesDown : Long) : FXEvent()
 class MessageResolvedEvent(val pylonsAction: String, val messageData: MessageData,
                            val status: Status, val response: Response) : FXEvent()
 
-object BeginIPCPumpEvent : FXEvent()
-object IPCPumpTickRequest : FXEvent(EventBus.RunOn.BackgroundThread)
-class CoreStateEvent(val version : String, val started : Boolean, val sane : Boolean,
+/**
+ * Called regularly by IpcController.timeline.
+ * On each HeartbeatRequest, we run HeartBeatEvent and pump IPC messages.
+ */
+object HeartbeatRequest : FXEvent(EventBus.RunOn.BackgroundThread)
+
+/**
+ * Runs every HEARTBEAT_INTERVAL. Gets current system state/health info from walletcore.
+ */
+class HeartbeatEvent(val version : String, val started : Boolean, val sane : Boolean,
                      val suspendedAction : String) : FXEvent()
 
 const val HEARTBEAT_INTERVAL = 1.0
@@ -53,38 +60,40 @@ class IPCController  : Controller() {
 
     init {
         socket = ServerSocket(50001)
-        subscribe<BeginIPCPumpEvent> { startCoreUpdateTicks() }
-        subscribe<IPCPumpTickRequest> {
-            val started = Core.started
-            val sane = Core.sane
-            val suspendedAction = Core.suspendedAction.orEmpty()
-            fire(CoreStateEvent(Core.VERSION_STRING, started, sane, suspendedAction))
-            handleIpcMessages()
-        }
-        subscribe<CoreInteractEvent> { evt ->
-            CoreServer.run { evt.action }
-        }
+        startCoreUpdateTicks()
+        subscribe<HeartbeatRequest> { heartbeat() }
     }
 
-    private fun prepareForGetClient () {
+    private fun heartbeat () {
+        val started = Core.started
+        val sane = Core.sane
+        val suspendedAction = Core.suspendedAction.orEmpty()
+        fire(HeartbeatEvent(Core.VERSION_STRING, started, sane, suspendedAction))
+        if (client?.isConnected != true) resetConnectionState()
+        pumpIpcMessages()
+    }
+
+    private fun resetConnectionState () {
         state = State.WaitForHandshake
         client = null
         socket?.close()
     }
 
-    private fun handleIpcMessages () {
-        if ((client?.isConnected == false)) prepareForGetClient()
-        else when (state) {
-            State.Error -> prepareForGetClient()
-            State.WaitForHandshake -> {
-                state = if (checkForHandshake())
-                    State.AwaitingMessage
-                else {
-                    Logger.implementation.log(
-                            "Handshake w/ client failed", LogTag.externalError)
-                    State.Error
-                }
+    private fun handleIpcHandshake () {
+        state = if (checkForHandshake()) State.AwaitingMessage
+        else {
+            Logger.implementation.log("IPC handshake failed", LogTag.externalError)
+            State.Error
+        }
+    }
+
+    private fun pumpIpcMessages () {
+        when (state) {
+            State.Error -> {
+                Logger.implementation.log("IPC controller entered an error state; flushing connection state", LogTag.walletError)
+                resetConnectionState()
             }
+            State.WaitForHandshake -> handleIpcHandshake()
             State.AwaitingMessage -> {
                 val chk = checkForIncomingMessage()
                 if (chk.result!!) processMessage(chk.msg!!) {
@@ -94,7 +103,7 @@ class IPCController  : Controller() {
                         Status.REQUIRE_UI_ELEVATION -> requireUiElevation(chk.msg)
                     }
                 }
-                else prepareForGetClient()
+                else resetConnectionState()
             }
             State.OperationInProgress -> {
                 // pass
@@ -352,7 +361,7 @@ class IPCController  : Controller() {
     }
 
     private val coreUpdateTick = EventHandler<ActionEvent> {
-        fire(IPCPumpTickRequest)
+        fire(HeartbeatRequest)
     }
 
 }

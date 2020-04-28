@@ -16,5 +16,5 @@ val basicItemOutput = ItemOutput(
         strings = listOf(
                 StringParam("1.0", "Name", "fooBar", "")
         ),
-        weight = 1
+        modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf())
 )

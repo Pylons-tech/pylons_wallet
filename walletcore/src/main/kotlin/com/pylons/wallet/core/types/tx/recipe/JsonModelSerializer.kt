@@ -6,6 +6,7 @@ import com.beust.klaxon.JsonObject
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.starProjectedType
 
 object JsonModelSerializer {
 
@@ -93,14 +94,14 @@ object JsonModelSerializer {
         else {
             val jsonArray = JsonArray<Any?>()
             when (prop.returnType.toString()) {
-                "kotlin.Array<kotlin.String>" -> (value as Array<String>).forEach { jsonArray.add(it) }
-                "kotlin.Array<kotlin.Byte>" -> (value as Array<Byte>).forEach { jsonArray.add(it) }
-                "kotlin.Array<kotlin.Int>" -> (value as Array<Int>).forEach { jsonArray.add(it) }
-                "kotlin.Array<kotlin.Long>" -> (value as Array<Long>).forEach { jsonArray.add(it) }
-                "kotlin.Array<kotlin.Number>" -> (value as Array<Number>).forEach { jsonArray.add(it) }
-                "kotlin.Array<kotlin.Float>" -> (value as Array<Float>).forEach { jsonArray.add(it) }
-                "kotlin.Array<kotlin.Double>" -> (value as Array<Double>).forEach { jsonArray.add(it) }
-                "kotlin.Array<kotlin.Boolean>" -> (value as Array<Boolean>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.String>" -> (value as List<String>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.Byte>" -> (value as List<Byte>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.Int>" -> (value as List<Int>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.Long>" -> (value as List<Long>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.Number>" -> (value as List<Number>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.Float>" -> (value as List<Float>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.Double>" -> (value as List<Double>).forEach { jsonArray.add(it) }
+                "kotlin.collections.List<kotlin.Boolean>" -> (value as List<Boolean>).forEach { jsonArray.add(it) }
                 else -> value.forEach { jsonArray.add(processObject(mode, it)) }
             }
             return jsonArray

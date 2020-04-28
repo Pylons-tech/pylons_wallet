@@ -8,7 +8,7 @@ import com.pylons.wallet.core.internal.BadMessageException
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
-import com.pylons.wallet.core.types.tx.recipe.WeightedParamList
+import com.pylons.wallet.core.types.tx.recipe.EntriesList
 
 internal fun batchUpdateRecipe (msg: MessageData) : Response {
     checkValid(msg)
@@ -53,8 +53,8 @@ fun Core.batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks 
     itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
     val mCoinInputs = mutableListOf<List<CoinInput>>()
     coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
-    val mOutputTables = mutableListOf<WeightedParamList>()
-    outputTables.forEach { mOutputTables.add(WeightedParamList.fromJson(klaxon.parse<JsonObject>(it))!!) }
+    val mOutputTables = mutableListOf<EntriesList>()
+    outputTables.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
     val txs = engine.updateRecipes(
             sender = userProfile!!.credentials.address,
             ids = ids,
