@@ -39,6 +39,13 @@ val updateRecipeSignable = UpdateRecipe(
                         )
                 )
         ),
+        outputs = listOf(
+                WeightedOutput(
+                        resultEntries = listOf(0), weight = "1"
+                ),
+                WeightedOutput(resultEntries = listOf(1),
+                        weight = "1")
+        ),
         itemInputs = listOf(
                 ItemInput(
                         doubles = listOf(),

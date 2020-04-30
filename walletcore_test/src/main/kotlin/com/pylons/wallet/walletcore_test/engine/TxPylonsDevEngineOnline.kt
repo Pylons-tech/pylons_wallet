@@ -152,7 +152,7 @@ internal class TxPylonsDevEngineOnline {
     fun updatesRecipe () {
         basicTxTestFlow(
                 { it.updateRecipe(getRecipeIfOneExists(it), Core.userProfile!!.credentials.address, "wood!!!!!!!", getCookbookIfOneExists(it),
-                        "fooBar description blahhhh", 0, listOf(), listOf(), EntriesList(listOf(), listOf())) },
+                        "fooBar description blahhhh", 0, listOf(), listOf(), EntriesList(listOf(), listOf()), listOf()) },
                 { it, _ -> checkIfRecipeExists(it, "wood!!!!!!!", getCookbookIfOneExists(it)) }
         )
     }

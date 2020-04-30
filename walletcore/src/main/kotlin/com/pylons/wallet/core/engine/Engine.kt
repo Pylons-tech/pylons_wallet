@@ -227,14 +227,14 @@ abstract class Engine {
      * Update-recipe message
      */
     abstract fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList) : Transaction
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>) : Transaction
 
     /**
      * Batch update-recipe message
      */
     fun updateRecipes (sender : String, ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                        blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
-                       entries : List<EntriesList>) : List<Transaction> {
+                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0  until count) {
@@ -248,7 +248,8 @@ abstract class Engine {
                             blockInterval = blockIntervals[i],
                             coinInputs = coinInputs[i],
                             itemInputs = itemInputs[i],
-                            entries = entries[i]
+                            entries = entries[i],
+                            outputs = outputs[i]
                     )
             )
         }

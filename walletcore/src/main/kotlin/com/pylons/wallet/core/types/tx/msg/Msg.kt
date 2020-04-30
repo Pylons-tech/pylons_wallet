@@ -150,7 +150,6 @@ data class CreateRecipe (
                     sender = jsonObject.string("Sender")!!,
                     blockInterval = jsonObject.string("BlockInterval")!!.toLong(),
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
-                    //modifyItem = ItemUpgradeParams.fromJson(jsonObject.obj("ModifyItem")!!),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
                         EntriesList(listOf(), listOf()),
@@ -305,6 +304,8 @@ data class UpdateRecipe (
         val description: String,
         @property:[Json(name = "Entries")]
         val entries : EntriesList,
+        @property:[Json(name = "Outputs")]
+        val outputs : List<WeightedOutput>,
         @property:[Json(name = "ID")]
         val id : String,
         @property:[Json(name = "ItemInputs")]
@@ -330,7 +331,8 @@ data class UpdateRecipe (
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
-                            EntriesList(listOf(), listOf())
+                            EntriesList(listOf(), listOf()),
+                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
             )
         }
     }
