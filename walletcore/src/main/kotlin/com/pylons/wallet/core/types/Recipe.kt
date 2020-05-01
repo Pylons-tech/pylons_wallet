@@ -3,10 +3,7 @@ package com.pylons.wallet.core.types
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.pylons.wallet.core.types.tx.recipe.CoinInput
-import com.pylons.wallet.core.types.tx.recipe.ItemInput
-import com.pylons.wallet.core.types.tx.recipe.ItemUpgradeParams
-import com.pylons.wallet.core.types.tx.recipe.EntriesList
+import com.pylons.wallet.core.types.tx.recipe.*
 import java.lang.StringBuilder
 
 data class Recipe(
@@ -18,8 +15,8 @@ data class Recipe(
         val disabled : Boolean,
         @property:[Json(name = "Name")]
         val name : String,
-        @property:[Json(name = "Cookbook")]
-        val cookbook : String,
+        @property:[Json(name = "CookbookID")]
+        val cookbookId : String,
         @property:[Json(name = "Description")]
         val description : String,
         @property:[Json(name = "BlockInterval")]
@@ -30,10 +27,8 @@ data class Recipe(
         val itemInputs : List<ItemInput>,
         @property:[Json(name = "Entries")]
         val entries : EntriesList,
-        @property:[Json(name = "RType")]
-        val recipeType : Long,
-        @property:[Json(name = "ToUpgrade")]
-        val upgradeParam : ItemUpgradeParams
+        @property:[Json(name = "Outputs")]
+        val outputs : List<WeightedOutput>
 ) {
     companion object {
         fun getListFromJson(json : String) : List<Recipe> {
@@ -43,7 +38,7 @@ data class Recipe(
             jsonArray.forEach {
                 list.add(
                         Recipe(
-                                cookbook = it.string("CookbookID")!!,
+                                cookbookId = it.string("CookbookID")!!,
                                 name = it.string("Name")!!,
                                 id = it.string("ID")!!,
                                 description = it.string("Description")!!,
@@ -53,8 +48,7 @@ data class Recipe(
                                 coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
                                 itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
                                 entries = EntriesList.fromJson(it.obj("Entries"))!!,
-                                recipeType = it.string("RType")!!.toLong(),
-                                upgradeParam = ItemUpgradeParams.fromJson(it.obj("ToUpgrade")!!)
+                                outputs = WeightedOutput.listFromJson(it.array("Outputs"))!!
                         )
                 )
             }

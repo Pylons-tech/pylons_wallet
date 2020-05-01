@@ -52,7 +52,7 @@ internal class TxPylonsDevEngineOnline {
     private fun checkIfRecipeExists (engine: TxPylonsDevEngine, recipeName: String, cookbook : String) {
         val recipes = engine.listRecipes()
         var recipe : Recipe? = null
-        for (it : Recipe in recipes) { if (it.name == recipeName  && it.cookbook == cookbook) { recipe = it; break } }
+        for (it : Recipe in recipes) { if (it.name == recipeName  && it.cookbookId == cookbook) { recipe = it; break } }
         assertNotNull(recipe, "could not find recipe $recipeName in cookbook $cookbook")
         println(recipe?.name)
     }
@@ -77,7 +77,10 @@ internal class TxPylonsDevEngineOnline {
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         engine.getOwnBalances()
-        assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
+        //This check is no longer used bc we have a cleaner way to make sure transactions are accepted,
+        //but you may want to uncomment it if Extremely Weird things are happening when interacting w/ the chain
+        //and you're trying to debug.
+        //assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
         println("ok!")
         val a = engine.getTransaction(tx.id!!)

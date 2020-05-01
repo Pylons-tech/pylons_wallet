@@ -33,7 +33,7 @@ fun Core.applyRecipe (recipe : String, cookbook : String, itemInputs : List<Stri
     val arr = engine.listRecipes()
     var r : String? = null
     arr.forEach {
-        if (it.cookbook == cookbook && it.name == recipe) {
+        if (it.cookbookId == cookbook && it.name == recipe) {
             r = it.id
         }
     }

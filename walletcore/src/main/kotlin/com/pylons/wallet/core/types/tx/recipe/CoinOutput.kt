@@ -14,7 +14,7 @@ data class CoinOutput(
                 fun fromJson (jsonObject: JsonObject) : CoinOutput =
                         CoinOutput (
                                 coin = jsonObject.string("Coin")!!,
-                                count = jsonObject.long("Count")!!
+                                count = jsonObject.string("Count")!!.toLong()
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {
