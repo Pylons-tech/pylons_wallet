@@ -3,6 +3,9 @@ package com.pylons.wallet.core.types
 import org.bouncycastle.jcajce.provider.digest.SHA256
 import org.bouncycastle.util.encoders.Hex
 
+/**
+ * Nasty little helper class containing hacky methods for dealing with weird Amino errata.
+ */
 class AminoCompat {
     companion object {
         const val DISAMB_LENGTH = 3

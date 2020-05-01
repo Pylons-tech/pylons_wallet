@@ -13,11 +13,31 @@ import com.pylons.wallet.core.types.tx.recipe.*
  * systems, in effect acting as "drivers."
  */
 abstract class Engine {
+    /**
+     * Identifier string, unique per Engine implementation.
+     * Used to identify the engine type associated with a given dataset
+     * when we dump the datastore to XML.
+     */
     abstract val prefix : String
+
+    /**
+     * Specifies the TX-handling backend associated w/ an Engine instance.
+     */
     abstract val backendType : Backend
+
+    /**
+     * Identifies whether or not we're using BIP44 mnemonics when doing keygen.
+     */
     abstract val usesMnemonic : Boolean
+
+    /**
+     * Should this engine have access to developer-use methods?
+     */
     abstract val isDevEngine : Boolean
-    abstract val isOffLineEngine : Boolean
+
+    /**
+     * The current CryptoHandler instance associated with this engine
+     */
     abstract var cryptoHandler : CryptoHandler
 
     /**

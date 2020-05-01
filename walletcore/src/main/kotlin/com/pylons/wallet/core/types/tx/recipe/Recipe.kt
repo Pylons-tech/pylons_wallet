@@ -1,9 +1,8 @@
-package com.pylons.wallet.core.types
+package com.pylons.wallet.core.types.tx.recipe
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.pylons.wallet.core.types.tx.recipe.*
 import java.lang.StringBuilder
 
 data class Recipe(

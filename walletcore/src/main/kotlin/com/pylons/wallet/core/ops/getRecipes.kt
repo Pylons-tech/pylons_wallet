@@ -3,6 +3,7 @@ package com.pylons.wallet.core.ops
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.tx.recipe.Recipe
 
 internal fun getRecipes(): Response {
     val cookbooks = Core.getCookbooks()

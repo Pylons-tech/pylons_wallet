@@ -34,7 +34,6 @@ open class TxPylonsEngine : Engine() {
     override val backendType: Backend = Backend.LIVE
     override val usesMnemonic: Boolean = true
     override val isDevEngine: Boolean = false
-    override val isOffLineEngine: Boolean = false
     override var cryptoHandler: CryptoHandler = CryptoCosmos()
     val cryptoCosmos get() = cryptoHandler as CryptoCosmos
     private val local = """http://127.0.0.1:1317"""

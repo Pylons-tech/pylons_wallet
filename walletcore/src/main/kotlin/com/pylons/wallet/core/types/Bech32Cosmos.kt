@@ -2,6 +2,12 @@ package com.pylons.wallet.core.types
 
 import org.bitcoinj.core.AddressFormatException
 
+/**
+ * Implements Bech32 encoding.
+ *
+ * Cosmos' Bech32 code behaves slightly Wrong (tbd: confirm what the Wrong-ness is, I remember that it's a thing and
+ * it's why we have this, but not what it was) which is why we have to have our own implementation.
+ */
 class Bech32Cosmos {
     class Bech32Data(
             val hrp: String,

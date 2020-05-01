@@ -17,7 +17,6 @@ internal class NoEngine : Engine() {
     override var cryptoHandler: CryptoHandler = CryptoNull()
     override val usesMnemonic: Boolean = false
     override val isDevEngine: Boolean = false
-    override val isOffLineEngine: Boolean = false
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
