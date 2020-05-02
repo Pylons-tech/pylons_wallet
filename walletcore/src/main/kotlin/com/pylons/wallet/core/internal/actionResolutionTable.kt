@@ -5,6 +5,11 @@ import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.types.*
 import java.lang.Exception
 
+/**
+ * Function that resolves incoming MessageData to engine methods, requests UI elevation where appropriate, etc.
+ * Once processing has finished, actionResolutionTable returns a Response object encapsulating the data that should
+ * be returned to the client application.
+ */
 internal fun actionResolutionTable (action : String, msg : MessageData, extraArgs: MessageData? = null) : Response {
     try {
         return when (action) {

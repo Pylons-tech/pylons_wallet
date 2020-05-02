@@ -4,6 +4,11 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.*
 
+/**
+ * Extracts requires arguments from the supplied MessageData to call engine methods.
+ * Resolves action type GET_PROFILE.
+ * Returns a Response containing profile data when done.
+ */
 internal fun getProfile(msg : MessageData): Response {
         val outgoingMessage = when (val address = msg.strings[Keys.ADDRESS]) {
             null -> when (Core.userProfile) {
