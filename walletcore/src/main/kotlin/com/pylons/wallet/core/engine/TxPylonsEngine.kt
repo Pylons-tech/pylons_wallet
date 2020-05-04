@@ -1,7 +1,7 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.Logger
+import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
@@ -13,6 +13,8 @@ import com.pylons.wallet.core.types.jsonTemplate.*
 import com.pylons.wallet.core.types.tx.StdTx
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.LogTag
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -79,10 +81,9 @@ open class TxPylonsEngine : Engine() {
     }
 
     private fun postTxJson (json : String) : String {
-        Logger().log(json, "request_json")
-        Logger().log(nodeUrl, "request_url")
+        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl","tx":$json}""", LogTag.info)
         val response = HttpWire.post("""$nodeUrl/txs""", json)
-        Logger().log(response, "request_response")
+        Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response
     }
 

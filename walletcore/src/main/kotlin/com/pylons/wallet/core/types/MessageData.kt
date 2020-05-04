@@ -37,6 +37,8 @@ data class MessageData(
         //fun getUserDetails () = MessageData(strings = mutableMapOf(ReservedKeys.wcAction to Actions.GET_USER_DETAILS))
     }
 
+    override fun toString(): String = klaxon.toJsonString(this)
+
     fun isError () : Boolean = strings.containsKey(Keys.ERROR)
 
     fun errorToString () : String = "ERROR | ${ints[Keys.ERROR_CODE]} | ${strings[Keys.ERROR]} | ${strings[Keys.INFO]}"

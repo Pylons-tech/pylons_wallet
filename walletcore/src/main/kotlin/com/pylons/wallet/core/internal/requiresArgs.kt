@@ -1,8 +1,9 @@
 package com.pylons.wallet.core.internal
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.Logger
-import com.pylons.wallet.core.constants.LogTag
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.Logger
+import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.*
 
 /**
@@ -15,12 +16,13 @@ import com.pylons.wallet.core.types.*
  * and if you try to go back to the client with that it'll crash, so
  * don't do that.
  */
+@ExperimentalUnsignedTypes
 internal fun requiresArgs(action : String, msg : MessageData, extraArgs: MessageData?, func: (MessageData) -> Response): Response {
     return if (extraArgs != null) func(extraArgs)
     else {
         Core.suspendedAction = action
         Core.suspendedMsg = msg
-        Logger.implementation.log("Set suspended action", LogTag.info)
+        Logger.implementation.log(LogEvent.SET_SUSPENDED_ACTION, """{"msg":${klaxon.toJsonString(msg)}}""", LogTag.info)
         Response(null, Status.REQUIRE_UI_ELEVATION)
     }
 }

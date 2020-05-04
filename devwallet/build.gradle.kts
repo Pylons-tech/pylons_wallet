@@ -48,8 +48,10 @@ dependencies {
     }
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("com.google.protobuf:protobuf-java:3.11.4")
+    implementation("commons-codec:commons-codec:1.14")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.70")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.5")
+    implementation("com.beust:klaxon:5.0.12")
 
     testCompile("junit", "junit", "4.12")
 

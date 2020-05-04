@@ -1,5 +1,8 @@
 package com.pylons.wallet.core.types
 
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.Logger
+import com.pylons.wallet.core.logging.LogTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
@@ -9,12 +12,19 @@ import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 
+/**
+ * Object handling low-level network operations.
+ */
 object HttpWire {
     private const val RETRIES = 3
     private const val RETRY_DELAY = 1000.toLong()
+    var verbose = false
 
+    /**
+     * Fires an http GET request at the given URL; returns the received page as a string.
+     */
     fun get (url : String) : String {
-        println(url)
+        if (verbose) Logger.implementation.log(LogEvent.HTTP_GET,"""{"url":"$url"}""", LogTag.info)
         var retryCount = 0
         while (true) {
             with(URL(url).openConnection() as HttpURLConnection) {
@@ -47,7 +57,11 @@ object HttpWire {
         }
     }
 
+    /**
+     * POSTs the supplied input to the given URL;  returns the received page as a string.
+     */
     fun post (url : String, input : String) : String {
+        if (verbose) Logger.implementation.log(LogEvent.HTTP_POST, """{"input":$input, "url":"$url"}""", LogTag.info);
         println(input)
         println(url)
         var retryCount = 0

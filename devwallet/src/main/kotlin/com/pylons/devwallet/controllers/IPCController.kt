@@ -2,19 +2,22 @@ package com.pylons.devwallet.controllers
 
 import com.pylons.ipc.ipcProtos
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.Logger
+import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.constants.Actions
 import com.pylons.wallet.core.constants.Keys
-import com.pylons.wallet.core.constants.LogTag
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.MessageData
 import com.pylons.wallet.core.types.Response
 import com.pylons.wallet.core.types.Status
+import com.pylons.wallet.core.types.klaxon
 import javafx.animation.Animation
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.util.Duration
+import org.apache.commons.codec.binary.Hex
 import tornadofx.*
 import java.lang.Exception
 import java.net.ServerSocket
@@ -51,7 +54,6 @@ class IPCController  : Controller() {
         OperationInProgress,
         AwaitingMessage
     }
-
     private var socket: ServerSocket? = null
     private var client: Socket? = null
     private var state = State.WaitForHandshake
@@ -80,9 +82,10 @@ class IPCController  : Controller() {
     }
 
     private fun handleIpcHandshake () {
-        state = if (checkForHandshake()) State.AwaitingMessage
+        val chkOutput = checkForHandshake()
+        state = if (chkOutput.success) State.AwaitingMessage
         else {
-            Logger.implementation.log("IPC handshake failed", LogTag.externalError)
+            Logger.implementation.log(LogEvent.IPC_HANDSHAKE_FAIL, """{"data":"${chkOutput.data}"}""", LogTag.walletError)
             State.Error
         }
     }
@@ -90,7 +93,7 @@ class IPCController  : Controller() {
     private fun pumpIpcMessages () {
         when (state) {
             State.Error -> {
-                Logger.implementation.log("IPC controller entered an error state; flushing connection state", LogTag.walletError)
+                Logger.implementation.log(LogEvent.RESET_IPC_STATE, "", LogTag.walletError)
                 resetConnectionState()
             }
             State.WaitForHandshake -> handleIpcHandshake()
@@ -113,31 +116,24 @@ class IPCController  : Controller() {
 
     private fun processMessage(msg: MessageData, callback : (Response) -> Unit) {
         if (!msg.strings.containsKey("@P__ACTION")) {
-            Logger.implementation.log("Error: " +
-                    "Incoming message did not contain a valid action field. | " +
-                    msg.toString(), LogTag.externalError)
+            Logger.implementation.log(LogEvent.NO_ACTION_FIELD, """{"msg":$msg}""", LogTag.malformedData)
             state = State.Error
         }
-        else {
-            val pylonsAction = msg.strings["@P__ACTION"]
-            Logger.implementation.log("handling action: $pylonsAction", LogTag.info)
-            Core.resolveMessage(msg, callback)
-        }
+        else Core.resolveMessage(msg, callback)
     }
 
     private fun returnMessageToClient (response: Response) {
-        Logger.implementation.log("Sending outgoing message!", LogTag.info)
+        Logger.implementation.log(LogEvent.RETURN_MESSAGE_TO_CLIENT,
+                """{"status":"${response.status}", "msg":${response.msg}}""",
+                LogTag.info)
         sendMessage(response.msg!!.merge(MessageData(
                 strings = mutableMapOf("@P__STATUS_BLOCK" to response.statusBlock.toJson()))))
-        Logger.implementation.log("Message sent!", LogTag.info)
     }
 
     private fun rejectMessage (response: Response) {
-        Logger.implementation.log("Rejecting message!", LogTag.info)
+        Logger.implementation.log(LogEvent.REJECT_MESSAGE, """{"status":"${response.status}", "msg":${response.msg}}""", LogTag.info)
         sendMessage(response.msg!!.merge(MessageData(
                 strings = mutableMapOf("@P__STATUS_BLOCK" to response.statusBlock.toJson()))))
-        Logger.implementation.log("NOTE: this needs to actually be Designed", LogTag.info)
-        Logger.implementation.log("Message sent!", LogTag.info)
     }
 
     private fun requireUiElevation (msg: MessageData) {
@@ -148,11 +144,8 @@ class IPCController  : Controller() {
     private class CheckOutput(val result: Boolean?, val msg: MessageData?)
 
     private fun checkForIncomingMessage(): CheckOutput {
-        println("Checking for incoming message...")
         val msg = readMessage()
-        if (msg != null) println("Got incoming message!")
-        val b = msg != null
-        return CheckOutput(b, msg)
+        return CheckOutput(msg != null, msg)
     }
 
     private fun produceArguments(pylonsAction: String): MessageData {
@@ -173,7 +166,12 @@ class IPCController  : Controller() {
         return args
     }
 
-    private fun checkForHandshake(): Boolean {
+    class HandshakeCheckOutput(
+            val data : String,
+            val success : Boolean
+    )
+
+    private fun checkForHandshake(): HandshakeCheckOutput {
         println(socket)
         client = socket!!.accept()
         val pid = ProcessHandle.current().pid()
@@ -182,17 +180,18 @@ class IPCController  : Controller() {
         return confirmHandshakeReply()
     }
 
-    private fun confirmHandshakeReply(): Boolean {
+    private fun confirmHandshakeReply(): HandshakeCheckOutput {
         var m: ByteArray? = null
         while (m == null) m = readNext()
         val s = ascii.decode(ByteBuffer.wrap(m)).toString()
-        return s == HANDSHAKE_REPLY_MAGIC
+        return HandshakeCheckOutput(s, s == HANDSHAKE_REPLY_MAGIC)
     }
 
     private fun readMessage(): MessageData? {
         val bytes = readNext()?: return null
         val ipc = ipcProtos.ipcMessage.parseFrom(bytes)
-        Logger.implementation.log("Got message proto!", LogTag.info)
+        Logger.implementation.log(LogEvent.PARSED_MESSAGE,
+                """{"bytes":"${Hex.encodeHexString(bytes)}", "msg":${klaxon.toJsonString(ipc)}}""", LogTag.info)
         return parseMessageFromProto(ipc)
     }
 
@@ -264,13 +263,13 @@ class IPCController  : Controller() {
     }
 
     private fun readNext(): ByteArray? {
-        Logger.implementation.log("Awaiting message from client...", LogTag.info)
+        Logger.implementation.log(LogEvent.AWAIT_MESSAGE, "", LogTag.info)
         val s = client!!.getInputStream()
         while (s.read() == -1) Thread.sleep(100)
-        Logger.implementation.log("Beginning read", LogTag.info)
         val buffer = ByteArray(1024 * 512) // 512kb is overkill
         val len = s.read(buffer, 0, buffer.size)
-        println(len.toString() + " bytes down | " + ascii.decode(ByteBuffer.wrap(buffer)).subSequence(0, len)) // this is really wasteful w/ memory but idc rn
+        Logger.implementation.log(LogEvent.RESOLVED_MESSAGE,
+                """{"msg":"${ascii.decode(ByteBuffer.wrap(buffer)).subSequence(0, len)}"}""", LogTag.info)
         if (len == 0) return null
         val m = ByteArray(len)
         for (i in 0 until len) m[i] = buffer[i]

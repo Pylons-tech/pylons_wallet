@@ -6,6 +6,9 @@ import kotlinx.coroutines.*
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.engine.*
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.LogTag
+import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import org.apache.tuweni.bytes.Bytes32
@@ -97,10 +100,9 @@ object Core {
                     else -> Profile.fromUserData()
                 }
             } catch (e : Exception) { // Eventually: we should recover properly from bad data
-                Logger.implementation.log(LogTag.info, "Saved data was bad; generating new credentials." +
-                        "(This behavior should not exist in production)")
-                Logger.implementation.log(e.stackTrace!!.contentDeepToString(), LogTag.info)
-                Logger.implementation.log(e.message.orEmpty(), LogTag.info)
+                Logger.implementation.log(LogEvent.USER_DATA_PARSE_FAIL,
+                        """{"message":"${e.message.orEmpty()}","stackTrace":"${e.stackTrace!!.contentDeepToString()}","badUserData":$userJson}""",
+                        LogTag.malformedData)
                 UserData.dataSets = engine.getInitialDataSets()
                 userProfile = null
             }
@@ -151,9 +153,9 @@ object Core {
             }
             val action = dat.msg.strings[ReservedKeys.wcAction].orEmpty()
             val out = actionResolutionTable(action, dat.msg)
-            println(out.status)
             out.msg?.strings?.set(ReservedKeys.statusBlock, statusBlock.toJson())
-            Logger.implementation.log("Resolution of message ${dat.msg.getAction()} complete}", LogTag.info)
+            Logger.implementation.log(LogEvent.RESOLVED_MESSAGE,
+                    """{"status":"${out.status}","msgIn":${dat.msg}, "msgOut":${out.msg}}""", LogTag.info)
             inDoResolveMessage = false
             dat.callback?.invoke(out)
             onCompletedOperation?.invoke()
