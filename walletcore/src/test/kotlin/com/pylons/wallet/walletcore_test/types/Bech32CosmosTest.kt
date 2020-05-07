@@ -8,7 +8,7 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import java.util.*
 
-internal class  Bech32CosmosTest {
+class  Bech32CosmosTest {
     /**
      * Port from btcutil bech32_test.go
      * (https://github.com/btcsuite/btcutil/blob/master/bech32/bech32_test.go)

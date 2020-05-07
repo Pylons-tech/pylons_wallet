@@ -18,7 +18,7 @@ import java.util.*
 
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-internal class TxPylonsDevEngineOnline {
+class TxPylonsDevEngineOnline {
     private fun getCookbookIfOneExists (engine: TxPylonsDevEngine) : String {
         val cb = engine.listCookbooks()
         return when (cb.isNotEmpty()) {

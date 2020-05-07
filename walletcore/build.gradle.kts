@@ -22,6 +22,10 @@ configurations {
     }
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
@@ -41,6 +45,9 @@ dependencies {
     implementation("com.github.walleth.kethereum:bip39_wordlist_en:$ketheriumVer")
     implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVer")
 }
 
 val jar by tasks.getting(Jar::class) {
@@ -60,19 +67,7 @@ val jar by tasks.getting(Jar::class) {
     }
 }
 
-tasks.compileJava {
-    //dependsOn(":compileKotlin")
-    doFirst {
-        //options.compilerArgs = listOf("--module-path", classpath.asPath)
-        //classpath = files()
-    }
-}
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    doFirst {
-        //destinationDir = tasks.compileJava.get().destinationDir
-    }
-
     kotlinOptions {
         jvmTarget = "11"
         sourceCompatibility = "11"

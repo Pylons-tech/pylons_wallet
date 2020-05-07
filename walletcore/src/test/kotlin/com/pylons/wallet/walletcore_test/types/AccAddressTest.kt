@@ -5,7 +5,7 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import java.security.KeyPairGenerator
 
-internal class AccAddressTest {
+class AccAddressTest {
     val invalidStrs = arrayOf(
             "hello, world!",
             "0xAA",

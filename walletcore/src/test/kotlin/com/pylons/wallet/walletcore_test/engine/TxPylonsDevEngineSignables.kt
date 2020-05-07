@@ -11,7 +11,7 @@ import com.pylons.wallet.core.types.jsonTemplate.*
 import org.opentest4j.AssertionFailedError
 import org.apache.commons.lang3.StringUtils.*
 
-internal class TxPylonsDevEngineSignables {
+class TxPylonsDevEngineSignables {
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
         val engine = Core.engine as TxPylonsDevEngine
