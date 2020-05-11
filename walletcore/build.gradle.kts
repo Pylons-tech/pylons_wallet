@@ -10,15 +10,20 @@ version = "0.1a"
 val ketheriumVer = "0.81.2"
 val bouncycastleVer = "1.64"
 val junitVer = "5.6.0"
+val useJava8 = project.hasProperty("java8")
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    val jVer = when (useJava8) {
+        true -> JavaVersion.VERSION_1_8
+        false -> JavaVersion.VERSION_11
+    }
+    sourceCompatibility = jVer
+    targetCompatibility = jVer
 }
 
 configurations {
     all {
-        exclude("com.github.walleth.kethereum", "crypto_api")
+        //exclude("com.github.walleth.kethereum", "crypto_api")
     }
 }
 
@@ -43,6 +48,7 @@ dependencies {
     implementation("com.github.walleth.kethereum:bip32:$ketheriumVer")
     implementation("com.github.walleth.kethereum:bip39:$ketheriumVer")
     implementation("com.github.walleth.kethereum:bip39_wordlist_en:$ketheriumVer")
+    implementation("com.github.walleth.kethereum:crypto_api:$ketheriumVer")
     implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
 
@@ -69,7 +75,11 @@ val jar by tasks.getting(Jar::class) {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "11"
-        sourceCompatibility = "11"
+        val jVer = when (useJava8) {
+            true -> "1.8"
+            false -> "11"
+        }
+        jvmTarget = jVer
+        sourceCompatibility = jVer
     }
 }
