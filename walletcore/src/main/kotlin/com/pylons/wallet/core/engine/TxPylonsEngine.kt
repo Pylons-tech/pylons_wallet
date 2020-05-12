@@ -15,6 +15,7 @@ import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
+import com.pylons.wallet.core.types.tx.item.Item
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -134,14 +135,17 @@ open class TxPylonsEngine : Engine() {
     override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
     override fun getOwnBalances(): Profile? {
-        val json = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
-        val value = (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("value")!!
+        val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
+        val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
+        val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("value")!!
         val sequence = value.string("sequence")!!.toLong()
         val accountNumber = value.string("account_number")!!.toLong()
         val coins = Coin.listFromJson(value.array("coins"))
+        val items = Item.listFromJson(value.array("items"))
         (Core.userProfile?.credentials as Credentials?)?.accountNumber = accountNumber
         (Core.userProfile?.credentials as Credentials?)?.sequence = sequence
         Core.userProfile?.coins = coins
+        Core.userProfile?.items = items
         return Core.userProfile
     }
 
@@ -184,7 +188,8 @@ open class TxPylonsEngine : Engine() {
     override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction {
         if (kp == null) cryptoHandler.generateNewKeys()
         else cryptoCosmos.keyPair = kp
-        Core.userProfile = Profile(credentials = getNewCredentials(), coins = listOf(), strings = mutableMapOf())
+        Core.userProfile = Profile(credentials = getNewCredentials(),
+                coins = listOf(), strings = mutableMapOf(), items = listOf())
         return getPylons(500)
     }
 

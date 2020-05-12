@@ -12,7 +12,10 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.walletcore_test.fixtures.basicItemOutput
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.walletcore_test.fixtures.emitCreateRecipe
+import com.pylons.wallet.walletcore_test.fixtures.emitUpdateRecipe
 import org.junit.jupiter.api.MethodOrderer
+import java.time.Instant
 
 import java.util.*
 
@@ -30,7 +33,7 @@ class TxPylonsDevEngineOnline {
     private fun getRecipeIfOneExists (engine: TxPylonsDevEngine) : String {
         val r = engine.listRecipes()
         return when (r.isNotEmpty()) {
-            true -> r[0].id
+            true -> r[r.lastIndex].id
             false -> fail("No recipes exist on chain belonging to current address. This test cannot continue.")
         }
     }
@@ -45,7 +48,7 @@ class TxPylonsDevEngineOnline {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf())
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
         return engine
     }
 
@@ -126,12 +129,10 @@ class TxPylonsDevEngineOnline {
     @Order(5)
     @Test
     fun createsRecipe () {
-        // needs proper weightedoutput
-        val name = "wood ${Random().nextInt()}"
+        val name = "RTEST_${Instant.now().epochSecond}"
         basicTxTestFlow(
-                { it.createRecipe(Core.userProfile!!.credentials.address, name, getCookbookIfOneExists(it),
-                        "fooBar description blahhhh", 0, listOf(CoinInput("pylon", 2)), listOf(),
-                        EntriesList(listOf(CoinOutput("wood", 999)), listOf(basicItemOutput)), listOf()) },
+                { emitCreateRecipe(it, name,
+                        getCookbookIfOneExists(it), Core.userProfile!!.credentials.address)},
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }
@@ -153,10 +154,11 @@ class TxPylonsDevEngineOnline {
     @Order(8)
     @Test
     fun updatesRecipe () {
+        val name = "RTEST_${Instant.now().epochSecond}"
         basicTxTestFlow(
-                { it.updateRecipe(getRecipeIfOneExists(it), Core.userProfile!!.credentials.address, "wood!!!!!!!", getCookbookIfOneExists(it),
-                        "fooBar description blahhhh", 0, listOf(), listOf(), EntriesList(listOf(), listOf()), listOf()) },
-                { it, _ -> checkIfRecipeExists(it, "wood!!!!!!!", getCookbookIfOneExists(it)) }
+                { emitUpdateRecipe(it, name, getCookbookIfOneExists(it),
+                        getRecipeIfOneExists(it), Core.userProfile!!.credentials.address)},
+                { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }
 
