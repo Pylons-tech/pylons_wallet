@@ -44,7 +44,7 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                         )
                 )
         ),
-        outputs = listOf(),
+        outputs = listOf(WeightedOutput(listOf(1), "1")),
         itemInputs = listOf(),
         name = name,
         sender = sender,
