@@ -6,7 +6,7 @@ import java.time.Instant
 
 fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, rId : String, sender : String) =
         engine.updateRecipe (
-        blockInterval = 0,
+        blockInterval = 1,
         coinInputs = listOf(CoinInput(
                 coin = "pylon",
                 count = 10

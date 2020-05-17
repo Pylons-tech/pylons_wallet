@@ -4,6 +4,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.recipe.*
 import java.lang.StringBuilder
 import java.util.*
@@ -28,6 +29,8 @@ data class Item(
         @property:[Json(name = "Strings")]
         val strings : Map<String, String>
 ) {
+    fun serialize(): String = klaxon.toJsonString(this)
+
     companion object {
         fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<Item> {
             if (jsonArray == null) return listOf()

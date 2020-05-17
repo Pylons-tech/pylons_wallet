@@ -73,6 +73,8 @@ abstract class Engine {
      */
     abstract fun applyRecipe(id : String, itemIds : Array<String>) : Transaction
 
+    abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
+
     /**
      * Create-recipe message
      */

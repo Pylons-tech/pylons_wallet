@@ -30,6 +30,14 @@ class TxPylonsDevEngineOnline {
         }
     }
 
+    private fun getExecutionIfOneExists (engine: TxPylonsDevEngine) : String {
+        val e = engine.getPendingExecutions()
+        return when (e.isNotEmpty()) {
+            true -> e[e.lastIndex].id
+            false -> fail("No executions exist on chain belonging to current address. This test cannot continue.")
+        }
+    }
+
     private fun getRecipeIfOneExists (engine: TxPylonsDevEngine) : String {
         val r = engine.listRecipes()
         return when (r.isNotEmpty()) {
@@ -179,6 +187,12 @@ class TxPylonsDevEngineOnline {
     @Test
     fun executesRecipe () {
         basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), arrayOf()) }
+    }
+
+    @Order(12)
+    @Test
+    fun checksExecution () {
+        basicTxTestFlow { it.checkExecution(getExecutionIfOneExists(it), true) }
     }
 
 }

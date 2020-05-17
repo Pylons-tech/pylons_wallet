@@ -50,6 +50,9 @@ data class Profile (
         credentials.dumpToMessageData(msg)
         coins.serializeCoinsToMessageData(msg)
         msg.stringArrays[Keys.ITEMS] = mutableListOf()
+        items.forEach {
+            msg.stringArrays[Keys.ITEMS]!!.add(it.serialize())
+        }
         return msg
     }
 

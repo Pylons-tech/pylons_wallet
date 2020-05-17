@@ -16,6 +16,7 @@ import com.beust.klaxon.*
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.tx.item.Item
+import com.pylons.wallet.core.types.tx.msg.CheckExecution
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -93,6 +94,9 @@ open class TxPylonsEngine : Engine() {
     override fun applyRecipe(id: String, itemIds : Array<String>): Transaction =
             basicTxHandlerFlow { executeRecipe(id, itemIds, Core.userProfile!!.credentials.address,
                     cryptoCosmos.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
+
+    override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
+            basicTxHandlerFlow { CheckExecution(id, Core.userProfile!!.credentials.address, payForCompletion).toSignedTx() }
 
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials

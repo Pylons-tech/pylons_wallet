@@ -72,6 +72,29 @@ sealed class Msg {
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
+@MsgType("pylons/CheckExecution")
+data class CheckExecution (
+        @property:[Json(name = "ExecID")]
+        val execId : String,
+        @property:[Json(name = "Sender")]
+        val sender : String,
+        @property:[Json(name = "PayToComplete")]
+        val payToComplete : Boolean
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : CheckExecution {
+            return CheckExecution(
+                    execId = jsonObject.string("ExecID")!!,
+                    sender = jsonObject.string("Sender")!!,
+                    payToComplete = jsonObject.boolean("PayToComplete")!!
+            )
+        }
+    }
+}
+
 @MsgType("pylons/CreateCookbook")
 data class CreateCookbook (
         @property:[Json(name = "CookbookID")]

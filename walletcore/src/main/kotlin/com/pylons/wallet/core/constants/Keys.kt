@@ -35,6 +35,8 @@ class Keys {
         const val COINS = "coins"
         const val ERROR = "error"
         const val ERROR_CODE = "errorCode"
+        const val EXEC_ID = "EXEC_ID"
+        const val PAY_TO_COMPLETE = "PAY_TO_COMPLETE"
 
         const val EXCEPTION = "exception"
         const val MESSAGE = "message"
