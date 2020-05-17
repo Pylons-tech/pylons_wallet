@@ -45,7 +45,7 @@ data class Item(
                                 tradable = it.boolean("Tradable")!!,
                                 lastUpdate = it.long("LastUpdate")!!,
                                 doubles = doubleMapFromJson(it.array("Doubles")),
-                                longs = longDictFromJson(it.array("Longs")),
+                                longs = longDictFromJsonInt(it.array("Longs")),
                                 strings = stringDictFromJson(it.array("Strings"))
                         )
                 )
@@ -64,6 +64,13 @@ data class Item(
             if (jsonArray == null) return mapOf()
             val mm = mutableMapOf<String, Long>()
             jsonArray.forEach { mm[it.string("Key")!!] = it.string("Value")!!.toLong() }
+            return mm
+        }
+
+        private fun longDictFromJsonInt(jsonArray: JsonArray<JsonObject>?) : Map<String, Long> {
+            if (jsonArray == null) return mapOf()
+            val mm = mutableMapOf<String, Long>()
+            jsonArray.forEach { mm[it.string("Key")!!] = it.int("Value")!!.toLong() }
             return mm
         }
 
