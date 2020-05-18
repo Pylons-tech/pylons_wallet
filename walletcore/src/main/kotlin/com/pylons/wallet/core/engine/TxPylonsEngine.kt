@@ -10,7 +10,6 @@ import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
-import com.pylons.wallet.core.types.tx.StdTx
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
 import com.pylons.wallet.core.logging.LogEvent
@@ -174,11 +173,7 @@ open class TxPylonsEngine : Engine() {
 
     override fun getTransaction(id: String): Transaction {
         val response = HttpWire.get("$nodeUrl/txs/$id")
-        val doc = Parser.default().parse(StringBuilder(response)) as JsonObject
-        return Transaction(
-                stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                _id = id
-        )
+        return Transaction.parseTransactionResponse(id, response)
     }
 
     override fun listRecipes(): List<Recipe> {
