@@ -8,7 +8,7 @@ data class TxData(
         @property:[Json(name = "status")]
         val status: String,
         @property:[Json(name = "output")]
-        val output: List<TxDataOutput>?
+        val output: List<TxDataOutput>
 ) {
     companion object {
         fun fromJson(jsonObject: JsonObject): TxData {
