@@ -39,19 +39,26 @@ open class TxPylonsEngine : Engine() {
     override val isDevEngine: Boolean = false
     override var cryptoHandler: CryptoHandler = CryptoCosmos()
     val cryptoCosmos get() = cryptoHandler as CryptoCosmos
-    private val local = """http://127.0.0.1:1317"""
-    internal val nodeUrl = getUrl()
-
-    private fun getUrl () : String  {
-        return when ((Core.config?.nodes.isNullOrEmpty())) {
-            true -> local
-            false -> Core.config?.nodes!!.first()
-        }
-    }
 
     companion object {
+        private val local = """http://127.0.0.1:1317"""
+        internal val nodeUrl = getUrl()
+
+        private fun getUrl () : String  {
+            return when ((Core.config?.nodes.isNullOrEmpty())) {
+                true -> local
+                false -> Core.config?.nodes!!.first()
+            }
+        }
+
         fun getAddressString (addr : ByteArray) : String {
             return Bech32Cosmos.convertAndEncode("cosmos1", AminoCompat.accAddress(addr))
+        }
+
+        fun getAddressFromNode (key : PylonsSECP256K1.PublicKey) : String {
+            val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
+                    Hex.toHexString(CryptoCosmos.getCompressedPubkey(key).toArray()))
+            return klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
         }
     }
 
@@ -129,9 +136,7 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun getNewCredentials(): Profile.Credentials {
-        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
-                Hex.toHexString(CryptoCosmos.getCompressedPubkey(cryptoCosmos.keyPair!!.publicKey()).toArray()))
-        val addrString = klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
+        val addrString = getAddressFromNode(cryptoCosmos.keyPair!!.publicKey())
         return Credentials(addrString)
     }
 
