@@ -52,7 +52,7 @@ open class TxPylonsEngine : Engine() {
         }
 
         fun getAddressString (addr : ByteArray) : String {
-            return Bech32Cosmos.convertAndEncode("cosmos1", AminoCompat.accAddress(addr))
+            return Bech32Cosmos.convertAndEncode("cosmos", AminoCompat.accAddress(addr))
         }
 
         fun getAddressFromNode (key : PylonsSECP256K1.PublicKey) : String {
@@ -136,7 +136,8 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun getNewCredentials(): Profile.Credentials {
-        val addrString = getAddressFromNode(cryptoCosmos.keyPair!!.publicKey())
+        //val addrString = getAddressFromNode(cryptoCosmos.keyPair!!.publicKey())
+        val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
         return Credentials(addrString)
     }
 

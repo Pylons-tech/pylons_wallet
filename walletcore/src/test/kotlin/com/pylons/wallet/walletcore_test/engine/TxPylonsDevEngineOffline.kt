@@ -50,7 +50,7 @@ class TxPylonsDevEngineOffline {
         val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
         engine.getOwnBalances()
         val pubkey = engine.cryptoCosmos.keyPair!!.publicKey()
-        val addr = CryptoCosmos.getAddressFromPubkey(pubkey.bytes())
+        val addr = CryptoCosmos.getAddressFromPubkey(pubkey)
         assertEquals(Core.userProfile!!.credentials.address, TxPylonsEngine.getAddressString(addr.toArray()))
     }
 

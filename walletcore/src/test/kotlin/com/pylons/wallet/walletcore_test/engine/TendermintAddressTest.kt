@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.crypto.SECP256K1
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.util.encoders.Hex
 
 class TendermintAddressTest {
     private val REPETITIONS = 100
@@ -23,13 +24,24 @@ class TendermintAddressTest {
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         for (i in 0 until REPETITIONS) {
             engine.cryptoHandler.generateNewKeys()
-            var nodeGenerated = TxPylonsEngine.getAddressFromNode(engine.cryptoCosmos.keyPair!!.publicKey())
-            var selfGenerated = TxPylonsEngine.getAddressString(
+            val nodeGenerated = TxPylonsEngine.getAddressFromNode(engine.cryptoCosmos.keyPair!!.publicKey())
+            val selfGenerated = TxPylonsEngine.getAddressString(
                     CryptoCosmos.getAddressFromKeyPair(engine.cryptoCosmos.keyPair!!).toArray())
             assertEquals(nodeGenerated, selfGenerated,
                     "($i) Address mismatch w/ pubkey ${engine.cryptoCosmos.keyPair!!.publicKey().toHexString()} - " +
-                            "expected: $nodeGenerated\n" +
-                            "got: $selfGenerated")
+                            "expected: ${getDisplayString(nodeGenerated)}\n" +
+                            "got: ${getDisplayString(selfGenerated)}")
         }
+    }
+
+    private fun getDisplayString (bech32 : String) : String {
+        val b = Bech32Cosmos.decode(bech32)
+        return "${b.hrp} $bech32   (${byteArrayToBinString(b.data)})"
+    }
+
+    private fun byteArrayToBinString(b : ByteArray) : String {
+        val sb = StringBuilder()
+        b.forEach { sb.append(" ${it.toString(2)} ") }
+        return sb.toString()
     }
 }
