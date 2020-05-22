@@ -31,8 +31,11 @@ class AminoCompat {
 
         /**
          * Attaches prefix bytes for a golang type of AccAddress to a raw ByteArray.
+         * This does not attach any prefix bytes because of Mystery Cosmos Behavior.
+         * We are keeping the function here anyway b/c it _should_ be attaching
+         * prefix bytes and we will need to un-break it if they should ever fix this.
          */
-        fun accAddress (raw : ByteArray) = prependPrefixBytes(calculatePrefixBytes("AccAddress"), raw)
+        fun accAddress (raw : ByteArray) = raw
 
         /**
          * Attaches prefix bytes for a golang type of PubKeyEd25519 to a raw ByteArray.

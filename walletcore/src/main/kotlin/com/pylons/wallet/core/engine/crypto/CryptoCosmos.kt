@@ -3,6 +3,7 @@ package com.pylons.wallet.core.engine.crypto
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
+import com.pylons.wallet.core.types.Bech32Cosmos
 import org.apache.commons.codec.binary.Base32
 import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.UserData
@@ -81,15 +82,15 @@ class CryptoCosmos : CryptoHandler() {
             return bytes
         }
 
-        fun getAddressFromPubkey (pubkey : Bytes) : Bytes {
-            val pubkey = getCompressedPubkey(PylonsSECP256K1.PublicKey.fromBytes(pubkey))
+        fun getAddressFromPubkey (key: PylonsSECP256K1.PublicKey) : Bytes {
+            val pubkey = getCompressedPubkey(key)
             val sha = MessageDigest.getInstance("SHA-256").digest(pubkey.toArray())
             val ripEmd = MessageDigest.getInstance("RIPEMD160").digest(sha)
             return Bytes.wrap(ripEmd)
         }
 
         fun getAddressFromKeyPair (keyPair : PylonsSECP256K1.KeyPair) : Bytes {
-            return getAddressFromPubkey(keyPair.publicKey().bytes())
+            return getAddressFromPubkey(keyPair.publicKey())
         }
     }
 }
