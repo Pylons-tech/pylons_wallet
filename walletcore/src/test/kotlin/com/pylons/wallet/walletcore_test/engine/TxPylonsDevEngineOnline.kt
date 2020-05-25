@@ -98,6 +98,7 @@ class TxPylonsDevEngineOnline {
         val a = engine.getTransaction(tx.id!!)
         println(a.stdTx!!.msg.size)
         followUp?.invoke(engine, tx.id!!)
+        println(Core.backupUserData())
     }
 
     @Order(0)

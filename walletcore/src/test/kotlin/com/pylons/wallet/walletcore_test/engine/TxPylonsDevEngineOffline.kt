@@ -9,16 +9,18 @@ import com.pylons.wallet.core.ops.newProfile
 import com.pylons.wallet.core.types.*
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
-import com.pylons.wallet.core.types.PylonsSECP256K1
 import com.pylons.wallet.core.types.jsonTemplate.*
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
+import java.security.Security
 
 @ExperimentalUnsignedTypes
 class TxPylonsDevEngineOffline {
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
+        Security.addProvider(BouncyCastleProvider())
         Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
         val engine = Core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
@@ -68,7 +70,7 @@ class TxPylonsDevEngineOffline {
         val data = Bytes.wrap("This is an example of a signed message.".toByteArray(Charsets.UTF_8))
         println("signing: \n" + data.toHexString())
         val engine = engineSetup(InternalPrivKeyStore.TUWENI_FIXTURES_SECRET)
-        val signature = PylonsSECP256K1.sign(data, engine.cryptoCosmos.keyPair)
+        val signature = PylonsSECP256K1.sign(data, engine.cryptoCosmos.keyPair!!)
         println("signature : \n" + Hex.toHexString(signature.bytes().toArray().slice(0 until 64).toByteArray()))
         assertTrue(PylonsSECP256K1.verify(data, signature, engine.cryptoCosmos.keyPair!!.publicKey()))
     }

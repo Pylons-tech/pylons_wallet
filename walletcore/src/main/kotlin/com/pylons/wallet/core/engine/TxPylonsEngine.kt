@@ -107,7 +107,7 @@ open class TxPylonsEngine : Engine() {
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
-        UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes().toHexString()
+        UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
     }
 
@@ -147,17 +147,25 @@ open class TxPylonsEngine : Engine() {
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("value")!!
-        val sequence = value.string("sequence")!!.toLong()
-        val accountNumber = value.string("account_number")!!.toLong()
-        val coins = Coin.listFromJson(value.array("coins"))
+        return when (value.string("address")) {
+            "" -> {
+                null
+            }
+            else -> {
+                val sequence = value.string("sequence")!!.toLong()
+                val accountNumber = value.string("account_number")!!.toLong()
+                val coins = Coin.listFromJson(value.array("coins"))
+                val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject)
+                val items = Item.listFromJson(valueItems.array("Items"))
+                val credentials = (Core.userProfile!!.credentials as Credentials)
+                credentials.accountNumber = accountNumber
+                credentials.sequence = sequence
+                Core.userProfile?.coins = coins
+                Core.userProfile?.items = items
+                return Core.userProfile
+            }
+        }
 
-        val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject)
-        val items = Item.listFromJson(valueItems.array("Items"))
-        (Core.userProfile?.credentials as Credentials?)?.accountNumber = accountNumber
-        (Core.userProfile?.credentials as Credentials?)?.sequence = sequence
-        Core.userProfile?.coins = coins
-        Core.userProfile?.items = items
-        return Core.userProfile
     }
 
     override fun getPendingExecutions(): List<Execution> {
