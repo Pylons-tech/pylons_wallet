@@ -7,6 +7,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
 import java.lang.Exception
 import kotlin.reflect.KClass
@@ -183,6 +184,40 @@ data class CreateRecipe (
     }
 }
 
+@MsgType("pylons/CreateTrade")
+data class CreateTrade (
+        @property:[Json(name = "CoinInputs")]
+        val coinInputs : List<CoinInput>,
+        @property:[Json(name = "CoinOutputs")]
+        val coinOutputs : List<CoinOutput>,
+        @property:[Json(name = "ExtraInfo")]
+        val extraInfo : String,
+        @property:[Json(name = "ItemInputs")]
+        val itemInputs: List<ItemInput>,
+        @property:[Json(name = "ItemOutputs")]
+        val itemOutputs: List<Item>,
+        @property:[Json(name = "Sender")]
+        val sender : String
+):Msg() {
+
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : CreateTrade {
+            return CreateTrade(
+                    sender = jsonObject.string("Sender")!!,
+                    extraInfo = jsonObject.string("ExtraInfo")!!,
+                    coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
+                    coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")),
+                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
+                    itemOutputs = Item.listFromJson(jsonObject.array("ItemOutputs"))
+
+            )
+        }
+    }
+}
+
 @MsgType("pylons/DisableRecipe")
 data class DisableRecipe(
         @property:[Json(name = "RecipeID")]
@@ -235,6 +270,27 @@ data class ExecuteRecipe(
                     recipeId = jsonObject.string("RecipeID")!!,
                     sender = jsonObject.string("Sender")!!,
                     itemIds = jsonObject.array("ItemIDs")
+            )
+        }
+    }
+}
+
+@MsgType("pylons/FulfillTrade")
+data class FulfillTrade (
+        @property:[Json(name = "Sender")]
+        val sender : String,
+        @property:[Json(name = "TradeID")]
+        val tradeId : String
+):Msg() {
+
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : FulfillTrade {
+            return FulfillTrade(
+                    sender = jsonObject.string("Sender")!!,
+                    tradeId = jsonObject.string("TradeID")!!
             )
         }
     }
@@ -309,6 +365,32 @@ data class UpdateCookbook(
                     developer = jsonObject.string("Developer")!!,
                     version = jsonObject.string("Version")!!,
                     supportEmail = jsonObject.string("SupportEmail")!!,
+                    sender = jsonObject.string("Sender")!!
+            )
+        }
+    }
+}
+
+@MsgType("pylons/UpdateItemString")
+data class UpdateItemString (
+        @property:[Json(name = "Field")]
+        val field : String,
+        @property:[Json(name = "ItemID")]
+        val itemId : String,
+        @property:[Json(name = "Sender")]
+        val sender: String,
+        @property:[Json(name = "Value")]
+        val value : String
+): Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : UpdateItemString {
+            return UpdateItemString(
+                    itemId = jsonObject.string("ItemID")!!,
+                    field = jsonObject.string("Field")!!,
+                    value = jsonObject.string("Value")!!,
                     sender = jsonObject.string("Sender")!!
             )
         }
