@@ -15,7 +15,9 @@ object JsonModelSerializer {
         return jo?.toJsonString(
                 prettyPrint = mode == SerializationMode.FOR_BROADCAST,
                 canonical = true
-        ).orEmpty()
+        ).orEmpty().replace("{}", "null")
+        // HACK! this is used to not serialize empty maps atm.
+        // TODO: write proper map handling so we don't need Bullshit here
     }
 
     private fun processObject (mode : SerializationMode, obj: Any?) : JsonObject? {

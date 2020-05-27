@@ -4,6 +4,8 @@ import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.engine.crypto.CryptoNull
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
+import com.pylons.wallet.core.types.tx.Trade
+import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
 
 /**
@@ -34,6 +36,10 @@ internal class NoEngine : Engine() {
                               outputs : List<WeightedOutput>) : Transaction =
             throw NoEngineException()
 
+    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+                             coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, ExtraInfo: String)   =
+            throw NoEngineException()
+
     override fun disableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
@@ -41,6 +47,9 @@ internal class NoEngine : Engine() {
             throw NoEngineException()
 
     override fun enableRecipe(id: String): Transaction  =
+            throw NoEngineException()
+
+    override fun fulfillTrade(tradeId: String): Transaction =
             throw NoEngineException()
 
     override fun generateCredentialsFromKeys(): Profile.Credentials =
@@ -88,10 +97,16 @@ internal class NoEngine : Engine() {
     override fun sendPylons(q: Long, receiver: String) =
             throw NoEngineException()
 
+    override fun setItemFieldString(itemId : String, field : String, value : String): Transaction =
+            throw NoEngineException()
+
     override fun updateCookbook(id: String, developer: String, description: String, version: String, supportEmail: String): Transaction =
             throw NoEngineException()
 
     override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>): Transaction =
+            throw NoEngineException()
+
+    override fun listTrades(): List<Trade> =
             throw NoEngineException()
 }

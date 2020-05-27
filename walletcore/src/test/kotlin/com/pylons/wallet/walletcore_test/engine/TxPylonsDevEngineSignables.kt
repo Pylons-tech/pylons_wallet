@@ -104,4 +104,22 @@ class TxPylonsDevEngineSignables {
             executeRecipeSignTemplate("id0001", arrayOf("alpha", "beta", "gamma"), "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
         }
     }
+
+    //TODO: implement missing signables tests once txbuilder support for these messages exists
+//    @Test
+//    fun fulfillTradeSignable () {
+//        val model = com.pylons.wallet.walletcore_test.fixtures.fulfillTradeSignable
+//        basicSignableTestFlow("fulfill_trade") { model.toSignStruct() }
+//    }
+//
+//    @Test
+//    fun createTradeSignable () {
+//        val model = com.pylons.wallet.walletcore_test.fixtures.createTradeSignable
+//        basicSignableTestFlow("create_trade") { model.toSignStruct() }
+//    }
+//
+//    @Test
+//    fun setItemStringSignable () {
+//
+//    }
 }

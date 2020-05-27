@@ -13,6 +13,7 @@ class Actions {
         const val SEND_PYLONS = "SEND_PYLONS"
         const val CREATE_TRADE = "CREATE_TRADE"
         const val FULFILL_TRADE = "FULFILL_TRADE"
+        const val SET_ITEM_FIELD_STRING = "SET_ITEM_FIELD_STRING"
         const val APPLY_RECIPE = "APPLY_RECIPE"
         const val BATCH_CREATE_COOKBOOK = "BATCH_CREATE_COOKBOOK"
         const val BATCH_UPDATE_COOKBOOK = "BATCH_UPDATE_COOKBOOK"

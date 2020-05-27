@@ -6,6 +6,7 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.recipe.*
+import java.lang.ClassCastException
 import java.lang.StringBuilder
 import java.util.*
 
@@ -22,20 +23,26 @@ data class Item(
         val tradable : Boolean,
         @property:[Json(name = "LastUpdate")]
         val lastUpdate : Long,
-        @property:[Json(name = "Doubles") QuotedJsonNumeral]
+        @property:[Json(name = "Doubles" ) QuotedJsonNumeral]
         val doubles : Map<String, Double>,
         @property:[Json(name = "Longs") QuotedJsonNumeral]
         val longs : Map<String, Long>,
         @property:[Json(name = "Strings")]
         val strings : Map<String, String>
 ) {
-    fun serialize(): String = klaxon.toJsonString(this)
+    fun serialize(mode : SerializationMode? = null): String {
+        return when (mode) {
+            null -> klaxon.toJsonString(this)
+            else -> JsonModelSerializer.serialize(mode, this)
+        }
+    }
 
     companion object {
         fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<Item> {
             if (jsonArray == null) return listOf()
             val list = mutableListOf<Item>()
             jsonArray.forEach {
+                println(it.toJsonString())
                 list.add(
                         Item(
                                 id = it.string("ID")!!,
@@ -43,7 +50,14 @@ data class Item(
                                 sender = it.string("Sender")!!,
                                 ownerRecipeID = it.string("OwnerRecipeID")!!,
                                 tradable = it.boolean("Tradable")!!,
-                                lastUpdate = it.long("LastUpdate")!!,
+                                // TODO this is an EXTREMELY ugly hack and a general-purpose
+                                // custom serializer would obsolete it
+                                // (we need a custom serializer now, too, bc this is not acceptable)
+                                lastUpdate = try {
+                                    it.long("LastUpdate")!!
+                                } catch (c : ClassCastException) {
+                                    it.string("LastUpdate")!!.toLong()
+                                },
                                 doubles = doubleMapFromJson(it.array("Doubles")),
                                 longs = longDictFromJsonInt(it.array("Longs")),
                                 strings = stringDictFromJson(it.array("Strings"))

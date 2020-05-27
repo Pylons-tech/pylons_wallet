@@ -30,7 +30,7 @@ data class Recipe(
         val outputs : List<WeightedOutput>
 ) {
     companion object {
-        fun getListFromJson(json : String) : List<Recipe> {
+        fun listFromJson(json : String) : List<Recipe> {
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)
                     .array<JsonObject>("Recipes").orEmpty()
             val list = mutableListOf<Recipe>()

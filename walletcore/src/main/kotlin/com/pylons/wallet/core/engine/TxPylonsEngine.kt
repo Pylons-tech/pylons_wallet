@@ -14,8 +14,12 @@ import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
+import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.msg.CheckExecution
+import com.pylons.wallet.core.types.tx.msg.CreateTrade
+import com.pylons.wallet.core.types.tx.msg.FulfillTrade
+import com.pylons.wallet.core.types.tx.msg.UpdateItemString
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -104,12 +108,20 @@ open class TxPylonsEngine : Engine() {
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
             basicTxHandlerFlow { CheckExecution(id, Core.userProfile!!.credentials.address, payForCompletion).toSignedTx() }
 
+    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+                             coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, extraInfo: String) =
+            basicTxHandlerFlow{ CreateTrade(coinInputs, coinOutputs, extraInfo, itemInputs, itemOutputs, it.address).toSignedTx() }
+
+
     override fun dumpCredentials(credentials: Profile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
         UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
     }
+
+    override fun fulfillTrade(tradeId : String)   =
+            basicTxHandlerFlow{ FulfillTrade(it.address, tradeId).toSignedTx() }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
         val addrString = AccAddress.getAddressFromNode(nodeUrl, cryptoCosmos.keyPair!!)
@@ -192,7 +204,12 @@ open class TxPylonsEngine : Engine() {
 
     override fun listRecipes(): List<Recipe> {
         val json = HttpWire.get("$nodeUrl/pylons/list_recipe/${Core.userProfile!!.credentials.address}")
-        return Recipe.getListFromJson(json)
+        return Recipe.listFromJson(json)
+    }
+
+    override fun listTrades(): List<Trade> {
+        val json = HttpWire.get("$nodeUrl/pylons/list_trade")
+        return Trade.listFromJson(json)
     }
 
     override fun listCookbooks(): List<Cookbook> {
@@ -211,6 +228,9 @@ open class TxPylonsEngine : Engine() {
     override fun sendPylons(q: Long, receiver: String): Transaction =
         basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoCosmos.keyPair!!.publicKey(),
                 it.accountNumber, it.sequence) }
+
+    override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
+            basicTxHandlerFlow { UpdateItemString(field, value, it.address, itemId).toSignedTx() }
 
     // Unimplemented engine method stubs
 

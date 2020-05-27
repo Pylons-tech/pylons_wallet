@@ -11,8 +11,10 @@ import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.walletcore_test.fixtures.basicItemOutput
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.walletcore_test.fixtures.emitCreateRecipe
+import com.pylons.wallet.walletcore_test.fixtures.emitCreateTrade
 import com.pylons.wallet.walletcore_test.fixtures.emitUpdateRecipe
 import org.junit.jupiter.api.MethodOrderer
 import java.time.Instant
@@ -43,6 +45,22 @@ class TxPylonsDevEngineOnline {
         return when (r.isNotEmpty()) {
             true -> r[r.lastIndex].id
             false -> fail("No recipes exist on chain belonging to current address. This test cannot continue.")
+        }
+    }
+
+    private fun getTradeIfOneExists (engine: TxPylonsDevEngine) : String {
+        val t = engine.listTrades()
+        return when (t.isNotEmpty()) {
+            true -> t[t.lastIndex].id
+            false -> fail("No trades exist on chain. This test cannot continue.")
+        }
+    }
+
+    private fun getItemIfOneExists (engine: TxPylonsDevEngine) : Item {
+        val r = engine.getOwnBalances()!!.items
+        return when (r.isNotEmpty()) {
+            true -> r[r.lastIndex]
+            false -> fail("No items exist on chain belonging to current address. This test cannot continue.")
         }
     }
 
@@ -93,12 +111,13 @@ class TxPylonsDevEngineOnline {
         //but you may want to uncomment it if Extremely Weird things are happening when interacting w/ the chain
         //and you're trying to debug.
         //assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
+
+        println("txhash: ${tx.id}")
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
         println("ok!")
         val a = engine.getTransaction(tx.id!!)
         println(a.stdTx!!.msg.size)
         followUp?.invoke(engine, tx.id!!)
-        println(Core.backupUserData())
     }
 
     @Order(0)
@@ -194,6 +213,35 @@ class TxPylonsDevEngineOnline {
     @Test
     fun checksExecution () {
         basicTxTestFlow { it.checkExecution(getExecutionIfOneExists(it), true) }
+    }
+
+    @Order(13)
+    @Test
+    fun createsTrade () {
+        basicTxTestFlow(
+                { emitCreateTrade(it, getItemIfOneExists(it), Core.userProfile!!.credentials.address)},
+                { it, _ -> println("do trade chk later") }
+        )
+    }
+
+    @Order(14)
+    @Test
+    fun getsTrades () {
+        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        val a = engine.listTrades()
+        assert(a.isNotEmpty())
+    }
+
+    @Order(15)
+    @Test
+    fun fulfillsTrade () {
+        basicTxTestFlow { it.fulfillTrade(getTradeIfOneExists(it)) }
+    }
+
+    @Order(16)
+    @Test
+    fun setsItemString () {
+        basicTxTestFlow { it.setItemFieldString(getItemIfOneExists(it).id, "knobliness", "very") }
     }
 
 }

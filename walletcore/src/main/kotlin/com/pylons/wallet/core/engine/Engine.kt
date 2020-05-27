@@ -3,6 +3,8 @@ package com.pylons.wallet.core.engine
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
+import com.pylons.wallet.core.types.tx.Trade
+import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
 
 /***
@@ -75,7 +77,12 @@ abstract class Engine {
 
     abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
-    /**
+    abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+                             coinOutputs : List<CoinOutput>, itemOutputs : List<Item>,
+                             ExtraInfo : String) : Transaction
+
+
+                             /**
      * Create-recipe message
      */
     abstract fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
@@ -146,6 +153,8 @@ abstract class Engine {
      *  TODO: why does this actually exist?
      */
     abstract fun dumpCredentials (credentials: Profile.Credentials)
+
+    abstract fun fulfillTrade (tradeId : String) : Transaction
 
     /**
      * Generates a new Credentials object appropriate for our engine
@@ -287,4 +296,8 @@ abstract class Engine {
      * List cookbooks query
      */
     abstract fun listCookbooks () : List<Cookbook>
+
+    abstract fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
+
+    abstract fun listTrades () : List<Trade>
 }
