@@ -5,19 +5,20 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class CoinOutput(
-        @property:[Json(name = "Coin")]
-        val coin : String,
-        @property:[Json(name = "Count") QuotedJsonNumeral]
-        val count : Long
+        @property:[Json(name = "denom")]
+        val denom : String,
+        @property:[Json(name = "amount") QuotedJsonNumeral]
+        val amount : Long
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : CoinOutput =
                         CoinOutput (
-                                coin = jsonObject.string("Coin")!!,
-                                count = jsonObject.string("Count")!!.toLong()
+                                denom = jsonObject.string("denom")!!,
+                                amount = jsonObject.string("amount")!!.toLong()
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {
+                        println("listFromJson: $jsonArray")
                         if (jsonArray == null) return listOf()
                         val ls = mutableListOf<CoinOutput>()
                         jsonArray.forEach { ls.add(fromJson(it)) }

@@ -12,25 +12,25 @@ import java.util.*
 
 data class Item(
         @property:[Json(name = "ID")]
-        val id : String,
+        val id: String,
         @property:[Json(name = "CookbookID")]
-        val cookbookId : String,
+        val cookbookId: String,
         @property:[Json(name = "Sender")]
-        val sender : String,
+        val sender: String,
         @property:[Json(name = "OwnerRecipeID")]
-        val ownerRecipeID : String,
+        val ownerRecipeID: String,
         @property:[Json(name = "Tradable")]
-        val tradable : Boolean,
+        val tradable: Boolean,
         @property:[Json(name = "LastUpdate")]
-        val lastUpdate : Long,
-        @property:[Json(name = "Doubles" ) QuotedJsonNumeral]
-        val doubles : Map<String, Double>,
+        val lastUpdate: Long,
+        @property:[Json(name = "Doubles") QuotedJsonNumeral]
+        val doubles: Map<String, Double>,
         @property:[Json(name = "Longs") QuotedJsonNumeral]
-        val longs : Map<String, Long>,
+        val longs: Map<String, Long>,
         @property:[Json(name = "Strings")]
-        val strings : Map<String, String>
+        val strings: Map<String, String>
 ) {
-    fun serialize(mode : SerializationMode? = null): String {
+    fun serialize(mode: SerializationMode? = null): String {
         return when (mode) {
             null -> klaxon.toJsonString(this)
             else -> JsonModelSerializer.serialize(mode, this)
@@ -38,7 +38,7 @@ data class Item(
     }
 
     companion object {
-        fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<Item> {
+        fun listFromJson(jsonArray: JsonArray<JsonObject>?): List<Item> {
             if (jsonArray == null) return listOf()
             val list = mutableListOf<Item>()
             jsonArray.forEach {
@@ -55,11 +55,11 @@ data class Item(
                                 // (we need a custom serializer now, too, bc this is not acceptable)
                                 lastUpdate = try {
                                     it.long("LastUpdate")!!
-                                } catch (c : ClassCastException) {
+                                } catch (c: ClassCastException) {
                                     it.string("LastUpdate")!!.toLong()
                                 },
                                 doubles = doubleMapFromJson(it.array("Doubles")),
-                                longs = longDictFromJsonInt(it.array("Longs")),
+                                longs = longDictFromJson(it.array("Longs")),
                                 strings = stringDictFromJson(it.array("Strings"))
                         )
                 )
@@ -67,28 +67,27 @@ data class Item(
             return list
         }
 
-        private fun doubleMapFromJson(jsonArray: JsonArray<JsonObject>?) : Map<String, Double> {
+        private fun doubleMapFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, Double> {
             if (jsonArray == null) return mapOf()
             val mm = mutableMapOf<String, Double>()
             jsonArray.forEach { mm[it.string("Key")!!] = it.string("Value")!!.toDouble() }
             return mm
         }
 
-        private fun longDictFromJson(jsonArray: JsonArray<JsonObject>?) : Map<String, Long> {
+        private fun longDictFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, Long> {
             if (jsonArray == null) return mapOf()
             val mm = mutableMapOf<String, Long>()
-            jsonArray.forEach { mm[it.string("Key")!!] = it.string("Value")!!.toLong() }
+            jsonArray.forEach {
+                mm[it.string("Key")!!] = try {
+                    it.string("Value")!!.toLong()
+                } catch (c: ClassCastException) {
+                    it.int("Value")!!.toLong()
+                }
+            }
             return mm
         }
 
-        private fun longDictFromJsonInt(jsonArray: JsonArray<JsonObject>?) : Map<String, Long> {
-            if (jsonArray == null) return mapOf()
-            val mm = mutableMapOf<String, Long>()
-            jsonArray.forEach { mm[it.string("Key")!!] = it.int("Value")!!.toLong() }
-            return mm
-        }
-
-        private fun stringDictFromJson(jsonArray: JsonArray<JsonObject>?) : Map<String, String> {
+        private fun stringDictFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, String> {
             if (jsonArray == null) return mapOf()
             val mm = mutableMapOf<String, String>()
             jsonArray.forEach { mm[it.string("Key")!!] = it.string("Value")!! }

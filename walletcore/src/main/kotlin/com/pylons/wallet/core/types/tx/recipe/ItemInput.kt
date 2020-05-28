@@ -15,9 +15,9 @@ data class ItemInput(
         companion object {
                 fun fromJson (jsonObject: JsonObject) : ItemInput =
                         ItemInput (
-                                doubles = DoubleInputParam.listFromJson(jsonObject.array("Doubles")!!),
-                                longs = LongInputParam.listFromJson(jsonObject.array("Long")!!),
-                                strings = StringInputParam.listFromJson(jsonObject.array("Strings")!!)
+                                doubles = DoubleInputParam.listFromJson(jsonObject.array("Doubles")),
+                                longs = LongInputParam.listFromJson(jsonObject.array("Longs")),
+                                strings = StringInputParam.listFromJson(jsonObject.array("Strings"))
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<ItemInput> {

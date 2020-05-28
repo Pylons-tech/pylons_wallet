@@ -49,7 +49,7 @@ data class Trade(
                         itemOutputs = Item.listFromJson(it.array("ItemOutputs")),
                         extraInfo = it.string("ExtraInfo").orEmpty(),
                         sender = it.string("Sender")!!,
-                        fulfiller = it.string("Fulfiller").orEmpty(),
+                        fulfiller = it.string("FulFiller").orEmpty(),
                         disabled = it.boolean("Disabled")!!,
                         completed = it.boolean("Completed")!!)
                 )
