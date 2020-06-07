@@ -52,6 +52,9 @@ internal class NoEngine : Engine() {
     override fun fulfillTrade(tradeId: String): Transaction =
             throw NoEngineException()
 
+    override fun cancelTrade(tradeId: String): Transaction =
+            throw NoEngineException()
+
     override fun generateCredentialsFromKeys(): Profile.Credentials =
             throw NoEngineException()
 

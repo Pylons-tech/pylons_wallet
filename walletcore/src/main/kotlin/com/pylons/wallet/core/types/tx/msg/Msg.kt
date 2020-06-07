@@ -296,6 +296,27 @@ data class FulfillTrade (
     }
 }
 
+@MsgType("pylons/DisableTrade")
+data class CancelTrade (
+        @property:[Json(name = "Sender")]
+        val sender : String,
+        @property:[Json(name = "TradeID")]
+        val tradeId : String
+):Msg() {
+
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : FulfillTrade {
+            return FulfillTrade(
+                    sender = jsonObject.string("Sender")!!,
+                    tradeId = jsonObject.string("TradeID")!!
+            )
+        }
+    }
+}
+
 @MsgType("pylons/GetPylons")
 data class GetPylons(
         @property:[Json(name = "Amount")]
