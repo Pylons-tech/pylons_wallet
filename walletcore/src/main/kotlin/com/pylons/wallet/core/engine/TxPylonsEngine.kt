@@ -230,7 +230,7 @@ open class TxPylonsEngine : Engine() {
                 it.accountNumber, it.sequence) }
 
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
-            basicTxHandlerFlow { UpdateItemString(field, value, it.address, itemId).toSignedTx() }
+            basicTxHandlerFlow { UpdateItemString(field, itemId, it.address, value).toSignedTx() }
 
     // Unimplemented engine method stubs
 
