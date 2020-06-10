@@ -6,6 +6,7 @@ import com.beust.klaxon.Parser
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.types.tx.StdTx
 import com.pylons.wallet.core.types.tx.TxData
+import com.pylons.wallet.core.types.tx.TxError
 import java.util.*
 
 data class Transaction(
@@ -13,7 +14,8 @@ data class Transaction(
         val stdTx: StdTx? = null,
         val _id: String? = null,
         val resolver: ((Transaction) -> Unit)? = null,
-        var state: State = State.TX_NOT_YET_SENT
+        var state: State = State.TX_NOT_YET_SENT,
+        val txError: List<TxError>? = null
 ) {
     var id: String? = _id
         get() = {
@@ -58,34 +60,51 @@ data class Transaction(
     companion object {
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
-            if (doc.containsKey("data")) {
-                try {
-                    val dataString = hexToAscii(doc.string("data")!!)
-                    val dataObject = (Parser.default().parse(java.lang.StringBuilder(dataString)) as JsonObject)
-
-                    if (dataObject.containsKey("Output") && dataObject.string("Output") != null) {
-                        val arrayString = String(Base64.getDecoder().decode(dataObject.string("Output")))
-                        val outputArray = Parser.default().parse(StringBuilder(arrayString)) as JsonArray<JsonObject>
-                        dataObject["Output"] = outputArray
+            when {
+                doc.contains("code") -> {
+                    val logs = doc.array<JsonObject>("logs")
+                    val errors = mutableListOf<TxError>()
+                    logs?.forEach {
+                        val json: JsonObject = Parser.default().parse(StringBuilder(it.string("log"))) as JsonObject
+                        errors.add(TxError.fromJson(json))
                     }
 
                     return Transaction(
-                            txData = TxData.fromJson(dataObject),
+                            txError = errors,
                             stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                             _id = id
                     )
-                } catch (e: Exception) {
-                    println(e)
+                }
+                doc.containsKey("data") -> {
+                    try {
+                        val dataString = hexToAscii(doc.string("data")!!)
+                        val dataObject = (Parser.default().parse(java.lang.StringBuilder(dataString)) as JsonObject)
+
+                        if (dataObject.containsKey("Output") && dataObject.string("Output") != null) {
+                            val arrayString = String(Base64.getDecoder().decode(dataObject.string("Output")))
+                            val outputArray = Parser.default().parse(StringBuilder(arrayString)) as JsonArray<JsonObject>
+                            dataObject["Output"] = outputArray
+                        }
+
+                        return Transaction(
+                                txData = TxData.fromJson(dataObject),
+                                stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                                _id = id
+                        )
+                    } catch (e: Exception) {
+                        println(e)
+                        return Transaction(
+                                stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                                _id = id
+                        )
+                    }
+                }
+                else -> {
                     return Transaction(
                             stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                             _id = id
                     )
                 }
-            } else {
-                return Transaction(
-                        stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                        _id = id
-                )
             }
         }
     }

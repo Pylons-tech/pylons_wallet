@@ -3,10 +3,11 @@ package com.pylons.wallet.walletcore_test.types
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.TxData
 import com.pylons.wallet.core.types.tx.TxDataOutput
+import com.pylons.wallet.core.types.tx.TxError
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class TxDataTest {
+class TransactionTest {
     private val executeRecipeResponse = """
         {
           "height": "24295",
@@ -63,7 +64,7 @@ class TxDataTest {
         }
     """.trimIndent()
 
-    private val noDataResponse = """
+    private val errorResponse = """
         {
           "height": "25127",
           "txhash": "1D3D5484D214CC83D726870D9BA5C9CA3B90A436AB9F3D6B870DE15DA7BB4580",
@@ -396,10 +397,12 @@ class TxDataTest {
     }
 
     @Test
-    fun getTransactionNoDataResponse() {
+    fun getTransactionErrorResponse() {
         val expected = TxData("", "", listOf())
-        val tx = Transaction.parseTransactionResponse("1D3D5484D214CC83D726870D9BA5C9CA3B90A436AB9F3D6B870DE15DA7BB4580", noDataResponse)
+        val tx = Transaction.parseTransactionResponse("1D3D5484D214CC83D726870D9BA5C9CA3B90A436AB9F3D6B870DE15DA7BB4580", errorResponse)
         Assertions.assertEquals(expected, tx.txData)
+        val expectedError = listOf(TxError(1, "The execution doesn't exist"))
+        Assertions.assertEquals(expectedError, tx.txError)
     }
 
     @Test
