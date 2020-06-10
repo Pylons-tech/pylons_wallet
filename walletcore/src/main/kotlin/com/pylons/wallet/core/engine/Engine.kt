@@ -156,6 +156,7 @@ abstract class Engine {
 
     abstract fun fulfillTrade (tradeId : String) : Transaction
 
+    abstract fun cancelTrade (tradeId : String) : Transaction
     /**
      * Generates a new Credentials object appropriate for our engine
      * type from the given mnemonic.

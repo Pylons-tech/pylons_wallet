@@ -3,6 +3,8 @@ package com.pylons.wallet.core.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import com.pylons.wallet.core.internal.fuzzyInt
+import com.pylons.wallet.core.internal.fuzzyLong
 
 data class LongWeightRange(
         @property:[NeverQuoteWrap Json(name = "Upper")]
@@ -15,9 +17,9 @@ data class LongWeightRange(
         companion object {
                 fun fromJson (jsonObject: JsonObject) : LongWeightRange =
                         LongWeightRange (
-                                upper = jsonObject.long("Upper")!!,
-                                lower = jsonObject.long("Lower")!!,
-                                weight = jsonObject.int("Weight")!!
+                                upper = jsonObject.fuzzyLong("upper"),
+                                lower = jsonObject.fuzzyLong("Lower"),
+                                weight = jsonObject.fuzzyInt("Weight")
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<LongWeightRange> {

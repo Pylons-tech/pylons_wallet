@@ -48,11 +48,11 @@ class TxPylonsDevEngineOnline {
         }
     }
 
-    private fun getTradeIfOneExists (engine: TxPylonsDevEngine) : String {
-        val t = engine.listTrades()
+    private fun getActiveTradeIfOneExists (engine: TxPylonsDevEngine) : String {
+        val t = engine.listTrades().filter { !it.completed && !it.disabled }
         return when (t.isNotEmpty()) {
             true -> t[t.lastIndex].id
-            false -> fail("No trades exist on chain. This test cannot continue.")
+            false -> fail("No active trades exist on chain. This test cannot continue.")
         }
     }
 
@@ -235,13 +235,29 @@ class TxPylonsDevEngineOnline {
     @Order(15)
     @Test
     fun fulfillsTrade () {
-        basicTxTestFlow { it.fulfillTrade(getTradeIfOneExists(it)) }
+        basicTxTestFlow { it.fulfillTrade(getActiveTradeIfOneExists(it)) }
     }
 
     @Order(16)
     @Test
     fun setsItemString () {
         basicTxTestFlow { it.setItemFieldString(getItemIfOneExists(it).id, "knobliness", "very") }
+    }
+
+    @Order(17)
+    @Test
+    fun createsTradeForCancel () {
+        basicTxTestFlow(
+                { emitCreateTrade(it, getItemIfOneExists(it), Core.userProfile!!.credentials.address)},
+                { it, id -> println("do trade chk later") }
+        )
+    }
+
+    @Order(18)
+    @Test
+    fun cancelsTrade () {
+        basicTxTestFlow {
+            it.cancelTrade(getActiveTradeIfOneExists(it)) }
     }
 
 }

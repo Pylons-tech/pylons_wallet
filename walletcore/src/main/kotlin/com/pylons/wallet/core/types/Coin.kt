@@ -4,6 +4,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.constants.Keys
+import com.pylons.wallet.core.internal.fuzzyLong
 
 /**
  * Local representation of a coin-type resource.
@@ -18,7 +19,7 @@ data class Coin(
         fun fromJson (jsonObject: JsonObject) : Coin =
                 Coin (
                         denom = jsonObject.string("denom")!!,
-                        amount = jsonObject.string("amount")!!.toLong()
+                        amount = jsonObject.fuzzyLong("amount")
                 )
 
         fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<Coin> {

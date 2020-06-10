@@ -2,6 +2,7 @@ package com.pylons.wallet.walletcore_test.types.tx.recipe
 
 import com.beust.klaxon.Json
 import com.pylons.wallet.core.types.tx.recipe.JsonModelSerializer
+import com.pylons.wallet.core.types.tx.recipe.QuotedJsonNumeral
 import com.pylons.wallet.core.types.tx.recipe.SerializationMode
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -38,4 +39,26 @@ class JsonModelSerializerTest {
     }
 
 
+    @Test
+    fun mapsForBroadcast() {
+        val expected = """{"Doubles":[{"Key":"XP","Value":"1.23"}],"Longs":[{"Key":"level","Value":"1"},{"Key":"GiantKill","Value":"0"},{"Key":"Special","Value":"0"},{"Key":"SpecialDragonKill","Value":"0"},{"Key":"UndeadDragonKill","Value":"0"}],"Strings":[{"Key":"Name","Value":"Tiger"},{"Key":"Type","Value":"Character"}]}""".trimIndent()
+        val actual = JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, TestObject2(mapOf("XP" to 1.23), mapOf("level" to 1L, "GiantKill" to 0L, "Special" to 0L, "SpecialDragonKill" to 0L, "UndeadDragonKill" to 0L), mapOf("Name" to "Tiger", "Type" to "Character")))
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun mapsForSigning() {
+        val expected = """{"Doubles":[{"Key":"XP","Value":"1.23"}],"Longs":[{"Key":"level","Value":1},{"Key":"GiantKill","Value":0},{"Key":"Special","Value":0},{"Key":"SpecialDragonKill","Value":0},{"Key":"UndeadDragonKill","Value":0}],"Strings":[{"Key":"Name","Value":"Tiger"},{"Key":"Type","Value":"Character"}]}""".trimIndent()
+        val actual = JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, TestObject2(mapOf("XP" to 1.23), mapOf("level" to 1L, "GiantKill" to 0L, "Special" to 0L, "SpecialDragonKill" to 0L, "UndeadDragonKill" to 0L), mapOf("Name" to "Tiger", "Type" to "Character")))
+        assertEquals(expected, actual)
+    }
 }
+
+data class TestObject2(
+        @property:[Json(name = "Doubles") QuotedJsonNumeral]
+        val doubles: Map<String, Double>,
+        @property:[Json(name = "Longs") QuotedJsonNumeral]
+        val longs: Map<String, Long>,
+        @property:[Json(name = "Strings")]
+        val strings: Map<String, String>
+)

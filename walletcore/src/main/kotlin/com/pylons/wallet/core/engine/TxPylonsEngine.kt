@@ -16,10 +16,7 @@ import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
-import com.pylons.wallet.core.types.tx.msg.CheckExecution
-import com.pylons.wallet.core.types.tx.msg.CreateTrade
-import com.pylons.wallet.core.types.tx.msg.FulfillTrade
-import com.pylons.wallet.core.types.tx.msg.UpdateItemString
+import com.pylons.wallet.core.types.tx.msg.*
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -122,6 +119,9 @@ open class TxPylonsEngine : Engine() {
 
     override fun fulfillTrade(tradeId : String)   =
             basicTxHandlerFlow{ FulfillTrade(it.address, tradeId).toSignedTx() }
+
+    override fun cancelTrade(tradeId : String)   =
+            basicTxHandlerFlow{ CancelTrade(it.address, tradeId).toSignedTx() }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
         val addrString = AccAddress.getAddressFromNode(nodeUrl, cryptoCosmos.keyPair!!)
@@ -230,7 +230,7 @@ open class TxPylonsEngine : Engine() {
                 it.accountNumber, it.sequence) }
 
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
-            basicTxHandlerFlow { UpdateItemString(field, value, it.address, itemId).toSignedTx() }
+            basicTxHandlerFlow { UpdateItemString(field, itemId, it.address, value).toSignedTx() }
 
     // Unimplemented engine method stubs
 

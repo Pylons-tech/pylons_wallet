@@ -6,7 +6,7 @@ import com.beust.klaxon.JsonObject
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.starProjectedType
+
 
 object JsonModelSerializer {
 
@@ -67,7 +67,7 @@ object JsonModelSerializer {
             value == null -> null
             Regex("kotlin.Array<.*>").matches(prop.returnType.toString()) -> handleArrays(mode, prop, value)
             Regex("kotlin.collections.List<.*>").matches(prop.returnType.toString()) -> handleLists(mode, prop, value)
-            // TODO: maps?
+            Regex("kotlin.collections.Map<.*>").matches(prop.returnType.toString()) -> handleMaps(mode, prop, value)
             else -> processObject(mode, value) // serialize nested object
         }
     }
@@ -115,6 +115,53 @@ object JsonModelSerializer {
                 else -> value.forEach { jsonArray.add(processObject(mode, it)) }
             }
             return jsonArray
+        }
+    }
+
+    private fun handleMaps(mode : SerializationMode, prop : KProperty1<out Any, Any?>, value : Any?): JsonArray<*>? {
+        if ((value as Map<String, *>).size == 0) return null
+        else {
+            val jsonArray = JsonArray<Any?>()
+            val q = prop.findAnnotation<QuotedJsonNumeral>()
+            when (prop.returnType.toString()) {
+                "kotlin.collections.Map<kotlin.String, kotlin.Long>" -> (value as Map<String, Long>).forEach {
+                    val obj = JsonObject()
+                    obj["Key"] = it.key
+
+                    // broadcast has to be string format "1" while signing has to be number 1
+                    obj["Value"] = if (mode == SerializationMode.FOR_BROADCAST) {
+                        it.value.toString()
+                    } else {
+                        it.value
+                    }
+
+                    jsonArray.add(obj)
+                }
+                "kotlin.collections.Map<kotlin.String, kotlin.String>" -> (value as Map<String, String>).forEach {
+                    val obj = JsonObject()
+                    obj["Key"] = it.key
+                    obj["Value"] = it.value
+                    jsonArray.add(obj)
+                }
+                else -> value.forEach {
+                    val obj = JsonObject()
+                    obj["Key"] = it.key
+                    obj["Value"] = if (q != null && (q.serializationMode == SerializationMode.ALL || q.serializationMode == mode)) {
+                        it.value.toString()
+                    } else {
+                        it.value
+                    }
+                    jsonArray.add(obj)
+                }
+            }
+
+            return if (jsonArray.isNotEmpty()) {
+                jsonArray
+            } else {
+                // must return null for empty array
+                null
+            }
+
         }
     }
 }
