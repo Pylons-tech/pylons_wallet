@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.pylons.wallet.core.internal.fuzzyLong
 import java.lang.StringBuilder
 
 data class Cookbook (
@@ -37,7 +38,7 @@ data class Cookbook (
                                 description = obj.string("Description")!!,
                                 version = obj.string("Version")!!,
                                 developer = obj.string("Developer")!!,
-                                level = obj.string("Level")!!.toLong(),
+                                level = obj.fuzzyLong("Level"),
                                 sender = obj.string("Sender")!!,
                                 supportEmail = obj.string("SupportEmail")!!
                         )

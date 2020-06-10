@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.pylons.wallet.core.internal.fuzzyLong
 import java.lang.StringBuilder
 
 data class Recipe(
@@ -42,7 +43,7 @@ data class Recipe(
                                 id = it.string("ID")!!,
                                 description = it.string("Description")!!,
                                 sender = it.string("Sender")!!,
-                                blockInterval = it.string("BlockInterval")!!.toLong(),
+                                blockInterval = it.fuzzyLong("BlockInterval"),
                                 disabled = it.boolean("Disabled")!!,
                                 coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
                                 itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),

@@ -3,6 +3,8 @@ package com.pylons.wallet.core.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import com.beust.klaxon.json
+import com.pylons.wallet.core.internal.fuzzyLong
 import java.lang.ClassCastException
 
 data class LongInputParam(
@@ -17,16 +19,8 @@ data class LongInputParam(
         fun fromJson(jsonObject: JsonObject): LongInputParam =
                 LongInputParam(
                         key = jsonObject.string("Key")!!,
-                        minValue = try {
-                            jsonObject.long("MinValue")!!
-                        } catch (c: ClassCastException) {
-                            jsonObject.string("MinValue")!!.toLong()
-                        },
-                        maxValue = try {
-                            jsonObject.long("MaxValue")!!
-                        } catch (c: ClassCastException) {
-                            jsonObject.string("MaxValue")!!.toLong()
-                        }
+                        minValue = jsonObject.fuzzyLong("MinValue"),
+                        maxValue = jsonObject.fuzzyLong("MaxValue")
                 )
 
         fun listFromJson(jsonArray: JsonArray<JsonObject>?): List<LongInputParam> {

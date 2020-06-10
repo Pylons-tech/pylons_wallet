@@ -2,6 +2,7 @@ package com.pylons.wallet.core.types.tx
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
+import com.pylons.wallet.core.internal.fuzzyLong
 import com.pylons.wallet.core.types.Coin
 
 data class StdFee(
@@ -17,7 +18,7 @@ data class StdFee(
                                         null -> null
                                         else -> Coin.fromJson(it)
                                 },
-                                gas = jsonObject.string("gas")!!.toLong()
+                                gas = jsonObject.fuzzyLong("gas")
                         )
                 }
         }

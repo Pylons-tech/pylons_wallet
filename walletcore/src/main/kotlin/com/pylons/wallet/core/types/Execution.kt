@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.pylons.wallet.core.internal.fuzzyLong
 import java.lang.StringBuilder
 
 data class Execution (
@@ -37,7 +38,7 @@ data class Execution (
                                                 cookbookId = entry.string("CookbookID")!!,
                                                 completed = entry.boolean("Completed")!!,
                                                 sender = entry.string("Sender")!!,
-                                                blockHeight = entry.string("BlockHeight")!!.toLong(),
+                                                blockHeight = entry.fuzzyLong("BlockHeight"),
                                                 coinInputs = Coin.listFromJson(entry.array("CoinInputs")),
                                                 itemInputs = entry.array("ItemInputs")?: listOf()
                                         )

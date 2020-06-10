@@ -3,6 +3,7 @@ package com.pylons.wallet.core.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import com.pylons.wallet.core.internal.fuzzyLong
 
 data class CoinOutput(
         @property:[Json(name = "denom")]
@@ -14,7 +15,7 @@ data class CoinOutput(
                 fun fromJson (jsonObject: JsonObject) : CoinOutput =
                         CoinOutput (
                                 denom = jsonObject.string("denom")!!,
-                                amount = jsonObject.string("amount")!!.toLong()
+                                amount = jsonObject.fuzzyLong("amount")
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {

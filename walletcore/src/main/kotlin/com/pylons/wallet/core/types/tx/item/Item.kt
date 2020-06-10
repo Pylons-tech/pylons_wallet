@@ -4,6 +4,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.pylons.wallet.core.internal.fuzzyLong
 import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.recipe.*
 import java.lang.ClassCastException
@@ -50,14 +51,7 @@ data class Item(
                                 sender = it.string("Sender")!!,
                                 ownerRecipeID = it.string("OwnerRecipeID")!!,
                                 tradable = it.boolean("Tradable")!!,
-                                // TODO this is an EXTREMELY ugly hack and a general-purpose
-                                // custom serializer would obsolete it
-                                // (we need a custom serializer now, too, bc this is not acceptable)
-                                lastUpdate = try {
-                                    it.long("LastUpdate")!!
-                                } catch (c: ClassCastException) {
-                                    it.string("LastUpdate")!!.toLong()
-                                },
+                                lastUpdate = it.fuzzyLong("LastUpdate"),
                                 doubles = doubleMapFromJson(it.array("Doubles")),
                                 longs = longDictFromJson(it.array("Longs")),
                                 strings = stringDictFromJson(it.array("Strings"))
@@ -78,11 +72,7 @@ data class Item(
             if (jsonArray == null) return mapOf()
             val mm = mutableMapOf<String, Long>()
             jsonArray.forEach {
-                mm[it.string("Key")!!] = try {
-                    it.string("Value")!!.toLong()
-                } catch (c: ClassCastException) {
-                    it.int("Value")!!.toLong()
-                }
+                mm[it.string("Key")!!] = it.fuzzyLong("Value")
             }
             return mm
         }
