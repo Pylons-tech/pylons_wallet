@@ -124,7 +124,7 @@ open class TxPylonsEngine : Engine() {
             basicTxHandlerFlow{ CancelTrade(it.address, tradeId).toSignedTx() }
 
     override fun generateCredentialsFromKeys() : Profile.Credentials {
-        val addrString = AccAddress.getAddressFromNode(nodeUrl, cryptoCosmos.keyPair!!)
+        val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
         return Credentials(addrString)
     }
 
