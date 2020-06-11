@@ -7,17 +7,14 @@ import com.pylons.wallet.core.types.Coin
 
 data class StdFee(
         @property:[Json(name = "amount")]
-        val amount : Coin?,
+        val amount : List<Coin>,
         @property:[Json(name = "gas")]
         val gas : Long
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : StdFee {
                         return StdFee(
-                                amount = when (val it = jsonObject.obj("amount")) {
-                                        null -> null
-                                        else -> Coin.fromJson(it)
-                                },
+                                amount = Coin.listFromJson(jsonObject.array("amount")),
                                 gas = jsonObject.fuzzyLong("gas")
                         )
                 }

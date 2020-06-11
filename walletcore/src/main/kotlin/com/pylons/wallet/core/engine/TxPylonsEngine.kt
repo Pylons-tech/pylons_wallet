@@ -12,6 +12,7 @@ import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
+import com.pylons.wallet.core.internal.fuzzyLong
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.tx.Trade
@@ -158,14 +159,14 @@ open class TxPylonsEngine : Engine() {
     override fun getOwnBalances(): Profile? {
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
-        val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("value")!!
+        val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
             "" -> {
                 null
             }
             else -> {
-                val sequence = value.string("sequence")!!.toLong()
-                val accountNumber = value.string("account_number")!!.toLong()
+                val sequence = value.fuzzyLong("sequence")
+                val accountNumber = value.fuzzyLong("account_number")
                 val coins = Coin.listFromJson(value.array("coins"))
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject)
                 val items = Item.listFromJson(valueItems.array("Items"))
