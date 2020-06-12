@@ -27,7 +27,8 @@ data class Execution (
         companion object {
                 fun getListFromJson(json : String) : List<Execution> {
                         val jsonArray =
-                                (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Executions")
+                                (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("result")!!
+                                        .array<JsonObject>("Executions")
                         val list = mutableListOf<Execution>()
                         if (jsonArray != null && jsonArray.size > 0) for (i in jsonArray.indices) {
                                 val entry = jsonArray[i]

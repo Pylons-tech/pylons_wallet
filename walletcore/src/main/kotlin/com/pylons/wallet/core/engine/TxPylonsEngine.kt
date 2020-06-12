@@ -168,7 +168,7 @@ open class TxPylonsEngine : Engine() {
                 val sequence = value.fuzzyLong("sequence")
                 val accountNumber = value.fuzzyLong("account_number")
                 val coins = Coin.listFromJson(value.array("coins"))
-                val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject)
+                val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject).obj("result")!!
                 val items = Item.listFromJson(valueItems.array("Items"))
                 val credentials = (Core.userProfile!!.credentials as Credentials)
                 credentials.accountNumber = accountNumber

@@ -22,12 +22,14 @@ data class Cookbook (
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "SupportEmail")]
-        val supportEmail : String
+        val supportEmail : String,
+        @property:[Json(name ="CostPerBlock")]
+        val costPerBlock : Long
 ) {
     companion object {
         fun getListFromJson(json : String) : List<Cookbook> {
             val jsonArray =
-                    (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Cookbooks").orEmpty()
+                    (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("result")!!.array<JsonObject>("Cookbooks").orEmpty()
             val list = mutableListOf<Cookbook>()
             for (i in jsonArray.indices) {
                 val obj = jsonArray[i]
@@ -40,7 +42,8 @@ data class Cookbook (
                                 developer = obj.string("Developer")!!,
                                 level = obj.fuzzyLong("Level"),
                                 sender = obj.string("Sender")!!,
-                                supportEmail = obj.string("SupportEmail")!!
+                                supportEmail = obj.string("SupportEmail")!!,
+                                costPerBlock = obj.fuzzyLong("CostPerBlock")!!
                         )
                 )
             }
