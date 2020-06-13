@@ -66,7 +66,7 @@ class TxPylonsDevEngineOnline {
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         HttpWire.verbose = true
-        Core.start(Config(Backend.LIVE_DEV, listOf("http://35.238.123.59")), "")
+        Core.start(Config(Backend.LIVE_DEV, listOf("http://128.0.0.1")), "")
         val engine = Core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {

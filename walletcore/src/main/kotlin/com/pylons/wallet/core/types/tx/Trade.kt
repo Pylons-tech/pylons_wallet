@@ -37,7 +37,7 @@ data class Trade(
     companion object {
         fun listFromJson (json : String) : List<Trade> {
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.
-                    obj("result")!!.array<JsonObject>("Trades").orEmpty()
+                    array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
                 println(it.toJsonString())
