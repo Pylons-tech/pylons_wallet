@@ -5,6 +5,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.internal.fuzzyLong
+import com.pylons.wallet.core.types.Cookbook
 import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.recipe.*
 import java.lang.ClassCastException
@@ -39,6 +40,12 @@ data class Item(
     }
 
     companion object {
+        fun List<Item>.filterByCookbook(cb : String) : List<Item> {
+            val ls = mutableListOf<Item>()
+            this.forEach { if (it.cookbookId == cb) ls.add(it) }
+            return ls
+        }
+
         fun listFromJson(jsonArray: JsonArray<JsonObject>?): List<Item> {
             if (jsonArray == null) return listOf()
             val list = mutableListOf<Item>()
