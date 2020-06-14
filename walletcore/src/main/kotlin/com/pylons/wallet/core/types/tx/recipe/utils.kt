@@ -4,6 +4,8 @@ annotation class QuotedJsonNumeral(val serializationMode : SerializationMode = S
 
 annotation class NeverQuoteWrap
 
+annotation class EmptyArray
+
 enum class SerializationMode {
     FOR_BROADCAST,
     FOR_SIGNING,

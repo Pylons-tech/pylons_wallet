@@ -10,6 +10,8 @@ class TradeTest {
 
     private val tradeListJson = """
 {
+    "height": "0",
+    "result": {
     "Trades": [{
             "ID": "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e6050971e5d-7349-43a1-ab78-8a5e11a45988",
             "CoinInputs": null,
@@ -385,6 +387,7 @@ class TradeTest {
             "Completed": false
         }
     ]
+    }
 }
     """.trimIndent()
 

@@ -37,7 +37,7 @@ internal fun baseTxTemplate (msg : String, pubkey : String, signature : String) 
     
                 "fee": {
                 "amount": null,
-                "gas": "200000"
+                "gas": "400000"
             },
                 "signatures": [
                 {
@@ -54,6 +54,6 @@ internal fun baseTxTemplate (msg : String, pubkey : String, signature : String) 
         }"""
 
 fun baseSignTemplate (msg : String, sequence: Long, accountNumber: Long) =
-        """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"200000"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
+        """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"400000"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
 
 private fun pubkeyToString (pubkey: PylonsSECP256K1.PublicKey) = base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())

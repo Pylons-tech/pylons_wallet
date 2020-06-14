@@ -1,15 +1,12 @@
 package com.pylons.wallet.core.types.tx
 
 import com.beust.klaxon.Json
-import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.CoinOutput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
-import com.pylons.wallet.core.types.tx.recipe.ItemOutput
 import java.lang.StringBuilder
 
 data class Trade(
@@ -36,8 +33,7 @@ data class Trade(
 ) {
     companion object {
         fun listFromJson (json : String) : List<Trade> {
-            val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.
-                    array<JsonObject>("Trades").orEmpty()
+            val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.obj("result")!!.array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
                 println(it.toJsonString())

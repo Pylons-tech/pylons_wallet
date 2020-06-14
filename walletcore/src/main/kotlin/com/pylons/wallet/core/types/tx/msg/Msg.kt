@@ -188,7 +188,7 @@ data class CreateRecipe (
 data class CreateTrade (
         @property:[Json(name = "CoinInputs")]
         val coinInputs : List<CoinInput>,
-        @property:[Json(name = "CoinOutputs")]
+        @property:[Json(name = "CoinOutputs") EmptyArray]
         val coinOutputs : List<CoinOutput>,
         @property:[Json(name = "ExtraInfo")]
         val extraInfo : String,
