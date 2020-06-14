@@ -99,7 +99,13 @@ object JsonModelSerializer {
     }
 
     private fun handleLists (mode : SerializationMode, prop : KProperty1<out Any, Any?>, value : Any?) : JsonArray<*>? {
-        if ((value as List<*>).size == 0) return null
+        if ((value as List<*>).size == 0) {
+            return if (prop.findAnnotation<EmptyArray>() != null) {
+                JsonArray<Any?>()
+            } else {
+                null
+            }
+        }
         else {
             val jsonArray = JsonArray<Any?>()
             val q = prop.findAnnotation<QuotedJsonNumeral>()
