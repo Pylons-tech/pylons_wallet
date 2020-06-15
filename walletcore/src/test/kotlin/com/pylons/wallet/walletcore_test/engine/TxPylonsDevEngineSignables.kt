@@ -1,5 +1,6 @@
 package com.pylons.wallet.walletcore_test.engine
 
+import com.beust.klaxon.JsonReader
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -10,8 +11,14 @@ import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import org.opentest4j.AssertionFailedError
 import org.apache.commons.lang3.StringUtils.*
+import java.io.Reader
+import java.io.StringReader
 
 class TxPylonsDevEngineSignables {
+    fun baseSignTemplate2 (msg : String, gas: Long, sequence: Long, accountNumber: Long) =
+            """{"height":"0","result":{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","msgs":$msg,"sequence":"$sequence"}}"""
+
+
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
         val engine = Core.engine as TxPylonsDevEngine
@@ -30,18 +37,21 @@ class TxPylonsDevEngineSignables {
         println("getting profile state...")
         engine.getOwnBalances()
         println("getting txbuilder output...")
+
         val fixture = engine.queryTxBuilder(msgType)
+        // Parse it out w/ klaxon and spit it back out bc cosmos is doing inane things with whitespace now
+        val reparsed = klaxon.parseJsonObject(StringReader(fixture)).toJsonString()
         println("generating sign struct")
-        val signable = baseSignTemplate(signableFun(engine), 0, 0)
+        val signable = baseSignTemplate2(signableFun(engine),200000, 0, 0)
         try {
-            assertEquals(fixture, signable)
+            assertEquals(reparsed, signable)
         } catch (e : AssertionFailedError) {
             println("-------------------\n" +
-                    "DIFFERENCE: \n\n${difference(fixture, signable)}" +
+                    "DIFFERENCE: \n\n${difference(reparsed, signable)}" +
                     "\n-------------------")
             throw e
         }
-        println("FIXTURE\n$fixture\nGENERATED\n$signable")
+        println("FIXTURE\n$reparsed\nGENERATED\n$signable")
         println("ok!")
     }
 

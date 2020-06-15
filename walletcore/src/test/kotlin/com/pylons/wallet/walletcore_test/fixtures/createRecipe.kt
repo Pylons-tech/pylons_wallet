@@ -2,7 +2,6 @@ package com.pylons.wallet.walletcore_test.fixtures
 
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.types.tx.recipe.*
-import java.time.Instant
 
 fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, sender : String) = engine.createRecipe(
         blockInterval = 0,

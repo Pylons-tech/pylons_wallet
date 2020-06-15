@@ -6,9 +6,9 @@ import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.internal.fuzzyLong
 
 data class CoinOutput(
-        @property:[Json(name = "denom")]
+        @property:[Json(name = "Coin")]
         val denom : String,
-        @property:[Json(name = "amount") QuotedJsonNumeral]
+        @property:[Json(name = "Count") QuotedJsonNumeral]
         val amount : Long
 ) {
         companion object {

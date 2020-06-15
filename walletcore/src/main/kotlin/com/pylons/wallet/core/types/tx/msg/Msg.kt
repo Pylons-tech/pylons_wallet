@@ -419,27 +419,27 @@ data class UpdateItemString (
 }
 
 @MsgType("pylons/UpdateRecipe")
-data class UpdateRecipe (
+data class UpdateRecipe(
         @property:[Json(name = "BlockInterval")]
-        val blockInterval : Long,
+        val blockInterval: Long,
         @property:[Json(name = "CoinInputs")]
-        val coinInputs : List<CoinInput>,
+        val coinInputs: List<CoinInput>,
         @property:[Json(name = "CookbookID")]
-        val cookbookId : String,
+        val cookbookId: String,
         @property:[Json(name = "Description")]
         val description: String,
         @property:[Json(name = "Entries")]
-        val entries : EntriesList,
+        val entries: EntriesList,
         @property:[Json(name = "Outputs")]
-        val outputs : List<WeightedOutput>,
+        val outputs: List<WeightedOutput>,
         @property:[Json(name = "ID")]
-        val id : String,
+        val id: String,
         @property:[Json(name = "ItemInputs")]
-        val itemInputs : List<ItemInput>,
+        val itemInputs: List<ItemInput>,
         @property:[Json(name = "Name")]
-        val name : String,
+        val name: String,
         @property:[Json(name = "Sender")]
-        val sender : String
+        val sender: String
 ): Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
