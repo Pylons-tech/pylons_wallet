@@ -65,6 +65,7 @@ class WalletCoreController : Controller() {
     }
 
     private val coreThread: Thread = thread {
+        println("ct setup")
         if (FunctionQueue.isDirty) {
             FunctionQueue.poll().invoke()
             if (FunctionQueue.size == 0) FunctionQueue.isDirty = false
@@ -73,6 +74,8 @@ class WalletCoreController : Controller() {
     }
 
     init {
+        println("ccc")
+        coreThread
         subscribe<CoreInteractEvent> { evt ->
             FunctionQueue.add { evt.action }
             FunctionQueue.isDirty = true

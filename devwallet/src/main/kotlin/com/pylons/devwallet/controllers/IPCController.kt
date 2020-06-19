@@ -362,5 +362,4 @@ class IPCController  : Controller() {
     private val coreUpdateTick = EventHandler<ActionEvent> {
         fire(HeartbeatRequest)
     }
-
 }

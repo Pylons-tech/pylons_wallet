@@ -1,21 +1,30 @@
 package com.pylons.devwallet
 
+import com.pylons.devwallet.controllers.CoreInteractEvent
 import com.pylons.devwallet.controllers.WalletCoreController
 import com.pylons.devwallet.controllers.HeartbeatEvent
+import com.pylons.devwallet.controllers.IPCController
 import com.pylons.devwallet.views.StatusView
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.types.Config
 import javafx.scene.layout.BorderPane
 import tornadofx.*
+import java.io.ObjectInputFilter
 
 @ExperimentalUnsignedTypes
 class MainView : View() {
+    private val ipcController: IPCController by inject()
     private val walletCoreController: WalletCoreController by inject()
     private val statusView: StatusView by inject()
     override val root = BorderPane()
 
     override fun onDock() {
+        ipcController
         walletCoreController
-        //fire(BeginIPCPumpEvent)
+        fire(CoreInteractEvent {
+            println("CoreInteract")
+            Core.start(Config, "")
+        })
         subscribe<HeartbeatEvent> { event ->
             getCoreStatusString(event.version, event.started, event.sane, event.suspendedAction)
         }
