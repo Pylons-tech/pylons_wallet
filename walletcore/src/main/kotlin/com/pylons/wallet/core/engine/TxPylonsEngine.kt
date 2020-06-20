@@ -18,6 +18,7 @@ import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.msg.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -106,7 +107,7 @@ open class TxPylonsEngine : Engine() {
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
             basicTxHandlerFlow { CheckExecution(id, Core.userProfile!!.credentials.address, payForCompletion).toSignedTx() }
 
-    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
                              coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, extraInfo: String) =
             basicTxHandlerFlow{ CreateTrade(coinInputs, coinOutputs, extraInfo, itemInputs, itemOutputs, it.address).toSignedTx() }
 
@@ -118,8 +119,8 @@ open class TxPylonsEngine : Engine() {
         println("Dumped credentials")
     }
 
-    override fun fulfillTrade(tradeId : String)   =
-            basicTxHandlerFlow{ FulfillTrade(it.address, tradeId).toSignedTx() }
+    override fun fulfillTrade(tradeId : String, itemIds : List<String>)   =
+            basicTxHandlerFlow{ FulfillTrade(it.address, tradeId, itemIds).toSignedTx() }
 
     override fun cancelTrade(tradeId : String)   =
             basicTxHandlerFlow{ CancelTrade(it.address, tradeId).toSignedTx() }

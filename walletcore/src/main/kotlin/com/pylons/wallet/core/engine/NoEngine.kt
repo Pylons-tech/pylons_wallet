@@ -7,6 +7,7 @@ import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 
 /**
  * Engine that throws NoEngineException on calling any function.
@@ -36,7 +37,7 @@ internal class NoEngine : Engine() {
                               outputs : List<WeightedOutput>) : Transaction =
             throw NoEngineException()
 
-    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
                              coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, ExtraInfo: String)   =
             throw NoEngineException()
 
@@ -49,7 +50,7 @@ internal class NoEngine : Engine() {
     override fun enableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun fulfillTrade(tradeId: String): Transaction =
+    override fun fulfillTrade(tradeId: String, itemIds : List<String>): Transaction =
             throw NoEngineException()
 
     override fun cancelTrade(tradeId: String): Transaction =
