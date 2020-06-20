@@ -2,6 +2,7 @@ package com.pylons.wallet.walletcore_test.fixtures
 
 import com.pylons.wallet.core.types.tx.msg.CreateTrade
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 
 val createTradeSignable = CreateTrade(
         coinInputs = listOf(
@@ -11,11 +12,14 @@ val createTradeSignable = CreateTrade(
 
         ),
         itemInputs = listOf(
-                ItemInput(
-                        doubles = listOf(),
-                        longs = listOf(),
-                        strings = listOf(
-                                StringInputParam("Name", "Raichu")
+                TradeItemInput(
+                        "cookbookid1",
+                        ItemInput(
+                                doubles = listOf(),
+                                longs = listOf(),
+                                strings = listOf(
+                                        StringInputParam("Name", "Raichu")
+                                )
                         )
                 )
         ),

@@ -8,7 +8,7 @@ import java.time.Instant
 fun emitCreateTrade (engine : TxPylonsDevEngine, item : Item, sender : String) = engine.createTrade(
         coinInputs = listOf(CoinInput(
                 coin = "pylon",
-                count = 1
+                count = 10
         )),
         itemInputs = listOf(),
         coinOutputs = listOf(),

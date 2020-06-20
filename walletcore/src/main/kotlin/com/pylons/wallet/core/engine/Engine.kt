@@ -6,6 +6,7 @@ import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 
 /***
  * Generic interface for transaction-handling layers.
@@ -77,7 +78,7 @@ abstract class Engine {
 
     abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
-    abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+    abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
                              coinOutputs : List<CoinOutput>, itemOutputs : List<Item>,
                              ExtraInfo : String) : Transaction
 
@@ -154,7 +155,7 @@ abstract class Engine {
      */
     abstract fun dumpCredentials (credentials: Profile.Credentials)
 
-    abstract fun fulfillTrade (tradeId : String) : Transaction
+    abstract fun fulfillTrade (tradeId : String, itemIds : List<String>) : Transaction
 
     abstract fun cancelTrade (tradeId : String) : Transaction
     /**

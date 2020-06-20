@@ -3,14 +3,9 @@ package com.pylons.wallet.core.types.tx.item
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Parser
 import com.pylons.wallet.core.internal.fuzzyLong
-import com.pylons.wallet.core.types.Cookbook
 import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.recipe.*
-import java.lang.ClassCastException
-import java.lang.StringBuilder
-import java.util.*
 
 data class Item(
         @property:[Json(name = "ID")]
@@ -21,6 +16,8 @@ data class Item(
         val sender: String,
         @property:[Json(name = "OwnerRecipeID")]
         val ownerRecipeID: String,
+        @property:[Json(name = "OwnerTradeID")]
+        val ownerTradeID: String,
         @property:[Json(name = "Tradable")]
         val tradable: Boolean,
         @property:[Json(name = "LastUpdate")]
@@ -57,6 +54,7 @@ data class Item(
                                 cookbookId = it.string("CookbookID")!!,
                                 sender = it.string("Sender")!!,
                                 ownerRecipeID = it.string("OwnerRecipeID")!!,
+                                ownerTradeID = it.string("OwnerTradeID")!!,
                                 tradable = it.boolean("Tradable")!!,
                                 lastUpdate = it.fuzzyLong("LastUpdate"),
                                 doubles = doubleMapFromJson(it.array("Doubles")),

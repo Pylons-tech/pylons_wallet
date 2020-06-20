@@ -6,6 +6,6 @@ import com.pylons.wallet.core.types.tx.recipe.*
 
 val fulfillTradeSignable = FulfillTrade(
         tradeId = "",
-        sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
-
+        sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
+        itemIds = listOf()
 )

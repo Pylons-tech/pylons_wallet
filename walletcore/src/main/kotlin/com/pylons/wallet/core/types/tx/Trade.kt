@@ -6,7 +6,7 @@ import com.beust.klaxon.Parser
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.CoinOutput
-import com.pylons.wallet.core.types.tx.recipe.ItemInput
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import java.lang.StringBuilder
 
 data class Trade(
@@ -15,7 +15,7 @@ data class Trade(
         @property:[Json(name = "CoinInputs")]
         val coinInputs : List<CoinInput>,
         @property:[Json(name = "ItemInputs")]
-        val itemInputs : List<ItemInput>,
+        val itemInputs : List<TradeItemInput>,
         @property:[Json(name = "CoinOutputs")]
         val coinOutputs : List<CoinOutput>,
         @property:[Json(name = "ItemOutputs")]
@@ -40,7 +40,7 @@ data class Trade(
                 list.add(Trade(
                         id = it.string("ID")!!,
                         coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
-                        itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
+                        itemInputs = TradeItemInput.listFromJson(it.array("ItemInputs")),
                         coinOutputs = CoinOutput.listFromJson(it.array("CoinOutputs")),
                         itemOutputs = Item.listFromJson(it.array("ItemOutputs")),
                         extraInfo = it.string("ExtraInfo").orEmpty(),

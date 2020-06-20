@@ -9,6 +9,7 @@ import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
@@ -193,7 +194,7 @@ data class CreateTrade (
         @property:[Json(name = "ExtraInfo")]
         val extraInfo : String,
         @property:[Json(name = "ItemInputs")]
-        val itemInputs: List<ItemInput>,
+        val itemInputs: List<TradeItemInput>,
         @property:[Json(name = "ItemOutputs")]
         val itemOutputs: List<Item>,
         @property:[Json(name = "Sender")]
@@ -210,7 +211,7 @@ data class CreateTrade (
                     extraInfo = jsonObject.string("ExtraInfo")!!,
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")),
-                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
+                    itemInputs = TradeItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     itemOutputs = Item.listFromJson(jsonObject.array("ItemOutputs"))
 
             )
@@ -280,7 +281,9 @@ data class FulfillTrade (
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "TradeID")]
-        val tradeId : String
+        val tradeId : String,
+        @property:[Json(name = "ItemIDs")]
+        val itemIds : List<String>
 ):Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
@@ -290,7 +293,8 @@ data class FulfillTrade (
         fun parse (jsonObject: JsonObject) : FulfillTrade {
             return FulfillTrade(
                     sender = jsonObject.string("Sender")!!,
-                    tradeId = jsonObject.string("TradeID")!!
+                    tradeId = jsonObject.string("TradeID")!!,
+                    itemIds = jsonObject.array("ItemIDs") ?: listOf()
             )
         }
     }
@@ -308,8 +312,8 @@ data class CancelTrade (
 
     companion object {
         @MsgParser
-        fun parse (jsonObject: JsonObject) : FulfillTrade {
-            return FulfillTrade(
+        fun parse (jsonObject: JsonObject) : CancelTrade {
+            return CancelTrade(
                     sender = jsonObject.string("Sender")!!,
                     tradeId = jsonObject.string("TradeID")!!
             )
