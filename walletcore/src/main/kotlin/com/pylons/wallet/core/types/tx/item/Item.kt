@@ -46,24 +46,24 @@ data class Item(
             return ls
         }
 
+        fun fromJson (it: JsonObject) : Item = Item(
+                id = it.string("ID")!!,
+                cookbookId = it.string("CookbookID")!!,
+                sender = it.string("Sender")!!,
+                ownerRecipeID = it.string("OwnerRecipeID")!!,
+                tradable = it.boolean("Tradable")!!,
+                lastUpdate = it.fuzzyLong("LastUpdate"),
+                doubles = doubleMapFromJson(it.array("Doubles")),
+                longs = longDictFromJson(it.array("Longs")),
+                strings = stringDictFromJson(it.array("Strings"))
+        )
+
         fun listFromJson(jsonArray: JsonArray<JsonObject>?): List<Item> {
             if (jsonArray == null) return listOf()
             val list = mutableListOf<Item>()
             jsonArray.forEach {
                 println(it.toJsonString())
-                list.add(
-                        Item(
-                                id = it.string("ID")!!,
-                                cookbookId = it.string("CookbookID")!!,
-                                sender = it.string("Sender")!!,
-                                ownerRecipeID = it.string("OwnerRecipeID")!!,
-                                tradable = it.boolean("Tradable")!!,
-                                lastUpdate = it.fuzzyLong("LastUpdate"),
-                                doubles = doubleMapFromJson(it.array("Doubles")),
-                                longs = longDictFromJson(it.array("Longs")),
-                                strings = stringDictFromJson(it.array("Strings"))
-                        )
-                )
+                list.add(fromJson(it))
             }
             return list
         }

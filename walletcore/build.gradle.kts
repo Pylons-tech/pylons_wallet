@@ -54,6 +54,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVer")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.6.2")
 }
 
 val jar by tasks.getting(Jar::class) {

@@ -32,23 +32,24 @@ data class Trade(
         val completed : Boolean
 ) {
     companion object {
+        fun fromJson (it: JsonObject) : Trade = Trade(
+                id = it.string("ID")!!,
+                coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
+                itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
+                coinOutputs = CoinOutput.listFromJson(it.array("CoinOutputs")),
+                itemOutputs = Item.listFromJson(it.array("ItemOutputs")),
+                extraInfo = it.string("ExtraInfo").orEmpty(),
+                sender = it.string("Sender")!!,
+                fulfiller = it.string("FulFiller").orEmpty(),
+                disabled = it.boolean("Disabled")!!,
+                completed = it.boolean("Completed")!!)
+
         fun listFromJson (json : String) : List<Trade> {
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.obj("result")!!.array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
                 println(it.toJsonString())
-                list.add(Trade(
-                        id = it.string("ID")!!,
-                        coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
-                        itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
-                        coinOutputs = CoinOutput.listFromJson(it.array("CoinOutputs")),
-                        itemOutputs = Item.listFromJson(it.array("ItemOutputs")),
-                        extraInfo = it.string("ExtraInfo").orEmpty(),
-                        sender = it.string("Sender")!!,
-                        fulfiller = it.string("FulFiller").orEmpty(),
-                        disabled = it.boolean("Disabled")!!,
-                        completed = it.boolean("Completed")!!)
-                )
+                list.add(fromJson(it))
             }
             return list
         }

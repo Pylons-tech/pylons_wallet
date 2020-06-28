@@ -31,26 +31,26 @@ data class Recipe(
         val outputs : List<WeightedOutput>
 ) {
     companion object {
+        fun fromJson(it : JsonObject) : Recipe = Recipe(
+                cookbookId = it.string("CookbookID")!!,
+                name = it.string("Name")!!,
+                id = it.string("ID")!!,
+                description = it.string("Description")!!,
+                sender = it.string("Sender")!!,
+                blockInterval = it.fuzzyLong("BlockInterval"),
+                disabled = it.boolean("Disabled")!!,
+                coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
+                itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
+                entries = EntriesList.fromJson(it.obj("Entries"))!!,
+                outputs = WeightedOutput.listFromJson(it.array("Outputs"))!!
+        )
+
         fun listFromJson(json : String) : List<Recipe> {
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("result")!!
                     .array<JsonObject>("Recipes").orEmpty()
             val list = mutableListOf<Recipe>()
             jsonArray.forEach {
-                list.add(
-                        Recipe(
-                                cookbookId = it.string("CookbookID")!!,
-                                name = it.string("Name")!!,
-                                id = it.string("ID")!!,
-                                description = it.string("Description")!!,
-                                sender = it.string("Sender")!!,
-                                blockInterval = it.fuzzyLong("BlockInterval"),
-                                disabled = it.boolean("Disabled")!!,
-                                coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
-                                itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
-                                entries = EntriesList.fromJson(it.obj("Entries"))!!,
-                                outputs = WeightedOutput.listFromJson(it.array("Outputs"))!!
-                        )
-                )
+                list.add(fromJson(it))
             }
             return list
         }

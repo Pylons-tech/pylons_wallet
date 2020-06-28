@@ -25,6 +25,17 @@ data class Execution (
         val completed : Boolean
 ) {
         companion object {
+                fun fromJson (entry : JsonObject) : Execution = Execution(
+                        id = entry.string("ID")!!,
+                        recipeId = entry.string("RecipeID")!!,
+                        cookbookId = entry.string("CookbookID")!!,
+                        completed = entry.boolean("Completed")!!,
+                        sender = entry.string("Sender")!!,
+                        blockHeight = entry.fuzzyLong("BlockHeight"),
+                        coinInputs = Coin.listFromJson(entry.array("CoinInputs")),
+                        itemInputs = entry.array("ItemInputs")?: listOf()
+                )
+
                 fun getListFromJson(json : String) : List<Execution> {
                         val jsonArray =
                                 (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("result")!!
@@ -32,18 +43,7 @@ data class Execution (
                         val list = mutableListOf<Execution>()
                         if (jsonArray != null && jsonArray.size > 0) for (i in jsonArray.indices) {
                                 val entry = jsonArray[i]
-                                list.add(
-                                        Execution(
-                                                id = entry.string("ID")!!,
-                                                recipeId = entry.string("RecipeID")!!,
-                                                cookbookId = entry.string("CookbookID")!!,
-                                                completed = entry.boolean("Completed")!!,
-                                                sender = entry.string("Sender")!!,
-                                                blockHeight = entry.fuzzyLong("BlockHeight"),
-                                                coinInputs = Coin.listFromJson(entry.array("CoinInputs")),
-                                                itemInputs = entry.array("ItemInputs")?: listOf()
-                                        )
-                                )
+                                list.add(fromJson(entry))
                         }
                         return list
                 }

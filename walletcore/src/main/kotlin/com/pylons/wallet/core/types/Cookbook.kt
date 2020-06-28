@@ -27,25 +27,25 @@ data class Cookbook (
         val costPerBlock : Long
 ) {
     companion object {
+        fun fromJson(obj : JsonObject) : Cookbook = Cookbook(
+                id = obj.string("ID")!!,
+                name = obj.string("Name")!!,
+                description = obj.string("Description")!!,
+                version = obj.string("Version")!!,
+                developer = obj.string("Developer")!!,
+                level = obj.fuzzyLong("Level"),
+                sender = obj.string("Sender")!!,
+                supportEmail = obj.string("SupportEmail")!!,
+                costPerBlock = obj.fuzzyLong("CostPerBlock")!!
+        )
+
         fun getListFromJson(json : String) : List<Cookbook> {
             val jsonArray =
                     (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("result")!!.array<JsonObject>("Cookbooks").orEmpty()
             val list = mutableListOf<Cookbook>()
             for (i in jsonArray.indices) {
                 val obj = jsonArray[i]
-                list.add(
-                        Cookbook(
-                                id = obj.string("ID")!!,
-                                name = obj.string("Name")!!,
-                                description = obj.string("Description")!!,
-                                version = obj.string("Version")!!,
-                                developer = obj.string("Developer")!!,
-                                level = obj.fuzzyLong("Level"),
-                                sender = obj.string("Sender")!!,
-                                supportEmail = obj.string("SupportEmail")!!,
-                                costPerBlock = obj.fuzzyLong("CostPerBlock")!!
-                        )
-                )
+                list.add(fromJson(obj))
             }
             return list
         }
