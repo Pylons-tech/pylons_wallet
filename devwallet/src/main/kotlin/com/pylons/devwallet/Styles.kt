@@ -6,9 +6,7 @@ import tornadofx.*
 class Styles : Stylesheet() {
     init {
         Companion.label {
-            fontSize = 11.px
-            fontWeight = FontWeight.THIN
-            backgroundColor += c("#ffffff")
+            fontSize = 12.px
         }
     }
 }
