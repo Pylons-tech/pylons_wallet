@@ -7,13 +7,17 @@ import javafx.beans.property.SimpleStringProperty
 import tornadofx.*
 import kotlin.concurrent.fixedRateTimer
 
-class StatusViewController: Controller() {
+class StatusViewController : Controller() {
     val height = SimpleLongProperty()
     val address = SimpleStringProperty()
+    val pylons = SimpleLongProperty()
 
     init {
         address.value = Core.userProfile?.credentials?.address
-        fixedRateTimer("timer",false,0,5000){
+        val profile = Core.engine.getOwnBalances()
+        pylons.value = profile?.countOfCoin("pylon")
+
+        fixedRateTimer("timer", false, 0, 5000) {
             val status = Core.engine.getStatusBlock()
             Platform.runLater {
                 height.value = status.height

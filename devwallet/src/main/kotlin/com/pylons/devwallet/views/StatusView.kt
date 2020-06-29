@@ -24,6 +24,15 @@ class StatusView : View() {
         }
 
         hbox {
+            label("Pylon: ") {
+                style {
+                    fontWeight = FontWeight.BOLD
+                }
+            }
+            label(statusViewController.pylons)
+        }
+
+        hbox {
             label("Height: ") {
                 style {
                     fontWeight = FontWeight.BOLD

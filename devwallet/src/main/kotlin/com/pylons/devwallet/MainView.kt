@@ -14,6 +14,8 @@ class MainView : View() {
     private val walletCoreController: WalletCoreController by inject()
     private val statusView: StatusView by inject()
     private val menuView: MenuView by inject()
+    private val actionView: ActionView by inject()
+    private val resultView: ResultView by inject()
     override val root = BorderPane()
 
     override fun onDock() {
@@ -41,7 +43,7 @@ class MainView : View() {
         if (keys != null) {
             Core.start(Config(
                     Backend.LIVE_DEV,
-                    listOf("http://192.168.1.69:1317")
+                    listOf("http://127.0.0.1:1317")
             ), keys)
         }
 
@@ -52,10 +54,8 @@ class MainView : View() {
             prefHeight = 600.0
             top = menuView.root
             bottom = statusView.root
-            center = borderpane {
-                left<ActionView>()
-                center<ResultView>()
-            }
+            left = actionView.root
+            center = resultView.root
         }
     }
 }
