@@ -1,7 +1,9 @@
 package com.pylons.devwallet.views
 
 import com.pylons.devwallet.controllers.ActionViewController
+import com.pylons.devwallet.fragments.GetPylonsFragment
 import com.pylons.devwallet.fragments.GetTransactionFragment
+import com.pylons.devwallet.fragments.SendPylonsFragment
 import javafx.scene.paint.Color
 import tornadofx.*
 
@@ -61,6 +63,27 @@ class ActionView : View() {
                 actionViewController.listRecipes()
                 currentView.replaceWith<ListCookbookView>()
                 currentView = find<ListCookbookView>()
+            }
+        }
+        button("List Executions") {
+            useMaxWidth = true
+            action {
+                actionViewController.getPendingExecutions()
+                currentView.replaceWith<ListExecutionView>()
+                currentView = find<ListExecutionView>()
+            }
+        }
+        separator()
+        button("Get Pylons") {
+            useMaxWidth = true
+            action {
+                find<GetPylonsFragment>().openModal()
+            }
+        }
+        button("Send Pylons") {
+            useMaxWidth = true
+            action {
+                find<SendPylonsFragment>().openModal()
             }
         }
     }

@@ -1,10 +1,12 @@
 package com.pylons.devwallet.controllers
 
 import com.pylons.wallet.core.Core
+import kotlinx.coroutines.delay
 import tornadofx.*
 
 class ActionViewController : Controller() {
     private val resultViewController: ResultViewController by inject()
+    private val statusViewController: StatusViewController by inject()
 
     fun getAccount() {
         val profile = Core.engine.getOwnBalances()
@@ -34,5 +36,24 @@ class ActionViewController : Controller() {
     fun listRecipes() {
         val recipes = Core.engine.listRecipes()
         resultViewController.recipes.value = recipes.observable()
+    }
+
+    fun getPendingExecutions() {
+        val executions = Core.engine.getPendingExecutions()
+        resultViewController.executions.value = executions.observable()
+    }
+
+    suspend fun getPylons(amount: Long) {
+        val tx = Core.engine.getPylons(amount)
+        tx.submit()
+        delay(5000)
+        statusViewController.updatePylons()
+    }
+
+    suspend fun sendPylons(amount: Long, address: String) {
+        val tx = Core.engine.sendPylons(amount, address)
+        tx.submit()
+        delay(5000)
+        statusViewController.updatePylons()
     }
 }

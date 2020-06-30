@@ -14,8 +14,7 @@ class StatusViewController : Controller() {
 
     init {
         address.value = Core.userProfile?.credentials?.address
-        val profile = Core.engine.getOwnBalances()
-        pylons.value = profile?.countOfCoin("pylon")
+        updatePylons()
 
         fixedRateTimer("timer", false, 0, 5000) {
             val status = Core.engine.getStatusBlock()
@@ -23,5 +22,10 @@ class StatusViewController : Controller() {
                 height.value = status.height
             }
         }
+    }
+
+    fun updatePylons() {
+        val profile = Core.engine.getOwnBalances()
+        pylons.value = profile?.countOfCoin("pylon")
     }
 }

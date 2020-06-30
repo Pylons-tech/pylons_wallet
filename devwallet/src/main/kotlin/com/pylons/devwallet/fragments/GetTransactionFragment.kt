@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Orientation
 import tornadofx.*
 
-class GetTransactionFragment: Fragment("Get Transaction") {
+class GetTransactionFragment : Fragment("Get Transaction") {
     private val actionViewController: ActionViewController by inject()
     private val input = SimpleStringProperty()
 
