@@ -468,3 +468,25 @@ data class UpdateRecipe (
     }
 }
 
+@MsgType("pylons/SendItems")
+data class SendItems(
+        @property:[Json(name = "Sender")]
+        val sender : String,
+        @property:[Json(name = "Receiver")]
+        val receiver : String,
+        @property:[Json(name = "ItemIDs")]
+        val itemIds : List<String>
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : SendItems {
+            return SendItems(
+                    sender = jsonObject.string("Sender")!!,
+                    receiver = jsonObject.string("Receiver")!!,
+                    itemIds = jsonObject.array("ItemIDs") ?: listOf()
+            )
+        }
+    }
+}

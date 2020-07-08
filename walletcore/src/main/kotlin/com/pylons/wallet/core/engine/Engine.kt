@@ -302,4 +302,6 @@ abstract class Engine {
     abstract fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
 
     abstract fun listTrades () : List<Trade>
+
+    abstract fun sendItems(sender: String, receiver: String, itemIds: List<String>) : Transaction
 }
