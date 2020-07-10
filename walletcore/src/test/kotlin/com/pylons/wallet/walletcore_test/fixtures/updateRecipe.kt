@@ -39,8 +39,10 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                                 modifyItem = ItemUpgradeParams(
                                         doubles = listOf(),
                                         longs = listOf(),
-                                        strings = listOf()
-                                )
+                                        strings = listOf(),
+                                        transferFee = 0
+                                ),
+                                transferFee = 0
                         )
                 )
         ),

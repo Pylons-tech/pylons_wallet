@@ -34,7 +34,8 @@ val createRecipeSignable = CreateRecipe(
                                 strings = listOf(
                                         StringParam("1.0", "Name", "Raichu", "")
                                 ),
-                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf())
+                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf(), 0),
+                                transferFee = 0
                         )
                 )
         ),

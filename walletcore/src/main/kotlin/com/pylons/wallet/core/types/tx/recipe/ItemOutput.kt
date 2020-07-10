@@ -12,7 +12,9 @@ data class ItemOutput(
         @property:[Json(name = "ModifyItem")]
         val modifyItem : ItemUpgradeParams,
         @property:[Json(name = "Strings")]
-        val strings : List<StringParam>
+        val strings : List<StringParam>,
+        @property:[Json(name = "TransferFee")]
+        val transferFee : Long
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : ItemOutput =
@@ -20,7 +22,9 @@ data class ItemOutput(
                                 doubles = DoubleParam.listFromJson(jsonObject.array("Doubles")),
                                 longs = LongParam.listFromJson(jsonObject.array("Long")),
                                 strings = StringParam.listFromJson(jsonObject.array("Strings")),
-                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf())
+                                // TODO: hard coded empty list?
+                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf(), 0),
+                                transferFee = jsonObject.long("TransferFee")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<ItemOutput> {
