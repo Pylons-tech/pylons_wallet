@@ -51,7 +51,8 @@ val createRecipeSignable = CreateRecipe(
                         longs = listOf(),
                         strings = listOf(
                                 StringInputParam("Name", "Raichu")
-                        )
+                        ),
+                        transferFee = FeeInputParam(0,0)
                 )
         ),
         name = "name",

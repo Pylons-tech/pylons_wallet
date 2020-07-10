@@ -52,7 +52,8 @@ val updateRecipeSignable = UpdateRecipe(
                         longs = listOf(),
                         strings = listOf(
                                 StringInputParam("Name", "Raichu")
-                        )
+                        ),
+                        transferFee = FeeInputParam(0,0)
                 )
         ),
         name = "recipeName",
