@@ -27,7 +27,9 @@ data class Item(
         @property:[Json(name = "Longs") QuotedJsonNumeral]
         val longs: Map<String, Long>,
         @property:[Json(name = "Strings")]
-        val strings: Map<String, String>
+        val strings: Map<String, String>,
+        @property:[Json(name = "TransferFee")]
+        val transferFee: Long
 ) {
     fun serialize(mode: SerializationMode? = null): String {
         return when (mode) {
@@ -59,7 +61,8 @@ data class Item(
                                 lastUpdate = it.fuzzyLong("LastUpdate"),
                                 doubles = doubleMapFromJson(it.array("Doubles")),
                                 longs = longDictFromJson(it.array("Longs")),
-                                strings = stringDictFromJson(it.array("Strings"))
+                                strings = stringDictFromJson(it.array("Strings")),
+                                transferFee = it.fuzzyLong("TransferFee")
                         )
                 )
             }

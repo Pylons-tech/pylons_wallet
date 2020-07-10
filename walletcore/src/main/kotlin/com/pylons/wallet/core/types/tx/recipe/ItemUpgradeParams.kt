@@ -10,7 +10,7 @@ data class ItemUpgradeParams(
         val longs : List<LongInputParam>,
         @property:[Json(name = "Strings")]
         val strings : List<StringInputParam>,
-        @property:[Json(name = "TransferFee")]
+        @property:[Json(name = "TransferFee") NeverQuoteWrap]
         val transferFee : Long
 ) {
         companion object {

@@ -13,7 +13,7 @@ data class ItemOutput(
         val modifyItem : ItemUpgradeParams,
         @property:[Json(name = "Strings")]
         val strings : List<StringParam>,
-        @property:[Json(name = "TransferFee")]
+        @property:[Json(name = "TransferFee") NeverQuoteWrap]
         val transferFee : Long
 ) {
         companion object {
