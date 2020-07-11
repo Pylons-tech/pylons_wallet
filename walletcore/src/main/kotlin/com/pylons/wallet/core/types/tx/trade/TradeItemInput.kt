@@ -3,13 +3,10 @@ package com.pylons.wallet.core.types.tx.trade
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.pylons.wallet.core.types.tx.recipe.DoubleInputParam
-import com.pylons.wallet.core.types.tx.recipe.ItemInput
-import com.pylons.wallet.core.types.tx.recipe.LongInputParam
-import com.pylons.wallet.core.types.tx.recipe.StringInputParam
+import com.pylons.wallet.core.types.tx.recipe.*
 
 data class TradeItemInput(
-        @property:[Json(name = "CookbookID" )]
+        @property:[Json(name = "CookbookID")]
         val cookbookId: String,
         @property:[Json(name = "ItemInput")]
         val itemInput: ItemInput
@@ -21,7 +18,8 @@ data class TradeItemInput(
                         ItemInput(
                                 doubles = DoubleInputParam.listFromJson(jsonObject.obj("ItemInput")?.array("Doubles")),
                                 longs = LongInputParam.listFromJson(jsonObject.obj("ItemInput")?.array("Longs")),
-                                strings = StringInputParam.listFromJson(jsonObject.obj("ItemInput")?.array("Strings"))
+                                strings = StringInputParam.listFromJson(jsonObject.obj("ItemInput")?.array("Strings")),
+                                transferFee = FeeInputParam.fromJson(jsonObject.obj("ItemInput")?.obj("TransferFee"))
                         )
                 )
 

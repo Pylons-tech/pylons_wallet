@@ -217,7 +217,8 @@ class TransactionTest {
                           "ModifyItem": {
                             "Doubles": null,
                             "Longs": null,
-                            "Strings": null
+                            "Strings": null,
+                            "TransferFee": 0
                           },
                           "Doubles": [
                             {
@@ -241,7 +242,8 @@ class TransactionTest {
                               "Value": "Earth",
                               "Program": ""
                             }
-                          ]
+                          ],
+                          "TransferFee": 0
                         }
                       ]
                     },
@@ -324,7 +326,8 @@ class TransactionTest {
                           "ModifyItem": {
                             "Doubles": null,
                             "Longs": null,
-                            "Strings": null
+                            "Strings": null,
+                            "TransferFee": 0
                           },
                           "Doubles": [
                             {
@@ -348,7 +351,8 @@ class TransactionTest {
                               "Value": "Earth",
                               "Program": ""
                             }
-                          ]
+                          ],
+                          "TransferFee": 0
                         }
                       ]
                     },

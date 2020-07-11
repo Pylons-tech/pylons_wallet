@@ -38,8 +38,10 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                                 modifyItem = ItemUpgradeParams(
                                         doubles = listOf(),
                                         longs = listOf(),
-                                        strings = listOf()
-                                )
+                                        strings = listOf(),
+                                        transferFee = 0
+                                ),
+                                transferFee = 0
                         )
                 )
         ),

@@ -260,4 +260,11 @@ class TxPylonsDevEngineOnline {
             it.cancelTrade(getActiveTradeIfOneExists(it)) }
     }
 
+    @Order(19)
+    @Test
+    fun sendsItems () {
+        basicTxTestFlow {
+            it.sendItems(Core.userProfile!!.credentials.address, "cosmos1992pvmjlj3va7kcx8ldlrdgn0qkspvxe8snrk9", listOf(getItemIfOneExists(it).id)) }
+    }
+
 }
