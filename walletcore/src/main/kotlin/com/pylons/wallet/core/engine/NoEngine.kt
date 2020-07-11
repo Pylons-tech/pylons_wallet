@@ -113,4 +113,7 @@ internal class NoEngine : Engine() {
 
     override fun listTrades(): List<Trade> =
             throw NoEngineException()
+
+    override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
+            throw NoEngineException()
 }

@@ -19,7 +19,8 @@ val createTradeSignable = CreateTrade(
                                 longs = listOf(),
                                 strings = listOf(
                                         StringInputParam("Name", "Raichu")
-                                )
+                                ),
+                                transferFee = FeeInputParam(0,0)
                         )
                 )
         ),
