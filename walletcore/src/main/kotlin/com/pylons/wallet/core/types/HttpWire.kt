@@ -39,19 +39,23 @@ object HttpWire {
                             inputLine = it.readLine()
                         }
                         it.close()
-                        println(response.toString())
+                        Logger().log(LogEvent.HTTP_GET, response.toString(), LogTag.info)
                         return response.toString()
-
                     }
                 } catch (e : FileNotFoundException) {
+                    Logger().log(LogEvent.HTTP_GET_EXCEPTION, e.toString(), LogTag.error)
                     if (retryCount > RETRIES) {
                         this.disconnect()
                         throw e
                     }
                     else {
                         retryCount++
-                        println("Retrying connection...")
+                        Logger().log(LogEvent.HTTP_GET, "Retrying connection... $retryCount/$RETRIES", LogTag.info)
                     }
+                }  catch (e:Exception) {
+                    Logger().log(LogEvent.HTTP_GET_EXCEPTION, e.toString(), LogTag.error)
+                    this.disconnect()
+                    throw e
                 }
                 runBlocking { delay(RETRY_DELAY) }
             }
