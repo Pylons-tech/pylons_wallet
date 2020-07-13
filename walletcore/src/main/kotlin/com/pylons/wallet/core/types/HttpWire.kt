@@ -25,7 +25,7 @@ object HttpWire {
      * Fires an http GET request at the given URL; returns the received page as a string.
      */
     fun get (url : String) : String {
-        if (verbose) Logger.implementation.log(LogEvent.HTTP_GET,"""{"url":"$url"}""", LogTag.info)
+        Logger.implementation.log(LogEvent.HTTP_GET,"""{"url":"$url"}""", LogTag.info)
         var retryCount = 0
         while (true) {
             with(URL(url).openConnection() as HttpURLConnection) {
@@ -62,9 +62,8 @@ object HttpWire {
      * POSTs the supplied input to the given URL;  returns the received page as a string.
      */
     fun post (url : String, input : String) : String {
-        if (verbose) Logger.implementation.log(LogEvent.HTTP_POST, """{"input":$input, "url":"$url"}""", LogTag.info);
         println(input)
-        println(url)
+        Logger.implementation.log(LogEvent.HTTP_POST, """{"url":"$url", "input":$input}""", LogTag.info)
         var retryCount = 0
         while (true) {
             with(URL(url).openConnection() as HttpURLConnection) {
@@ -82,6 +81,7 @@ object HttpWire {
                             inputLine = it.readLine()
                         }
                         it.close()
+                        Logger().log(LogEvent.HTTP_POST, response.toString(), LogTag.info)
                         return response.toString()
                     }
                 } catch (e : FileNotFoundException) {
@@ -91,10 +91,10 @@ object HttpWire {
                     }
                     else {
                         retryCount++
-                        println("Retrying connection...")
+                        Logger().log(LogEvent.HTTP_GET, "Retrying connection... $retryCount/$RETRIES", LogTag.info)
                     }
                 } catch (e:Exception) {
-                    println(e)
+                    Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
                     this.disconnect()
                     throw e
                 }

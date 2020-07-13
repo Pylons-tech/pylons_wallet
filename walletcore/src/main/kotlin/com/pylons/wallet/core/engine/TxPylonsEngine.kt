@@ -92,7 +92,7 @@ open class TxPylonsEngine : Engine() {
     }
 
     private fun postTxJson (json : String) : String {
-        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl","tx":$json}""", LogTag.info)
+        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
         val response = HttpWire.post("""$nodeUrl/txs""", json)
         Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response
