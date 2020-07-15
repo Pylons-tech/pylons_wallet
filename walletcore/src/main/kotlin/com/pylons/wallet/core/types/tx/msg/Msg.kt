@@ -490,3 +490,20 @@ data class SendItems(
         }
     }
 }
+
+@MsgType("pylons/CreateAccount")
+data class CreateAccount(
+        @property:[Json(name = "Requester")]
+        val requester : String
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : CreateAccount {
+            return CreateAccount(
+                    requester = jsonObject.string("Requester")!!
+            )
+        }
+    }
+}

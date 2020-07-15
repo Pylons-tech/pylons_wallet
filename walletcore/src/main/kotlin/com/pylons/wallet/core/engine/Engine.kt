@@ -211,6 +211,8 @@ abstract class Engine {
      */
     abstract fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
 
+    abstract fun createChainAccount () : Transaction
+
     /**
      * Calls get pylons endpoint.
      * Takes an arbitrary number of pylons,
