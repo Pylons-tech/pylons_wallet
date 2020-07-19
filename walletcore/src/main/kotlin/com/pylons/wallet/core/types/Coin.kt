@@ -5,14 +5,15 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.fuzzyLong
+import com.pylons.wallet.core.types.tx.recipe.QuotedJsonNumeral
 
 /**
  * Local representation of a coin-type resource.
  */
 data class Coin(
-        @Json("denom")
+        @property:[Json(name = "denom")]
         val denom: String = "",
-        @Json("amount")
+        @property:[Json(name = "amount") QuotedJsonNumeral]
         val amount: Long = 0
 ) {
     companion object {
