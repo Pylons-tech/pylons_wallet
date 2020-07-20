@@ -198,8 +198,7 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun getPylons(q: Long): Transaction =
-            basicTxHandlerFlow { getPylons(q, it.address, cryptoCosmos.keyPair!!.publicKey(),
-                    it.accountNumber, it.sequence) }
+            basicTxHandlerFlow { GetPylons(listOf(Coin("pylon", q)), it.address).toSignedTx() }
 
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("$nodeUrl/blocks/latest")
@@ -234,8 +233,11 @@ open class TxPylonsEngine : Engine() {
         else cryptoCosmos.keyPair = kp
         Core.userProfile = Profile(credentials = getNewCredentials(),
                 coins = listOf(), strings = mutableMapOf(), items = listOf())
-        return getPylons(500)
+        return createChainAccount()
     }
+
+    override fun createChainAccount(): Transaction =
+            basicTxHandlerFlow { CreateAccount(it.address).toSignedTx() }
 
     override fun sendPylons(q: Long, receiver: String): Transaction =
         basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoCosmos.keyPair!!.publicKey(),

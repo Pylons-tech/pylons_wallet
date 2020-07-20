@@ -122,17 +122,24 @@ class TxPylonsDevEngineOnline {
 
     @Order(0)
     @Test
+    fun createAccount () {
+        //TODO: Will fail if account exists, handle fail or clear chain for testing?
+        basicTxTestFlow { it.createChainAccount() }
+    }
+
+    @Order(1)
+    @Test
     fun getsPylons () {
         basicTxTestFlow { it.getPylons(500000) }
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     fun sendsPylons () {
         basicTxTestFlow { it.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch") }
     }
 
-    @Order(2)
+    @Order(3)
     @Test
     fun createsCookbook () {
         basicTxTestFlow { it.createCookbook("${kotlin.random.Random.nextInt()}","blyyah ${Random().nextInt()}", "tst",
@@ -140,7 +147,7 @@ class TxPylonsDevEngineOnline {
                 "1.0.0", "fake@example.com", 0, 50) }
     }
 
-    @Order(3)
+    @Order(4)
     @Test
     fun getsCookbooks () {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
@@ -148,14 +155,14 @@ class TxPylonsDevEngineOnline {
         assert(a.isNotEmpty())
     }
 
-    @Order(4)
+    @Order(5)
     @Test
     fun updatesCookbook () {
         basicTxTestFlow { it.updateCookbook(getCookbookIfOneExists(it), "tst",
                 "this is a description for updatescookbook test", "1.0.0", "example@example.com") }
     }
 
-    @Order(5)
+    @Order(6)
     @Test
     fun createsRecipe () {
         val name = "RTEST_${Instant.now().epochSecond}"
@@ -166,21 +173,21 @@ class TxPylonsDevEngineOnline {
         )
     }
 
-    @Order(6)
+    @Order(7)
     @Test
     fun getsRecipes () {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.listRecipes()
     }
 
-    @Order(7)
+    @Order(8)
     @Test
     fun getsExecutions () {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
         engine.getPendingExecutions()
     }
 
-    @Order(8)
+    @Order(9)
     @Test
     fun updatesRecipe () {
         val name = "RTEST_${Instant.now().epochSecond}"
@@ -191,31 +198,31 @@ class TxPylonsDevEngineOnline {
         )
     }
 
-    @Order(9)
+    @Order(10)
     @Test
     fun disablesRecipe () {
         basicTxTestFlow { it.disableRecipe(getRecipeIfOneExists(it)) }
     }
 
-    @Order(10)
+    @Order(11)
     @Test
     fun enablesRecipe () {
         basicTxTestFlow { it.enableRecipe(getRecipeIfOneExists(it)) }
     }
 
-    @Order(11)
+    @Order(12)
     @Test
     fun executesRecipe () {
         basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), arrayOf()) }
     }
 
-    @Order(12)
+    @Order(13)
     @Test
     fun checksExecution () {
         basicTxTestFlow { it.checkExecution(getExecutionIfOneExists(it), true) }
     }
 
-    @Order(13)
+    @Order(14)
     @Test
     fun createsTrade () {
         basicTxTestFlow(
@@ -224,7 +231,7 @@ class TxPylonsDevEngineOnline {
         )
     }
 
-    @Order(14)
+    @Order(15)
     @Test
     fun getsTrades () {
         val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
@@ -232,19 +239,19 @@ class TxPylonsDevEngineOnline {
         assert(a.isNotEmpty())
     }
 
-    @Order(15)
+    @Order(16)
     @Test
     fun fulfillsTrade () {
         basicTxTestFlow { it.fulfillTrade(getActiveTradeIfOneExists(it), listOf()) }
     }
 
-    @Order(16)
+    @Order(17)
     @Test
     fun setsItemString () {
         basicTxTestFlow { it.setItemFieldString(getItemIfOneExists(it).id, "knobliness", "very") }
     }
 
-    @Order(17)
+    @Order(18)
     @Test
     fun createsTradeForCancel () {
         basicTxTestFlow(
@@ -253,14 +260,14 @@ class TxPylonsDevEngineOnline {
         )
     }
 
-    @Order(18)
+    @Order(19)
     @Test
     fun cancelsTrade () {
         basicTxTestFlow {
             it.cancelTrade(getActiveTradeIfOneExists(it)) }
     }
 
-    @Order(19)
+    @Order(20)
     @Test
     fun sendsItems () {
         basicTxTestFlow {
