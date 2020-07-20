@@ -15,7 +15,9 @@ data class Transaction(
         val _id: String? = null,
         val resolver: ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT,
-        val txError: List<TxError>? = null
+        var txError: List<TxError>? = null,
+        var code: Int? = null,
+        var raw_log: String? = null
 ) {
     var id: String? = _id
         get() = {
