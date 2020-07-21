@@ -91,7 +91,7 @@ open class TxPylonsEngine : Engine() {
             if (code != null) {
                 println("throw Exception")
                 it.code = code
-                it.raw_log = jsonObject.string("raw_log")
+                it.raw_log = jsonObject.string("raw_log") ?: "Unknown Error"
                 throw Exception("Node returned error code $code for message - " +
                         "${jsonObject.obj("raw_log")!!.string("message")}")
             }

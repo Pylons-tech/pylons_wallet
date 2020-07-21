@@ -16,8 +16,8 @@ data class Transaction(
         val resolver: ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT,
         var txError: List<TxError>? = null,
-        var code: Int? = null,
-        var raw_log: String? = null
+        var code: Int = 0,
+        var raw_log: String = ""
 ) {
     var id: String? = _id
         get() = {
@@ -72,16 +72,21 @@ data class Transaction(
                     }
 
                     return Transaction(
-                            txError = errors,
+                            txError = if (errors.isEmpty()) {
+                                null
+                            } else {
+                                errors
+                            },
                             stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                            _id = id
+                            _id = id,
+                            code = doc.int("code") ?: 1,
+                            raw_log = doc.string("raw_log") ?: "Unknown Error"
                     )
                 }
                 doc.containsKey("data") -> {
                     try {
                         val dataString = hexToAscii(doc.string("data")!!)
                         val dataObject = (Parser.default().parse(java.lang.StringBuilder(dataString)) as JsonObject)
-
                         if (dataObject.containsKey("Output") && dataObject.string("Output") != null) {
                             val arrayString = String(Base64.getDecoder().decode(dataObject.string("Output")))
                             val outputArray = Parser.default().parse(StringBuilder(arrayString)) as JsonArray<JsonObject>
@@ -94,7 +99,6 @@ data class Transaction(
                                 _id = id
                         )
                     } catch (e: Exception) {
-                        println(e)
                         return Transaction(
                                 stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                                 _id = id

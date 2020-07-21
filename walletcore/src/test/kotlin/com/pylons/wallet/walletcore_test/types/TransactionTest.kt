@@ -1,9 +1,8 @@
 package com.pylons.wallet.walletcore_test.types
 
 import com.pylons.wallet.core.types.Transaction
-import com.pylons.wallet.core.types.tx.TxData
-import com.pylons.wallet.core.types.tx.TxDataOutput
-import com.pylons.wallet.core.types.tx.TxError
+import com.pylons.wallet.core.types.tx.*
+import com.pylons.wallet.core.types.tx.msg.ExecuteRecipe
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -115,6 +114,48 @@ class TransactionTest {
             }
           },
           "timestamp": "2020-05-17T21:50:24Z"
+        }
+    """.trimIndent()
+
+    private val errorResponse2 = """
+        {
+          "height": "17819",
+          "txhash": "BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03",
+          "codespace": "sdk",
+          "code": 18,
+          "raw_log": "invalid request: The recipe doesn't exist: failed to execute message; message index: 0",
+          "gas_wanted": "400000",
+          "gas_used": "20423",
+          "tx": {
+            "type": "cosmos-sdk/StdTx",
+            "value": {
+              "msg": [
+                {
+                  "type": "pylons/ExecuteRecipe",
+                  "value": {
+                    "RecipeID": "LOUD-get-character-recipe-v0.1.0-1589853708",
+                    "Sender": "cosmos1cmdcfat6n8vhlysnlzyqsnlty2wrkx05uyp7ez",
+                    "ItemIDs": null
+                  }
+                }
+              ],
+              "fee": {
+                "amount": [],
+                "gas": "400000"
+              },
+              "signatures": [
+                {
+                  "pub_key": {
+                    "type": "tendermint/PubKeySecp256k1",
+                    "value": "AiRKdkdNgsMV6k21jFD1Wswyow0raUpx/gC+jE5v1STP"
+                  },
+                  "signature": "WzdzUlobvGaTkr6Y7SdaqWelmY12ERsWeNwKhzpAtnwBgz+aIhV0hMJsV61MdqpwlAz1epY5QZvL306By87dLQ=="
+                }
+              ],
+              "memo": ""
+            }
+          },
+          "timestamp": "2020-07-20T22:00:08Z"
         }
     """.trimIndent()
 
@@ -407,6 +448,26 @@ class TransactionTest {
         Assertions.assertEquals(expected, tx.txData)
         val expectedError = listOf(TxError(1, "The execution doesn't exist"))
         Assertions.assertEquals(expectedError, tx.txError)
+    }
+
+    @Test
+    fun getTransactionErrorResponse2() {
+        val expected = TxData("", "", listOf())
+        val tx = Transaction.parseTransactionResponse("BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03", errorResponse2)
+        Assertions.assertEquals(expected, tx.txData)
+//        val expectedError = listOf(TxError(1, "The execution doesn't exist"))
+//        Assertions.assertEquals(expectedError, tx.txError)
+
+        val expectedTransaction = Transaction(
+                txData = expected,
+                _id = "BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03",
+                stdTx = StdTx(msg = listOf(ExecuteRecipe("LOUD-get-character-recipe-v0.1.0-1589853708", "cosmos1cmdcfat6n8vhlysnlzyqsnlty2wrkx05uyp7ez", null)),
+                        fee = StdFee(listOf(), 400000L),
+                        signatures = listOf(StdSignature(signature = "WzdzUlobvGaTkr6Y7SdaqWelmY12ERsWeNwKhzpAtnwBgz+aIhV0hMJsV61MdqpwlAz1epY5QZvL306By87dLQ==", pubKey = PubKey(type = "tendermint/PubKeySecp256k1", value = "AiRKdkdNgsMV6k21jFD1Wswyow0raUpx/gC+jE5v1STP"))), memo = ""),
+                code = 18,
+                raw_log = "invalid request: The recipe doesn't exist: failed to execute message; message index: 0"
+        )
+        Assertions.assertEquals(expectedTransaction, tx)
     }
 
     @Test
