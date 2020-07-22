@@ -14,7 +14,7 @@ data class Transaction(
         val _id: String? = null,
         val resolver: ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT,
-        var code: Int = 0,
+        var code: Int = ResponseCode.OK,
         var raw_log: String = ""
 ) {
     var id: String? = _id
@@ -57,6 +57,11 @@ data class Transaction(
         return msg
     }
 
+    object ResponseCode {
+        const val UNKNOWN_ERROR = -1
+        const val OK = 0
+    }
+
     companion object {
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
@@ -65,7 +70,7 @@ data class Transaction(
                     return Transaction(
                             stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                             _id = id,
-                            code = doc.int("code") ?: 1,
+                            code = doc.int("code") ?: ResponseCode.UNKNOWN_ERROR,
                             raw_log = doc.string("raw_log") ?: "Unknown Error"
                     )
                 }
