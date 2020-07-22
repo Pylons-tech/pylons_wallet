@@ -16,7 +16,6 @@ import com.pylons.wallet.core.internal.fuzzyLong
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.tx.Trade
-import com.pylons.wallet.core.types.tx.TxError
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.msg.*
 import com.pylons.wallet.core.types.tx.trade.TradeItemInput
@@ -83,13 +82,8 @@ open class TxPylonsEngine : Engine() {
         return Transaction(resolver =  {
             val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
             val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
-            println("response: $response")
-            println("jsonObject: $jsonObject")
             val code = jsonObject.int("code")
-            println("code: $code")
-            println("code != null: ${code != null}")
             if (code != null) {
-                println("throw Exception")
                 it.code = code
                 it.raw_log = jsonObject.string("raw_log") ?: "Unknown Error"
                 throw Exception("Node returned error code $code for message - " +

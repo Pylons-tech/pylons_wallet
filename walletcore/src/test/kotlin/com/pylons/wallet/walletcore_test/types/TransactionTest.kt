@@ -65,60 +65,6 @@ class TransactionTest {
 
     private val errorResponse = """
         {
-          "height": "25127",
-          "txhash": "1D3D5484D214CC83D726870D9BA5C9CA3B90A436AB9F3D6B870DE15DA7BB4580",
-          "code": 1,
-          "raw_log": "[{\"msg_index\":\"0\",\"success\":false,\"log\":\"{\\\"codespace\\\":\\\"sdk\\\",\\\"code\\\":1,\\\"message\\\":\\\"The execution doesn't exist\\\"}\"}]",
-          "logs": [
-            {
-              "msg_index": "0",
-              "success": false,
-              "log": "{\"codespace\":\"sdk\",\"code\":1,\"message\":\"The execution doesn't exist\"}"
-            }
-          ],
-          "gas_wanted": "200000",
-          "gas_used": "10559",
-          "tags": [
-            {
-              "key": "action",
-              "value": "check_execution"
-            }
-          ],
-          "tx": {
-            "type": "auth/StdTx",
-            "value": {
-              "msg": [
-                {
-                  "type": "pylons/CheckExecution",
-                  "value": {
-                    "ExecID": "706D5C01916B0243CE44C99BE2C27CEC38B9BF60BBEA9B17C7EFF7A4370DE9A0",
-                    "Sender": "cosmos1sx8wmlcm7l7rulg7fam56ngxge4fsvxq76q28c",
-                    "PayToComplete": true
-                  }
-                }
-              ],
-              "fee": {
-                "amount": null,
-                "gas": "200000"
-              },
-              "signatures": [
-                {
-                  "pub_key": {
-                    "type": "tendermint/PubKeySecp256k1",
-                    "value": "AyO+7DL1dj4hfvZaDkG1nr2rHtmHkU2W9/sppgsM5Suu"
-                  },
-                  "signature": "mv6YVZ6Zli95xz0s0px18vzPQFHN0SeuXwBOJXOeqrF1f/YDR0eS69+S8eGGMSsJC5C3yV20yUFsK8TkL6ZiNg=="
-                }
-              ],
-              "memo": ""
-            }
-          },
-          "timestamp": "2020-05-17T21:50:24Z"
-        }
-    """.trimIndent()
-
-    private val errorResponse2 = """
-        {
           "height": "17819",
           "txhash": "BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03",
           "codespace": "sdk",
@@ -444,19 +390,8 @@ class TransactionTest {
     @Test
     fun getTransactionErrorResponse() {
         val expected = TxData("", "", listOf())
-        val tx = Transaction.parseTransactionResponse("1D3D5484D214CC83D726870D9BA5C9CA3B90A436AB9F3D6B870DE15DA7BB4580", errorResponse)
+        val tx = Transaction.parseTransactionResponse("BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03", errorResponse)
         Assertions.assertEquals(expected, tx.txData)
-        val expectedError = listOf(TxError(1, "The execution doesn't exist"))
-        Assertions.assertEquals(expectedError, tx.txError)
-    }
-
-    @Test
-    fun getTransactionErrorResponse2() {
-        val expected = TxData("", "", listOf())
-        val tx = Transaction.parseTransactionResponse("BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03", errorResponse2)
-        Assertions.assertEquals(expected, tx.txData)
-//        val expectedError = listOf(TxError(1, "The execution doesn't exist"))
-//        Assertions.assertEquals(expectedError, tx.txError)
 
         val expectedTransaction = Transaction(
                 txData = expected,
