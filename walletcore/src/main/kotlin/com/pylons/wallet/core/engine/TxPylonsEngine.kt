@@ -86,8 +86,7 @@ open class TxPylonsEngine : Engine() {
             if (code != null) {
                 it.code = code
                 it.raw_log = jsonObject.string("raw_log") ?: "Unknown Error"
-                throw Exception("Node returned error code $code for message - " +
-                        "${jsonObject.obj("raw_log")!!.string("message")}")
+                throw Exception("Node returned error code $code for message - ${jsonObject.string("raw_log")}")
             }
 
             // TODO: we should be doing smth else w/ this jsonobject?

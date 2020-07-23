@@ -4,6 +4,7 @@ object LogEvent {
     const val MISC = "misc"
     const val TX_POST  = "tx_post"
     const val TX_RESPONSE = "tx_response"
+    const val TX_SUBMIT_EXCEPTION = "tx_submit_exception"
     const val HTTP_POST = "http_post"
     const val HTTP_POST_EXCEPTION = "http_post_exception"
     const val HTTP_GET = "http_get"

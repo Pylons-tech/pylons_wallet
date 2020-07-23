@@ -4,6 +4,9 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.constants.Keys
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.LogTag
+import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.types.tx.StdTx
 import com.pylons.wallet.core.types.tx.TxData
 import java.util.*
@@ -39,6 +42,7 @@ data class Transaction(
             State.TX_ACCEPTED
         } catch (e: Exception) {
             // todo: this should get some data
+            Logger().log(LogEvent.TX_SUBMIT_EXCEPTION, e.toString(), LogTag.error)
             State.TX_REFUSED
         }
         return this
