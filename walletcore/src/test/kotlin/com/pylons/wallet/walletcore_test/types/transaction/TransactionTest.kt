@@ -1,4 +1,4 @@
-package com.pylons.wallet.walletcore_test.types
+package com.pylons.wallet.walletcore_test.types.transaction
 
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.*
