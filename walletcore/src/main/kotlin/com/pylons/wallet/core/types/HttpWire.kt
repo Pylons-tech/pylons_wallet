@@ -5,10 +5,7 @@ import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.logging.LogTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
+import java.io.*
 import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
@@ -24,38 +21,31 @@ object HttpWire {
     /**
      * Fires an http GET request at the given URL; returns the received page as a string.
      */
-    fun get (url : String) : String {
-        Logger.implementation.log(LogEvent.HTTP_GET,"""{"url":"$url"}""", LogTag.info)
+    fun get(url: String): String {
+        Logger.implementation.log(LogEvent.HTTP_GET, """{"url":"$url"}""", LogTag.info)
         var retryCount = 0
         while (true) {
             with(URL(url).openConnection() as HttpURLConnection) {
                 try {
                     requestMethod = "GET"
-                    BufferedReader(InputStreamReader(inputStream)).use {
-                        val response = StringBuffer()
-                        var inputLine = it.readLine()
-                        while (inputLine != null) {
-                            response.append(inputLine)
-                            inputLine = it.readLine()
-                        }
-                        it.close()
-                        Logger().log(LogEvent.HTTP_GET, response.toString(), LogTag.info)
-                        return response.toString()
-                    }
-                } catch (e : FileNotFoundException) {
+                    val response = getResponse(inputStream)
+                    Logger().log(LogEvent.HTTP_GET, response, LogTag.info)
+                    return response
+                } catch (e: FileNotFoundException) {
                     Logger().log(LogEvent.HTTP_GET_EXCEPTION, e.toString(), LogTag.error)
                     if (retryCount > RETRIES) {
-                        this.disconnect()
+                        val response = getResponse(errorStream)
+                        Logger().log(LogEvent.HTTP_GET, response, LogTag.info)
                         throw e
-                    }
-                    else {
+                    } else {
                         retryCount++
                         Logger().log(LogEvent.HTTP_GET, "Retrying connection... $retryCount/$RETRIES", LogTag.info)
                     }
-                }  catch (e:Exception) {
+                } catch (e: Exception) {
                     Logger().log(LogEvent.HTTP_GET_EXCEPTION, e.toString(), LogTag.error)
-                    this.disconnect()
                     throw e
+                } finally {
+                    disconnect()
                 }
                 runBlocking { delay(RETRY_DELAY) }
             }
@@ -65,45 +55,44 @@ object HttpWire {
     /**
      * POSTs the supplied input to the given URL;  returns the received page as a string.
      */
-    fun post (url : String, input : String) : String {
+    fun post(url: String, input: String): String {
         println(input)
         Logger.implementation.log(LogEvent.HTTP_POST, """{"url":"$url", "input":$input}""", LogTag.info)
-        var retryCount = 0
-        while (true) {
-            with(URL(url).openConnection() as HttpURLConnection) {
-                try {
-                    doOutput = true
-                    requestMethod = "POST"
-                    val wr = OutputStreamWriter(outputStream)
-                    wr.write(input)
-                    wr.flush()
-                    BufferedReader(InputStreamReader(inputStream)).use {
-                        val response = StringBuffer()
-                        var inputLine = it.readLine()
-                        while (inputLine != null) {
-                            response.append(inputLine)
-                            inputLine = it.readLine()
-                        }
-                        it.close()
-                        Logger().log(LogEvent.HTTP_POST, response.toString(), LogTag.info)
-                        return response.toString()
-                    }
-                } catch (e : FileNotFoundException) {
-                    if (retryCount > RETRIES) {
-                        this.disconnect()
-                        throw e
-                    }
-                    else {
-                        retryCount++
-                        Logger().log(LogEvent.HTTP_GET, "Retrying connection... $retryCount/$RETRIES", LogTag.info)
-                    }
-                } catch (e:Exception) {
-                    Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
-                    this.disconnect()
+        with(URL(url).openConnection() as HttpURLConnection) {
+            try {
+                doOutput = true
+                requestMethod = "POST"
+                val wr = OutputStreamWriter(outputStream)
+                wr.write(input)
+                wr.flush()
+                val response = getResponse(inputStream)
+                Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
+                return response
+            } catch (e: Exception) {
+                Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
+                if (errorStream != null) {
+                    val response = getResponse(errorStream)
+                    Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
+                    return response
+                } else {
                     throw e
                 }
-                runBlocking { delay(RETRY_DELAY) }
+            } finally {
+                disconnect()
             }
+        }
+    }
+
+    private fun getResponse(inputStream: InputStream): String {
+        BufferedReader(InputStreamReader(inputStream)).use {
+            val response = StringBuffer()
+            var inputLine = it.readLine()
+            while (inputLine != null) {
+                response.append(inputLine)
+                inputLine = it.readLine()
+            }
+            it.close()
+            return response.toString()
         }
     }
 }
