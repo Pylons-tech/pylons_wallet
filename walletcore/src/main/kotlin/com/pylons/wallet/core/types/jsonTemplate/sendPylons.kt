@@ -9,7 +9,7 @@ internal fun sendPylons (amount : Long, sender: String, receiver: String, pubkey
 private fun sendPylonsMsgTemplate (amount : String, sender : String, receiver : String) = """
             [
             {
-                "type": "pylons/SendPylons",
+                "type": "pylons/SendCoins",
                 "value": {
                 "Amount": [
                 {
