@@ -82,17 +82,36 @@ open class TxPylonsEngine : Engine() {
         return Transaction(resolver =  {
             val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
             val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
-            val code = jsonObject.long("code")
-            if (code != null)
-                throw Exception("Node returned error code $code for message - " +
-                        "${jsonObject.obj("raw_log")!!.string("message")}")
+
+            val code = jsonObject.int("code")
+            if (code != null) {
+                it.code = code
+                it.raw_log = jsonObject.string("raw_log") ?: "Unknown Error"
+                throw Exception("Node returned error code $code for message - ${jsonObject.string("raw_log")}")
+            }
+
+            val error = jsonObject.string("error")
+            if (error != null) {
+                it.code = Transaction.ResponseCode.UNKNOWN_ERROR
+                it.raw_log = error
+                throw Exception("Node returned error code $code for message - $error")
+            }
+
             // TODO: we should be doing smth else w/ this jsonobject?
-            it.id = jsonObject.string("txhash")
+            val txhash = jsonObject.string("txhash")
+            if (txhash != null) {
+                it.id = txhash
+            } else {
+                it.code = Transaction.ResponseCode.UNKNOWN_ERROR
+                it.raw_log = "No TX Hash"
+                throw Exception("No TX Hash")
+            }
+
         })
     }
 
     private fun postTxJson (json : String) : String {
-        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl","tx":$json}""", LogTag.info)
+        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
         val response = HttpWire.post("""$nodeUrl/txs""", json)
         Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response

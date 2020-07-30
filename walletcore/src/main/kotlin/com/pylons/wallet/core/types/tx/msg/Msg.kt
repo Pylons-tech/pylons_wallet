@@ -341,7 +341,7 @@ data class GetPylons(
     }
 }
 
-@MsgType("pylons/SendPylons")
+@MsgType("pylons/SendCoins")
 data class SendPylons(
         @property:[Json(name = "Amount")]
         val amount : List<Coin>,
