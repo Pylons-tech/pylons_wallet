@@ -4,8 +4,11 @@ object LogEvent {
     const val MISC = "misc"
     const val TX_POST  = "tx_post"
     const val TX_RESPONSE = "tx_response"
+    const val TX_SUBMIT_EXCEPTION = "tx_submit_exception"
     const val HTTP_POST = "http_post"
+    const val HTTP_POST_EXCEPTION = "http_post_exception"
     const val HTTP_GET = "http_get"
+    const val HTTP_GET_EXCEPTION = "http_get_exception"
     const val USER_DATA_PARSE_FAIL = "user_data_parse_fail"
     const val RESOLVED_MESSAGE = "resolved_message"
     const val GENERATED_NEW_KEYS = "generated_new_keys"
@@ -20,4 +23,5 @@ object LogEvent {
     const val AWAIT_MESSAGE = "await_message"
     const val GOT_DATA_FROM_CLIENT = "got_data_from_client"
     const val REQUIRE_UI_ELEVATION = "require_ui_elevation"
+    const val BASE_JSON_WELD_FLOW = "base_json_weld_flow"
 }

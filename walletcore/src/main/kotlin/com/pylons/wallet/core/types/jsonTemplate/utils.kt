@@ -3,6 +3,10 @@ package com.pylons.wallet.core.types.jsonTemplate
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.LogTag
+import com.pylons.wallet.core.logging.Logger
+import com.pylons.wallet.core.types.HttpWire
 import com.pylons.wallet.core.types.PylonsSECP256K1
 import java.util.*
 
@@ -20,8 +24,7 @@ internal fun Double.s() : String {
 internal fun baseJsonWeldFlow (msg : String, signComponent : String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey) : String {
     val cryptoHandler = (Core.engine as TxPylonsEngine).cryptoHandler
     val signable = baseSignTemplate(signComponent, sequence, accountNumber)
-    println("Signable:")
-    println(signable)
+    Logger().log(LogEvent.BASE_JSON_WELD_FLOW, "signable: $signable", LogTag.info)
     val signBytes = signable.toByteArray(Charsets.UTF_8)
     val signatureBytes = cryptoHandler.signature(signBytes)
     val signature = base64.encodeToString(signatureBytes)

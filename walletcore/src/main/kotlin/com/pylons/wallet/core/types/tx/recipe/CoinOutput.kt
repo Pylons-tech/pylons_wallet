@@ -19,7 +19,6 @@ data class CoinOutput(
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {
-                        println("listFromJson: $jsonArray")
                         if (jsonArray == null) return listOf()
                         val ls = mutableListOf<CoinOutput>()
                         jsonArray.forEach { ls.add(fromJson(it)) }

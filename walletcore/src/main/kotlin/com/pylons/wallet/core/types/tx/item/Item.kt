@@ -49,7 +49,6 @@ data class Item(
             if (jsonArray == null) return listOf()
             val list = mutableListOf<Item>()
             jsonArray.forEach {
-                println(it.toJsonString())
                 list.add(
                         Item(
                                 id = it.string("ID")!!,
