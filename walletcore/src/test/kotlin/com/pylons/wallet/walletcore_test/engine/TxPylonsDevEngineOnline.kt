@@ -117,6 +117,9 @@ class TxPylonsDevEngineOnline {
         println("ok!")
         val a = engine.getTransaction(tx.id!!)
         println(a.stdTx!!.msg.size)
+
+        assertEquals(Transaction.ResponseCode.OK, a.code, "Not OK Response Code")
+
         followUp?.invoke(engine, tx.id!!)
     }
 
