@@ -71,16 +71,13 @@ class CryptoCosmos : CryptoHandler() {
             val xBytes = Bytes.wrap(ecPoint.xCoord.toBigInteger().toByteArray()).trimLeadingZeros()
             val yStr = ecPoint.yCoord.toBigInteger().toString()
             val xStr = ecPoint.xCoord.toBigInteger().toString()
-            println("$xStr $yStr")
             val prefix = when (ecPoint.yCoord.toBigInteger() % 2.toBigInteger() == 0.toBigInteger()) {
                 true -> 0x02
                 false -> 0x03
             }
-            println("PREFIX: $prefix")
             val bytes = MutableBytes.wrap(ByteArray(33))
             bytes[0] = prefix.toByte()
             xBytes.copyTo(bytes, 1)
-            println(bytes.toHexString())
             return bytes
         }
 
