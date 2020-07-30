@@ -14,6 +14,7 @@ val createRecipeSignable = CreateRecipe(
                 coinOutputs = listOf(
                         CoinOutput("chair", 1)
                 ),
+                itemModifyOutputs = listOf(ItemModifyOutput(0, listOf(), listOf(), listOf(), 0)),
                 itemOutputs = listOf(
                         ItemOutput(
                                 doubles = listOf(DoubleParam("1.0", "endurance",
@@ -34,7 +35,6 @@ val createRecipeSignable = CreateRecipe(
                                 strings = listOf(
                                         StringParam("1.0", "Name", "Raichu", "")
                                 ),
-                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf(), 0),
                                 transferFee = 0
                         )
                 )

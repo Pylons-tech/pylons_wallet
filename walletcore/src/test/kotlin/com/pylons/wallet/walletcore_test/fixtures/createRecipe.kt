@@ -14,6 +14,7 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
         description = "test recipe from test suite",
         entries = EntriesList(
                 coinOutputs = listOf(),
+                itemModifyOutputs = listOf(),
                 itemOutputs = listOf(
                         ItemOutput(
                                 doubles = listOf(
@@ -34,12 +35,6 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                                                 value = "Mars",
                                                 program = ""
                                         )
-                                ),
-                                modifyItem = ItemUpgradeParams(
-                                        doubles = listOf(),
-                                        longs = listOf(),
-                                        strings = listOf(),
-                                        transferFee = 0
                                 ),
                                 transferFee = 0
                         )

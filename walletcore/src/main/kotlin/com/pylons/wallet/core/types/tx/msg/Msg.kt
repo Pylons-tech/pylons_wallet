@@ -177,7 +177,7 @@ data class CreateRecipe (
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
-                        EntriesList(listOf(), listOf()),
+                        EntriesList(listOf(), listOf(), listOf()),
                     outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
 
             )
@@ -461,7 +461,7 @@ data class UpdateRecipe (
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
-                            EntriesList(listOf(), listOf()),
+                            EntriesList(listOf(), listOf(), listOf()),
                     outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
             )
         }
