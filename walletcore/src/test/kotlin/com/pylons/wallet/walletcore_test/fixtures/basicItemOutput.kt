@@ -3,6 +3,7 @@ package com.pylons.wallet.walletcore_test.fixtures
 import com.pylons.wallet.core.types.tx.recipe.*
 
 val basicItemOutput = ItemOutput(
+        id = "",
         doubles = listOf(
                 DoubleParam("1.0", "Heft", listOf(
                         DoubleWeightRange("1.0", "0.1", 1)

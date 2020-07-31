@@ -18,6 +18,7 @@ val updateRecipeSignable = UpdateRecipe(
                 itemModifyOutputs = listOf(ItemModifyOutput(0, listOf(), listOf(), listOf(), 0)),
                 itemOutputs = listOf(
                         ItemOutput(
+                                id = "0",
                                 doubles = listOf(DoubleParam("1.0", "endurance",
                                         listOf(
                                                 DoubleWeightRange("500.00", "100.00", 6),
@@ -42,9 +43,9 @@ val updateRecipeSignable = UpdateRecipe(
         ),
         outputs = listOf(
                 WeightedOutput(
-                        resultEntries = listOf(0), weight = "1"
+                        entryIds = listOf("0"), weight = "1"
                 ),
-                WeightedOutput(resultEntries = listOf(1),
+                WeightedOutput(entryIds = listOf("1"),
                         weight = "1")
         ),
         itemInputs = listOf(
