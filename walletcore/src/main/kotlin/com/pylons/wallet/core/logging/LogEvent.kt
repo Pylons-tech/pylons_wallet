@@ -24,4 +24,5 @@ object LogEvent {
     const val GOT_DATA_FROM_CLIENT = "got_data_from_client"
     const val REQUIRE_UI_ELEVATION = "require_ui_elevation"
     const val BASE_JSON_WELD_FLOW = "base_json_weld_flow"
+    const val SIGNABLE = "signable"
 }
