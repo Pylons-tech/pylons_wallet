@@ -8,6 +8,8 @@ import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.recipe.*
 
 data class Item(
+        @property:[Json(name = "NodeVersion")]
+        val nodeVersion: String,
         @property:[Json(name = "ID")]
         val id: String,
         @property:[Json(name = "CookbookID")]
@@ -51,6 +53,7 @@ data class Item(
             jsonArray.forEach {
                 list.add(
                         Item(
+                                nodeVersion = it.string("NodeVersion")!!,
                                 id = it.string("ID")!!,
                                 cookbookId = it.string("CookbookID")!!,
                                 sender = it.string("Sender")!!,
