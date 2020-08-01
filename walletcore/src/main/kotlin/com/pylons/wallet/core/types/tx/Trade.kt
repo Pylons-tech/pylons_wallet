@@ -10,6 +10,8 @@ import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import java.lang.StringBuilder
 
 data class Trade(
+        @property:[Json(name = "NodeVersion")]
+        val nodeVersion : String,
         @property:[Json(name = "ID")]
         val id : String,
         @property:[Json(name = "CoinInputs")]
@@ -36,8 +38,8 @@ data class Trade(
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.obj("result")!!.array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
-                println(it.toJsonString())
                 list.add(Trade(
+                        nodeVersion = it.string("NodeVersion")!!,
                         id = it.string("ID")!!,
                         coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
                         itemInputs = TradeItemInput.listFromJson(it.array("ItemInputs")),
