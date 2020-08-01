@@ -7,6 +7,8 @@ import com.pylons.wallet.core.internal.fuzzyLong
 import java.lang.StringBuilder
 
 data class Recipe(
+        @property:[Json(name = "NodeVersion")]
+        val nodeVersion : String,
         @property:[Json(name = "ID")]
         val id : String,
         @property:[Json(name = "Sender")]
@@ -38,6 +40,7 @@ data class Recipe(
             jsonArray.forEach {
                 list.add(
                         Recipe(
+                                nodeVersion = it.string("NodeVersion")!!,
                                 cookbookId = it.string("CookbookID")!!,
                                 name = it.string("Name")!!,
                                 id = it.string("ID")!!,
