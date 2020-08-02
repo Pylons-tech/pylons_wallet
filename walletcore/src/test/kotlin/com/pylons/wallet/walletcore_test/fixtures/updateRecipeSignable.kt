@@ -13,18 +13,18 @@ val updateRecipeSignable = UpdateRecipe(
         description = "this has to meet character limits lol",
         entries = EntriesList(
                 coinOutputs = listOf(
-                        CoinOutput("chair", 1)
+                        CoinOutput("0","chair", 1)
                 ),
                 itemModifyOutputs = listOf(ItemModifyOutput(0, listOf(), listOf(), listOf(), 0)),
                 itemOutputs = listOf(
                         ItemOutput(
-                                id = "0",
+                                id = "1",
                                 doubles = listOf(DoubleParam("1.0", "endurance",
                                         listOf(
                                                 DoubleWeightRange("500.00", "100.00", 6),
                                                 DoubleWeightRange("800.00", "501.00", 2)
                                         )
-                                , "")
+                                        , "")
                                 ),
                                 longs = listOf(
                                         LongParam("", "HP",
@@ -32,7 +32,7 @@ val updateRecipeSignable = UpdateRecipe(
                                                         LongWeightRange(500, 100, 6),
                                                         LongWeightRange(800, 501, 2)
                                                 )
-                                        , "")
+                                                , "")
                                 ),
                                 strings = listOf(
                                         StringParam("1.0", "Name", "Raichu", "")
