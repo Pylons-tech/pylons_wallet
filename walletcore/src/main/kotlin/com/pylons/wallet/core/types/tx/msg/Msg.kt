@@ -190,7 +190,7 @@ data class CreateTrade (
         @property:[Json(name = "CoinInputs")]
         val coinInputs : List<CoinInput>,
         @property:[Json(name = "CoinOutputs") EmptyArray]
-        val coinOutputs : List<CoinOutput>,
+        val coinOutputs : List<Coin>,
         @property:[Json(name = "ExtraInfo")]
         val extraInfo : String,
         @property:[Json(name = "ItemInputs")]
@@ -210,7 +210,7 @@ data class CreateTrade (
                     sender = jsonObject.string("Sender")!!,
                     extraInfo = jsonObject.string("ExtraInfo")!!,
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
-                    coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")),
+                    coinOutputs = Coin.listFromJson(jsonObject.array("CoinOutputs")),
                     itemInputs = TradeItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     itemOutputs = Item.listFromJson(jsonObject.array("ItemOutputs"))
 

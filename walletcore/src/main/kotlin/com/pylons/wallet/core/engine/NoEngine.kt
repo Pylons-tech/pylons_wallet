@@ -38,7 +38,7 @@ internal class NoEngine : Engine() {
             throw NoEngineException()
 
     override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                             coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, ExtraInfo: String)   =
+                             coinOutputs: List<Coin>, itemOutputs: List<Item>, ExtraInfo: String)   =
             throw NoEngineException()
 
     override fun disableRecipe(id: String): Transaction  =
