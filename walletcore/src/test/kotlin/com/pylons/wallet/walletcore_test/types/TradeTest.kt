@@ -21,6 +21,7 @@ class TradeTest {
                 {
                     "CookbookID": "LOUD-v0.1.0-1589853709",
                     "ItemInput": {
+                        "ID": "",
                         "Doubles": [
                             {
                                 "Key": "XP",
@@ -189,6 +190,7 @@ class TradeTest {
                                 {
                                     "CookbookID": "LOUD-v0.1.0-1589853709",
                                     "ItemInput": {
+                                        "ID": "",
                                         "Doubles": null,
                                         "Longs": [
                                             {
@@ -231,6 +233,7 @@ class TradeTest {
                     {
                         "CookbookID": "LOUD-v0.1.0-1589853709",
                         "ItemInput": {
+                            "ID": "",
                             "Doubles": null,
                             "Longs": null,
                             "Strings": [
@@ -292,6 +295,7 @@ class TradeTest {
                             {
                                 "CookbookID": "LOUD-v0.1.0-1589853709",
                                 "ItemInput": {
+                                    "ID": "KNIFE",
                                     "Doubles": null,
                                     "Longs": null,
                                     "Strings": [
@@ -445,17 +449,17 @@ class TradeTest {
     @Test
     fun getTradeList() {
         val expected = listOf(
-                Trade("0.0.1", "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e6050971e5d-7349-43a1-ab78-8a5e11a45988", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput(listOf(DoubleInputParam("XP", "1", "1000000")), listOf(LongInputParam("level", 1, 2)), listOf(StringInputParam("Name", "LionBaby")), FeeInputParam(0, 0)))), listOf(CoinOutput("pylon", 444)), listOf(), "character buy request created by loud game", "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60", "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn", false, true
+                Trade("0.0.1", "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e6050971e5d-7349-43a1-ab78-8a5e11a45988", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput("", listOf(DoubleInputParam("XP", "1", "1000000")), listOf(LongInputParam("level", 1, 2)), listOf(StringInputParam("Name", "LionBaby")), FeeInputParam(0, 0)))), listOf(CoinOutput("pylon", 444)), listOf(), "character buy request created by loud game", "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60", "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn", false, true
                 ),
                 Trade("0.0.1", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs401401a9-eb2f-41df-9480-1b3017dcd7f3", listOf(CoinInput("pylon", 40000)), listOf(), listOf(), listOf(Item("0.0.1", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs92340456-8623-44ca-8c5b-21eb779dca2a", "LOUD-v0.1.0-1589853709", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs", "orid", "otid", true, 39334, mapOf("XP" to 1.0), mapOf("level" to 1L, "GiantKill" to 0L, "Special" to 0L, "SpecialDragonKill" to 0L, "UndeadDragonKill" to 0L), mapOf("Name" to "Tiger", "Type" to "Character"), 1)), "character sell request created by loud game", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs", "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn", false, true
                 ),
                 Trade("0.0.1", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs774d3f14-d988-4aaf-a51e-13e2ccd09221", listOf(CoinInput("pylon", 4000)), listOf(), listOf(), listOf(Item("0.0.1", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs90580d1b-4521-466b-8e78-0f3b8e95f8f5", "LOUD-v0.1.0-1589853709", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs", "", "", true, 39328, mapOf("attack" to 3.0), mapOf("level" to 1L, "value" to 100L), mapOf("Name" to "Wooden sword"), 0)), "sword sell request created by loud game", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs", "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60", false, true
                 ),
-                Trade("0.0.1", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs7b0fc361-5ce0-4cfb-9173-039e84c89124", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput(listOf(), listOf(LongInputParam("level", 1, 1)), listOf(StringInputParam("Name", "Wooden sword")), FeeInputParam(0, 0)))), listOf(CoinOutput("pylon", 333)), listOf(), "sword buy request created by loud game", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs", "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60", false, true
+                Trade("0.0.1", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs7b0fc361-5ce0-4cfb-9173-039e84c89124", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput("", listOf(), listOf(LongInputParam("level", 1, 1)), listOf(StringInputParam("Name", "Wooden sword")), FeeInputParam(0, 0)))), listOf(CoinOutput("pylon", 333)), listOf(), "sword buy request created by loud game", "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs", "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60", false, true
                 ),
-                Trade("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglb96ad4ee-3b7f-4b12-96c4-dca45556f812", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput(listOf(), listOf(), listOf(StringInputParam("Name", "Trading Knife v4")), FeeInputParam(0, 0)))), listOf(), listOf(Item("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl2f92088b-1115-4b4e-8f20-5d1ee558af2a", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "", "", true, 125, mapOf("attack" to 2.0), mapOf("level" to 2L), mapOf("Name" to "Trading Knife v2"), 0)), "item to item trading", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep", false, true
+                Trade("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglb96ad4ee-3b7f-4b12-96c4-dca45556f812", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput("", listOf(), listOf(), listOf(StringInputParam("Name", "Trading Knife v4")), FeeInputParam(0, 0)))), listOf(), listOf(Item("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl2f92088b-1115-4b4e-8f20-5d1ee558af2a", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "", "", true, 125, mapOf("attack" to 2.0), mapOf("level" to 2L), mapOf("Name" to "Trading Knife v2"), 0)), "item to item trading", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep", false, true
                 ),
-                Trade("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl3da7b0cc-e79a-4e8b-90f0-3ce3032e691e", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput(listOf(), listOf(), listOf(StringInputParam("Name", "Trading Knife v3")), FeeInputParam(50, 100)))), listOf(CoinOutput("eugencoin", 200)), listOf(), "item to coin trading", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep", false, true
+                Trade("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl3da7b0cc-e79a-4e8b-90f0-3ce3032e691e", listOf(), listOf(TradeItemInput("LOUD-v0.1.0-1589853709", ItemInput("KNIFE", listOf(), listOf(), listOf(StringInputParam("Name", "Trading Knife v3")), FeeInputParam(50, 100)))), listOf(CoinOutput("eugencoin", 200)), listOf(), "item to coin trading", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep", false, true
                 ),
                 Trade("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglfde15ca3-1fa3-4608-ad7b-892bc0c15494", listOf(CoinInput("pylon", 1)), listOf(), listOf(), listOf(Item("0.0.1", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl55c90ca8-0566-499a-999f-753a13cc89c6", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "", "", true, 124, mapOf("attack" to 1.0), mapOf("level" to 1L), mapOf("Name" to "Trading Knife v1"), 0)), "coin to item trading", "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl", "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep", false, true
                 ),

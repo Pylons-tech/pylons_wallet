@@ -49,6 +49,7 @@ val createRecipeSignable = CreateRecipe(
         ),
         itemInputs = listOf(
                 ItemInput(
+                        id = "",
                         doubles = listOf(),
                         longs = listOf(),
                         strings = listOf(
