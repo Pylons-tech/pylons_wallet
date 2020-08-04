@@ -210,7 +210,7 @@ class TransactionTest {
                       "ItemModifyOutputs": null,
                       "ItemOutputs": [
                         {
-                          "ID": "0",
+                          "ID": "itemEarth",
                           "Doubles": [
                             {
                               "Rate": "1",
@@ -241,7 +241,7 @@ class TransactionTest {
                     "Outputs": [
                       {
                         "EntryIDs": [
-                          "0"
+                          "itemEarth"
                         ],
                         "Weight": "1"
                       }
@@ -319,7 +319,7 @@ class TransactionTest {
                       "ItemModifyOutputs": null,
                       "ItemOutputs": [
                         {
-                          "ID": "0",
+                          "ID": "itemEarth",
                           "Doubles": [
                             {
                               "Rate": "1",
@@ -350,7 +350,7 @@ class TransactionTest {
                     "Outputs": [
                       {
                         "EntryIDs": [
-                          "0"
+                          "itemEarth"
                         ],
                         "Weight": "1"
                       }

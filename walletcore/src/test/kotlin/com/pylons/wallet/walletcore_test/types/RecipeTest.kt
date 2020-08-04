@@ -28,7 +28,7 @@ class RecipeTest {
                   "ItemModifyOutputs": null,
                   "ItemOutputs": [
                     {
-                      "ID": "0",
+                      "ID": "itemMars",
                       "Doubles": [
                         {
                           "Rate": "1",
@@ -59,7 +59,7 @@ class RecipeTest {
                 "Outputs": [
                   {
                     "EntryIDs": [
-                      "0"
+                      "itemMars"
                     ],
                     "Weight": "1"
                   }
@@ -93,7 +93,7 @@ class RecipeTest {
                         itemModifyOutputs = listOf(),
                         itemOutputs = listOf(
                                 ItemOutput(
-                                        id = "0",
+                                        id = "itemMars",
                                         doubles = listOf(DoubleParam(
                                                 rate = "1",
                                                 key = "Mass",
@@ -116,7 +116,7 @@ class RecipeTest {
                         )
                 ),
                 outputs = listOf(WeightedOutput(
-                        entryIds = listOf("0"),
+                        entryIds = listOf("itemMars"),
                         weight = "1"
                 )),
                 description = "test recipe from test suite",

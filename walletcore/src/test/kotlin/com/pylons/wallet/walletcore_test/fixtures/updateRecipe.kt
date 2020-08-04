@@ -18,7 +18,7 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                 itemModifyOutputs = listOf(),
                 itemOutputs = listOf(
                         ItemOutput(
-                                id = "0",
+                                id = "itemEarth",
                                 doubles = listOf(
                                         DoubleParam(
                                                 rate = "1",
@@ -42,7 +42,7 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                         )
                 )
         ),
-        outputs = listOf(WeightedOutput(listOf("0"), "1")),
+        outputs = listOf(WeightedOutput(listOf("itemEarth"), "1")),
         itemInputs = listOf(),
         name = name,
         sender = sender,

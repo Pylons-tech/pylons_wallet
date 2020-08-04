@@ -17,7 +17,7 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                 itemModifyOutputs = listOf(),
                 itemOutputs = listOf(
                         ItemOutput(
-                                id = "0",
+                                id = "itemMars",
                                 doubles = listOf(
                                         DoubleParam(
                                                 rate = "1",
@@ -41,7 +41,7 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                         )
                 )
         ),
-        outputs = listOf(WeightedOutput(listOf("0"), "1")),
+        outputs = listOf(WeightedOutput(listOf("itemMars"), "1")),
         itemInputs = listOf(),
         name = name,
         sender = sender
