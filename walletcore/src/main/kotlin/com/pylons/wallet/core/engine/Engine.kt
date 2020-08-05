@@ -223,6 +223,8 @@ abstract class Engine {
 
     abstract fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
 
+    abstract fun checkGoogleIapOrder(purchaseToken: String) : Boolean
+
     /**
      * Gets initial userdata tables for the engine type.
      */

@@ -256,6 +256,11 @@ open class TxPylonsEngine : Engine() {
     override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction =
             basicTxHandlerFlow { GoogleIAPGetPylons(productId, purchaseToken, Base64.getEncoder().encodeToString(receiptData.toByteArray()), signature, it.address).toSignedTx() }
 
+    override fun checkGoogleIapOrder(purchaseToken: String): Boolean {
+        val response = HttpWire.get("$nodeUrl/pylons/check_google_iap_order/$purchaseToken")
+        return (Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!.boolean("exist")!!
+    }
+
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
             basicTxHandlerFlow { UpdateItemString(field, itemId, it.address, value).toSignedTx() }
 
