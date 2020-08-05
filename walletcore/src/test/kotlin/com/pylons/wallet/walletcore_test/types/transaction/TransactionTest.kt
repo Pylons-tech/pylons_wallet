@@ -107,41 +107,45 @@ class TransactionTest {
 
     private val checkExecutionResponse = """
         {
-          "height": "25213",
-          "txhash": "F7E835A287BB9E7CBAACDD9A6D211DC1918D329DA682A93F8C0C71F236CFFFB7",
-          "data": "7B224D657373616765223A22657865637574696F6E20616C726561647920636F6D706C65746564222C22537461747573223A22436F6D706C65746564222C224F7574707574223A6E756C6C7D",
-          "raw_log": "[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+          "height": "2920",
+          "txhash": "A85DCD7536C991657DD7D352760A6D0C18A8A7C634B33C7EDCC8CB2C9324E40C",
+          "data": "7B224D657373616765223A227375636365737366756C6C7920636F6D706C657465642074686520657865637574696F6E222C22537461747573223A2253756363657373222C224F7574707574223A225733736964486C775A534936496B6C55525530694C434A6A62326C75496A6F69496977695957317664573530496A6F774C434A7064475674535551694F694A6A62334E7462334D786554683265584E6E4F576874646D46326132523463485A6A59335979646D557A626E4E7A646A5668646D30776133517A4D7A646A4D4463314F446C684E53316C5A5752684C5451335A446374595467775A5331695A6A59784E6A55795A4441794E574D696656303D227D",
+          "raw_log": "[{\"msg_index\":0,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"check_execution\"}]}]}]",
           "logs": [
             {
-              "msg_index": "0",
-              "success": true,
-              "log": ""
+              "msg_index": 0,
+              "log": "",
+              "events": [
+                {
+                  "type": "message",
+                  "attributes": [
+                    {
+                      "key": "action",
+                      "value": "check_execution"
+                    }
+                  ]
+                }
+              ]
             }
           ],
-          "gas_wanted": "200000",
-          "gas_used": "12314",
-          "tags": [
-            {
-              "key": "action",
-              "value": "check_execution"
-            }
-          ],
+          "gas_wanted": "400000",
+          "gas_used": "104892",
           "tx": {
-            "type": "auth/StdTx",
+            "type": "cosmos-sdk/StdTx",
             "value": {
               "msg": [
                 {
                   "type": "pylons/CheckExecution",
                   "value": {
-                    "ExecID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt3372a36a8f1-6dab-4c8a-97d0-9035aa5c81ac",
+                    "ExecID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt3376c91783d-69c2-48a4-a97b-5bd7a67a6be1",
                     "Sender": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
                     "PayToComplete": true
                   }
                 }
               ],
               "fee": {
-                "amount": null,
-                "gas": "200000"
+                "amount": [],
+                "gas": "400000"
               },
               "signatures": [
                 {
@@ -149,47 +153,51 @@ class TransactionTest {
                     "type": "tendermint/PubKeySecp256k1",
                     "value": "A5PAksiR77+c5CrjVo4m6RTAnHW+2hKkjO9jj+GKhL/h"
                   },
-                  "signature": "EQwgo3iu740Nuwoh1N8K2ernOvfx3w+jgfCKhYKzausyUOyfJNo6qM5ZWcoMfIgbHVZh7NIPnPSj18qqqLX7QQ=="
+                  "signature": "bYCm9/sZMPBR1jEPgCsODMTvvXSSW6n4kYj27mg039gptlKftDOUTCdwLbq9xl4zpR+N60SGAn4eY3+DbiJy6A=="
                 }
               ],
               "memo": ""
             }
           },
-          "timestamp": "2020-05-17T21:57:37Z"
+          "timestamp": "2020-08-01T03:13:44Z"
         }
     """.trimIndent()
 
     private val updateRecipeResponse = """
         {
-          "height": "25158",
-          "txhash": "A0B4A3F09E936BAF0E9F9E0085BAD76FFA0CBCF5E471E32F2C0F26876A98AD10",
-          "data": "7B225265636970654944223A22636F736D6F733179387679736739686D7661766B64787076636376327665336E7373763561766D306B7433333734323962633965342D323533642D343563612D393038662D643262343534616562623337227D",
-          "raw_log": "[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+          "height": "2610",
+          "txhash": "E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61",
+          "data": "7B225265636970654944223A22636F736D6F733179387679736739686D7661766B64787076636376327665336E7373763561766D306B7433333738623738643238312D613035652D343561382D623962632D393036396138653564373362222C224D657373616765223A227375636365737366756C6C7920757064617465642074686520726563697065222C22537461747573223A2253756363657373227D",
+          "raw_log": "[{\"msg_index\":0,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"update_recipe\"}]}]}]",
           "logs": [
             {
-              "msg_index": "0",
-              "success": true,
-              "log": ""
+              "msg_index": 0,
+              "log": "",
+              "events": [
+                {
+                  "type": "message",
+                  "attributes": [
+                    {
+                      "key": "action",
+                      "value": "update_recipe"
+                    }
+                  ]
+                }
+              ]
             }
           ],
-          "gas_wanted": "200000",
-          "gas_used": "38237",
-          "tags": [
-            {
-              "key": "action",
-              "value": "update_recipe"
-            }
-          ],
+          "gas_wanted": "400000",
+          "gas_used": "47511",
           "tx": {
-            "type": "auth/StdTx",
+            "type": "cosmos-sdk/StdTx",
             "value": {
               "msg": [
                 {
                   "type": "pylons/UpdateRecipe",
                   "value": {
-                    "Name": "RTEST_1589752383",
-                    "CookbookID": "-1660484269",
-                    "ID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337429bc9e4-253d-45ca-908f-d2b454aebb37",
+                    "Name": "RTEST_1596250068",
+                    "CookbookID": "-124015487",
+                    "ID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt3378b78d281-a05e-45a8-b9bc-9069a8e5d73b",
                     "CoinInputs": [
                       {
                         "Coin": "pylon",
@@ -199,14 +207,10 @@ class TransactionTest {
                     "ItemInputs": null,
                     "Entries": {
                       "CoinOutputs": null,
+                      "ItemModifyOutputs": null,
                       "ItemOutputs": [
                         {
-                          "ModifyItem": {
-                            "Doubles": null,
-                            "Longs": null,
-                            "Strings": null,
-                            "TransferFee": 0
-                          },
+                          "ID": "itemEarth",
                           "Doubles": [
                             {
                               "Rate": "1",
@@ -236,8 +240,8 @@ class TransactionTest {
                     },
                     "Outputs": [
                       {
-                        "ResultEntries": [
-                          "0"
+                        "EntryIDs": [
+                          "itemEarth"
                         ],
                         "Weight": "1"
                       }
@@ -249,8 +253,8 @@ class TransactionTest {
                 }
               ],
               "fee": {
-                "amount": null,
-                "gas": "200000"
+                "amount": [],
+                "gas": "400000"
               },
               "signatures": [
                 {
@@ -258,47 +262,51 @@ class TransactionTest {
                     "type": "tendermint/PubKeySecp256k1",
                     "value": "A5PAksiR77+c5CrjVo4m6RTAnHW+2hKkjO9jj+GKhL/h"
                   },
-                  "signature": "4Yh5dJB6tQdiJIfoXaLc6biXpat+fPFyz+nEuB86XwVRmLkVhg4ibmjGUsImgYXEI06jWhbeXcpgemEvSsADaw=="
+                  "signature": "o3l5SIOimBZvgRYhquOhYqU9ae/TxSZTJ0aYe3yQaRJW23TSG6qD85+Didrcm3hmOOGQ9LberjpgGb3w8u+Wdw=="
                 }
               ],
               "memo": ""
             }
           },
-          "timestamp": "2020-05-17T21:53:00Z"
+          "timestamp": "2020-08-01T02:47:45Z"
         }
     """.trimIndent()
 
     private val invalidDataResponse = """
         {
-          "height": "25158",
-          "txhash": "A0B4A3F09E936BAF0E9F9E0085BAD76FFA0CBCF5E471E32F2C0F26876A98AD10",
+          "height": "2610",
+          "txhash": "E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61",
           "data": "",
-          "raw_log": "[{\"msg_index\":\"0\",\"success\":true,\"log\":\"\"}]",
+          "raw_log": "[{\"msg_index\":0,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"update_recipe\"}]}]}]",
           "logs": [
             {
-              "msg_index": "0",
-              "success": true,
-              "log": ""
+              "msg_index": 0,
+              "log": "",
+              "events": [
+                {
+                  "type": "message",
+                  "attributes": [
+                    {
+                      "key": "action",
+                      "value": "update_recipe"
+                    }
+                  ]
+                }
+              ]
             }
           ],
-          "gas_wanted": "200000",
-          "gas_used": "38237",
-          "tags": [
-            {
-              "key": "action",
-              "value": "update_recipe"
-            }
-          ],
+          "gas_wanted": "400000",
+          "gas_used": "47511",
           "tx": {
-            "type": "auth/StdTx",
+            "type": "cosmos-sdk/StdTx",
             "value": {
               "msg": [
                 {
                   "type": "pylons/UpdateRecipe",
                   "value": {
-                    "Name": "RTEST_1589752383",
-                    "CookbookID": "-1660484269",
-                    "ID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337429bc9e4-253d-45ca-908f-d2b454aebb37",
+                    "Name": "RTEST_1596250068",
+                    "CookbookID": "-124015487",
+                    "ID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt3378b78d281-a05e-45a8-b9bc-9069a8e5d73b",
                     "CoinInputs": [
                       {
                         "Coin": "pylon",
@@ -308,14 +316,10 @@ class TransactionTest {
                     "ItemInputs": null,
                     "Entries": {
                       "CoinOutputs": null,
+                      "ItemModifyOutputs": null,
                       "ItemOutputs": [
                         {
-                          "ModifyItem": {
-                            "Doubles": null,
-                            "Longs": null,
-                            "Strings": null,
-                            "TransferFee": 0
-                          },
+                          "ID": "itemEarth",
                           "Doubles": [
                             {
                               "Rate": "1",
@@ -345,8 +349,8 @@ class TransactionTest {
                     },
                     "Outputs": [
                       {
-                        "ResultEntries": [
-                          "0"
+                        "EntryIDs": [
+                          "itemEarth"
                         ],
                         "Weight": "1"
                       }
@@ -358,8 +362,8 @@ class TransactionTest {
                 }
               ],
               "fee": {
-                "amount": null,
-                "gas": "200000"
+                "amount": [],
+                "gas": "400000"
               },
               "signatures": [
                 {
@@ -367,13 +371,13 @@ class TransactionTest {
                     "type": "tendermint/PubKeySecp256k1",
                     "value": "A5PAksiR77+c5CrjVo4m6RTAnHW+2hKkjO9jj+GKhL/h"
                   },
-                  "signature": "4Yh5dJB6tQdiJIfoXaLc6biXpat+fPFyz+nEuB86XwVRmLkVhg4ibmjGUsImgYXEI06jWhbeXcpgemEvSsADaw=="
+                  "signature": "o3l5SIOimBZvgRYhquOhYqU9ae/TxSZTJ0aYe3yQaRJW23TSG6qD85+Didrcm3hmOOGQ9LberjpgGb3w8u+Wdw=="
                 }
               ],
               "memo": ""
             }
           },
-          "timestamp": "2020-05-17T21:53:00Z"
+          "timestamp": "2020-08-01T02:47:45Z"
         }
     """.trimIndent()
 
@@ -407,8 +411,10 @@ class TransactionTest {
 
     @Test
     fun getTransactionCheckExecutionResponse() {
-        val expected = TxData("execution already completed", "Completed", listOf())
-        val tx = Transaction.parseTransactionResponse("F7E835A287BB9E7CBAACDD9A6D211DC1918D329DA682A93F8C0C71F236CFFFB7", checkExecutionResponse)
+        val expected = TxData("successfully completed the execution", "Success", listOf(
+                TxDataOutput("ITEM", "", 0, "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c07589a5-eeda-47d7-a80e-bf61652d025c")
+        ))
+        val tx = Transaction.parseTransactionResponse("A85DCD7536C991657DD7D352760A6D0C18A8A7C634B33C7EDCC8CB2C9324E40C", checkExecutionResponse)
         Assertions.assertEquals(expected, tx.txData)
     }
 
@@ -418,8 +424,8 @@ class TransactionTest {
     */
     @Test
     fun getTransactionUpdateRecipeResponse() {
-        val expected = TxData("", "", listOf())
-        val tx = Transaction.parseTransactionResponse("A0B4A3F09E936BAF0E9F9E0085BAD76FFA0CBCF5E471E32F2C0F26876A98AD10", updateRecipeResponse)
+        val expected = TxData("successfully updated the recipe", "Success", listOf())
+        val tx = Transaction.parseTransactionResponse("E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61", updateRecipeResponse)
         Assertions.assertEquals(expected, tx.txData)
     }
 
@@ -430,7 +436,7 @@ class TransactionTest {
     @Test
     fun getTransactionInvalidData() {
         val expected = TxData("", "", listOf())
-        val tx = Transaction.parseTransactionResponse("A0B4A3F09E936BAF0E9F9E0085BAD76FFA0CBCF5E471E32F2C0F26876A98AD10", invalidDataResponse)
+        val tx = Transaction.parseTransactionResponse("E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61", invalidDataResponse)
         Assertions.assertEquals(expected, tx.txData)
     }
 }

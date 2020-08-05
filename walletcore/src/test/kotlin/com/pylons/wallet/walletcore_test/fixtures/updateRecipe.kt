@@ -15,8 +15,10 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
         description = "test recipe from test suite",
         entries = EntriesList(
                 coinOutputs = listOf(),
+                itemModifyOutputs = listOf(),
                 itemOutputs = listOf(
                         ItemOutput(
+                                id = "itemEarth",
                                 doubles = listOf(
                                         DoubleParam(
                                                 rate = "1",
@@ -36,17 +38,11 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                                                 program = ""
                                         )
                                 ),
-                                modifyItem = ItemUpgradeParams(
-                                        doubles = listOf(),
-                                        longs = listOf(),
-                                        strings = listOf(),
-                                        transferFee = 0
-                                ),
                                 transferFee = 0
                         )
                 )
         ),
-        outputs = listOf(WeightedOutput(listOf(0), "1")),
+        outputs = listOf(WeightedOutput(listOf("itemEarth"), "1")),
         itemInputs = listOf(),
         name = name,
         sender = sender,

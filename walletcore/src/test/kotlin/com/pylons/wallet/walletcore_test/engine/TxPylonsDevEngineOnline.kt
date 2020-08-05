@@ -9,7 +9,6 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.walletcore_test.fixtures.basicItemOutput
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
@@ -33,7 +32,9 @@ class TxPylonsDevEngineOnline {
     }
 
     private fun getExecutionIfOneExists (engine: TxPylonsDevEngine) : String {
-        val e = engine.getPendingExecutions()
+        val e = engine.getPendingExecutions().filter {
+            !it.completed
+        }
         return when (e.isNotEmpty()) {
             true -> e[e.lastIndex].id
             false -> fail("No executions exist on chain belonging to current address. This test cannot continue.")
@@ -117,6 +118,9 @@ class TxPylonsDevEngineOnline {
         println("ok!")
         val a = engine.getTransaction(tx.id!!)
         println(a.stdTx!!.msg.size)
+
+        assertEquals(Transaction.ResponseCode.OK, a.code, "Not OK Response Code")
+
         followUp?.invoke(engine, tx.id!!)
     }
 
@@ -248,7 +252,7 @@ class TxPylonsDevEngineOnline {
     @Order(17)
     @Test
     fun setsItemString () {
-        basicTxTestFlow { it.setItemFieldString(getItemIfOneExists(it).id, "knobliness", "very") }
+        basicTxTestFlow { it.setItemFieldString(getItemIfOneExists(it).id, "Name", "very") }
     }
 
     @Order(18)

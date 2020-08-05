@@ -5,12 +5,12 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class ItemOutput(
+        @property:[Json(name = "ID")]
+        val id: String,
         @property:[Json(name = "Doubles")]
         val doubles : List<DoubleParam>,
         @property:[Json(name = "Longs")]
         val longs : List<LongParam>,
-        @property:[Json(name = "ModifyItem")]
-        val modifyItem : ItemUpgradeParams,
         @property:[Json(name = "Strings")]
         val strings : List<StringParam>,
         @property:[Json(name = "TransferFee") NeverQuoteWrap]
@@ -19,11 +19,11 @@ data class ItemOutput(
         companion object {
                 fun fromJson (jsonObject: JsonObject) : ItemOutput =
                         ItemOutput (
+                                id = jsonObject.string("ID")!!,
                                 doubles = DoubleParam.listFromJson(jsonObject.array("Doubles")),
                                 longs = LongParam.listFromJson(jsonObject.array("Long")),
                                 strings = StringParam.listFromJson(jsonObject.array("Strings")),
                                 // TODO: hard coded empty list?
-                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf(), 0),
                                 transferFee = jsonObject.long("TransferFee")!!
                         )
 

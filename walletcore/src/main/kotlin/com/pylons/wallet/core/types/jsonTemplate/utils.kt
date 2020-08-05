@@ -24,7 +24,7 @@ internal fun Double.s() : String {
 internal fun baseJsonWeldFlow (msg : String, signComponent : String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey) : String {
     val cryptoHandler = (Core.engine as TxPylonsEngine).cryptoHandler
     val signable = baseSignTemplate(signComponent, sequence, accountNumber)
-    Logger().log(LogEvent.BASE_JSON_WELD_FLOW, "signable: $signable", LogTag.info)
+    Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
     val signBytes = signable.toByteArray(Charsets.UTF_8)
     val signatureBytes = cryptoHandler.signature(signBytes)
     val signature = base64.encodeToString(signatureBytes)

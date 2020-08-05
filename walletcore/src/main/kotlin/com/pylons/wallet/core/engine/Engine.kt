@@ -79,7 +79,7 @@ abstract class Engine {
     abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
     abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                             coinOutputs : List<CoinOutput>, itemOutputs : List<Item>,
+                             coinOutputs : List<Coin>, itemOutputs : List<Item>,
                              ExtraInfo : String) : Transaction
 
 

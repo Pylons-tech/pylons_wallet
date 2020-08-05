@@ -5,6 +5,8 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class ItemInput(
+        @property:[Json(name = "ID")]
+        val id: String,
         @property:[Json(name = "Doubles")]
         val doubles : List<DoubleInputParam>,
         @property:[Json(name = "Longs")]
@@ -17,6 +19,7 @@ data class ItemInput(
         companion object {
                 fun fromJson (jsonObject: JsonObject) : ItemInput =
                         ItemInput (
+                                id = jsonObject.string("ID")!!,
                                 doubles = DoubleInputParam.listFromJson(jsonObject.array("Doubles")),
                                 longs = LongInputParam.listFromJson(jsonObject.array("Longs")),
                                 strings = StringInputParam.listFromJson(jsonObject.array("Strings")),

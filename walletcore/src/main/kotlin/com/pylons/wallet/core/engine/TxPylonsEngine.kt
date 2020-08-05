@@ -127,7 +127,7 @@ open class TxPylonsEngine : Engine() {
             basicTxHandlerFlow { CheckExecution(id, Core.userProfile!!.credentials.address, payForCompletion).toSignedTx() }
 
     override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                             coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, extraInfo: String) =
+                             coinOutputs: List<Coin>, itemOutputs: List<Item>, extraInfo: String) =
             basicTxHandlerFlow{ CreateTrade(coinInputs, coinOutputs, extraInfo, itemInputs, itemOutputs, it.address).toSignedTx() }
 
 
