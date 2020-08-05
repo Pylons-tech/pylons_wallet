@@ -221,6 +221,8 @@ abstract class Engine {
      */
     abstract fun getPylons (q : Long) : Transaction
 
+    abstract fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
+
     /**
      * Gets initial userdata tables for the engine type.
      */

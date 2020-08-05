@@ -24,6 +24,7 @@ import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.security.Security
+import java.util.*
 
 @ExperimentalUnsignedTypes
 open class TxPylonsEngine : Engine() {
@@ -251,6 +252,9 @@ open class TxPylonsEngine : Engine() {
     override fun sendPylons(q: Long, receiver: String): Transaction =
         basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoCosmos.keyPair!!.publicKey(),
                 it.accountNumber, it.sequence) }
+
+    override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction =
+            basicTxHandlerFlow { GoogleIAPGetPylons(productId, purchaseToken, Base64.getEncoder().encodeToString(receiptData.toByteArray()), signature, it.address).toSignedTx() }
 
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
             basicTxHandlerFlow { UpdateItemString(field, itemId, it.address, value).toSignedTx() }

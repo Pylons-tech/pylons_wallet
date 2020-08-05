@@ -83,6 +83,9 @@ internal class NoEngine : Engine() {
     override fun getPylons(q: Long): Transaction =
             throw NoEngineException()
 
+    override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptDataBase64: String, signature: String): Transaction =
+            throw NoEngineException()
+
     override fun getStatusBlock(): StatusBlock  =
             throw NoEngineException()
 
