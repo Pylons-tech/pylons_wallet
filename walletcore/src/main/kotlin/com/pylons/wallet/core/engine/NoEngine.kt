@@ -128,4 +128,7 @@ internal class NoEngine : Engine() {
 
     override fun getLockedCoins(): LockedCoin =
         throw NoEngineException()
+
+    override fun getLockedCoinDetails(): LockedCoinDetails =
+            throw NoEngineException()
 }

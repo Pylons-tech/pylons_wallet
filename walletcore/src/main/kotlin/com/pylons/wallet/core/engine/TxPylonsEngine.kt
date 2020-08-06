@@ -272,6 +272,11 @@ open class TxPylonsEngine : Engine() {
         return LockedCoin.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
     }
 
+    override fun getLockedCoinDetails(): LockedCoinDetails {
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coin_details/${Core.userProfile!!.credentials.address}")
+        return LockedCoinDetails.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
+    }
+
     // Unimplemented engine method stubs
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
