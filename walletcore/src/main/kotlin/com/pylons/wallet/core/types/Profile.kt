@@ -14,6 +14,7 @@ data class Profile (
         val strings : MutableMap<String, String>,
         var coins : List<Coin>,
         var items : List<Item>,
+        var lockedCoinDetails: LockedCoinDetails,
         /**
          * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
          * from the network.
@@ -32,9 +33,9 @@ data class Profile (
             val credentials = Core.engine.generateCredentialsFromKeys()
             return when (val name = data.getOrDefault("name", "")) {
                 "" -> Profile(credentials = credentials, provisional = true,
-                        coins = listOf(), items = listOf(), strings = mutableMapOf())
+                        coins = listOf(), items = listOf(), strings = mutableMapOf(), lockedCoinDetails = LockedCoinDetails("", listOf(), listOf(), listOf()))
                 else -> Profile(credentials = credentials, strings = mutableMapOf(ReservedKeys.profileName to name),
-                        provisional = true, coins = listOf(), items = listOf())
+                        provisional = true, coins = listOf(), items = listOf(), lockedCoinDetails = LockedCoinDetails("", listOf(), listOf(), listOf()))
             }
         }
     }

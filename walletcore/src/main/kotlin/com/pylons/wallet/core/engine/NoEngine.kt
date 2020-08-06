@@ -125,4 +125,10 @@ internal class NoEngine : Engine() {
 
     override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
             throw NoEngineException()
+
+    override fun getLockedCoins(): LockedCoin =
+        throw NoEngineException()
+
+    override fun getLockedCoinDetails(): LockedCoinDetails =
+            throw NoEngineException()
 }

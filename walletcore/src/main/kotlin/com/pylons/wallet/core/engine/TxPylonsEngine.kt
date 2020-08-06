@@ -180,6 +180,7 @@ open class TxPylonsEngine : Engine() {
     override fun getOwnBalances(): Profile? {
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
+        val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
             "" -> {
@@ -196,6 +197,7 @@ open class TxPylonsEngine : Engine() {
                 credentials.sequence = sequence
                 Core.userProfile?.coins = coins
                 Core.userProfile?.items = items
+                Core.userProfile?.lockedCoinDetails = lockedCoinDetails
                 return Core.userProfile
             }
         }
@@ -242,7 +244,7 @@ open class TxPylonsEngine : Engine() {
         if (kp == null) cryptoHandler.generateNewKeys()
         else cryptoCosmos.keyPair = kp
         Core.userProfile = Profile(credentials = getNewCredentials(),
-                coins = listOf(), strings = mutableMapOf(), items = listOf())
+                coins = listOf(), strings = mutableMapOf(), items = listOf(), lockedCoinDetails = LockedCoinDetails("", listOf(), listOf(), listOf()))
         return createChainAccount()
     }
 
@@ -266,6 +268,16 @@ open class TxPylonsEngine : Engine() {
 
     override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
         basicTxHandlerFlow { SendItems(sender, receiver, itemIds).toSignedTx() }
+
+    override fun getLockedCoins(): LockedCoin {
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coins/${Core.userProfile!!.credentials.address}")
+        return LockedCoin.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
+    }
+
+    override fun getLockedCoinDetails(): LockedCoinDetails {
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coin_details/${Core.userProfile!!.credentials.address}")
+        return LockedCoinDetails.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
+    }
 
     // Unimplemented engine method stubs
 

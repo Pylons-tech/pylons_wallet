@@ -24,7 +24,7 @@ class TransactionErrorTest {
             engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
             UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
             engine.cryptoHandler.importKeysFromUserData()
-            Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
+            Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf(), lockedCoinDetails = LockedCoinDetails("", listOf(), listOf(), listOf()))
         }
     }
 
