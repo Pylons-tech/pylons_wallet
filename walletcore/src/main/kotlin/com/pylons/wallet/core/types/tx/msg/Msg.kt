@@ -507,3 +507,32 @@ data class CreateAccount(
         }
     }
 }
+
+@MsgType("pylons/GoogleIAPGetPylons")
+data class GoogleIAPGetPylons(
+        @property:[Json(name = "ProductID")]
+        val productId : String,
+        @property:[Json(name = "PurchaseToken")]
+        val purchaseToken : String,
+        @property:[Json(name = "ReceiptDataBase64")]
+        val receiptDataBase64 : String,
+        @property:[Json(name = "Signature")]
+        val signature : String,
+        @property:[Json(name = "Requester")]
+        val requester : String
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : GoogleIAPGetPylons {
+            return GoogleIAPGetPylons(
+                    productId = jsonObject.string("ProductID")!!,
+                    purchaseToken = jsonObject.string("PurchaseToken")!!,
+                    receiptDataBase64 = jsonObject.string("ReceiptDataBase64")!!,
+                    signature = jsonObject.string("Signature")!!,
+                    requester = jsonObject.string("Requester")!!
+            )
+        }
+    }
+}
