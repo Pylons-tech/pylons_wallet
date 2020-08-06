@@ -21,7 +21,7 @@ class TxPylonsDevEngineSignables {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
+        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf(), lockedCoinDetails = LockedCoinDetails("", listOf(), listOf(), listOf()))
         return engine
     }
 
