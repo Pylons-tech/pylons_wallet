@@ -267,6 +267,11 @@ open class TxPylonsEngine : Engine() {
     override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
         basicTxHandlerFlow { SendItems(sender, receiver, itemIds).toSignedTx() }
 
+    override fun getLockedCoins(): LockedCoin {
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coins/${Core.userProfile!!.credentials.address}")
+        return LockedCoin.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
+    }
+
     // Unimplemented engine method stubs
 
     override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,

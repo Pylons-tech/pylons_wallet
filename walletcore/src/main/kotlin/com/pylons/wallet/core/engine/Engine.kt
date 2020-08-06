@@ -310,4 +310,6 @@ abstract class Engine {
     abstract fun listTrades () : List<Trade>
 
     abstract fun sendItems(sender: String, receiver: String, itemIds: List<String>) : Transaction
+
+    abstract fun getLockedCoins () : LockedCoin
 }
