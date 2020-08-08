@@ -1,62 +1,22 @@
 package com.pylons.wallet.core.types
 
-import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.constants.*
-import com.pylons.wallet.core.engine.TxPylonsEngine
+import com.pylons.wallet.core.constants.Keys
+import com.pylons.wallet.core.constants.ReservedKeys
 import com.pylons.wallet.core.types.tx.item.Item
 
 /**
- * Internal state representation of the user's own userProfile.
+ * Internal state representation of a userProfile other than the user's own.
+ * TODO: refactor these to inherit from a shared base
  */
-@ExperimentalUnsignedTypes
-data class Profile (
-        var credentials: Credentials,
-        val strings : MutableMap<String, String>,
+open class Profile (
+        val id : String = "",
+        val strings : Map<String, String>,
         var coins : List<Coin>,
-        var items : List<Item>,
-        /**
-         * Mark profile as provisional if we haven't yet registered it (if needed) and retrieved a record of it
-         * from the network.
-         */
-        var provisional : Boolean = false,
-        val singletonGameRules : MutableList<String> = mutableListOf()
+        var items : List<Item>
 ) {
-    abstract class Credentials (var address : String) {
-        abstract fun dumpToMessageData (msg : MessageData)
-    }
-
-    companion object {
-        fun fromUserData () : Profile? {
-            val data = UserData.dataSets.getValue(Core.engine.prefix)
-            (Core.engine as TxPylonsEngine).cryptoHandler.importKeysFromUserData()
-            val credentials = Core.engine.generateCredentialsFromKeys()
-            return when (val name = data.getOrDefault("name", "")) {
-                "" -> Profile(credentials = credentials, provisional = true,
-                        coins = listOf(), items = listOf(), strings = mutableMapOf())
-                else -> Profile(credentials = credentials, strings = mutableMapOf(ReservedKeys.profileName to name),
-                        provisional = true, coins = listOf(), items = listOf())
-            }
-        }
-    }
-
     fun getName () : String? = strings[ReservedKeys.profileName]
 
-    fun detailsToMessageData () : MessageData {
-        val msg = MessageData()
-        val name = getName()
-        if (name != null) msg.strings[Keys.NAME] = name
-        else msg.strings[Keys.NAME] = ""
-        msg.strings[Keys.ADDRESS]
-        credentials.dumpToMessageData(msg)
-        coins.serializeCoinsToMessageData(msg)
-        msg.stringArrays[Keys.ITEMS] = mutableListOf()
-        items.forEach {
-            msg.stringArrays[Keys.ITEMS]!!.add(it.serialize())
-        }
-        return msg
-    }
-
-    fun countOfCoin (id : String) : Long {
+    fun coin (id : String) : Long {
         coins.forEach {
             if (it.denom == id) return it.amount
         }
@@ -66,7 +26,7 @@ data class Profile (
     fun canPayCoins (coinsOut : List<Coin>) : Boolean {
         var ok = true
         coinsOut.forEach{
-            if (countOfCoin(it.denom) < it.amount) ok = false
+            if (coin(it.denom) < it.amount) ok = false
         }
         return ok
     }

@@ -7,8 +7,6 @@ import com.pylons.wallet.core.constants.Actions
 import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
-import com.pylons.wallet.core.types.MessageData
-import com.pylons.wallet.core.types.Response
 import com.pylons.wallet.core.types.Status
 import com.pylons.wallet.core.types.klaxon
 import javafx.animation.Animation

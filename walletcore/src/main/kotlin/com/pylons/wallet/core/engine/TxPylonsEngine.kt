@@ -66,13 +66,9 @@ open class TxPylonsEngine : Engine() {
 
     // Credentials stuff
 
-    class Credentials (address : String) : Profile.Credentials (address) {
+    class Credentials (address : String) : MyProfile.Credentials (address) {
         var sequence : Long = 0
         var accountNumber : Long = 0
-
-        override fun dumpToMessageData(msg: MessageData) {
-            msg.strings[Keys.ADDRESS] = address
-        }
     }
 
     // Wiring
@@ -111,7 +107,7 @@ open class TxPylonsEngine : Engine() {
             basicTxHandlerFlow{ CreateTrade(coinInputs, coinOutputs, extraInfo, itemInputs, itemOutputs, it.address).toSignedTx() }
 
 
-    override fun dumpCredentials(credentials: Profile.Credentials) {
+    override fun dumpCredentials(credentials: MyProfile.Credentials) {
         val c = credentials as Credentials
         UserData.dataSets[prefix]!!["address"] = c.address
         UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
@@ -124,12 +120,12 @@ open class TxPylonsEngine : Engine() {
     override fun cancelTrade(tradeId : String)   =
             basicTxHandlerFlow{ CancelTrade(it.address, tradeId).toSignedTx() }
 
-    override fun generateCredentialsFromKeys() : Profile.Credentials {
+    override fun generateCredentialsFromKeys() : MyProfile.Credentials {
         val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
         return Credentials(addrString)
     }
 
-    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): Profile.Credentials {
+    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): MyProfile.Credentials {
         //val bip39 = Bip39(EnglishDictionary.instance())
         //val seed = bip39.createSeed(mnemonic, passphrase)
         //SECP256K1.SecretKey.
@@ -138,7 +134,7 @@ open class TxPylonsEngine : Engine() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getForeignBalances(id: String): ForeignProfile? {
+    override fun getForeignBalances(id: String): Profile? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -148,7 +144,7 @@ open class TxPylonsEngine : Engine() {
         return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 
-    override fun getNewCredentials(): Profile.Credentials {
+    override fun getNewCredentials(): MyProfile.Credentials {
         //val addrString = getAddressFromNode(cryptoCosmos.keyPair!!.publicKey())
         val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
         return Credentials(addrString)
@@ -156,7 +152,7 @@ open class TxPylonsEngine : Engine() {
 
     override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
-    override fun getOwnBalances(): Profile? {
+    override fun getOwnBalances(): MyProfile? {
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
@@ -221,7 +217,7 @@ open class TxPylonsEngine : Engine() {
     override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction {
         if (kp == null) cryptoHandler.generateNewKeys()
         else cryptoCosmos.keyPair = kp
-        Core.userProfile = Profile(credentials = getNewCredentials(),
+        Core.userProfile = MyProfile(credentials = getNewCredentials(),
                 coins = listOf(), strings = mutableMapOf(), items = listOf())
         return getPylons(500)
     }

@@ -152,7 +152,7 @@ abstract class Engine {
      * for serialization.
      *  TODO: why does this actually exist?
      */
-    abstract fun dumpCredentials (credentials: Profile.Credentials)
+    abstract fun dumpCredentials (credentials: MyProfile.Credentials)
 
     abstract fun fulfillTrade (tradeId : String) : Transaction
 
@@ -161,29 +161,29 @@ abstract class Engine {
      * Generates a new Credentials object appropriate for our engine
      * type from the given mnemonic.
      */
-    abstract fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : Profile.Credentials
+    abstract fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : MyProfile.Credentials
 
     /***
      * Generates a new Credentials object appropriate for our engine
      * type from keys in userdata.
      */
-    abstract fun generateCredentialsFromKeys () : Profile.Credentials
+    abstract fun generateCredentialsFromKeys () : MyProfile.Credentials
 
     /**
      * Creates new, default Credentials object appropriate for engine
      * type.
      */
-    abstract fun getNewCredentials () : Profile.Credentials
+    abstract fun getNewCredentials () : MyProfile.Credentials
 
     /**
      * Get the balances of a third-party account.
      */
-    abstract fun getForeignBalances(id : String) : ForeignProfile?
+    abstract fun getForeignBalances(id : String) : Profile?
 
     /**
      * Get the balances of the user account.
      */
-    abstract fun getOwnBalances () : Profile?
+    abstract fun getOwnBalances () : MyProfile?
 
     abstract fun getPendingExecutions () : List<Execution>
 

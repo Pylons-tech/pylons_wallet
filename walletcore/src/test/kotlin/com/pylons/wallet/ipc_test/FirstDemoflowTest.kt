@@ -2,15 +2,10 @@ package com.pylons.wallet.ipc_test
 
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
-import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.ops.getProfile
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.ipc.demoflow
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
-import java.security.Security
 
 class FirstDemoflowTest {
 
@@ -25,7 +20,7 @@ class FirstDemoflowTest {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = Profile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
+        Core.userProfile = MyProfile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
         return engine
     }
 

@@ -43,7 +43,7 @@ internal class NoEngine : Engine() {
     override fun disableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun dumpCredentials(credentials: Profile.Credentials) =
+    override fun dumpCredentials(credentials: MyProfile.Credentials) =
             throw NoEngineException()
 
     override fun enableRecipe(id: String): Transaction  =
@@ -55,16 +55,16 @@ internal class NoEngine : Engine() {
     override fun cancelTrade(tradeId: String): Transaction =
             throw NoEngineException()
 
-    override fun generateCredentialsFromKeys(): Profile.Credentials =
+    override fun generateCredentialsFromKeys(): MyProfile.Credentials =
             throw NoEngineException()
 
     override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String) =
             throw NoEngineException()
 
-    override fun getForeignBalances(id: String): ForeignProfile? =
+    override fun getForeignBalances(id: String): Profile? =
             throw NoEngineException()
 
-    override fun getNewCredentials(): Profile.Credentials =
+    override fun getNewCredentials(): MyProfile.Credentials =
             throw NoEngineException()
 
     override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
@@ -73,7 +73,7 @@ internal class NoEngine : Engine() {
     override fun getNewCryptoHandler(): CryptoHandler =
             throw NoEngineException()
 
-    override fun getOwnBalances(): Profile? =
+    override fun getOwnBalances(): MyProfile? =
             throw NoEngineException()
 
     override fun getPendingExecutions(): List<Execution> =

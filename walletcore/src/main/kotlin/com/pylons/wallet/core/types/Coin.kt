@@ -43,25 +43,3 @@ fun Map<String, Long>.addCoins (other : Set<Coin>, subtractValues : Boolean) : M
     }
     return mutable.toMap()
 }
-
-fun Map<String, Long>.serializeCoinsToMessageData (msg : MessageData) {
-    val denoms = mutableListOf<String>()
-    val counts = mutableListOf<Long>()
-    forEach{
-        denoms.add(it.key)
-        counts.add(it.value)
-    }
-    msg.longArrays[Keys.COIN_COUNTS] = counts.toLongArray()
-    msg.stringArrays[Keys.COIN_DENOMS] = denoms
-}
-
-fun List<Coin>.serializeCoinsToMessageData (msg : MessageData)  {
-    val denoms = mutableListOf<String>()
-    val counts = mutableListOf<Long>()
-    forEach{
-        denoms.add(it.denom)
-        counts.add(it.amount)
-    }
-    msg.longArrays[Keys.COIN_COUNTS] = counts.toLongArray()
-    msg.stringArrays[Keys.COIN_DENOMS] = denoms
-}

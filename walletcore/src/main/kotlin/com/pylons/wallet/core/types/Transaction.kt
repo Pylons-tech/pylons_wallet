@@ -44,19 +44,6 @@ data class Transaction(
         return this
     }
 
-    fun detailsToMessageData(): MessageData {
-        // TODO: use stdtx lol
-        val msg = MessageData()
-        msg.strings[Keys.INFO] = "Transaction.detailsToMessageData is stubbed!!! Write this shit"
-//        msg.strings["txId"] = txId
-//        msg.strings[Keys.otherProfileId] = addressOut
-//        msg.strings[Keys.coinsIn] = coinsIn.serialize()
-//        msg.strings[Keys.coinsOut] = coinsOut.serialize()
-//        msg.stringArrays[Keys.itemsIn] = itemsIn.serialize()
-//        msg.stringArrays[Keys.itemsOut] = itemsOut.serialize()
-        return msg
-    }
-
     companion object {
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject

@@ -27,15 +27,14 @@ object Core {
     internal const val retryDelay : Long = 500 // milliseconds
     var engine: Engine = NoEngine()
         private set
-    var userProfile: Profile? = null
-    internal var foreignProfilesBuffer : Set<ForeignProfile> = setOf()
+    var userProfile: MyProfile? = null
+    internal var profilesBuffer : Set<Profile> = setOf()
     var sane : Boolean = false
         private set
     var started : Boolean = false
         private set
     var suspendedAction : String? = null
         internal set
-    internal var suspendedMsg : MessageData? = null
     internal val klaxon = Klaxon()
     const val VERSION_STRING = "0.0.1a"
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
@@ -49,7 +48,6 @@ object Core {
         engine = NoEngine()
         userProfile = null
         sane = false
-        inDoResolveMessage = false
         started = false
         onCompletedOperation = null
     }
@@ -70,8 +68,8 @@ object Core {
         }
     }
 
-    fun setProfile (profile: Profile) {
-        userProfile = profile
+    fun setProfile (myProfile: MyProfile) {
+        userProfile = myProfile
     }
 
     fun forceKeys (keyString : String, address : String) {
@@ -80,7 +78,7 @@ object Core {
                 PylonsSECP256K1.KeyPair.fromSecretKey(
                         PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(
                                 Hex.decode(keyString))))
-        userProfile = Profile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf(), listOf())
+        userProfile = MyProfile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf(), listOf())
     }
 
     fun dumpUserProfile () : String = userProfile!!.dump()
@@ -97,7 +95,7 @@ object Core {
                 UserData.parseFromJson(userJson)
                 userProfile = when (userJson) {
                     "" -> null
-                    else -> Profile.fromUserData()
+                    else -> MyProfile.fromUserData()
                 }
             } catch (e : Exception) { // Eventually: we should recover properly from bad data
                 Logger.implementation.log(LogEvent.USER_DATA_PARSE_FAIL,
@@ -111,65 +109,9 @@ object Core {
         }
     }
 
-    fun finishSuspendedActionWithArgs(args : MessageData) : Response? {
-        val action = suspendedAction!!; suspendedAction = null
-        val msg = suspendedMsg!!; suspendedMsg = null
-        return actionResolutionTable(action, msg, args)
-    }
-
-    private class MessageWithCallback (val msg : MessageData, val callback: ((Response) -> Unit)?)
-    private var inDoResolveMessage = false
-
     var onCompletedOperation : (() -> Unit)? = null
 
     fun isReady () : Boolean {
-        return sane && !inDoResolveMessage && started
+        return sane && started
     }
-
-    /**
-     * resolveMessage is the main entry point which platform-specific wallet apps should use
-     * in order to call into WalletCore. It takes two arguments:
-     *
-     * msg: MessageData object containing the data passed to us by the client. How, exactly,
-     * the client does this will of course depend on the platform-specific IPC behavior, but
-     * in general it should be packed in a relatively analogous form to this internal structure.
-     * On Android it's the extras attached to the intent with which we invoke the service, on
-     * Windows we just pass Message objects around directly, etc.
-     *
-     * args: A second MessageData object, provided for pylonsActions which require additional
-     * data that cannot or should not be provided by the client in order to be resolved.
-     * Null by default.
-     *
-     * Because walletCore will block on network operations - this is by design; restricting
-     * the core to a single thread of execution ensures consistent state and deterministic
-     * behavior - resolveMessage should not be called from the main thread of any wallet app.
-     */
-    fun resolveMessage(msg: MessageData, callback : ((Response) -> Unit)?) {
-        val dat = MessageWithCallback(msg, callback)
-        try {
-            inDoResolveMessage = true
-            if (!sane) {
-                throw IllegalStateException("Core state is not sane. Please call Core.start() before attempting to resolve messages.")
-            }
-            val action = dat.msg.strings[ReservedKeys.wcAction].orEmpty()
-            val out = actionResolutionTable(action, dat.msg)
-            out.msg?.strings?.set(ReservedKeys.statusBlock, statusBlock.toJson())
-            Logger.implementation.log(LogEvent.RESOLVED_MESSAGE,
-                    """{"status":"${out.status}","msgIn":${dat.msg}, "msgOut":${out.msg}}""", LogTag.info)
-            inDoResolveMessage = false
-            dat.callback?.invoke(out)
-            onCompletedOperation?.invoke()
-        }
-        // This isn't handled, so we're gonna throw it
-        catch (e : Exception) {
-            inDoResolveMessage = false // Cleanup before doing that
-            throw e
-        }
-    }
-
-    /**
-     * Wipe user data without going through action resolution table. Provided for wallet app UI wiring.
-     */
-    fun wipeUserData () = com.pylons.wallet.core.ops.wipeUserData()
-
 }
