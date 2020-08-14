@@ -12,11 +12,11 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/devwallet" />
+            <option value="$PROJECT_DIR$/httpipc" />
             <option value="$PROJECT_DIR$/txutil" />
             <option value="$PROJECT_DIR$/walletcore" />
           </set>
         </option>
-        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

@@ -1,5 +1,6 @@
 package com.pylons.wallet.ipc
 
+import com.beust.klaxon.KlaxonException
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.types.*
@@ -289,7 +290,7 @@ sealed class Message {
         override fun resolve() = listOf(Response(Core.getProfile(addr)))
     }
 
-    class GetPylons(private val q : Long) : Message() {
+    class GetPylons(private val q : Long? = null) : Message() {
         class Response(tx : Transaction): Message.Response() {
             val txhash = tx.id?: ""
             val state = tx.state
@@ -300,7 +301,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetPylons>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.getPylons(q)))
+        override fun resolve() = listOf(Response(Core.getPylons(q!!)))
     }
 
     class GetRecipes : Message() {
@@ -313,17 +314,17 @@ sealed class Message {
         override fun resolve() = listOf(Response(Core.getRecipes()))
     }
 
-    class GetTransaction(val txhash : String) : Message() {
+    class GetTransaction(val txhash : String? = null) : Message() {
         class Response(val tx : Transaction) : Message.Response()
 
         companion object {
             fun deserialize(json : String) = klaxon.parse<GetTransaction>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.getTransaction(txhash)))
+        override fun resolve() = listOf(Response(Core.getTransaction(txhash!!)))
     }
 
-    class RegisterProfile(val name : String) : Message() {
+    class RegisterProfile(val name : String? = null) : Message() {
         class Response(tx : Transaction): Message.Response() {
             val txhash = tx.id?: ""
             val state = tx.state
@@ -334,10 +335,10 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<RegisterProfile>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.newProfile(name)))
+        override fun resolve() = listOf(Response(Core.newProfile(name!!)))
     }
 
-    class SendPylons(val addr : String, val q : Long) : Message() {
+    class SendPylons(val addr : String? = null, val q : Long? = null) : Message() {
         class Response(tx : Transaction): Message.Response() {
             val txhash = tx.id?: ""
             val state = tx.state
@@ -348,10 +349,11 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<SendPylons>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.sendPylons(q, addr)))
+        override fun resolve() = listOf(Response(Core.sendPylons(q!!, addr!!)))
     }
 
-    class SetItemString(val itemId : String, val field : String, val value : String) : Message() {
+    class SetItemString(val itemId : String? = null, val field : String? = null,
+                        val value : String? = null) : Message() {
         class Response(tx: Transaction) : Message.Response() {
             val txhash = tx.id ?: ""
             val state = tx.state
@@ -362,17 +364,17 @@ sealed class Message {
             fun deserialize(json: String) = klaxon.parse<SetItemString>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.setItemString(itemId, field, value)))
+        override fun resolve() = listOf(Response(Core.setItemString(itemId!!, field!!, value!!)))
     }
 
-    class WalletServiceTest : Message() {
+    class WalletServiceTest(val str : String? = null) : Message() {
         class Response(val str : String) : Message.Response()
 
         companion object {
             fun deserialize(json: String) = klaxon.parse<WalletServiceTest>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.walletServiceTest()))
+        override fun resolve() = listOf(Response(Core.walletServiceTest(str!!)))
     }
 
     class WalletUiTest : Message() {
@@ -391,13 +393,19 @@ sealed class Message {
     }
 
     companion object {
-        fun match(json: String) : Message {
+        fun match(json: String) : Message? {
+            var ret : Message? = null
             Message::class.sealedSubclasses.forEach { kClass ->
+                println("attempting to match ${kClass.simpleName}")
                 val func = kClass.companionObject?.functions?.find { it.name == "deserialize" }
-                val ret = func?.call(kClass.companionObjectInstance, json) as Message?
-                if (ret != null) return ret
+                ret = try {
+                    func?.call(kClass.companionObjectInstance, json) as Message?
+                } catch (e : Exception) {
+                    if (e is KlaxonException) null
+                    else throw e
+                }
             }
-            throw Exception("Couldn't match input json to a message type\n\n\n$json")
+            return ret
         }
     }
 
@@ -418,7 +426,7 @@ sealed class Message {
 
     abstract class Response {
         fun submit() {
-            println(klaxon.toJsonString(this))
+            IPCLayer.handleResponse(this)
         }
     }
 

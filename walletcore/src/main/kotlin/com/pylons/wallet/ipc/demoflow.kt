@@ -1,16 +1,33 @@
 package com.pylons.wallet.ipc
 
 import com.pylons.wallet.core.types.klaxon
-import com.pylons.wallet.ipc.Message.ApplyRecipe
 
 var fakeIpcJson : String = ""
 
 @IPCLayer.Implementation
 class FakeIPC : IPCLayer() {
+    override fun getNextJson(callback: (String) -> Unit) {
+        callback(fakeIpcJson)
+    }
 
+    override fun establishConnection() {
+        println("fake establish connection")
+    }
 
-    override fun getNextJson(): String {
-        return fakeIpcJson
+    override fun checkConnectionStatus(): ConnectionState {
+        return ConnectionState.Connected
+    }
+
+    override fun connectionBroken() {
+        println("fake break connection")
+    }
+
+    override fun submit(r: Message.Response) {
+        println("fake submit ${klaxon.toJsonString(r)}")
+    }
+
+    override fun reject(json: String) {
+        println("fake reject $json")
     }
 
 }
@@ -28,11 +45,11 @@ class FakeUI : UILayer() {
 }
 
 fun demoflow () {
-
-
-    val msg = ApplyRecipe("recipe", "cookbook", listOf())
+    val msg = Message.WalletServiceTest()
     val json = klaxon.toJsonString(msg)
 
     fakeIpcJson = json
-    IPCLayer.getNextMessage().response?.submit()
+    IPCLayer.getNextMessage {
+        it.response?.submit()
+    }
 }
