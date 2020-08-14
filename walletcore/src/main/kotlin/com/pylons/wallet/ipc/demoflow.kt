@@ -1,6 +1,8 @@
 package com.pylons.wallet.ipc
 
+import com.google.common.base.Ascii
 import com.pylons.wallet.core.types.klaxon
+import java.util.*
 
 var fakeIpcJson : String = ""
 
@@ -45,11 +47,14 @@ class FakeUI : UILayer() {
 }
 
 fun demoflow () {
-    val msg = Message.WalletServiceTest()
-    val json = klaxon.toJsonString(msg)
+    val msg = Message.WalletServiceTest("input")
+    val msgJson =
+            Base64.getEncoder().encodeToString(
+                    klaxon.toJsonString(msg).toByteArray(Charsets.US_ASCII))
+    val json = """{"type":"WalletServiceTest", "msg":"$msgJson"}"""
 
     fakeIpcJson = json
     IPCLayer.getNextMessage {
-        it.response?.submit()
+        UILayer.getUiHook(it)?.release()
     }
 }

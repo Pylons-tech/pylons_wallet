@@ -73,6 +73,8 @@ abstract class IPCLayer {
             return m
         }
 
+        fun onUiReleased(uiHook: Message.UiHook) = implementation.onUiReleased(uiHook)
+
         fun getNextMessage(callback : (Message) -> Unit) {
             safelyDoIpcOperation {
                 val next = implementation.getNextJson {
@@ -95,7 +97,7 @@ abstract class IPCLayer {
         fun handleResponse(r : Message.Response) {
             safelyDoIpcOperation {
                 implementation.preprocessResponse(r) {
-                    it.submit()
+                    implementation.submit(r)
                     implementation.cleanup()
                 }
             }

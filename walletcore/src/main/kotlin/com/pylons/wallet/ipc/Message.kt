@@ -1,13 +1,18 @@
 package com.pylons.wallet.ipc
 
+import com.beust.klaxon.JsonObject
 import com.beust.klaxon.KlaxonException
+import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
 import com.pylons.wallet.core.types.tx.recipe.Recipe
+import java.lang.StringBuilder
+import java.util.*
 import kotlin.math.cos
+import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.companionObjectInstance
@@ -394,23 +399,22 @@ sealed class Message {
 
     companion object {
         fun match(json: String) : Message? {
+            val jsonObject = Parser.default().parse(StringBuilder(json)) as JsonObject
+            val type = jsonObject.string("type")!!
+            val msg =
+                    Base64.getDecoder().decode(
+                            jsonObject.string("msg")!!).toString(Charsets.US_ASCII)
             var ret : Message? = null
             Message::class.sealedSubclasses.forEach { kClass ->
-                println("attempting to match ${kClass.simpleName}")
-                val func = kClass.companionObject?.functions?.find { it.name == "deserialize" }
-                ret = try {
-                    func?.call(kClass.companionObjectInstance, json) as Message?
-                } catch (e : Exception) {
-                    if (e is KlaxonException) null
-                    else throw e
+                if (kClass.simpleName == type) {
+                    println("attempting to match ${kClass.simpleName}")
+                    val func = kClass.companionObject?.functions?.find { it.name == "deserialize" }
+                    ret = func?.call(kClass.companionObjectInstance, msg) as Message?
                 }
             }
             return ret
         }
     }
-
-    var uiHook : UiHook? = null
-    var response : Response? = null
 
     open class UiHook(val msg : Message) {
 

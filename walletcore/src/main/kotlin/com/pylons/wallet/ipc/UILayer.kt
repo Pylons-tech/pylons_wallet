@@ -12,7 +12,7 @@ abstract class UILayer {
     protected abstract fun onReleaseUiHook(uiHook: Message.UiHook)
 
     companion object {
-        val uiHooks = LinkedList<Message.UiHook>()
+        val uiHooks : MutableList<Message.UiHook> = mutableListOf()
 
         private val implementation : UILayer = findImplementation()
 
@@ -35,7 +35,15 @@ abstract class UILayer {
             uiHooks.remove(uiHook)
             uiHook.release()
             implementation.onReleaseUiHook(uiHook)
+            IPCLayer.onUiReleased(uiHook)
             return uiHook
+        }
+
+        fun getUiHook(msg : Message) : Message.UiHook? {
+            uiHooks.forEach {
+                if (it.msg == msg) return it
+            }
+            return null
         }
     }
 }
