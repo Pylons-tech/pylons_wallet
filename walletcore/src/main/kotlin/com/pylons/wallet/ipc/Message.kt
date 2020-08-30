@@ -295,7 +295,7 @@ sealed class Message {
         override fun resolve() = listOf(Response(Core.getProfile(addr)))
     }
 
-    class GetPylons(private val q : Long? = null) : Message() {
+    class GetPylons(private val count : Long? = null) : Message() {
         class Response(tx : Transaction): Message.Response() {
             val txhash = tx.id?: ""
             val state = tx.state
@@ -306,7 +306,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetPylons>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.getPylons(q!!)))
+        override fun resolve() = listOf(Response(Core.getPylons(count!!)))
     }
 
     class GetRecipes : Message() {
