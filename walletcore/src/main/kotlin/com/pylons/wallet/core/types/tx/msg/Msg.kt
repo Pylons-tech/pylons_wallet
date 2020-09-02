@@ -9,6 +9,7 @@ import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
@@ -193,7 +194,7 @@ data class CreateRecipe (
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
-                        EntriesList(listOf(), listOf()),
+                        EntriesList(listOf(), listOf(), listOf()),
                     outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
 
             )
@@ -206,11 +207,11 @@ data class CreateTrade (
         @property:[Json(name = "CoinInputs")]
         val coinInputs : List<CoinInput>,
         @property:[Json(name = "CoinOutputs") EmptyArray]
-        val coinOutputs : List<CoinOutput>,
+        val coinOutputs : List<Coin>,
         @property:[Json(name = "ExtraInfo")]
         val extraInfo : String,
         @property:[Json(name = "ItemInputs")]
-        val itemInputs: List<ItemInput>,
+        val itemInputs: List<TradeItemInput>,
         @property:[Json(name = "ItemOutputs")]
         val itemOutputs: List<Item>,
         @property:[Json(name = "Sender")]
@@ -226,8 +227,8 @@ data class CreateTrade (
                     sender = jsonObject.string("Sender")!!,
                     extraInfo = jsonObject.string("ExtraInfo")!!,
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
-                    coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")),
-                    itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
+                    coinOutputs = Coin.listFromJson(jsonObject.array("CoinOutputs")),
+                    itemInputs = TradeItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     itemOutputs = Item.listFromJson(jsonObject.array("ItemOutputs"))
 
             )
@@ -297,7 +298,9 @@ data class FulfillTrade (
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "TradeID")]
-        val tradeId : String
+        val tradeId : String,
+        @property:[Json(name = "ItemIDs")]
+        val itemIds : List<String>
 ):Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
@@ -307,7 +310,8 @@ data class FulfillTrade (
         fun parse (jsonObject: JsonObject) : FulfillTrade {
             return FulfillTrade(
                     sender = jsonObject.string("Sender")!!,
-                    tradeId = jsonObject.string("TradeID")!!
+                    tradeId = jsonObject.string("TradeID")!!,
+                    itemIds = jsonObject.array("ItemIDs") ?: listOf()
             )
         }
     }
@@ -325,8 +329,8 @@ data class CancelTrade (
 
     companion object {
         @MsgParser
-        fun parse (jsonObject: JsonObject) : FulfillTrade {
-            return FulfillTrade(
+        fun parse (jsonObject: JsonObject) : CancelTrade {
+            return CancelTrade(
                     sender = jsonObject.string("Sender")!!,
                     tradeId = jsonObject.string("TradeID")!!
             )
@@ -354,8 +358,8 @@ data class GetPylons(
     }
 }
 
-@MsgType("pylons/SendPylons")
-data class SendPylons(
+@MsgType("pylons/SendCoins")
+data class SendCoins(
         @property:[Json(name = "Amount")]
         val amount : List<Coin>,
         @property:[Json(name = "Receiver")]
@@ -367,8 +371,8 @@ data class SendPylons(
 
     companion object {
         @MsgParser
-        fun parse (jsonObject: JsonObject) : SendPylons {
-            return SendPylons(
+        fun parse (jsonObject: JsonObject) : SendCoins {
+            return SendCoins(
                     amount = Coin.listFromJson(jsonObject.array("Amount")!!),
                     receiver = jsonObject.string("Receiver")!!,
                     sender = jsonObject.string("Sender")!!
@@ -474,10 +478,61 @@ data class UpdateRecipe (
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
-                            EntriesList(listOf(), listOf()),
+                            EntriesList(listOf(), listOf(), listOf()),
                     outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
             )
         }
     }
 }
 
+@MsgType("pylons/SendItems")
+data class SendItems(
+        @property:[Json(name = "Sender")]
+        val sender : String,
+        @property:[Json(name = "Receiver")]
+        val receiver : String,
+        @property:[Json(name = "ItemIDs")]
+        val itemIds : List<String>
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : SendItems {
+            return SendItems(
+                    sender = jsonObject.string("Sender")!!,
+                    receiver = jsonObject.string("Receiver")!!,
+                    itemIds = jsonObject.array("ItemIDs") ?: listOf()
+            )
+        }
+    }
+}
+
+@MsgType("pylons/GoogleIAPGetPylons")
+data class GoogleIAPGetPylons(
+        @property:[Json(name = "ProductID")]
+        val productId : String,
+        @property:[Json(name = "PurchaseToken")]
+        val purchaseToken : String,
+        @property:[Json(name = "ReceiptDataBase64")]
+        val receiptDataBase64 : String,
+        @property:[Json(name = "Signature")]
+        val signature : String,
+        @property:[Json(name = "Requester")]
+        val requester : String
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : GoogleIAPGetPylons {
+            return GoogleIAPGetPylons(
+                    productId = jsonObject.string("ProductID")!!,
+                    purchaseToken = jsonObject.string("PurchaseToken")!!,
+                    receiptDataBase64 = jsonObject.string("ReceiptDataBase64")!!,
+                    signature = jsonObject.string("Signature")!!,
+                    requester = jsonObject.string("Requester")!!
+            )
+        }
+    }
+}

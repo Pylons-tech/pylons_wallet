@@ -13,16 +13,18 @@ val updateRecipeSignable = UpdateRecipe(
         description = "this has to meet character limits lol",
         entries = EntriesList(
                 coinOutputs = listOf(
-                        CoinOutput("chair", "chair", 1)
+                        CoinOutput("coinChair","chair", 1)
                 ),
+                itemModifyOutputs = listOf(ItemModifyOutput(0, listOf(), listOf(), listOf(), 0)),
                 itemOutputs = listOf(
                         ItemOutput(
+                                id = "itemRaichu",
                                 doubles = listOf(DoubleParam("1.0", "endurance",
                                         listOf(
                                                 DoubleWeightRange("500.00", "100.00", 6),
                                                 DoubleWeightRange("800.00", "501.00", 2)
                                         )
-                                , "")
+                                        , "")
                                 ),
                                 longs = listOf(
                                         LongParam("", "HP",
@@ -30,29 +32,31 @@ val updateRecipeSignable = UpdateRecipe(
                                                         LongWeightRange(500, 100, 6),
                                                         LongWeightRange(800, 501, 2)
                                                 )
-                                        , "")
+                                                , "")
                                 ),
                                 strings = listOf(
                                         StringParam("1.0", "Name", "Raichu", "")
                                 ),
-                                modifyItem = ItemUpgradeParams(listOf(), listOf(), listOf())
+                                transferFee = 0
                         )
                 )
         ),
         outputs = listOf(
                 WeightedOutput(
-                        resultEntries = listOf(0), weight = "1"
+                        entryIds = listOf("coinChair"), weight = "1"
                 ),
-                WeightedOutput(resultEntries = listOf(1),
+                WeightedOutput(entryIds = listOf("itemRaichu"),
                         weight = "1")
         ),
         itemInputs = listOf(
                 ItemInput(
+                        id = "",
                         doubles = listOf(),
                         longs = listOf(),
                         strings = listOf(
                                 StringInputParam("Name", "Raichu")
-                        )
+                        ),
+                        transferFee = FeeInputParam(0,0)
                 )
         ),
         name = "recipeName",

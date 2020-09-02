@@ -2,6 +2,7 @@ package com.pylons.wallet.core.ops
 
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.Transaction.Companion.submitAll
 
 fun Core.batchUpdateCookbook (names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
                               supportEmails : List<String>, ids : List<String>) : List<Transaction> {
@@ -13,5 +14,5 @@ fun Core.batchUpdateCookbook (names : List<String>, developers : List<String>, d
             versions = versions,
             supportEmails = supportEmails
     ).toMutableList()
-    return txs
+    return txs.submitAll()
 }

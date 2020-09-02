@@ -4,9 +4,11 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.constants.Keys
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.LogTag
+import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.types.tx.StdTx
 import com.pylons.wallet.core.types.tx.TxData
-import com.pylons.wallet.core.types.tx.TxError
 import java.util.*
 
 data class Transaction(
@@ -15,7 +17,8 @@ data class Transaction(
         val _id: String? = null,
         val resolver: ((Transaction) -> Unit)? = null,
         var state: State = State.TX_NOT_YET_SENT,
-        val txError: List<TxError>? = null
+        var code: ResponseCode = ResponseCode.OK,
+        var raw_log: String = ""
 ) {
     var id: String? = _id
         get() = {
@@ -30,6 +33,21 @@ data class Transaction(
         TX_ACCEPTED(2),
     }
 
+    enum class ResponseCode(val value : Int) {
+        UNKNOWN_ERROR(-1),
+        OK(0);
+
+        companion object  {
+            fun of (v : Int?) : ResponseCode {
+                return when (v) {
+                    OK.value -> OK
+                    else -> UNKNOWN_ERROR
+                }
+            }
+        }
+    }
+
+
     fun submit(): Transaction {
         if (state != State.TX_NOT_YET_SENT) throw Exception("Transaction.submit() should only be called on" +
                 "Transactions of state TX_NOT_YET_SENT")
@@ -39,34 +57,34 @@ data class Transaction(
             State.TX_ACCEPTED
         } catch (e: Exception) {
             // todo: this should get some data
+            Logger().log(LogEvent.TX_SUBMIT_EXCEPTION, e.toString(), LogTag.error)
             State.TX_REFUSED
         }
         return this
     }
 
     companion object {
+        fun List<Transaction>.submitAll() : List<Transaction> {
+            val ml = this.toMutableList()
+            ml.indices.forEach { ml[it] = ml[it].submit() }
+            return ml
+        }
+
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
             when {
                 doc.contains("code") -> {
-                    val logs = doc.array<JsonObject>("logs")
-                    val errors = mutableListOf<TxError>()
-                    logs?.forEach {
-                        val json: JsonObject = Parser.default().parse(StringBuilder(it.string("log"))) as JsonObject
-                        errors.add(TxError.fromJson(json))
-                    }
-
                     return Transaction(
-                            txError = errors,
                             stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                            _id = id
+                            _id = id,
+                            code = ResponseCode.of(doc.int("code")),
+                            raw_log = doc.string("raw_log") ?: "Unknown Error"
                     )
                 }
                 doc.containsKey("data") -> {
                     try {
                         val dataString = hexToAscii(doc.string("data")!!)
                         val dataObject = (Parser.default().parse(java.lang.StringBuilder(dataString)) as JsonObject)
-
                         if (dataObject.containsKey("Output") && dataObject.string("Output") != null) {
                             val arrayString = String(Base64.getDecoder().decode(dataObject.string("Output")))
                             val outputArray = Parser.default().parse(StringBuilder(arrayString)) as JsonArray<JsonObject>
@@ -79,7 +97,6 @@ data class Transaction(
                                 _id = id
                         )
                     } catch (e: Exception) {
-                        println(e)
                         return Transaction(
                                 stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                                 _id = id

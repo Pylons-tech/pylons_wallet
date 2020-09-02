@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.types
 
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.Core.engine
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.types.tx.item.Item
@@ -10,6 +11,7 @@ import com.pylons.wallet.core.types.tx.item.Item
  */
 @ExperimentalUnsignedTypes
 class MyProfile (var credentials: Credentials,
+                 var lockedCoinDetails: LockedCoinDetails = LockedCoinDetails.default,
                  strings : Map<String, String>,
                  items : List<Item>,
                  coins : List<Coin>) :
@@ -17,6 +19,13 @@ class MyProfile (var credentials: Credentials,
     abstract class Credentials (var address : String) { }
 
     companion object {
+        val default get() = MyProfile(
+                credentials = engine.generateCredentialsFromKeys(),
+                strings = mapOf(),
+                items = listOf(),
+                coins = listOf()
+        )
+
         fun fromUserData () : MyProfile? {
             val data = UserData.dataSets.getValue(Core.engine.prefix)
             (Core.engine as TxPylonsEngine).cryptoHandler.importKeysFromUserData()

@@ -29,7 +29,7 @@ class TxPylonsDevEngineOffline {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = MyProfile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
+        Core.userProfile = MyProfile.default
         return engine
     }
 
@@ -99,7 +99,7 @@ class TxPylonsDevEngineOffline {
     
                 "fee": {
                 "amount": null,
-                "gas": "200000"
+                "gas": "400000"
             },
                 "signatures": [
                 {
@@ -107,7 +107,7 @@ class TxPylonsDevEngineOffline {
                     "type": "tendermint/PubKeySecp256k1",
                     "value": "ApUOHN/LEz1gJBCf1In3NO60UCQY5TjChIHyK84nbySM"
                 },
-                    "signature": "HD7lxC1Av2WkSljoY31LnV7VWFO9KxVDyGYNa7eUVUUyUPeI8J3Sw5rzFmM3vd2mLQuBK1o3AO/CrA37lpvLng=="
+                    "signature": "qXNrX+mlbAWxsx14BB+7WfjOyMsBac1BhN6UAetqhhhO+cSPuvm3IgpOHJB+ItGpH6hDRB77d7LYIJaL+tGT0w=="
                 }
                 ],
                 "memo": ""

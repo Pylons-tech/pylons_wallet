@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.Transaction.Companion.submitAll
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
 import com.pylons.wallet.core.types.tx.recipe.ItemInput
 import com.pylons.wallet.core.types.tx.recipe.EntriesList
@@ -32,5 +33,5 @@ fun Core.batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks 
             entries = mOutputTables,
             outputs = mOutputs
     ).toMutableList()
-    return txs
+    return txs.submitAll()
 }

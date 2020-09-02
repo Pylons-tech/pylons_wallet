@@ -7,7 +7,7 @@ import com.pylons.wallet.core.internal.fuzzyLong
 
 data class CoinOutput(
         @property:[Json(name = "ID")]
-        val id : String,
+        val id: String,
         @property:[Json(name = "Coin")]
         val coin : String,
         @property:[Json(name = "Count") QuotedJsonNumeral]
@@ -22,7 +22,6 @@ data class CoinOutput(
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {
-                        println("listFromJson: $jsonArray")
                         if (jsonArray == null) return listOf()
                         val ls = mutableListOf<CoinOutput>()
                         jsonArray.forEach { ls.add(fromJson(it)) }

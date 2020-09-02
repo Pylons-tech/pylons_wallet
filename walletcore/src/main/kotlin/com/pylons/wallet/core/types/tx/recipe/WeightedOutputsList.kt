@@ -6,15 +6,15 @@ import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.types.klaxon
 
 data class WeightedOutput(
-        @property:[Json(name = "ResultEntries") QuotedJsonNumeral(SerializationMode.FOR_BROADCAST)]
-        val resultEntries : List<Int>,
+        @property:[Json(name = "EntryIDs")]
+        val entryIds : List<String>,
         @property:[Json(name = "Weight")]
         val weight : String
 ) {
     companion object {
         fun fromJson (jsonObject: JsonObject) : WeightedOutput =
                 WeightedOutput (
-                        resultEntries = jsonObject.array<Int>("ResultEntries")!!.toList(),
+                        entryIds = jsonObject.array<String>("EntryIDs")!!.toList(),
                         weight = jsonObject.string("Weight")!!
                 )
 

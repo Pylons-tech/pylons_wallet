@@ -3,21 +3,23 @@ package com.pylons.wallet.core.types.tx
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.pylons.wallet.core.types.Coin
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.CoinInput
-import com.pylons.wallet.core.types.tx.recipe.CoinOutput
-import com.pylons.wallet.core.types.tx.recipe.ItemInput
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import java.lang.StringBuilder
 
 data class Trade(
+        @property:[Json(name = "NodeVersion")]
+        val nodeVersion : String,
         @property:[Json(name = "ID")]
         val id : String,
         @property:[Json(name = "CoinInputs")]
         val coinInputs : List<CoinInput>,
         @property:[Json(name = "ItemInputs")]
-        val itemInputs : List<ItemInput>,
+        val itemInputs : List<TradeItemInput>,
         @property:[Json(name = "CoinOutputs")]
-        val coinOutputs : List<CoinOutput>,
+        val coinOutputs : List<Coin>,
         @property:[Json(name = "ItemOutputs")]
         val itemOutputs: List<Item>,
         @property:[Json(name = "ExtraInfo")]
@@ -36,12 +38,12 @@ data class Trade(
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.obj("result")!!.array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
-                println(it.toJsonString())
                 list.add(Trade(
+                        nodeVersion = it.string("NodeVersion")!!,
                         id = it.string("ID")!!,
                         coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
-                        itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
-                        coinOutputs = CoinOutput.listFromJson(it.array("CoinOutputs")),
+                        itemInputs = TradeItemInput.listFromJson(it.array("ItemInputs")),
+                        coinOutputs = Coin.listFromJson(it.array("CoinOutputs")),
                         itemOutputs = Item.listFromJson(it.array("ItemOutputs")),
                         extraInfo = it.string("ExtraInfo").orEmpty(),
                         sender = it.string("Sender")!!,

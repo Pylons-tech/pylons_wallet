@@ -1,3 +1,10 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-val googleIapGetPylonsSignable = GoogleIapGetPylons
+import com.pylons.wallet.core.types.tx.msg.GoogleIAPGetPylons
+
+val googleIapGetPylonsSignable = GoogleIAPGetPylons(
+        productId = "",
+        purchaseToken = "",
+        receiptDataBase64 = "",
+        signature = "",
+        requester = "")

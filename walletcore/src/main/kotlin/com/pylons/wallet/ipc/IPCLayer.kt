@@ -38,7 +38,7 @@ abstract class IPCLayer {
     }
 
     fun onUiReleased (uiHook: Message.UiHook) {
-        uiHook.msg.resolve().forEach { handleResponse(it) }
+        handleResponse(uiHook.msg.resolve())
     }
 
     companion object {

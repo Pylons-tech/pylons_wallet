@@ -7,6 +7,7 @@ import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 
 /**
  * Engine that throws NoEngineException on calling any function.
@@ -36,8 +37,8 @@ internal class NoEngine : Engine() {
                               outputs : List<WeightedOutput>) : Transaction =
             throw NoEngineException()
 
-    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
-                             coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, ExtraInfo: String)   =
+    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
+                             coinOutputs: List<Coin>, itemOutputs: List<Item>, ExtraInfo: String)   =
             throw NoEngineException()
 
     override fun disableRecipe(id: String): Transaction  =
@@ -49,7 +50,7 @@ internal class NoEngine : Engine() {
     override fun enableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun fulfillTrade(tradeId: String): Transaction =
+    override fun fulfillTrade(tradeId: String, itemIds : List<String>): Transaction =
             throw NoEngineException()
 
     override fun cancelTrade(tradeId: String): Transaction =
@@ -82,6 +83,12 @@ internal class NoEngine : Engine() {
     override fun getPylons(q: Long): Transaction =
             throw NoEngineException()
 
+    override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptDataBase64: String, signature: String): Transaction =
+            throw NoEngineException()
+
+    override fun checkGoogleIapOrder(purchaseToken: String): Boolean =
+            throw NoEngineException()
+
     override fun getStatusBlock(): StatusBlock  =
             throw NoEngineException()
 
@@ -97,7 +104,10 @@ internal class NoEngine : Engine() {
     override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction =
             throw NoEngineException()
 
-    override fun sendCoins(denom : String, q: Long, receiver: String) =
+    override fun sendCoins(coins : List<Coin>, receiver: String) =
+            throw NoEngineException()
+
+    override fun createChainAccount(): Transaction =
             throw NoEngineException()
 
     override fun setItemFieldString(itemId : String, field : String, value : String): Transaction =
@@ -111,5 +121,14 @@ internal class NoEngine : Engine() {
             throw NoEngineException()
 
     override fun listTrades(): List<Trade> =
+            throw NoEngineException()
+
+    override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
+            throw NoEngineException()
+
+    override fun getLockedCoins(): LockedCoin =
+        throw NoEngineException()
+
+    override fun getLockedCoinDetails(): LockedCoinDetails =
             throw NoEngineException()
 }

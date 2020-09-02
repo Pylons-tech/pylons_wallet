@@ -78,7 +78,11 @@ object Core {
                 PylonsSECP256K1.KeyPair.fromSecretKey(
                         PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(
                                 Hex.decode(keyString))))
-        userProfile = MyProfile(TxPylonsEngine.Credentials(address), mutableMapOf("name" to "Jack"), listOf(), listOf())
+        userProfile = MyProfile(
+                credentials = TxPylonsEngine.Credentials(address),
+                strings = mapOf("name" to "Jack"),
+                items = listOf(),
+                coins = listOf())
     }
 
     fun dumpUserProfile () : String = userProfile!!.dump()

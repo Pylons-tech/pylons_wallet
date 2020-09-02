@@ -11,9 +11,9 @@ import com.pylons.wallet.core.types.tx.recipe.QuotedJsonNumeral
  * Local representation of a coin-type resource.
  */
 data class Coin(
-        @Json("denom")
+        @property:[Json(name = "denom")]
         val denom: String = "",
-        @property:[Json("amount") QuotedJsonNumeral]
+        @property:[Json(name = "amount") QuotedJsonNumeral]
         val amount: Long = 0
 ) {
     companion object {
@@ -29,18 +29,10 @@ data class Coin(
             jsonArray.forEach { ls.add(fromJson(it)) }
             return ls
         }
-    }
-}
 
-fun Map<String, Long>.addCoins (other : Set<Coin>, subtractValues : Boolean) : Map<String, Long> {
-    val multi = when (subtractValues) {
-        true -> -1
-        false -> 1
+        fun Map<String, Long>.toCoinList () : List<Coin> {
+            val l = this.entries.toList()
+            return List(this.size) { Coin(l[it].key, l[it].value) }
+        }
     }
-    val mutable = this.toMutableMap()
-    other.forEach {
-        if (mutable.containsKey(it.denom)) mutable[it.denom] = mutable[it.denom]!! + it.amount * multi
-        else mutable[it.denom] = it.amount * multi
-    }
-    return mutable.toMap()
 }

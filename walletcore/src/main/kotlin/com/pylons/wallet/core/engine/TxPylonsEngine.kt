@@ -18,11 +18,14 @@ import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.msg.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
+import com.pylons.wallet.ipc.Message
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.security.Security
+import java.util.*
 
 @ExperimentalUnsignedTypes
 open class TxPylonsEngine : Engine() {
@@ -77,17 +80,36 @@ open class TxPylonsEngine : Engine() {
         return Transaction(resolver =  {
             val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
             val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
-            val code = jsonObject.long("code")
-            if (code != null)
-                throw Exception("Node returned error code $code for message - " +
-                        "${jsonObject.obj("raw_log")!!.string("message")}")
+
+            val code = jsonObject.int("code")
+            if (code != null) {
+                it.code = Transaction.ResponseCode.of(code)
+                it.raw_log = jsonObject.string("raw_log") ?: "Unknown Error"
+                throw Exception("Node returned error code $code for message - ${jsonObject.string("raw_log")}")
+            }
+
+            val error = jsonObject.string("error")
+            if (error != null) {
+                it.code = Transaction.ResponseCode.UNKNOWN_ERROR
+                it.raw_log = error
+                throw Exception("Node returned error code $code for message - $error")
+            }
+
             // TODO: we should be doing smth else w/ this jsonobject?
-            it.id = jsonObject.string("txhash")
+            val txhash = jsonObject.string("txhash")
+            if (txhash != null) {
+                it.id = txhash
+            } else {
+                it.code = Transaction.ResponseCode.UNKNOWN_ERROR
+                it.raw_log = "No TX Hash"
+                throw Exception("No TX Hash")
+            }
+
         })
     }
 
     private fun postTxJson (json : String) : String {
-        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl","tx":$json}""", LogTag.info)
+        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
         val response = HttpWire.post("""$nodeUrl/txs""", json)
         Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response
@@ -102,8 +124,8 @@ open class TxPylonsEngine : Engine() {
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
             basicTxHandlerFlow { CheckExecution(id, Core.userProfile!!.credentials.address, payForCompletion).toSignedTx() }
 
-    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
-                             coinOutputs: List<CoinOutput>, itemOutputs: List<Item>, extraInfo: String) =
+    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
+                             coinOutputs: List<Coin>, itemOutputs: List<Item>, extraInfo: String) =
             basicTxHandlerFlow{ CreateTrade(coinInputs, coinOutputs, extraInfo, itemInputs, itemOutputs, it.address).toSignedTx() }
 
 
@@ -114,8 +136,8 @@ open class TxPylonsEngine : Engine() {
         println("Dumped credentials")
     }
 
-    override fun fulfillTrade(tradeId : String)   =
-            basicTxHandlerFlow{ FulfillTrade(it.address, tradeId).toSignedTx() }
+    override fun fulfillTrade(tradeId : String, itemIds : List<String>)   =
+            basicTxHandlerFlow{ FulfillTrade(it.address, tradeId, itemIds).toSignedTx() }
 
     override fun cancelTrade(tradeId : String)   =
             basicTxHandlerFlow{ CancelTrade(it.address, tradeId).toSignedTx() }
@@ -155,6 +177,7 @@ open class TxPylonsEngine : Engine() {
     override fun getOwnBalances(): MyProfile? {
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
+        val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
             "" -> {
@@ -171,6 +194,7 @@ open class TxPylonsEngine : Engine() {
                 credentials.sequence = sequence
                 Core.userProfile?.coins = coins
                 Core.userProfile?.items = items
+                Core.userProfile?.lockedCoinDetails = lockedCoinDetails
                 return Core.userProfile
             }
         }
@@ -183,13 +207,12 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun getPylons(q: Long): Transaction =
-            basicTxHandlerFlow { getPylons(q, it.address, cryptoCosmos.keyPair!!.publicKey(),
-                    it.accountNumber, it.sequence) }
+            basicTxHandlerFlow { GetPylons(listOf(Coin("pylon", q)), it.address).toSignedTx() }
 
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("$nodeUrl/blocks/latest")
         val jsonObject = (Parser.default().parse(StringBuilder(response)) as JsonObject)
-        val height = jsonObject.obj("block_meta")!!.obj("header")!!.long("height")!!
+        val height = jsonObject.obj("block")!!.obj("header")!!.fuzzyLong("height")!!
         // TODO: calculate block time (this will be Gross)
         return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = Core.VERSION_STRING)
     }
@@ -219,15 +242,38 @@ open class TxPylonsEngine : Engine() {
         else cryptoCosmos.keyPair = kp
         Core.userProfile = MyProfile(credentials = getNewCredentials(),
                 coins = listOf(), strings = mutableMapOf(), items = listOf())
-        return basicTxHandlerFlow { CreateAccount(Core.userProfile!!.credentials.address).toSignedTx() }
+        return createChainAccount()
     }
 
-    override fun sendCoins(denom : String, q: Long, receiver: String): Transaction =
-        basicTxHandlerFlow { sendCoins(denom, q, it.address, receiver, cryptoCosmos.keyPair!!.publicKey(),
-                it.accountNumber, it.sequence) }
+    override fun createChainAccount(): Transaction =
+            basicTxHandlerFlow { CreateAccount(it.address).toSignedTx() }
+
+    override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction =
+            basicTxHandlerFlow { GoogleIAPGetPylons(productId, purchaseToken, Base64.getEncoder().encodeToString(receiptData.toByteArray()), signature, it.address).toSignedTx() }
+
+    override fun checkGoogleIapOrder(purchaseToken: String): Boolean {
+        val response = HttpWire.get("$nodeUrl/pylons/check_google_iap_order/$purchaseToken")
+        return (Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!.boolean("exist")!!
+    }
 
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
             basicTxHandlerFlow { UpdateItemString(field, itemId, it.address, value).toSignedTx() }
+
+    override fun sendCoins(coins : List<Coin>, receiver: String): Transaction =
+        basicTxHandlerFlow { SendCoins(coins, receiver, it.address).toSignedTx() }
+
+    override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
+        basicTxHandlerFlow { SendItems(sender, receiver, itemIds).toSignedTx() }
+
+    override fun getLockedCoins(): LockedCoin {
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coins/${Core.userProfile!!.credentials.address}")
+        return LockedCoin.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
+    }
+
+    override fun getLockedCoinDetails(): LockedCoinDetails {
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coin_details/${Core.userProfile!!.credentials.address}")
+        return LockedCoinDetails.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
+    }
 
     // Unimplemented engine method stubs
 

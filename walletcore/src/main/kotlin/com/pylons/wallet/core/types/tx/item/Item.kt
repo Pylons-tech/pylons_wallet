@@ -3,16 +3,13 @@ package com.pylons.wallet.core.types.tx.item
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Parser
 import com.pylons.wallet.core.internal.fuzzyLong
-import com.pylons.wallet.core.types.Cookbook
 import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.core.types.tx.recipe.*
-import java.lang.ClassCastException
-import java.lang.StringBuilder
-import java.util.*
 
 data class Item(
+        @property:[Json(name = "NodeVersion")]
+        val nodeVersion: String,
         @property:[Json(name = "ID")]
         val id: String,
         @property:[Json(name = "CookbookID")]
@@ -21,6 +18,8 @@ data class Item(
         val sender: String,
         @property:[Json(name = "OwnerRecipeID")]
         val ownerRecipeID: String,
+        @property:[Json(name = "OwnerTradeID")]
+        val ownerTradeID: String,
         @property:[Json(name = "Tradable")]
         val tradable: Boolean,
         @property:[Json(name = "LastUpdate")]
@@ -30,7 +29,9 @@ data class Item(
         @property:[Json(name = "Longs") QuotedJsonNumeral]
         val longs: Map<String, Long>,
         @property:[Json(name = "Strings")]
-        val strings: Map<String, String>
+        val strings: Map<String, String>,
+        @property:[Json(name = "TransferFee")]
+        val transferFee: Long
 ) {
     fun serialize(mode: SerializationMode? = null): String {
         return when (mode) {
@@ -46,24 +47,26 @@ data class Item(
             return ls
         }
 
-        fun fromJson(it: JsonObject) : Item = Item(
-                id = it.string("ID")!!,
-                cookbookId = it.string("CookbookID")!!,
-                sender = it.string("Sender")!!,
-                ownerRecipeID = it.string("OwnerRecipeID")!!,
-                tradable = it.boolean("Tradable")!!,
-                lastUpdate = it.fuzzyLong("LastUpdate"),
-                doubles = doubleMapFromJson(it.array("Doubles")),
-                longs = longDictFromJson(it.array("Longs")),
-                strings = stringDictFromJson(it.array("Strings"))
-        )
-
         fun listFromJson(jsonArray: JsonArray<JsonObject>?): List<Item> {
             if (jsonArray == null) return listOf()
             val list = mutableListOf<Item>()
             jsonArray.forEach { list.add(fromJson(it)) }
             return list
         }
+
+        fun fromJson(it : JsonObject) = Item(
+                nodeVersion = it.string("NodeVersion")!!,
+                id = it.string("ID")!!,
+                cookbookId = it.string("CookbookID")!!,
+                sender = it.string("Sender")!!,
+                ownerRecipeID = it.string("OwnerRecipeID")!!,
+                ownerTradeID = it.string("OwnerTradeID")!!,
+                tradable = it.boolean("Tradable")!!,
+                lastUpdate = it.fuzzyLong("LastUpdate"),
+                doubles = doubleMapFromJson(it.array("Doubles")),
+                longs = longDictFromJson(it.array("Longs")),
+                strings = stringDictFromJson(it.array("Strings")),
+                transferFee = it.fuzzyLong("TransferFee"))
 
         private fun doubleMapFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, Double> {
             if (jsonArray == null) return mapOf()

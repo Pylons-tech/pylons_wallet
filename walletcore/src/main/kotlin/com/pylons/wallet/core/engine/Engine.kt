@@ -6,6 +6,7 @@ import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 
 /***
  * Generic interface for transaction-handling layers.
@@ -77,8 +78,8 @@ abstract class Engine {
 
     abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
-    abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
-                             coinOutputs : List<CoinOutput>, itemOutputs : List<Item>,
+    abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
+                             coinOutputs : List<Coin>, itemOutputs : List<Item>,
                              ExtraInfo : String) : Transaction
 
 
@@ -154,7 +155,7 @@ abstract class Engine {
      */
     abstract fun dumpCredentials (credentials: MyProfile.Credentials)
 
-    abstract fun fulfillTrade (tradeId : String) : Transaction
+    abstract fun fulfillTrade (tradeId : String, itemIds : List<String>) : Transaction
 
     abstract fun cancelTrade (tradeId : String) : Transaction
     /**
@@ -210,6 +211,8 @@ abstract class Engine {
      */
     abstract fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
 
+    abstract fun createChainAccount () : Transaction
+
     /**
      * Calls get pylons endpoint.
      * Takes an arbitrary number of pylons,
@@ -217,6 +220,10 @@ abstract class Engine {
      * TODO: payment integration???
      */
     abstract fun getPylons (q : Long) : Transaction
+
+    abstract fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
+
+    abstract fun checkGoogleIapOrder(purchaseToken: String) : Boolean
 
     /**
      * Gets initial userdata tables for the engine type.
@@ -226,7 +233,7 @@ abstract class Engine {
     /***
      * Calls send pylons endpoint.
      */
-    abstract fun sendCoins (denom : String, q : Long, receiver : String) : Transaction
+    abstract fun sendCoins (coins : List<Coin>, receiver : String) : Transaction
 
     /**
      * Update-cookbook message
@@ -301,4 +308,10 @@ abstract class Engine {
     abstract fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
 
     abstract fun listTrades () : List<Trade>
+
+    abstract fun sendItems(sender: String, receiver: String, itemIds: List<String>) : Transaction
+
+    abstract fun getLockedCoins () : LockedCoin
+
+    abstract fun getLockedCoinDetails () : LockedCoinDetails
 }

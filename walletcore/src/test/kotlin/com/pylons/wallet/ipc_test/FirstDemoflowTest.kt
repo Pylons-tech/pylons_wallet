@@ -20,7 +20,7 @@ class FirstDemoflowTest {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = MyProfile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
+        Core.userProfile = MyProfile.default
         return engine
     }
 

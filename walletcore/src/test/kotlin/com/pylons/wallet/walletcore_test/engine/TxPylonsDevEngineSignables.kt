@@ -22,7 +22,7 @@ class TxPylonsDevEngineSignables {
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = MyProfile(engine.generateCredentialsFromKeys(), mutableMapOf(), listOf(), listOf())
+        Core.userProfile = MyProfile.default
         return engine
     }
 
@@ -112,10 +112,8 @@ class TxPylonsDevEngineSignables {
 
     @Test
     fun sendsCoinsSignable () {
-        basicSignableTestFlow("send_coins") {
-            sendCoinsSignTemplate("pylon",5, "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
-                    "cosmos13rkt5rzf4gz8dvmwxxxn2kqy6p94hkpgluh8dj")
-        }
+        val model = com.pylons.wallet.walletcore_test.fixtures.sendCoinsSignable
+        basicSignableTestFlow("send_coins") { model.toSignStruct() }
     }
 
     @Test
@@ -124,22 +122,4 @@ class TxPylonsDevEngineSignables {
             executeRecipeSignTemplate("id0001", arrayOf("alpha", "beta", "gamma"), "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337")
         }
     }
-
-    //TODO: implement missing signables tests once txbuilder support for these messages exists
-//    @Test
-//    fun fulfillTradeSignable () {
-//        val model = com.pylons.wallet.walletcore_test.fixtures.fulfillTradeSignable
-//        basicSignableTestFlow("fulfill_trade") { model.toSignStruct() }
-//    }
-//
-//    @Test
-//    fun createTradeSignable () {
-//        val model = com.pylons.wallet.walletcore_test.fixtures.createTradeSignable
-//        basicSignableTestFlow("create_trade") { model.toSignStruct() }
-//    }
-//
-//    @Test
-//    fun setItemStringSignable () {
-//
-//    }
 }

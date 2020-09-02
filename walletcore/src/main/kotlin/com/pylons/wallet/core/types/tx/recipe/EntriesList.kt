@@ -6,6 +6,8 @@ import com.beust.klaxon.JsonObject
 data class EntriesList(
         @property:[Json(name = "CoinOutputs")]
         val coinOutputs : List<CoinOutput>,
+        @property:[Json(name = "ItemModifyOutputs")]
+        val itemModifyOutputs : List<ItemModifyOutput>,
         @property:[Json(name = "ItemOutputs")]
         val itemOutputs : List<ItemOutput>)  {
 
@@ -14,6 +16,7 @@ data class EntriesList(
                         null -> null
                         else -> EntriesList(
                                 coinOutputs = CoinOutput.listFromJson(jsonObject.array("CoinOutputs")),
+                                itemModifyOutputs = ItemModifyOutput.listFromJson(jsonObject.array("ItemModifyOutputs")),
                                 itemOutputs = ItemOutput.listFromJson(jsonObject.array("ItemOutputs"))
                         )
                 }
