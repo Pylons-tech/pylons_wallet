@@ -1,4 +1,4 @@
-package com.pylons.devwallet
+package com.pylons.devdevwallet
 
 import javafx.application.Application
 import tornadofx.*

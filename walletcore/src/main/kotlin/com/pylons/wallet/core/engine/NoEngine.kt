@@ -97,7 +97,7 @@ internal class NoEngine : Engine() {
     override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction =
             throw NoEngineException()
 
-    override fun sendPylons(q: Long, receiver: String) =
+    override fun sendCoins(denom : String, q: Long, receiver: String) =
             throw NoEngineException()
 
     override fun setItemFieldString(itemId : String, field : String, value : String): Transaction =

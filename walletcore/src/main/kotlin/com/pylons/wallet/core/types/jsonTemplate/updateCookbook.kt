@@ -1,11 +1,12 @@
 package com.pylons.wallet.core.types.jsonTemplate
 
+import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.types.PylonsSECP256K1
 
 internal fun updateCookbook (id : String, devel : String, desc : String, version : String,
                              supportEmail : String, sender : String,
                              pubkey: PylonsSECP256K1.PublicKey, accountNumber: Long, sequence: Long) : String =
-        baseJsonWeldFlow(updateCookbookMsgTemplate(id, devel, desc, version, supportEmail, sender),
+        baseJsonWeldFlow(Core.statusBlock.height, updateCookbookMsgTemplate(id, devel, desc, version, supportEmail, sender),
                 updateCookbookSignTemplate(id, devel, desc, version, supportEmail, sender),
                 accountNumber, sequence, pubkey)
 

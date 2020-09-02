@@ -63,6 +63,7 @@ class IpcLayer : IPCLayer() {
         }
 
         private fun doHandshake () {
+            println("start handshake")
             val handshakeReply = checkForHandshake()
             if (handshakeReply != HANDSHAKE_REPLY_MAGIC) {
                 Logger.implementation.log(

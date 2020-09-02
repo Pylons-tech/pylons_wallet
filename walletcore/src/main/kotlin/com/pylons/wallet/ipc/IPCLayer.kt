@@ -77,7 +77,8 @@ abstract class IPCLayer {
 
         fun getNextMessage(callback : (Message) -> Unit) {
             safelyDoIpcOperation {
-                val next = implementation.getNextJson {
+                implementation.getNextJson {
+                    println("got: \n$it")
                     val msg = Message.match(it)
                     when (msg) {
                         null -> implementation.reject(it)

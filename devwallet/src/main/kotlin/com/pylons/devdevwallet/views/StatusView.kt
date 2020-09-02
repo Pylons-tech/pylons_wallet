@@ -1,4 +1,4 @@
-package com.pylons.devwallet.views
+package com.pylons.devdevwallet.views
 
 import tornadofx.*
 

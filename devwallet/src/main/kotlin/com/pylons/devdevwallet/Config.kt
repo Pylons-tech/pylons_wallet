@@ -1,4 +1,4 @@
-package com.pylons.devwallet
+package com.pylons.devdevwallet
 
 import com.pylons.wallet.core.types.Backend
 

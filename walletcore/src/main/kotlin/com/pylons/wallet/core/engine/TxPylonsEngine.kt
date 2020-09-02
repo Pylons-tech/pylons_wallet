@@ -219,11 +219,11 @@ open class TxPylonsEngine : Engine() {
         else cryptoCosmos.keyPair = kp
         Core.userProfile = MyProfile(credentials = getNewCredentials(),
                 coins = listOf(), strings = mutableMapOf(), items = listOf())
-        return getPylons(500)
+        return basicTxHandlerFlow { CreateAccount(Core.userProfile!!.credentials.address).toSignedTx() }
     }
 
-    override fun sendPylons(q: Long, receiver: String): Transaction =
-        basicTxHandlerFlow { sendPylons(q, it.address, receiver, cryptoCosmos.keyPair!!.publicKey(),
+    override fun sendCoins(denom : String, q: Long, receiver: String): Transaction =
+        basicTxHandlerFlow { sendCoins(denom, q, it.address, receiver, cryptoCosmos.keyPair!!.publicKey(),
                 it.accountNumber, it.sequence) }
 
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =

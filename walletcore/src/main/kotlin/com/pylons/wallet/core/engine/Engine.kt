@@ -226,7 +226,7 @@ abstract class Engine {
     /***
      * Calls send pylons endpoint.
      */
-    abstract fun sendPylons (q : Long, receiver : String) : Transaction
+    abstract fun sendCoins (denom : String, q : Long, receiver : String) : Transaction
 
     /**
      * Update-cookbook message

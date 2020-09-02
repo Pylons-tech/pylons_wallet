@@ -1,10 +1,11 @@
 package com.pylons.wallet.core.types.jsonTemplate
 
+import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.types.PylonsSECP256K1
 
 @ExperimentalUnsignedTypes
 fun getPylons (amount : Long, address: String, pubkey: PylonsSECP256K1.PublicKey, accountNumber: Long, sequence: Long) =
-        baseJsonWeldFlow(getPylonsMsgTemplate(amount.toString(), address), getPylonsSignTemplate(amount),
+        baseJsonWeldFlow(Core.statusBlock.height, getPylonsMsgTemplate(amount.toString(), address), getPylonsSignTemplate(amount),
                 accountNumber, sequence, pubkey)
 
 fun getPylonsMsgTemplate (amount : String, address : String) = """

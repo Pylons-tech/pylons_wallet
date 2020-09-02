@@ -1,4 +1,4 @@
-package com.pylons.devwallet.controllers
+package com.pylons.devdevwallet.controllers
 
 import com.pylons.ipc.ipcProtos
 import com.pylons.wallet.core.Core

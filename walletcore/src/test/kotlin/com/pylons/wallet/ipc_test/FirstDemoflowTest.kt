@@ -11,7 +11,7 @@ class FirstDemoflowTest {
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         HttpWire.verbose = true
-        Core.start(Config(Backend.LIVE_DEV, listOf("http://128.0.0.1")), "")
+        Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1")), "")
         val engine = Core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {

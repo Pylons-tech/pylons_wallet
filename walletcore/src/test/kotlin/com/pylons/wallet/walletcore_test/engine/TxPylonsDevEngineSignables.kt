@@ -10,6 +10,7 @@ import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.jsonTemplate.*
 import org.opentest4j.AssertionFailedError
 import org.apache.commons.lang3.StringUtils.*
+import java.io.StringReader
 
 class TxPylonsDevEngineSignables {
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
@@ -30,9 +31,11 @@ class TxPylonsDevEngineSignables {
         println("getting profile state...")
         engine.getOwnBalances()
         println("getting txbuilder output...")
-        val fixture = engine.queryTxBuilder(msgType)
+        var fixture = engine.queryTxBuilder(msgType)
+        fixture = klaxon.parseJsonObject(StringReader(fixture)).toJsonString()
         println("generating sign struct")
-        val signable = baseSignTemplate(signableFun(engine), 0, 0)
+        val signable = baseSignTemplate(0, signableFun(engine), 0, 0)
+        println("generated: ${signableFun(engine)}")
         try {
             assertEquals(fixture, signable)
         } catch (e : AssertionFailedError) {
@@ -43,6 +46,23 @@ class TxPylonsDevEngineSignables {
         }
         println("FIXTURE\n$fixture\nGENERATED\n$signable")
         println("ok!")
+    }
+
+    @Test
+    fun createAccountSignable () {
+        val model = com.pylons.wallet.walletcore_test.fixtures.createAccountSignable
+        basicSignableTestFlow("create_account") { model.toSignStruct() }
+    }
+
+    @Test
+    fun getsPylonsSignable () {
+        val model = com.pylons.wallet.walletcore_test.fixtures.getPylonsSignable
+        basicSignableTestFlow("get_pylons") { model.toSignStruct() }
+    }
+
+    @Test
+    fun googleIapGetsPylonsSignable () {
+
     }
 
     @Test
@@ -91,9 +111,9 @@ class TxPylonsDevEngineSignables {
     }
 
     @Test
-    fun sendsPylonsSignable () {
-        basicSignableTestFlow("send_pylons") {
-            sendPylonsSignTemplate(5, "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
+    fun sendsCoinsSignable () {
+        basicSignableTestFlow("send_coins") {
+            sendCoinsSignTemplate("pylon",5, "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
                     "cosmos13rkt5rzf4gz8dvmwxxxn2kqy6p94hkpgluh8dj")
         }
     }

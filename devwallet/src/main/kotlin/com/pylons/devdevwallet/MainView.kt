@@ -1,15 +1,13 @@
-package com.pylons.devwallet
+package com.pylons.devdevwallet
 
-import com.pylons.devwallet.controllers.CoreInteractEvent
-import com.pylons.devwallet.controllers.WalletCoreController
-import com.pylons.devwallet.controllers.HeartbeatEvent
-import com.pylons.devwallet.controllers.IPCController
-import com.pylons.devwallet.views.StatusView
+import com.pylons.devdevwallet.controllers.CoreInteractEvent
+import com.pylons.devdevwallet.controllers.WalletCoreController
+import com.pylons.devdevwallet.controllers.HeartbeatEvent
+import com.pylons.devdevwallet.controllers.IPCController
+import com.pylons.devdevwallet.views.StatusView
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.types.Config
 import javafx.scene.layout.BorderPane
 import tornadofx.*
-import java.io.ObjectInputFilter
 
 @ExperimentalUnsignedTypes
 class MainView : View() {

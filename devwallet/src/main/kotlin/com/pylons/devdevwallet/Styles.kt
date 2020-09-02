@@ -1,4 +1,4 @@
-package com.pylons.devwallet
+package com.pylons.devdevwallet
 
 import javafx.scene.text.FontWeight
 import tornadofx.*

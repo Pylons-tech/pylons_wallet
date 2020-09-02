@@ -309,6 +309,25 @@ sealed class Message {
         override fun resolve() = listOf(Response(Core.getPylons(count!!)))
     }
 
+    class GoogleIapGetPylons(
+            private val productId : String? = null,
+            private val purchaseToken : String? = null,
+            private val receiptDataBase64 : String? = null,
+            private val signature : String? = null
+    ) : Message() {
+        class Response(tx : Transaction): Message.Response() {
+            val txhash = tx.id?: ""
+            val state = tx.state
+            val error = tx.txError?: listOf()
+        }
+
+        companion object {
+            fun deserialize(json : String) = klaxon.parse<GetPylons>(json)
+        }
+
+        override fun resolve() = listOf(Response(Core.getPylons(count!!)))
+    }
+
     class GetRecipes : Message() {
         class Response(val recipes : List<Recipe>) : Message.Response()
 
@@ -343,7 +362,7 @@ sealed class Message {
         override fun resolve() = listOf(Response(Core.newProfile(name!!)))
     }
 
-    class SendPylons(val addr : String? = null, val q : Long? = null) : Message() {
+    class SendCoins(val denom : String? = null, val addr : String? = null, val q : Long? = null) : Message() {
         class Response(tx : Transaction): Message.Response() {
             val txhash = tx.id?: ""
             val state = tx.state
@@ -351,10 +370,10 @@ sealed class Message {
         }
 
         companion object {
-            fun deserialize(json : String) = klaxon.parse<SendPylons>(json)
+            fun deserialize(json : String) = klaxon.parse<SendCoins>(json)
         }
 
-        override fun resolve() = listOf(Response(Core.sendPylons(q!!, addr!!)))
+        override fun resolve() = listOf(Response(Core.sendCoins(denom!!, q!!, addr!!)))
     }
 
     class SetItemString(val itemId : String? = null, val field : String? = null,

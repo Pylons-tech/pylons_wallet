@@ -67,11 +67,28 @@ sealed class Msg {
     fun toSignedTx () : String {
         val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
         val crypto = (Core.engine as TxPylonsEngine).cryptoCosmos
-        return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
+        return baseJsonWeldFlow(Core.statusBlock.height, toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey())
     }
 
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
+
+ @MsgType("pylons/CreateAccount")
+ data class CreateAccount(
+         @property:[Json(name = "Requester")]
+         val requester : String
+ ) : Msg() {
+     override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+     companion object {
+         @MsgParser
+         fun parse (jsonObject: JsonObject) : CreateAccount {
+             return CreateAccount(
+                     requester = jsonObject.string("Requester")!!
+             )
+         }
+     }
+ }
 
 @MsgType("pylons/CheckExecution")
 data class CheckExecution (

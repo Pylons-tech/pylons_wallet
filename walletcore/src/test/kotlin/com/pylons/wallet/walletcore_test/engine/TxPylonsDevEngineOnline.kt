@@ -119,6 +119,12 @@ class TxPylonsDevEngineOnline {
         followUp?.invoke(engine, tx.id!!)
     }
 
+    @Order(-1)
+    @Test
+    fun createsAccount () {
+        basicTxTestFlow { it.registerNewProfile("fuckio", null) }
+    }
+
     @Order(0)
     @Test
     fun getsPylons () {
@@ -127,8 +133,8 @@ class TxPylonsDevEngineOnline {
 
     @Order(1)
     @Test
-    fun sendsPylons () {
-        basicTxTestFlow { it.sendPylons(1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch") }
+    fun sendsCoins () {
+        basicTxTestFlow { it.sendCoins("pylon", 1, "cosmos1hetxt4zc6kzq5ctepn9lz75jd5r4pkku0m5qch") }
     }
 
     @Order(2)
