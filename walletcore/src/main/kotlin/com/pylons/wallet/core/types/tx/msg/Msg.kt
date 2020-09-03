@@ -280,8 +280,8 @@ data class EnableRecipe(
 data class ExecuteRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
-        @property:[Json(name = "ItemIDs") EmptyArray]
-        val itemIds : List<String>,
+        @property:[Json(name = "ItemIDs")]
+        val itemIds : List<String>?,
         @property:[Json(name = "Sender")]
         val sender : String
 ) : Msg() {
@@ -293,7 +293,7 @@ data class ExecuteRecipe(
             return ExecuteRecipe(
                     recipeId = jsonObject.string("RecipeID")!!,
                     sender = jsonObject.string("Sender")!!,
-                    itemIds = jsonObject.array("ItemIDs")!!
+                    itemIds = jsonObject.array("ItemIDs")
             )
         }
     }

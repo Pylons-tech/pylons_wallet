@@ -23,7 +23,7 @@ internal class NoEngine : Engine() {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
-    override fun applyRecipe(id : String, itemIds : List<String>) : Transaction =
+    override fun applyRecipe(id : String, itemIds : List<String>?) : Transaction =
             throw NoEngineException()
 
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =

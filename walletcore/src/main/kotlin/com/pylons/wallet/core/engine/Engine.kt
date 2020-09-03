@@ -56,7 +56,7 @@ abstract class Engine {
     }
 
     /** Execute-recipe message */
-    abstract fun applyRecipe(id : String, itemIds : List<String>) : Transaction
+    abstract fun applyRecipe(id : String, itemIds : List<String>?) : Transaction
 
     /** Check-execution message */
     abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction

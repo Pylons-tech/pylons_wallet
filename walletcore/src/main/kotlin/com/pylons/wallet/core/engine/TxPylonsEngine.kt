@@ -114,7 +114,7 @@ open class TxPylonsEngine : Engine() {
 
     // Engine methods
 
-    override fun applyRecipe(id: String, itemIds : List<String>): Transaction =
+    override fun applyRecipe(id: String, itemIds : List<String>?): Transaction =
             handleTx {
                 ExecuteRecipe(
                         recipeId = id,
