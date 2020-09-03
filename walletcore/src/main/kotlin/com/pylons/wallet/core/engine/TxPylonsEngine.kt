@@ -2,14 +2,12 @@ package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.logging.Logger
-import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
 import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.recipe.*
-import com.pylons.wallet.core.types.jsonTemplate.*
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
 import com.pylons.wallet.core.internal.fuzzyLong
@@ -19,7 +17,6 @@ import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.msg.*
 import com.pylons.wallet.core.types.tx.trade.TradeItemInput
-import com.pylons.wallet.ipc.Message
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import java.lang.Exception
@@ -76,7 +73,7 @@ open class TxPylonsEngine : Engine() {
 
     // Wiring
 
-    protected fun basicTxHandlerFlow (func : (Credentials) -> String) : Transaction {
+    protected fun handleTx (func : (Credentials) -> String) : Transaction {
         return Transaction(resolver =  {
             val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
             val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
@@ -117,17 +114,36 @@ open class TxPylonsEngine : Engine() {
 
     // Engine methods
 
-    override fun applyRecipe(id: String, itemIds : Array<String>): Transaction =
-            basicTxHandlerFlow { executeRecipe(id, itemIds, Core.userProfile!!.credentials.address,
-                    cryptoCosmos.keyPair!!.publicKey(), it.accountNumber, it.sequence) }
+    override fun applyRecipe(id: String, itemIds : List<String>): Transaction =
+            handleTx {
+                ExecuteRecipe(
+                        recipeId = id,
+                        itemIds = itemIds,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
-            basicTxHandlerFlow { CheckExecution(id, Core.userProfile!!.credentials.address, payForCompletion).toSignedTx() }
+            handleTx {
+                CheckExecution(
+                        execId = id,
+                        sender = it.address,
+                        payToComplete = payForCompletion
+                ).toSignedTx()
+            }
 
     override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
                              coinOutputs: List<Coin>, itemOutputs: List<Item>, extraInfo: String) =
-            basicTxHandlerFlow{ CreateTrade(coinInputs, coinOutputs, extraInfo, itemInputs, itemOutputs, it.address).toSignedTx() }
-
+            handleTx{
+                CreateTrade(
+                        coinInputs = coinInputs,
+                        coinOutputs = coinOutputs,
+                        itemInputs = itemInputs,
+                        itemOutputs = itemOutputs,
+                        extraInfo = extraInfo,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun dumpCredentials(credentials: MyProfile.Credentials) {
         val c = credentials as Credentials
@@ -137,10 +153,21 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun fulfillTrade(tradeId : String, itemIds : List<String>)   =
-            basicTxHandlerFlow{ FulfillTrade(it.address, tradeId, itemIds).toSignedTx() }
+            handleTx{
+                FulfillTrade(
+                        tradeId = tradeId,
+                        itemIds = itemIds,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun cancelTrade(tradeId : String)   =
-            basicTxHandlerFlow{ CancelTrade(it.address, tradeId).toSignedTx() }
+            handleTx{
+                CancelTrade(
+                        tradeId = tradeId,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun generateCredentialsFromKeys() : MyProfile.Credentials {
         val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
@@ -153,10 +180,6 @@ open class TxPylonsEngine : Engine() {
         //SECP256K1.SecretKey.
 
         //cryptoHandler.importKeysFromUserData()
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getForeignBalances(id: String): Profile? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -174,15 +197,13 @@ open class TxPylonsEngine : Engine() {
 
     override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
-    override fun getOwnBalances(): MyProfile? {
+    override fun getMyProfileState(): MyProfile? {
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
         val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
-            "" -> {
-                null
-            }
+            "" -> null
             else -> {
                 val sequence = value.fuzzyLong("sequence")
                 val accountNumber = value.fuzzyLong("account_number")
@@ -198,7 +219,29 @@ open class TxPylonsEngine : Engine() {
                 return Core.userProfile
             }
         }
+    }
 
+    override fun getProfileState(addr: String): Profile? {
+        val prfJson = HttpWire.get("$nodeUrl/auth/accounts/$addr")
+        // this seems really wrong
+        val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/$addr")
+        val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
+        return when (value.string("address")) {
+            "" -> null
+            else -> {
+                val sequence = value.fuzzyLong("sequence")
+                val accountNumber = value.fuzzyLong("account_number")
+                val coins = Coin.listFromJson(value.array("coins"))
+                val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject).obj("result")!!
+                val items = Item.listFromJson(valueItems.array("Items"))
+                return Profile(
+                        address = addr,
+                        strings = mapOf(),
+                        coins = coins,
+                        items = items
+                )
+            }
+        }
     }
 
     override fun getPendingExecutions(): List<Execution> {
@@ -207,7 +250,12 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun getPylons(q: Long): Transaction =
-            basicTxHandlerFlow { GetPylons(listOf(Coin("pylon", q)), it.address).toSignedTx() }
+            handleTx {
+                GetPylons(
+                        amount = listOf(Coin("pylon", q)),
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("$nodeUrl/blocks/latest")
@@ -246,10 +294,22 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun createChainAccount(): Transaction =
-            basicTxHandlerFlow { CreateAccount(it.address).toSignedTx() }
+            handleTx {
+                CreateAccount(
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction =
-            basicTxHandlerFlow { GoogleIAPGetPylons(productId, purchaseToken, Base64.getEncoder().encodeToString(receiptData.toByteArray()), signature, it.address).toSignedTx() }
+            handleTx {
+                GoogleIapGetPylons(
+                        productId = productId,
+                        purchaseToken = purchaseToken,
+                        receiptDataBase64 = Base64.getEncoder().encodeToString(receiptData.toByteArray()),
+                        signature = signature,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun checkGoogleIapOrder(purchaseToken: String): Boolean {
         val response = HttpWire.get("$nodeUrl/pylons/check_google_iap_order/$purchaseToken")
@@ -257,13 +317,32 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
-            basicTxHandlerFlow { UpdateItemString(field, itemId, it.address, value).toSignedTx() }
+            handleTx {
+                UpdateItemString(
+                        itemId = itemId,
+                        field = field,
+                        value = value,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun sendCoins(coins : List<Coin>, receiver: String): Transaction =
-        basicTxHandlerFlow { SendCoins(coins, receiver, it.address).toSignedTx() }
+            handleTx {
+                SendCoins(
+                        amount = coins,
+                        receiver = receiver,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
-    override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
-        basicTxHandlerFlow { SendItems(sender, receiver, itemIds).toSignedTx() }
+    override fun sendItems(receiver: String, itemIds: List<String>): Transaction =
+            handleTx {
+                SendItems(
+                        itemIds = itemIds,
+                        receiver = receiver,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun getLockedCoins(): LockedCoin {
         val response = HttpWire.get("$nodeUrl/pylons/get_locked_coins/${Core.userProfile!!.credentials.address}")
@@ -277,7 +356,7 @@ open class TxPylonsEngine : Engine() {
 
     // Unimplemented engine method stubs
 
-    override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+    override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
                               outputs : List<WeightedOutput>) : Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
@@ -295,7 +374,7 @@ open class TxPylonsEngine : Engine() {
     override fun updateCookbook(id: String, developer: String, description: String, version: String, supportEmail: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+    override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 }

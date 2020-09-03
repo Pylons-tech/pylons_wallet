@@ -1,9 +1,5 @@
 package com.pylons.wallet.walletcore_test.engine
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.TestMethodOrder
-
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
@@ -15,7 +11,10 @@ import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.walletcore_test.fixtures.emitCreateRecipe
 import com.pylons.wallet.walletcore_test.fixtures.emitCreateTrade
 import com.pylons.wallet.walletcore_test.fixtures.emitUpdateRecipe
-import org.junit.jupiter.api.MethodOrderer
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.util.encoders.Hex
+import org.junit.jupiter.api.*
+import java.security.Security
 import java.time.Instant
 
 import java.util.*
@@ -23,6 +22,10 @@ import java.util.*
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class TxPylonsDevEngineOnline {
+    companion object {
+        var exportedKey : String? = null
+    }
+
     private fun getCookbookIfOneExists (engine: TxPylonsDevEngine) : String {
         val cb = engine.listCookbooks()
         return when (cb.isNotEmpty()) {
@@ -58,7 +61,7 @@ class TxPylonsDevEngineOnline {
     }
 
     private fun getItemIfOneExists (engine: TxPylonsDevEngine) : Item {
-        val r = engine.getOwnBalances()!!.items
+        val r = engine.getMyProfileState()!!.items
         return when (r.isNotEmpty()) {
             true -> r[r.lastIndex]
             false -> fail("No items exist on chain belonging to current address. This test cannot continue.")
@@ -91,11 +94,12 @@ class TxPylonsDevEngineOnline {
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) = basicTxTestFlow(txFun, null)
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine, String) -> Unit)?) {
-        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        val engine = engineSetup(exportedKey)
+        Core.updateStatusBlock()
         println("pubkey: ${CryptoCosmos.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
         println("getting profile state...")
-        engine.getOwnBalances()
-        val oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
+        engine.getMyProfileState()
+        //val oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
         println("building tx...")
         val tx = txFun(engine)
         println("submitting tx...")
@@ -107,7 +111,7 @@ class TxPylonsDevEngineOnline {
         }
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
-        engine.getOwnBalances()
+        engine.getMyProfileState()
         //This check is no longer used bc we have a cleaner way to make sure transactions are accepted,
         //but you may want to uncomment it if Extremely Weird things are happening when interacting w/ the chain
         //and you're trying to debug.
@@ -124,17 +128,16 @@ class TxPylonsDevEngineOnline {
         followUp?.invoke(engine, tx.id!!)
     }
 
-    @Order(-1)
-    @Test
-    fun createsAccount () {
-        basicTxTestFlow { it.registerNewProfile("fuckio", null) }
-    }
+
 
     @Order(0)
     @Test
     fun createAccount () {
-        //TODO: Will fail if account exists, handle fail or clear chain for testing?
-        basicTxTestFlow { it.createChainAccount() }
+        basicTxTestFlow (
+                { it.registerNewProfile("fuckio", null) },
+                { it, _ -> exportedKey =
+                        Hex.toHexString(it.cryptoCosmos.keyPair!!.secretKey().bytesArray())}
+        )
     }
 
     @Order(1)
@@ -224,7 +227,7 @@ class TxPylonsDevEngineOnline {
     @Order(12)
     @Test
     fun executesRecipe () {
-        basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), arrayOf()) }
+        basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), listOf()) }
     }
 
     @Order(13)
@@ -282,7 +285,7 @@ class TxPylonsDevEngineOnline {
     @Test
     fun sendsItems () {
         basicTxTestFlow {
-            it.sendItems(Core.userProfile!!.credentials.address, "cosmos1992pvmjlj3va7kcx8ldlrdgn0qkspvxe8snrk9", listOf(getItemIfOneExists(it).id)) }
+            it.sendItems("cosmos1992pvmjlj3va7kcx8ldlrdgn0qkspvxe8snrk9", listOf(getItemIfOneExists(it).id)) }
     }
 
 }

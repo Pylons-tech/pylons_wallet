@@ -22,7 +22,6 @@ fun Core.batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks 
     val mOutputs = mutableListOf<List<WeightedOutput>>()
     outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
     val txs = engine.updateRecipes(
-            sender = userProfile!!.credentials.address,
             ids = ids,
             names = names,
             cookbookIds = cookbooks,

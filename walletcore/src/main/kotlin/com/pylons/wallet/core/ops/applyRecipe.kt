@@ -16,5 +16,5 @@ fun Core.applyRecipe (recipe : String, cookbook : String, itemInputs : List<Stri
         }
     }
     if (r == null) throw Exception("Recipe $cookbook/$recipe does not exist")
-    return engine.applyRecipe(r!!, itemInputs.toTypedArray()).submit()
+    return engine.applyRecipe(r!!, itemInputs).submit()
 }

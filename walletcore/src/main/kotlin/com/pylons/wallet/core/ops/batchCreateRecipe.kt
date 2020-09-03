@@ -19,7 +19,6 @@ fun Core.batchCreateRecipe (names : List<String>, cookbooks : List<String>, desc
     val mOutputs = mutableListOf<List<WeightedOutput>>()
     outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
     val txs =  engine.createRecipes(
-            sender = userProfile!!.credentials.address,
             names = names,
             cookbookIds = cookbooks,
             descriptions = descriptions,

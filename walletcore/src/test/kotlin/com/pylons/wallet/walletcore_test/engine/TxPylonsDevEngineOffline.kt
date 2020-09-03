@@ -7,9 +7,9 @@ import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.newProfile
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.tx.msg.GetPylons
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
-import com.pylons.wallet.core.types.jsonTemplate.*
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
@@ -50,7 +50,7 @@ class TxPylonsDevEngineOffline {
     @Test
     fun addressFromPubkey() {
         val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
-        engine.getOwnBalances()
+        engine.getMyProfileState()
         val pubkey = engine.cryptoCosmos.keyPair!!.publicKey()
         val addr = CryptoCosmos.getAddressFromPubkey(pubkey)
         assertEquals(Core.userProfile!!.credentials.address, TxPylonsEngine.getAddressString(addr.toArray()))
@@ -115,8 +115,8 @@ class TxPylonsDevEngineOffline {
             "mode": "sync"
         }
         """.trimIndent().replace(" ", "")
-        val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
-        val json = getPylons(500, "DUMMYADDR", engine.cryptoCosmos.keyPair!!.publicKey(), 4, 0)
+        engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
+        val json = GetPylons(listOf(Coin("pylon", 500)), Core.userProfile!!.address).toSignedTx()
         assertEquals(fixture, json.trimIndent().replace(" ", ""))
     }
 }

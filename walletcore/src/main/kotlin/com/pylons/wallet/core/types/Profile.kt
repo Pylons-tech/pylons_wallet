@@ -9,7 +9,7 @@ import com.pylons.wallet.core.types.tx.item.Item
  * TODO: refactor these to inherit from a shared base
  */
 open class Profile (
-        val id : String = "",
+        val address : String = "",
         val strings : Map<String, String>,
         var coins : List<Coin>,
         var items : List<Item>

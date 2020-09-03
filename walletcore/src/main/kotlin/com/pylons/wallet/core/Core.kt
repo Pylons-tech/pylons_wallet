@@ -87,6 +87,10 @@ object Core {
 
     fun dumpUserProfile () : String = userProfile!!.dump()
 
+    fun updateStatusBlock () {
+        statusBlock = engine.getStatusBlock()
+    }
+
     fun start (cfg: Config, userJson : String) {
         config = cfg
         engine = when (config!!.backend) {

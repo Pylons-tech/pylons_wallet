@@ -23,7 +23,7 @@ internal class NoEngine : Engine() {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
-    override fun applyRecipe(id : String, itemIds : Array<String>) : Transaction =
+    override fun applyRecipe(id : String, itemIds : List<String>) : Transaction =
             throw NoEngineException()
 
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
@@ -32,7 +32,7 @@ internal class NoEngine : Engine() {
     override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
             throw NoEngineException()
 
-    override fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+    override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
                               outputs : List<WeightedOutput>) : Transaction =
             throw NoEngineException()
@@ -62,20 +62,16 @@ internal class NoEngine : Engine() {
     override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String) =
             throw NoEngineException()
 
-    override fun getForeignBalances(id: String): Profile? =
-            throw NoEngineException()
-
     override fun getNewCredentials(): MyProfile.Credentials =
             throw NoEngineException()
 
-    override fun getInitialDataSets(): MutableMap<String, MutableMap<String, String>> =
-            throw NoEngineException()
+    override fun getProfileState(addr: String) = throw NoEngineException()
 
-    override fun getNewCryptoHandler(): CryptoHandler =
-            throw NoEngineException()
+    override fun getInitialDataSets() = throw NoEngineException()
 
-    override fun getOwnBalances(): MyProfile? =
-            throw NoEngineException()
+    override fun getNewCryptoHandler() = throw NoEngineException()
+
+    override fun getMyProfileState() = throw NoEngineException()
 
     override fun getPendingExecutions(): List<Execution> =
             throw NoEngineException()
@@ -116,14 +112,14 @@ internal class NoEngine : Engine() {
     override fun updateCookbook(id: String, developer: String, description: String, version: String, supportEmail: String): Transaction =
             throw NoEngineException()
 
-    override fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+    override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>): Transaction =
             throw NoEngineException()
 
     override fun listTrades(): List<Trade> =
             throw NoEngineException()
 
-    override fun sendItems(sender: String, receiver: String, itemIds: List<String>): Transaction =
+    override fun sendItems(receiver: String, itemIds: List<String>): Transaction =
             throw NoEngineException()
 
     override fun getLockedCoins(): LockedCoin =
@@ -131,4 +127,6 @@ internal class NoEngine : Engine() {
 
     override fun getLockedCoinDetails(): LockedCoinDetails =
             throw NoEngineException()
+
+
 }

@@ -77,7 +77,7 @@ sealed class Msg {
  @MsgType("pylons/CreateAccount")
  data class CreateAccount(
          @property:[Json(name = "Requester")]
-         val requester : String
+         val sender : String
  ) : Msg() {
      override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -85,7 +85,7 @@ sealed class Msg {
          @MsgParser
          fun parse (jsonObject: JsonObject) : CreateAccount {
              return CreateAccount(
-                     requester = jsonObject.string("Requester")!!
+                     sender = jsonObject.string("Requester")!!
              )
          }
      }
@@ -239,7 +239,9 @@ data class CreateTrade (
 @MsgType("pylons/DisableRecipe")
 data class DisableRecipe(
         @property:[Json(name = "RecipeID")]
-        val recipeId : String
+        val recipeId : String,
+        @property:[Json(name="Sender")]
+        val sender : String
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -247,7 +249,8 @@ data class DisableRecipe(
         @MsgParser
         fun parse (jsonObject: JsonObject) : DisableRecipe {
             return DisableRecipe(
-                    recipeId = jsonObject.string("RecipeID")!!
+                    recipeId = jsonObject.string("RecipeID")!!,
+                    sender = jsonObject.string("Sender")!!
             )
         }
     }
@@ -256,7 +259,9 @@ data class DisableRecipe(
 @MsgType("pylons/EnableRecipe")
 data class EnableRecipe(
         @property:[Json(name = "RecipeID")]
-        val recipeId : String
+        val recipeId : String,
+        @property:[Json(name="Sender")]
+        val sender : String
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -264,7 +269,8 @@ data class EnableRecipe(
         @MsgParser
         fun parse (jsonObject: JsonObject) : EnableRecipe {
             return EnableRecipe(
-                    recipeId = jsonObject.string("RecipeID")!!
+                    recipeId = jsonObject.string("RecipeID")!!,
+                    sender = jsonObject.string("Sender")!!
             )
         }
     }
@@ -274,10 +280,10 @@ data class EnableRecipe(
 data class ExecuteRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
+        @property:[Json(name = "ItemIDs") EmptyArray]
+        val itemIds : List<String>,
         @property:[Json(name = "Sender")]
-        val sender : String,
-        @property:[Json(name = "ItemIDs")]
-        val itemIds : List<String>?
+        val sender : String
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -287,7 +293,7 @@ data class ExecuteRecipe(
             return ExecuteRecipe(
                     recipeId = jsonObject.string("RecipeID")!!,
                     sender = jsonObject.string("Sender")!!,
-                    itemIds = jsonObject.array("ItemIDs")
+                    itemIds = jsonObject.array("ItemIDs")!!
             )
         }
     }
@@ -295,14 +301,13 @@ data class ExecuteRecipe(
 
 @MsgType("pylons/FulfillTrade")
 data class FulfillTrade (
-        @property:[Json(name = "Sender")]
-        val sender : String,
         @property:[Json(name = "TradeID")]
         val tradeId : String,
         @property:[Json(name = "ItemIDs")]
-        val itemIds : List<String>
+        val itemIds : List<String>,
+        @property:[Json(name = "Sender")]
+        val sender : String
 ):Msg() {
-
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
@@ -319,10 +324,10 @@ data class FulfillTrade (
 
 @MsgType("pylons/DisableTrade")
 data class CancelTrade (
-        @property:[Json(name = "Sender")]
-        val sender : String,
         @property:[Json(name = "TradeID")]
-        val tradeId : String
+        val tradeId : String,
+        @property:[Json(name = "Sender")]
+        val sender : String
 ):Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
@@ -343,7 +348,7 @@ data class GetPylons(
         @property:[Json(name = "Amount")]
         val amount : List<Coin>,
         @property:[Json(name = "Requester")]
-        val requester : String
+        val sender : String
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -352,7 +357,7 @@ data class GetPylons(
         fun parse (jsonObject: JsonObject) : GetPylons {
             return GetPylons(
                     amount = Coin.listFromJson(jsonObject.array("Amount")!!),
-                    requester = jsonObject.string("Requester")!!
+                    sender = jsonObject.string("Requester")!!
             )
         }
     }
@@ -419,10 +424,10 @@ data class UpdateItemString (
         val field : String,
         @property:[Json(name = "ItemID")]
         val itemId : String,
-        @property:[Json(name = "Sender")]
-        val sender: String,
         @property:[Json(name = "Value")]
-        val value : String
+        val value : String,
+        @property:[Json(name = "Sender")]
+        val sender: String
 ): Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -487,12 +492,12 @@ data class UpdateRecipe (
 
 @MsgType("pylons/SendItems")
 data class SendItems(
-        @property:[Json(name = "Sender")]
-        val sender : String,
         @property:[Json(name = "Receiver")]
         val receiver : String,
         @property:[Json(name = "ItemIDs")]
-        val itemIds : List<String>
+        val itemIds : List<String>,
+        @property:[Json(name = "Sender")]
+        val sender : String
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -509,7 +514,7 @@ data class SendItems(
 }
 
 @MsgType("pylons/GoogleIAPGetPylons")
-data class GoogleIAPGetPylons(
+data class GoogleIapGetPylons(
         @property:[Json(name = "ProductID")]
         val productId : String,
         @property:[Json(name = "PurchaseToken")]
@@ -519,19 +524,19 @@ data class GoogleIAPGetPylons(
         @property:[Json(name = "Signature")]
         val signature : String,
         @property:[Json(name = "Requester")]
-        val requester : String
+        val sender : String
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
-        fun parse (jsonObject: JsonObject) : GoogleIAPGetPylons {
-            return GoogleIAPGetPylons(
+        fun parse (jsonObject: JsonObject) : GoogleIapGetPylons {
+            return GoogleIapGetPylons(
                     productId = jsonObject.string("ProductID")!!,
                     purchaseToken = jsonObject.string("PurchaseToken")!!,
                     receiptDataBase64 = jsonObject.string("ReceiptDataBase64")!!,
                     signature = jsonObject.string("Signature")!!,
-                    requester = jsonObject.string("Requester")!!
+                    sender = jsonObject.string("Requester")!!
             )
         }
     }

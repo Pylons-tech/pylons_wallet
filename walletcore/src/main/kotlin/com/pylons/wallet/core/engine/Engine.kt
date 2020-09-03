@@ -23,77 +23,56 @@ abstract class Engine {
      */
     abstract val prefix : String
 
-    /**
-     * Specifies the TX-handling backend associated w/ an Engine instance.
-     */
+    /** Specifies the TX-handling backend associated with an Engine instance. */
     abstract val backendType : Backend
 
-    /**
-     * Identifies whether or not we're using BIP44 mnemonics when doing keygen.
-     */
+    /** Identifies whether or not we're using BIP44 mnemonics when doing keygen. */
     abstract val usesMnemonic : Boolean
 
-    /**
-     * Should this engine have access to developer-use methods?
-     */
+    /** Should this engine have access to developer-use methods? */
     abstract val isDevEngine : Boolean
 
-    /**
-     * The current CryptoHandler instance associated with this engine
-     */
+    /** The current CryptoHandler instance associated with this engine */
     abstract var cryptoHandler : CryptoHandler
 
-    /**
-     * Enable-recipe message
-     */
+    /** Enable-recipe message */
     abstract fun enableRecipe(id : String) : Transaction
 
-    /**
-     * Batch enable-recipe message
-     */
+    /** Batch enable-recipe message */
     fun enableRecipes(recipes : List<String>) : List<Transaction> {
         val txs = mutableListOf<Transaction>()
         recipes.forEach { txs.add(enableRecipe(it)) }
         return txs
     }
 
-    /**
-     * Disable-recipe message
-     */
+    /** Disable-recipe message */
     abstract fun disableRecipe(id : String) : Transaction
 
-    /**
-     * Batch enable-recipe message
-     */
+    /** Batch enable-recipe message */
     fun disableRecipes(recipes : List<String>) : List<Transaction> {
         val txs = mutableListOf<Transaction>()
         recipes.forEach { txs.add(disableRecipe(it)) }
         return txs
     }
 
-    /**
-     * Execute-recipe message
-     */
-    abstract fun applyRecipe(id : String, itemIds : Array<String>) : Transaction
+    /** Execute-recipe message */
+    abstract fun applyRecipe(id : String, itemIds : List<String>) : Transaction
 
+    /** Check-execution message */
     abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
+    /** Create-trade message */
     abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
                              coinOutputs : List<Coin>, itemOutputs : List<Item>,
                              ExtraInfo : String) : Transaction
 
-
-                             /**
-     * Create-recipe message
-     */
-    abstract fun createRecipe(sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+    /** Create-recipe message */
+    abstract fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
                               outputs : List<WeightedOutput>) : Transaction
 
-    /**
-     * Batch create-recipe message
-     */
-    fun createRecipes(sender : String, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
+    /** Batch create-recipe message */
+    fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
                       itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
                       outputs: List<List<WeightedOutput>>) : List<Transaction> {
@@ -102,7 +81,6 @@ abstract class Engine {
         for (i in 0  until count) {
             txs.add(
                     createRecipe(
-                            sender = sender,
                             name = names[i],
                             cookbookId = cookbookIds[i],
                             description = descriptions[i],
@@ -117,15 +95,11 @@ abstract class Engine {
         return txs
     }
 
-    /**
-     * Create-cookbook message
-     */
+    /** Create-cookbook message */
     abstract fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
                                  supportEmail : String, level : Long, costPerBlock : Long) : Transaction
 
-    /**
-     * Batch create-cookbook message
-     */
+    /** Batch create-cookbook message */
     fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
                         versions : List<String>, supportEmails: List<String>, levels : List<Long>,
                         costsPerBlock : List<Long>) : List<Transaction> {
@@ -164,7 +138,7 @@ abstract class Engine {
      */
     abstract fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : MyProfile.Credentials
 
-    /***
+    /**
      * Generates a new Credentials object appropriate for our engine
      * type from keys in userdata.
      */
@@ -176,28 +150,17 @@ abstract class Engine {
      */
     abstract fun getNewCredentials () : MyProfile.Credentials
 
-    /**
-     * Get the balances of a third-party account.
-     */
-    abstract fun getForeignBalances(id : String) : Profile?
+    abstract fun getProfileState (addr : String) : Profile?
 
-    /**
-     * Get the balances of the user account.
-     */
-    abstract fun getOwnBalances () : MyProfile?
+    /** Get the balances of the user account. */
+    abstract fun getMyProfileState () : MyProfile?
 
     abstract fun getPendingExecutions () : List<Execution>
 
-    /**
-     * Get a new instance of a CryptoHandler object appropriate for
-     * engine type.
-     */
+    /** Get a new instance of a CryptoHandler object appropriate for engine type. */
     abstract fun getNewCryptoHandler() : CryptoHandler
 
-    /**
-     * Get the current status block.
-     * (Status block is returned w/ all IPC calls)
-     */
+    /** Get the current status block. (Status block is returned w/ all IPC calls) */
     abstract fun getStatusBlock() : StatusBlock
 
     /**
@@ -206,44 +169,30 @@ abstract class Engine {
      */
     abstract fun getTransaction (id : String) : Transaction
 
-    /**
-     * Registers a new profile under given name.
-     */
+    /** Registers a new profile under given name. */
     abstract fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
 
     abstract fun createChainAccount () : Transaction
 
-    /**
-     * Calls get pylons endpoint.
-     * Takes an arbitrary number of pylons,
-     * but backend is locked to 500 right now.
-     * TODO: payment integration???
-     */
+    /** Calls non-IAP get pylons endpoint. Shouldn't work against production nodes. */
     abstract fun getPylons (q : Long) : Transaction
 
+    /** Calls Google IAP get pylons endpoint. */
     abstract fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
 
     abstract fun checkGoogleIapOrder(purchaseToken: String) : Boolean
 
-    /**
-     * Gets initial userdata tables for the engine type.
-     */
+    /** Gets initial userdata tables for the engine type. */
     abstract fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
 
-    /***
-     * Calls send pylons endpoint.
-     */
+    /** Calls send pylons endpoint. */
     abstract fun sendCoins (coins : List<Coin>, receiver : String) : Transaction
 
-    /**
-     * Update-cookbook message
-     */
+    /** Update-cookbook message */
     abstract fun updateCookbook (id : String, developer : String, description : String, version : String,
                                  supportEmail : String) : Transaction
 
-    /**
-     * Batch update-cookbook message
-     */
+    /** Batch update-cookbook message */
     fun updateCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
                         versions : List<String>, supportEmails: List<String>) : List<Transaction> {
         val count = names.size
@@ -262,16 +211,12 @@ abstract class Engine {
         return txs
     }
 
-    /**
-     * Update-recipe message
-     */
-    abstract fun updateRecipe(id : String, sender : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+    /** Update-recipe message */
+    abstract fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>) : Transaction
 
-    /**
-     * Batch update-recipe message
-     */
-    fun updateRecipes (sender : String, ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
+    /** Batch update-recipe message */
+    fun updateRecipes (ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                        blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
                        entries : List<EntriesList>, outputs: List<List<WeightedOutput>>) : List<Transaction> {
         val count = names.size
@@ -280,7 +225,6 @@ abstract class Engine {
             txs.add(
                     updateRecipe(
                             id = ids[i],
-                            sender = sender,
                             name = names[i],
                             cookbookId = cookbookIds[i],
                             description = descriptions[i],
@@ -295,21 +239,17 @@ abstract class Engine {
         return txs
     }
 
-    /**
-     * List recipes query
-     */
+    /** List recipes query */
     abstract fun listRecipes () : List<Recipe>
 
-    /**
-     * List cookbooks query
-     */
+    /** List cookbooks query */
     abstract fun listCookbooks () : List<Cookbook>
 
     abstract fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
 
     abstract fun listTrades () : List<Trade>
 
-    abstract fun sendItems(sender: String, receiver: String, itemIds: List<String>) : Transaction
+    abstract fun sendItems(receiver: String, itemIds: List<String>) : Transaction
 
     abstract fun getLockedCoins () : LockedCoin
 

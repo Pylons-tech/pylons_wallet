@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import java.lang.Exception
 
 class TransactionErrorTest {
 
@@ -33,13 +34,12 @@ class TransactionErrorTest {
     */
     @Test
     fun error() {
-        val tx = Core.userProfile?.credentials?.address?.let {
-            Core.engine.sendItems(it, "abc", listOf())
-        }
-        tx?.submit()
-
-        if (tx == null) {
+        val tx = try {
+            Core.engine.sendItems("abc", listOf()).submit()
+        } catch (e : NullPointerException) {
             fail("tx is null")
+        } catch (e : Exception) {
+            throw e
         }
 
         Assertions.assertEquals(null, tx.id)
@@ -67,7 +67,7 @@ class TransactionErrorTest {
     */
     @Test
     fun signatureVerificationError() {
-        val tx = Core.engine.applyRecipe("", arrayOf())
+        val tx = Core.engine.applyRecipe("", listOf())
         tx.submit()
 
         Assertions.assertEquals(null, tx.id)
@@ -83,8 +83,8 @@ class TransactionErrorTest {
     @Test
     fun acceptedTXError() {
         runBlocking {
-            Core.engine.getOwnBalances()
-            val tx = Core.engine.applyRecipe("", arrayOf())
+            Core.engine.getMyProfileState()
+            val tx = Core.engine.applyRecipe("", listOf())
             tx.submit()
 
             Assertions.assertNotEquals(null, tx.id)

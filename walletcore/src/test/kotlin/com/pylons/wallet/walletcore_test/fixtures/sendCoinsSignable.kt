@@ -8,8 +8,9 @@ import com.pylons.wallet.core.types.tx.recipe.*
 
 val sendCoinsSignable = SendCoins(
         amount = listOf(
-                Coin("pylon", 500)
+                Coin("loudcoin", 10),
+                Coin("pylon", 10)
         ),
-        receiver = "",
-        sender = ""
+        receiver = "cosmos13rkt5rzf4gz8dvmwxxxn2kqy6p94hkpgluh8dj",
+        sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
 )

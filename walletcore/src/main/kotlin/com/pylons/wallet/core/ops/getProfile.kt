@@ -5,7 +5,7 @@ import com.pylons.wallet.core.types.*
 
 fun Core.getProfile (addr : String?) : Profile? {
     return when (addr) {
-        null -> engine.getOwnBalances()
-        else -> engine.getForeignBalances(addr)
+        null -> engine.getMyProfileState()
+        else -> engine.getProfileState(addr)
     }
 }

@@ -12,12 +12,12 @@ val createRecipeSignable = CreateRecipe(
         description = "this has to meet character limits lol",
         entries = EntriesList(
                 coinOutputs = listOf(
-                        CoinOutput("coinChair","chair", 1)
+                        CoinOutput("chair","chair", 1)
                 ),
                 itemModifyOutputs = listOf(ItemModifyOutput(0, listOf(), listOf(), listOf(), 0)),
                 itemOutputs = listOf(
                         ItemOutput(
-                                id = "itemRaichu",
+                                id = "Raichu",
                                 doubles = listOf(DoubleParam("1.0", "endurance",
                                         listOf(
                                                 DoubleWeightRange("500.00", "100.00", 6),
@@ -36,26 +36,26 @@ val createRecipeSignable = CreateRecipe(
                                 strings = listOf(
                                         StringParam("1.0", "Name", "Raichu", "")
                                 ),
-                                transferFee = 0
+                                transferFee = 1232
                         )
                 )
         ),
         outputs = listOf(
                 WeightedOutput(
-                        entryIds = listOf("coinChair"), weight = "1"
+                        entryIds = listOf("chair"), weight = "1"
                 ),
-                WeightedOutput(entryIds = listOf("itemRaichu"),
+                WeightedOutput(entryIds = listOf("Raichu"),
                         weight = "1")
         ),
         itemInputs = listOf(
                 ItemInput(
-                        id = "",
+                        id = "Raichu",
                         doubles = listOf(),
                         longs = listOf(),
                         strings = listOf(
                                 StringInputParam("Name", "Raichu")
                         ),
-                        transferFee = FeeInputParam(0,0)
+                        transferFee = FeeInputParam(0,10000)
                 )
         ),
         name = "name",
