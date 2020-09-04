@@ -13,7 +13,7 @@ val updateRecipeSignable = UpdateRecipe(
         description = "this has to meet character limits lol",
         entries = EntriesList(
                 coinOutputs = listOf(
-                        CoinOutput("chair","chair", 1)
+                        CoinOutput("chair","chair", "1")
                 ),
                 itemModifyOutputs = null,
                 itemOutputs = listOf(

@@ -20,24 +20,24 @@ internal fun Double.s() : String {
 }
 
 @ExperimentalUnsignedTypes
-internal fun baseJsonWeldFlow (height : Long, msg : String, signComponent : String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey) : String {
+internal fun baseJsonWeldFlow (msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String {
     val cryptoHandler = (Core.engine as TxPylonsEngine).cryptoHandler
-    val signable = baseSignTemplate(signComponent, sequence, accountNumber)
+    val signable = baseSignTemplate(signComponent, sequence, accountNumber, gas)
     Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
     val signBytes = signable.toByteArray(Charsets.UTF_8)
     val signatureBytes = cryptoHandler.signature(signBytes)
     val signature = base64.encodeToString(signatureBytes)
-    return baseTxTemplate(msg, pubkeyToString(pubkey), signature)
+    return baseTxTemplate(msg, pubkeyToString(pubkey), signature, 400000)
 }
 
-internal fun baseTxTemplate (msg : String, pubkey : String, signature : String) : String =
+internal fun baseTxTemplate (msg: String, pubkey: String, signature: String, gas: Long) : String =
         """{
             "tx": {
                 "msg": $msg,
     
                 "fee": {
                 "amount": null,
-                "gas": "400000"
+                "gas": "$gas"
             },
                 "signatures": [
                 {
@@ -53,8 +53,8 @@ internal fun baseTxTemplate (msg : String, pubkey : String, signature : String) 
             "mode": "sync"
         }"""
 
-fun baseSignTemplate (msg: String, sequence: Long, accountNumber: Long) =
-        """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"400000"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
+fun baseSignTemplate (msg: String, sequence: Long, accountNumber: Long, gas: Long) =
+        """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
 
 private fun pubkeyToString (pubkey: PylonsSECP256K1.PublicKey) =
         base64.encodeToString(CryptoCosmos.getCompressedPubkey(pubkey).toArray())
