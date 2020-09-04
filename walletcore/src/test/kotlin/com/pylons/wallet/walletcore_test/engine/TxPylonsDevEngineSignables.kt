@@ -34,7 +34,7 @@ class TxPylonsDevEngineSignables {
         var fixture = engine.queryTxBuilder(msgType)
         fixture = klaxon.parseJsonObject(StringReader(fixture)).toJsonString()
         println("generating sign struct")
-        val signable = baseSignTemplate(0, signableFun(engine), 0, 0)
+        val signable = baseSignTemplate(signableFun(engine), 0, 0)
         println("generated: ${signableFun(engine)}")
         try {
             assertEquals(fixture, signable)

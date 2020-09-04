@@ -5,7 +5,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
-import com.pylons.wallet.core.types.jsonTemplate.baseJsonWeldFlow
+import com.pylons.wallet.core.types.baseJsonWeldFlow
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.recipe.*
@@ -74,6 +74,29 @@ sealed class Msg {
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
+ @MsgType("pylons/CheckExecution")
+ data class CheckExecution (
+         @property:[Json(name = "ExecID")]
+         val execId : String,
+         @property:[Json(name = "Sender")]
+         val sender : String,
+         @property:[Json(name = "PayToComplete")]
+         val payToComplete : Boolean
+ ) : Msg() {
+     override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+     companion object {
+         @MsgParser
+         fun parse (jsonObject: JsonObject) : CheckExecution {
+             return CheckExecution(
+                     execId = jsonObject.string("ExecID")!!,
+                     sender = jsonObject.string("Sender")!!,
+                     payToComplete = jsonObject.boolean("PayToComplete")!!
+             )
+         }
+     }
+ }
+
  @MsgType("pylons/CreateAccount")
  data class CreateAccount(
          @property:[Json(name = "Requester")]
@@ -90,29 +113,6 @@ sealed class Msg {
          }
      }
  }
-
-@MsgType("pylons/CheckExecution")
-data class CheckExecution (
-        @property:[Json(name = "ExecID")]
-        val execId : String,
-        @property:[Json(name = "Sender")]
-        val sender : String,
-        @property:[Json(name = "PayToComplete")]
-        val payToComplete : Boolean
-) : Msg() {
-    override fun serializeForIpc(): String = klaxon.toJsonString(this)
-
-    companion object {
-        @MsgParser
-        fun parse (jsonObject: JsonObject) : CheckExecution {
-            return CheckExecution(
-                    execId = jsonObject.string("ExecID")!!,
-                    sender = jsonObject.string("Sender")!!,
-                    payToComplete = jsonObject.boolean("PayToComplete")!!
-            )
-        }
-    }
-}
 
 @MsgType("pylons/CreateCookbook")
 data class CreateCookbook (

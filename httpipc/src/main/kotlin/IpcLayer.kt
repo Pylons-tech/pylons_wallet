@@ -23,7 +23,7 @@ class IpcLayer : IPCLayer() {
         private val ascii = Charset.forName("US-ASCII")
 
         private fun readNext(): ByteArray? {
-            Logger.implementation.log(LogEvent.AWAIT_MESSAGE, "", LogTag.info)
+            Logger.implementation.log(LogEvent.AWAIT_MESSAGE, "{}", LogTag.info)
             val s = client!!.getInputStream()
             while (s.read() == -1) Thread.sleep(100)
             val buffer = ByteArray(1024 * 512) // 512kb is overkill
@@ -55,7 +55,6 @@ class IpcLayer : IPCLayer() {
         }
 
         private fun checkForHandshake(): String {
-            client = socket.accept()
             val pid = ProcessHandle.current().pid()
             val byteBuffer = ByteBuffer.allocate(Long.SIZE_BYTES).putLong(pid)
             writeBytes(ascii.encode(HANDSHAKE_MAGIC).array() + byteBuffer.array())
@@ -101,8 +100,10 @@ class IpcLayer : IPCLayer() {
     }
 
     override fun establishConnection() {
-        client = socket.accept()
+        println("establishing connection")
+        while (client == null) client = socket.accept()
         doHandshake()
+        println("connection established")
     }
 
     override fun getNextJson(callback: (String) -> Unit) {

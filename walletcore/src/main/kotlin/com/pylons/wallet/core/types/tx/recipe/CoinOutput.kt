@@ -7,18 +7,18 @@ import com.pylons.wallet.core.internal.fuzzyLong
 
 data class CoinOutput(
         @property:[Json(name = "ID")]
-        val id: String,
+        val id: String?,
         @property:[Json(name = "Coin")]
-        val coin : String,
-        @property:[Json(name = "Count") QuotedJsonNumeral]
-        val count : Long
+        val coin : String?,
+        @property:[Json(name = "Count")]
+        val count : String?
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : CoinOutput =
                         CoinOutput (
-                                id = jsonObject.string("ID")!!,
-                                coin = jsonObject.string("Coin")!!,
-                                count = jsonObject.fuzzyLong("Count")
+                                id = jsonObject.string("ID"),
+                                coin = jsonObject.string("Coin"),
+                                count = jsonObject.string("Count")
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<CoinOutput> {
