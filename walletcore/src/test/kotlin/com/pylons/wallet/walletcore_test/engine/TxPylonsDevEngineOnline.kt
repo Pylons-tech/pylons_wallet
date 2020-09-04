@@ -227,7 +227,7 @@ class TxPylonsDevEngineOnline {
     @Order(12)
     @Test
     fun executesRecipe () {
-        basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), null) }
+        basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), listOf()) }
     }
 
     @Order(13)
