@@ -155,10 +155,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetProfile>(json)
         }
 
-        override fun resolve() = when (address) {
-            null -> MyProfileResponse(listOf(Core.getProfile(address) as MyProfile))
-            else -> ProfileResponse(listOf(Core.getProfile(address)!!))
-        }
+        override fun resolve() = ProfileResponse(listOf(Core.getProfile(address)!!))
     }
 
     class GetPylons(
@@ -336,7 +333,6 @@ sealed class Message {
     class CookbookResponse (val cookbooks: List<Cookbook>) : Response()
     class ExecutionResponse (val executions: List<Execution>) : Response()
     class RecipeResponse (val recipes : List<Recipe>) : Response()
-    class MyProfileResponse (val profiles : List<MyProfile>) : Response()
     class ProfileResponse (val profiles : List<Profile>) : Response()
     class TradeResponse (val trades : List<Trade>) : Response()
     class TestResponse(val output : String) : Response()

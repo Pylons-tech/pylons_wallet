@@ -1,6 +1,5 @@
 package com.pylons.wallet.core.types
 
-import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Core.engine
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.engine.TxPylonsEngine
@@ -27,9 +26,9 @@ class MyProfile (var credentials: Credentials,
         )
 
         fun fromUserData () : MyProfile? {
-            val data = UserData.dataSets.getValue(Core.engine.prefix)
-            (Core.engine as TxPylonsEngine).cryptoHandler.importKeysFromUserData()
-            val credentials = Core.engine.generateCredentialsFromKeys()
+            val data = UserData.dataSets.getValue(engine.prefix)
+            (engine as TxPylonsEngine).cryptoHandler.importKeysFromUserData()
+            val credentials = engine.generateCredentialsFromKeys()
             return when (val name = data.getOrDefault("name", "")) {
                 "" -> MyProfile(credentials = credentials, coins = listOf(), items = listOf(), strings = mutableMapOf())
                 else -> MyProfile(credentials = credentials, strings = mutableMapOf(ReservedKeys.profileName to name),
