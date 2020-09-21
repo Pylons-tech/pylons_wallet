@@ -28,17 +28,6 @@ open class Logger {
          * Emits the log entry serialized as a JSON string.
          */
         fun serialize () = klaxon.toJsonString(this)
-
-        /*
-            Easier copy/paste to a json parser
-         */
-        override fun toString(): String {
-            return if (msg[0].toString() == "{" && msg[msg.length-1].toString() == "}" || msg[0].toString() == "[" && msg[msg.length-1].toString() == "]") {
-                """{"evt": "$evt", "msg": ${msg.replace("\n", "")}, "tag": "$tag", "timestamp": $timestamp}"""
-            } else {
-                """{"evt": "$evt", "msg": "$msg", "tag": "$tag", "timestamp": $timestamp}"""
-            }
-        }
     }
 
     companion object {

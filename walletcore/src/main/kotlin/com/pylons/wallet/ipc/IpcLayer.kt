@@ -1,10 +1,15 @@
 package com.pylons.wallet.ipc
 
 import io.github.classgraph.*
+import kotlin.random.Random
 import kotlin.reflect.jvm.jvmName
 import kotlin.reflect.typeOf
 
 abstract class IPCLayer {
+    var clientId : Int = 0
+    var walletId : Int = Random.nextInt()
+    var messageId : Int = 0
+
     class NoClientException : Exception() { }
     class ConnectionBrokenException : Exception() { }
 
@@ -42,7 +47,7 @@ abstract class IPCLayer {
     }
 
     companion object {
-        private val implementation : IPCLayer = findImplementation()
+        val implementation : IPCLayer = findImplementation()
         private val onGetNextList : List<MethodInfo> = findAllOnGetNextMethods()
 
         private fun updateConnectionState() {

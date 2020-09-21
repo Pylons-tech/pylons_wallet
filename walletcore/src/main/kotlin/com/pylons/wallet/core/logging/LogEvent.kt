@@ -25,4 +25,8 @@ object LogEvent {
     const val REQUIRE_UI_ELEVATION = "require_ui_elevation"
     const val BASE_JSON_WELD_FLOW = "base_json_weld_flow"
     const val SIGNABLE = "signable"
+    const val AWAIT_TCP = "await_tcp"
+    const val ACCEPTED_CLIENT = "accepted_client"
+    const val GOT_BYTES = "got_bytes"
+    const val SENT_BYTES = "sent_bytes"
 }

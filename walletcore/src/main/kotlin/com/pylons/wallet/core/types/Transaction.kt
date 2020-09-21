@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.types
 
+import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
@@ -14,8 +15,11 @@ import java.util.*
 data class Transaction(
         val txData: TxData = TxData("", "", listOf()),
         val stdTx: StdTx? = null,
+        @Json(ignored = true)
         val _id: String? = null,
+        @Json(ignored = true)
         val resolver: ((Transaction) -> Unit)? = null,
+        @Json(ignored = true)
         var state: State = State.TX_NOT_YET_SENT,
         var code: ResponseCode = ResponseCode.OK,
         var raw_log: String = ""

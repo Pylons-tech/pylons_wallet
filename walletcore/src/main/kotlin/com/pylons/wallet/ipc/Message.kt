@@ -25,7 +25,7 @@ sealed class Message {
         }
 
         override fun resolve() =
-                TxResponse(Core.applyRecipe(recipe!!, cookbook!!, itemInputs!!))
+                TxResponse(Core.applyRecipe(recipe!!, cookbook!!, itemInputs!!)).pack()
     }
 
     class CancelTrade (
@@ -35,7 +35,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<CancelTrade>(json)
         }
 
-        override fun resolve() = TxResponse(Core.cancelTrade(tradeId!!))
+        override fun resolve() = TxResponse(Core.cancelTrade(tradeId!!)).pack()
     }
 
     class CheckExecution(
@@ -46,7 +46,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<CheckExecution>(json)
         }
 
-        override fun resolve() = TxResponse(Core.checkExecution(id!!, payForCompletion!!))
+        override fun resolve() = TxResponse(Core.checkExecution(id!!, payForCompletion!!)).pack()
     }
 
     class CreateCookbooks(
@@ -64,7 +64,7 @@ sealed class Message {
         }
 
         override fun resolve() = TxResponse(Core.batchCreateCookbook(ids!!, names!!, developers!!,
-                descriptions!!, versions!!, supportEmails!!, levels!!, costsPerBlock!!))
+                descriptions!!, versions!!, supportEmails!!, levels!!, costsPerBlock!!)).pack()
     }
 
     class CreateRecipes(
@@ -83,7 +83,7 @@ sealed class Message {
 
         override fun resolve() = TxResponse(Core.batchCreateRecipe(names!!, cookbooks!!,
                 descriptions!!, blockIntervals!!, coinInputs!!, itemInputs!!, outputTables!!,
-                outputs!!))
+                outputs!!)).pack()
     }
 
     class CreateTrade (
@@ -98,7 +98,7 @@ sealed class Message {
         }
 
         override fun resolve() = TxResponse(Core.createTrade(coinInputs!!, itemInputs!!,
-                coinOutputs!!, itemOutputs!!, extraInfo!!))
+                coinOutputs!!, itemOutputs!!, extraInfo!!)).pack()
     }
 
     class DisableRecipes (
@@ -108,7 +108,7 @@ sealed class Message {
             fun deserialize(json: String) = klaxon.parse<DisableRecipes>(json)
         }
 
-        override fun resolve() = TxResponse(Core.batchDisableRecipe(recipes!!))
+        override fun resolve() = TxResponse(Core.batchDisableRecipe(recipes!!)).pack()
     }
 
     class EnableRecipes (
@@ -118,7 +118,7 @@ sealed class Message {
             fun deserialize(json: String) = klaxon.parse<EnableRecipes>(json)
         }
 
-        override fun resolve() = TxResponse(Core.batchEnableRecipe(recipes!!))
+        override fun resolve() = TxResponse(Core.batchEnableRecipe(recipes!!)).pack()
     }
 
     class FulfillTrade(
@@ -129,7 +129,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<FulfillTrade>(json)
         }
 
-        override fun resolve() = TxResponse(Core.fulfillTrade(tradeId!!, itemIds!!))
+        override fun resolve() = TxResponse(Core.fulfillTrade(tradeId!!, itemIds!!)).pack()
     }
 
     class GetCookbooks : Message() {
@@ -137,7 +137,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetCookbooks>(json)
         }
 
-        override fun resolve() = CookbookResponse(Core.getCookbooks())
+        override fun resolve() = CookbookResponse(Core.getCookbooks()).pack()
     }
 
     class GetPendingExecutions : Message() {
@@ -145,7 +145,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetPendingExecutions>(json)
         }
 
-        override fun resolve() = ExecutionResponse(Core.getPendingExecutions())
+        override fun resolve() = ExecutionResponse(Core.getPendingExecutions()).pack()
     }
 
     class GetProfile(
@@ -155,7 +155,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetProfile>(json)
         }
 
-        override fun resolve() = ProfileResponse(listOf(Core.getProfile(address)!!))
+        override fun resolve() = ProfileResponse(listOf(Core.getProfile(address)!!)).pack()
     }
 
     class GetPylons(
@@ -165,7 +165,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetPylons>(json)
         }
 
-        override fun resolve() = TxResponse(Core.getPylons(count!!))
+        override fun resolve() = TxResponse(Core.getPylons(count!!)).pack()
     }
 
     class GetRecipes : Message() {
@@ -173,7 +173,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetRecipes>(json)
         }
 
-        override fun resolve() = RecipeResponse(Core.getRecipes())
+        override fun resolve() = RecipeResponse(Core.getRecipes()).pack()
     }
 
     class GoogleIapGetPylons(
@@ -187,7 +187,7 @@ sealed class Message {
         }
 
         override fun resolve() = TxResponse(
-                Core.googleIapGetPylons(productId!!, purchaseToken!!, receiptData!!, signature!!))
+                Core.googleIapGetPylons(productId!!, purchaseToken!!, receiptData!!, signature!!)).pack()
     }
 
     class GetTransaction(
@@ -197,7 +197,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetTransaction>(json)
         }
 
-        override fun resolve() = TxResponse(Core.getTransaction(txHash!!))
+        override fun resolve() = TxResponse(Core.getTransaction(txHash!!)).pack()
     }
 
     class RegisterProfile(
@@ -207,7 +207,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<RegisterProfile>(json)
         }
 
-        override fun resolve() = TxResponse(Core.newProfile(name!!))
+        override fun resolve() = TxResponse(Core.newProfile(name!!)).pack()
     }
 
     class SendCoins(
@@ -218,7 +218,7 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<SendCoins>(json)
         }
 
-        override fun resolve() = TxResponse(Core.sendCoins(coins!!, receiver!!))
+        override fun resolve() = TxResponse(Core.sendCoins(coins!!, receiver!!)).pack()
     }
 
     class SetItemString(
@@ -230,7 +230,7 @@ sealed class Message {
             fun deserialize(json: String) = klaxon.parse<SetItemString>(json)
         }
 
-        override fun resolve() = TxResponse(Core.setItemString(itemId!!, field!!, value!!))
+        override fun resolve() = TxResponse(Core.setItemString(itemId!!, field!!, value!!)).pack()
     }
 
     class UpdateCookbooks(
@@ -246,7 +246,7 @@ sealed class Message {
         }
 
         override fun resolve() = TxResponse(Core.batchUpdateCookbook(names!!, developers!!, descriptions!!,
-                    versions!!, supportEmails!!, ids!!))
+                    versions!!, supportEmails!!, ids!!)).pack()
 
     }
 
@@ -267,7 +267,7 @@ sealed class Message {
 
         override fun resolve() = TxResponse(Core.batchUpdateRecipe(ids!!, names!!, cookbooks!!,
                 descriptions!!, blockIntervals!!, coinInputs!!, itemInputs!!, outputTables!!,
-                outputs!!))
+                outputs!!)).pack()
     }
 
     class WalletServiceTest(
@@ -277,7 +277,7 @@ sealed class Message {
             fun deserialize(json: String) = klaxon.parse<WalletServiceTest>(json)
         }
 
-        override fun resolve() = TestResponse(Core.walletServiceTest(input!!))
+        override fun resolve() = TestResponse(Core.walletServiceTest(input!!)).pack()
     }
 
     class WalletUiTest : Message() {
@@ -290,12 +290,17 @@ sealed class Message {
             return UILayer.addUiHook(UiHook(this))
         }
 
-        override fun resolve() = TestResponse(Core.walletUiTest())
+        override fun resolve() = TestResponse(Core.walletUiTest()).pack()
     }
 
     companion object {
         fun match(json: String) : Message? {
             val jsonObject = Parser.default().parse(StringBuilder(json)) as JsonObject
+            IPCLayer.implementation.messageId = jsonObject.int("messageId")!!
+            val cid = jsonObject.int("clientId")
+            val mid = jsonObject.int("walletId")
+            if (cid != IPCLayer.implementation.clientId || mid != IPCLayer.implementation.walletId)
+                throw Exception("Client/wallet ID mismatch - got ${jsonObject.int("clientId").toString()} ${jsonObject.int("walletId").toString()}, expected ${IPCLayer.implementation.clientId} ${IPCLayer.implementation.walletId}")
             val type = jsonObject.string("type")!!
             val msg =
                     Base64.getDecoder().decode(
@@ -324,20 +329,32 @@ sealed class Message {
         }
     }
 
-    abstract class Response {
+    data class Response (
+            val messageId : Int,
+            val clientId : Int,
+            val walletId : Int,
+            val statusBlock : StatusBlock,
+            val responseData: ResponseData
+    ) {
         fun submit() {
             IPCLayer.handleResponse(this)
         }
     }
 
-    class CookbookResponse (val cookbooks: List<Cookbook>) : Response()
-    class ExecutionResponse (val executions: List<Execution>) : Response()
-    class RecipeResponse (val recipes : List<Recipe>) : Response()
-    class ProfileResponse (val profiles : List<Profile>) : Response()
-    class TradeResponse (val trades : List<Trade>) : Response()
-    class TestResponse(val output : String) : Response()
+    abstract class ResponseData {
+        fun pack () : Response = Response(IPCLayer.implementation.messageId,
+                IPCLayer.implementation.clientId, IPCLayer.implementation.walletId,
+                Core.statusBlock, this)
+    }
 
-    class TxResponse : Response {
+    class CookbookResponse (val cookbooks: List<Cookbook>) : ResponseData()
+    class ExecutionResponse (val executions: List<Execution>) : ResponseData()
+    class RecipeResponse (val recipes : List<Recipe>) : ResponseData()
+    class ProfileResponse (val profiles : List<Profile>) : ResponseData()
+    class TradeResponse (val trades : List<Trade>) : ResponseData()
+    class TestResponse(val output : String) : ResponseData()
+
+    class TxResponse : ResponseData {
         val transactions : List<Transaction>
         constructor(txs : List<Transaction>) {
             transactions = txs
