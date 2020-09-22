@@ -85,14 +85,15 @@ abstract class IPCLayer {
                 implementation.getNextJson {
                     println("got: \n$it")
                     val msg = Message.match(it)
+                    println("matched!")
                     when (msg) {
                         null -> implementation.reject(it)
                         else -> {
                             onGetNextList.forEach { method ->
                                 method.loadClassAndGetMethod().invoke(method.classInfo, msg)
                             }
-                            msg.ui()
                             implementation.onMessage(msg)
+                            println("trying to do callback")
                             callback(msg)
                         }
                     }

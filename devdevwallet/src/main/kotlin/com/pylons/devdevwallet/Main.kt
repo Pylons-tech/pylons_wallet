@@ -27,11 +27,7 @@ object Main {
                 System.`in`.read()
             }
             while (true) {
-                println("getting next message")
-                IPCLayer.getNextMessage {
-                    println("Going to ui layer")
-                    UILayer.getUiHook(it)?.release()
-                }
+                IPCLayer.getNextMessage { }
             }
         } catch (e : Exception) {
             Logger.implementation.log(LogEvent.REJECT_MESSAGE, e.stackTrace.contentToString(), LogTag.walletError)

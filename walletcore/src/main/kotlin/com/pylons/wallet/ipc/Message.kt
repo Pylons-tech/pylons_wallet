@@ -295,8 +295,10 @@ sealed class Message {
 
     companion object {
         fun match(json: String) : Message? {
+            println("Trying to match message")
             val jsonObject = Parser.default().parse(StringBuilder(json)) as JsonObject
             IPCLayer.implementation.messageId = jsonObject.int("messageId")!!
+            println("Set messageId to ${IPCLayer.implementation.messageId}")
             val cid = jsonObject.int("clientId")
             val mid = jsonObject.int("walletId")
             if (cid != IPCLayer.implementation.clientId || mid != IPCLayer.implementation.walletId)
@@ -324,7 +326,6 @@ sealed class Message {
 
         fun release() : UiHook {
             live = false
-            msg.resolve().submit()
             return this
         }
     }
