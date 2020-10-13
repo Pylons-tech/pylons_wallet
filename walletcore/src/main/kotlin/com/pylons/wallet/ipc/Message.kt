@@ -3,11 +3,13 @@ package com.pylons.wallet.ipc
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction.Companion.submitAll
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.recipe.Recipe
+import org.bouncycastle.util.encoders.Hex
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.reflect.full.companionObject
@@ -155,7 +157,12 @@ sealed class Message {
             fun deserialize(json : String) = klaxon.parse<GetProfile>(json)
         }
 
-        override fun resolve() = ProfileResponse(listOf(Core.getProfile(address)!!)).pack()
+        override fun resolve(): Response {
+            val p = Core.getProfile(address)
+            val ls = mutableListOf<Profile>()
+            if (p != null) ls.add(p)
+            return ProfileResponse(ls).pack()
+        }
     }
 
     class GetPylons(
@@ -201,13 +208,19 @@ sealed class Message {
     }
 
     class RegisterProfile(
-            var name : String? = null
+            var name : String? = null,
+            var makeKeys : Boolean? = null
     ) : Message() {
         companion object {
             fun deserialize(json : String) = klaxon.parse<RegisterProfile>(json)
         }
 
-        override fun resolve() = TxResponse(Core.newProfile(name!!)).pack()
+        override fun resolve(): Response {
+            return when (makeKeys!!) {
+                true -> TxResponse(Core.newProfile(name!!)).pack()
+                false -> TxResponse(Core.newProfile(name!!, (Core.engine.cryptoHandler as CryptoCosmos).keyPair)).pack()
+            }
+        }
     }
 
     class SendCoins(
@@ -293,6 +306,22 @@ sealed class Message {
         override fun resolve() = TestResponse(Core.walletUiTest()).pack()
     }
 
+    class ExportKeys : Message() {
+        companion object {
+            fun deserialize(json : String) = klaxon.parse<ExportKeys>(json)
+        }
+
+        override fun resolve(): Response {
+            val keys = Core.dumpKeys()
+            return KeyResponse(
+                    address = Core.userProfile!!.address,
+                    name = Core.userProfile!!.getName().orEmpty(),
+                    privateKey = keys[0],
+                    publicKey = keys[1]
+            ).pack()
+        }
+    }
+
     companion object {
         fun match(json: String) : Message? {
             println("Trying to match message")
@@ -350,6 +379,7 @@ sealed class Message {
 
     class CookbookResponse (val cookbooks: List<Cookbook>) : ResponseData()
     class ExecutionResponse (val executions: List<Execution>) : ResponseData()
+    class KeyResponse (val name : String, val address : String, val privateKey : String, val publicKey : String) : ResponseData()
     class RecipeResponse (val recipes : List<Recipe>) : ResponseData()
     class ProfileResponse (val profiles : List<Profile>) : ResponseData()
     class TradeResponse (val trades : List<Trade>) : ResponseData()

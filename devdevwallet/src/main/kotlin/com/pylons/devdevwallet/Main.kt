@@ -16,6 +16,11 @@ object Main {
                 0 -> "127.0.0.1"
                 else -> args[0]
             }
+            val forcedPrivKey = when (args.size > 1) {
+                true -> args[1]
+                false -> ""
+            }
+            Datastore.setPrivKey(forcedPrivKey)
             Datastore.setIp(preferredIP)
             Logger.implementation = JvmLogger()
             Datastore.load()

@@ -6,6 +6,7 @@ import kotlinx.coroutines.*
 import com.pylons.wallet.core.constants.*
 import com.pylons.wallet.core.internal.*
 import com.pylons.wallet.core.engine.*
+import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
@@ -85,7 +86,11 @@ object Core {
                 coins = listOf())
     }
 
-    fun dumpUserProfile () : String = userProfile!!.dump()
+    fun dumpKeys () : List<String> {
+        val cc = engine.cryptoHandler as CryptoCosmos
+        return listOf(Hex.toHexString(cc.keyPair!!.secretKey().bytesArray()),
+                Hex.toHexString(cc.keyPair!!.publicKey().bytesArray()))
+    }
 
     fun updateStatusBlock () {
         statusBlock = engine.getStatusBlock()

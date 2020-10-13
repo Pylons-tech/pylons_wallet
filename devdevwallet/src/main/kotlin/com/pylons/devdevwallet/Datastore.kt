@@ -1,5 +1,6 @@
 package com.pylons.devdevwallet
 
+import com.beust.klaxon.Klaxon
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.logging.LogEvent
 import org.apache.commons.lang3.SystemUtils
@@ -7,6 +8,7 @@ import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.Backend
 import com.pylons.wallet.core.types.Config
+import com.pylons.wallet.core.types.UserData
 import java.io.*
 import java.nio.file.*
 import java.nio.file.Path
@@ -16,6 +18,8 @@ object Datastore {
     private val persistentDir = getPersistentDirectory()
     private val runtimeDir = getRuntimeDirectory()
     private var config = Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))
+    private var forcedPrivKey = ""
+    private val klaxon = Klaxon()
 
     private fun getRuntimeDirectory () : String {
         val path = Path.of(SystemUtils.USER_DIR)
@@ -24,6 +28,10 @@ object Datastore {
             Logger.implementation.log(LogEvent.MISC, path.toString(), LogTag.info)
         }
         return path.toString()
+    }
+
+    fun setPrivKey (key : String) {
+        forcedPrivKey = key
     }
 
     fun setIp (ip : String) {
@@ -48,7 +56,12 @@ object Datastore {
         val saveFile = File(persistentDir, saveFilename)
         if (saveFile.exists()) {
             println("Found save file")
-            Core.start(config, saveFile.readText()) // userText, worldText, txText
+            if (forcedPrivKey.isNotEmpty()) {
+                var udm = klaxon.parse<UserData.Model>(saveFile.readText())
+                udm!!.dataSets!!["__CRYPTO_COSMOS__"]!!["key"] = forcedPrivKey
+                Core.start(config, klaxon.toJsonString(udm))
+            }
+            else Core.start(config, saveFile.readText())
         }
         else {
             println("No save file found")

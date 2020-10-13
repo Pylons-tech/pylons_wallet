@@ -198,6 +198,7 @@ open class TxPylonsEngine : Engine() {
     override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
 
     override fun getMyProfileState(): MyProfile? {
+        println("myProfile path")
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
         val lockedCoinDetails = getLockedCoinDetails()
