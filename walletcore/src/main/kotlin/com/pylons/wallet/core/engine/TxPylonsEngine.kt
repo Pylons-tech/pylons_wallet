@@ -147,7 +147,6 @@ open class TxPylonsEngine : Engine() {
 
     override fun dumpCredentials(credentials: MyProfile.Credentials) {
         val c = credentials as Credentials
-        UserData.dataSets[prefix]!!["address"] = c.address
         UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
     }

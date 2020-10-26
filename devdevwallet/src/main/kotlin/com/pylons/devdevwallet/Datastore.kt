@@ -53,20 +53,12 @@ object Datastore {
     }
 
     fun load () {
-        val saveFile = File(persistentDir, saveFilename)
-        if (saveFile.exists()) {
-            println("Found save file")
-            if (forcedPrivKey.isNotEmpty()) {
-                var udm = klaxon.parse<UserData.Model>(saveFile.readText())
-                udm!!.dataSets!!["__CRYPTO_COSMOS__"]!!["key"] = forcedPrivKey
-                Core.start(config, klaxon.toJsonString(udm))
-            }
-            else Core.start(config, saveFile.readText())
+        if (forcedPrivKey.isNotEmpty()) {
+            var udm = UserData.Model()
+            udm.dataSets = mapOf("__CRYPTO_COSMOS__" to mutableMapOf("key" to forcedPrivKey))
+            Core.start(config, klaxon.toJsonString(udm))
         }
-        else {
-            println("No save file found")
-            Core.start(config, "")
-        }
+        else Core.start(config, "")
     }
 
     private fun writeFile (dir : String, filename : String, contents : String) {
