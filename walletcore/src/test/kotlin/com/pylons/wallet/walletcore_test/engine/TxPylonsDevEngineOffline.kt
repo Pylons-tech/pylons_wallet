@@ -17,19 +17,21 @@ import java.security.Security
 
 @ExperimentalUnsignedTypes
 class TxPylonsDevEngineOffline {
+    val core = Core().use()
+
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         Security.addProvider(BouncyCastleProvider())
-        Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
-        val engine = Core.engine as TxPylonsDevEngine
+        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+        val engine = core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {
-            UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
+            core.userData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = MyProfile.default
+        core.userProfile = MyProfile.getDefault(core)
         return engine
     }
 
@@ -42,8 +44,8 @@ class TxPylonsDevEngineOffline {
     @Test
     fun dumpCredentials () {
         engineSetup()
-        Core.newProfile("fucko")
-        val str = Core.backupUserData()
+        core.newProfile("fucko")
+        val str = core.backupUserData()
         assertNotEquals("{}", str)
     }
 
@@ -53,7 +55,7 @@ class TxPylonsDevEngineOffline {
         engine.getMyProfileState()
         val pubkey = engine.cryptoCosmos.keyPair!!.publicKey()
         val addr = CryptoCosmos.getAddressFromPubkey(pubkey)
-        assertEquals(Core.userProfile!!.credentials.address, TxPylonsEngine.getAddressString(addr.toArray()))
+        assertEquals(core.userProfile!!.credentials.address, TxPylonsEngine.getAddressString(addr.toArray()))
     }
 
     @Test
@@ -116,7 +118,7 @@ class TxPylonsDevEngineOffline {
         }
         """.trimIndent().replace(" ", "")
         engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
-        val json = GetPylons(listOf(Coin("pylon", 500)), Core.userProfile!!.address).toSignedTx()
+        val json = GetPylons(listOf(Coin("pylon", 500)), core.userProfile!!.address).toSignedTx()
         assertEquals(fixture, json.trimIndent().replace(" ", ""))
     }
 }

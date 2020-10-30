@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.engine
 
+import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.engine.crypto.CryptoNull
 import com.pylons.wallet.core.types.*
@@ -14,10 +15,10 @@ import com.pylons.wallet.core.types.tx.trade.TradeItemInput
  * We don't want Core.Engine to be nullable, but it needs to be initialized to something
  * before Core.Start() is called, so it's initialized to this.
  */
-internal class NoEngine : Engine() {
+internal class NoEngine(core : Core) : Engine(core) {
     override val prefix: String = "__NOENGINE__"
     override val backendType: Backend = Backend.NONE
-    override var cryptoHandler: CryptoHandler = CryptoNull()
+    override var cryptoHandler: CryptoHandler = CryptoNull(core)
     override val usesMnemonic: Boolean = false
     override val isDevEngine: Boolean = false
 

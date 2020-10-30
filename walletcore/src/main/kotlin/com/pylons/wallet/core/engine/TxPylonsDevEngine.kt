@@ -1,10 +1,11 @@
 package com.pylons.wallet.core.engine
 
+import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.tx.msg.*
 import com.pylons.wallet.core.types.tx.recipe.*
 
-class TxPylonsDevEngine : TxPylonsEngine () {
+class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
     override val isDevEngine: Boolean = true
     override val backendType: Backend = Backend.LIVE_DEV
 

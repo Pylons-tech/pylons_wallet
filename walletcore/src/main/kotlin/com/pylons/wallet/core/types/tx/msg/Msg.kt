@@ -20,10 +20,15 @@ private annotation class MsgType (
 )
 
 @ExperimentalUnsignedTypes
-sealed class Msg {
+sealed class Msg() {
     abstract fun serializeForIpc() : String
 
     companion object {
+        private var core : Core? = null
+        fun useCore(core : Core) {
+            this.core = core
+        }
+
         fun fromJson (json : String) : Msg? = fromJson(Parser.default().parse(json) as JsonObject)
 
         fun fromJson (jsonObject: JsonObject) : Msg? {
@@ -66,9 +71,9 @@ sealed class Msg {
     }
 
     fun toSignedTx () : String {
-        val c = Core.userProfile!!.credentials as TxPylonsEngine.Credentials
-        val crypto = (Core.engine as TxPylonsEngine).cryptoCosmos
-        return baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey(), 400000)
+        val c = core!!.userProfile!!.credentials as TxPylonsEngine.Credentials
+        val crypto = (core!!.engine as TxPylonsEngine).cryptoCosmos
+        return core!!.baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey(), 400000)
     }
 
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"

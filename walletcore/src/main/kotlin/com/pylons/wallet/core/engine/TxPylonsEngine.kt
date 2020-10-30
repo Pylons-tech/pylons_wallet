@@ -10,6 +10,7 @@ import com.pylons.wallet.core.types.Transaction
 import com.pylons.wallet.core.types.tx.recipe.*
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
+import com.pylons.wallet.core.VERSION_STRING
 import com.pylons.wallet.core.internal.fuzzyLong
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
@@ -25,7 +26,7 @@ import java.security.Security
 import java.util.*
 
 @ExperimentalUnsignedTypes
-open class TxPylonsEngine : Engine() {
+open class TxPylonsEngine(core : Core) : Engine(core) {
     init {
         Security.removeProvider("BC")
         Security.addProvider(BouncyCastleProvider())
@@ -39,28 +40,28 @@ open class TxPylonsEngine : Engine() {
     override val backendType: Backend = Backend.LIVE
     override val usesMnemonic: Boolean = true
     override val isDevEngine: Boolean = false
-    override var cryptoHandler: CryptoHandler = CryptoCosmos()
+    override var cryptoHandler: CryptoHandler = CryptoCosmos(core)
     val cryptoCosmos get() = cryptoHandler as CryptoCosmos
+    internal val nodeUrl = getUrl()
 
     companion object {
         private val local = """http://127.0.0.1:1317"""
-        internal val nodeUrl = getUrl()
-
-        private fun getUrl () : String  {
-            return when ((Core.config?.nodes.isNullOrEmpty())) {
-                true -> local
-                false -> Core.config?.nodes!!.first()
-            }
-        }
 
         fun getAddressString (addr : ByteArray) : String {
             return Bech32Cosmos.convertAndEncode("cosmos", AminoCompat.accAddress(addr))
         }
+    }
 
-        fun getAddressFromNode (key : PylonsSECP256K1.PublicKey) : String {
-            val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
-                    Hex.toHexString(CryptoCosmos.getCompressedPubkey(key).toArray()))
-            return klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
+    fun getAddressFromNode (key : PylonsSECP256K1.PublicKey) : String {
+        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
+                Hex.toHexString(CryptoCosmos.getCompressedPubkey(key).toArray()))
+        return klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
+    }
+
+    private fun getUrl () : String  {
+        return when ((core.config?.nodes.isNullOrEmpty())) {
+            true -> local
+            false -> core.config?.nodes!!.first()
         }
     }
 
@@ -75,7 +76,7 @@ open class TxPylonsEngine : Engine() {
 
     protected fun handleTx (func : (Credentials) -> String) : Transaction {
         return Transaction(resolver =  {
-            val response = postTxJson(func(Core.userProfile!!.credentials as Credentials))
+            val response = postTxJson(func(core.userProfile!!.credentials as Credentials))
             val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
 
             val code = jsonObject.int("code")
@@ -147,7 +148,7 @@ open class TxPylonsEngine : Engine() {
 
     override fun dumpCredentials(credentials: MyProfile.Credentials) {
         val c = credentials as Credentials
-        UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
+        core.userData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
     }
 
@@ -194,12 +195,13 @@ open class TxPylonsEngine : Engine() {
         return Credentials(addrString)
     }
 
-    override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos()
+    override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos(core)
 
     override fun getMyProfileState(): MyProfile? {
         println("myProfile path")
-        val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${Core.userProfile!!.credentials.address}")
-        val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${Core.userProfile!!.credentials.address}")
+        println(core.userProfile)
+        val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${core.userProfile!!.credentials.address}")
+        val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/${core.userProfile!!.credentials.address}")
         val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
@@ -210,13 +212,13 @@ open class TxPylonsEngine : Engine() {
                 val coins = Coin.listFromJson(value.array("coins"))
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject).obj("result")!!
                 val items = Item.listFromJson(valueItems.array("Items"))
-                val credentials = (Core.userProfile!!.credentials as Credentials)
+                val credentials = (core.userProfile!!.credentials as Credentials)
                 credentials.accountNumber = accountNumber
                 credentials.sequence = sequence
-                Core.userProfile?.coins = coins
-                Core.userProfile?.items = items
-                Core.userProfile?.lockedCoinDetails = lockedCoinDetails
-                return Core.userProfile
+                core.userProfile?.coins = coins
+                core.userProfile?.items = items
+                core.userProfile?.lockedCoinDetails = lockedCoinDetails
+                return core.userProfile
             }
         }
     }
@@ -245,7 +247,7 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun getPendingExecutions(): List<Execution> {
-        val json = HttpWire.get("$nodeUrl/pylons/list_executions/${Core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("$nodeUrl/pylons/list_executions/${core.userProfile!!.credentials.address}")
         return Execution.getListFromJson(json)
     }
 
@@ -262,7 +264,7 @@ open class TxPylonsEngine : Engine() {
         val jsonObject = (Parser.default().parse(StringBuilder(response)) as JsonObject)
         val height = jsonObject.obj("block")!!.obj("header")!!.fuzzyLong("height")!!
         // TODO: calculate block time (this will be Gross)
-        return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = Core.VERSION_STRING)
+        return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = VERSION_STRING)
     }
 
     override fun getTransaction(id: String): Transaction {
@@ -271,7 +273,7 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun listRecipes(): List<Recipe> {
-        val json = HttpWire.get("$nodeUrl/pylons/list_recipe/${Core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("$nodeUrl/pylons/list_recipe/${core.userProfile!!.credentials.address}")
         return Recipe.listFromJson(json)
     }
 
@@ -281,14 +283,14 @@ open class TxPylonsEngine : Engine() {
     }
 
     override fun listCookbooks(): List<Cookbook> {
-        val json = HttpWire.get("$nodeUrl/pylons/list_cookbooks/${Core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("$nodeUrl/pylons/list_cookbooks/${core.userProfile!!.credentials.address}")
         return Cookbook.getListFromJson(json)
     }
 
     override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction {
         if (kp == null) cryptoHandler.generateNewKeys()
         else cryptoCosmos.keyPair = kp
-        Core.userProfile = MyProfile(credentials = getNewCredentials(),
+        core.userProfile = MyProfile(core = core, credentials = getNewCredentials(),
                 coins = listOf(), strings = mutableMapOf(), items = listOf())
         return createChainAccount()
     }
@@ -345,12 +347,12 @@ open class TxPylonsEngine : Engine() {
             }
 
     override fun getLockedCoins(): LockedCoin {
-        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coins/${Core.userProfile!!.credentials.address}")
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coins/${core.userProfile!!.credentials.address}")
         return LockedCoin.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
     }
 
     override fun getLockedCoinDetails(): LockedCoinDetails {
-        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coin_details/${Core.userProfile!!.credentials.address}")
+        val response = HttpWire.get("$nodeUrl/pylons/get_locked_coin_details/${core.userProfile!!.credentials.address}")
         return LockedCoinDetails.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
     }
 

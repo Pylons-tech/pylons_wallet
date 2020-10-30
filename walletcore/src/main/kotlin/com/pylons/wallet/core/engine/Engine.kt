@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.engine
 
+import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Execution
@@ -15,7 +16,7 @@ import com.pylons.wallet.core.types.tx.trade.TradeItemInput
  * will do the dirty work of binding that functionality to low-level blockchain
  * systems, in effect acting as "drivers."
  */
-abstract class Engine {
+abstract class Engine(val core : Core) {
     /**
      * Identifier string, unique per Engine implementation.
      * Used to identify the engine type associated with a given dataset

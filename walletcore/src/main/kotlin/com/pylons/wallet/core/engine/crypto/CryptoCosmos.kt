@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.engine.crypto
 
+import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
@@ -18,12 +19,12 @@ import org.kethereum.bip39.model.MnemonicWords
 
 import org.kethereum.bip39.wordlists.WORDLIST_ENGLISH
 
-class CryptoCosmos : CryptoHandler() {
+class CryptoCosmos(core : Core) : CryptoHandler(core) {
     override fun getPrefix() : String = "__CRYPTO_COSMOS__"
     var keyPair : PylonsSECP256K1.KeyPair? = null
 
     override fun importKeysFromUserData() {
-        val bytes = Hex.decode(UserData.dataSets[getPrefix()]!!["key"]!!.removePrefix("0x"))
+        val bytes = Hex.decode(core.userData.dataSets[getPrefix()]!!["key"]!!.removePrefix("0x"))
         keyPair =  PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(bytes)))
         Logger.implementation.log(LogEvent.IMPORTED_KEYS, getLogMsgForKeys(keyPair), LogTag.info)
     }

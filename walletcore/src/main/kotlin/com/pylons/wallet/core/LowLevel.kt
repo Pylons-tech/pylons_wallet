@@ -8,22 +8,22 @@ import org.apache.commons.codec.binary.Hex.*
 import org.apache.tuweni.bytes.Bytes32
 
 @ExperimentalUnsignedTypes
-object LowLevel {
+class LowLevel (private val core : Core) {
     private val local = """http://127.0.0.1:1317"""
     private val nodeUrl = getUrl()
 
     private fun getUrl () : String  {
-        return when ((Core.config?.nodes.isNullOrEmpty())) {
+        return when ((core.config?.nodes.isNullOrEmpty())) {
             true -> local
-            false -> Core.config?.nodes!!.first()
+            false -> core.config?.nodes!!.first()
         }
     }
 
     private fun setup (privkeyHex : String, accountNumber : Long, sequence : Long) {
-        Core.forceKeys(privkeyHex, AccAddress.getAddressFromNode(nodeUrl,
+        core.forceKeys(privkeyHex, AccAddress.getAddressFromNode(nodeUrl,
                 PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(decodeHex(privkeyHex))))))
-        (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).accountNumber = accountNumber
-        (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence = sequence
+        (core.userProfile!!.credentials as TxPylonsEngine.Credentials).accountNumber = accountNumber
+        (core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence = sequence
     }
 
     fun getSignedTx (privkeyHex : String, accountNumber : Long, sequence : Long, msgJson : String) : String {

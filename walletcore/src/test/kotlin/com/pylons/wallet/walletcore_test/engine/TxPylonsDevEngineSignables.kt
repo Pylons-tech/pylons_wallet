@@ -12,16 +12,18 @@ import org.apache.commons.lang3.StringUtils.*
 import java.io.StringReader
 
 class TxPylonsDevEngineSignables {
+    val core = Core().use()
+
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
-        Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
-        val engine = Core.engine as TxPylonsDevEngine
+        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+        val engine = core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {
-            UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
+            core.userData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = MyProfile.default
+        core.userProfile = MyProfile.getDefault(core)
         return engine
     }
 

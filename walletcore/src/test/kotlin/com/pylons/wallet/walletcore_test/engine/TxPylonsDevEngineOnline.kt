@@ -22,6 +22,8 @@ import java.util.*
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class TxPylonsDevEngineOnline {
+    val core = Core().use()
+
     companion object {
         var exportedKey : String? = null
     }
@@ -70,16 +72,16 @@ class TxPylonsDevEngineOnline {
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         HttpWire.verbose = true
-        Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
-        val engine = Core.engine as TxPylonsDevEngine
+        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+        val engine = core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {
             println("Key is not null")
-            UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
+            core.userData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
             engine.cryptoHandler.importKeysFromUserData()
         }
         else engine.cryptoHandler.generateNewKeys()
-        Core.userProfile = MyProfile.default
+        core.userProfile = MyProfile.getDefault(core)
         return engine
     }
 
@@ -95,7 +97,7 @@ class TxPylonsDevEngineOnline {
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine, String) -> Unit)?) {
         val engine = engineSetup(exportedKey)
-        Core.updateStatusBlock()
+        core.updateStatusBlock()
         println("pubkey: ${CryptoCosmos.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
         println("getting profile state...")
         engine.getMyProfileState()
@@ -182,7 +184,7 @@ class TxPylonsDevEngineOnline {
         val name = "RTEST_${Instant.now().epochSecond}"
         basicTxTestFlow(
                 { emitCreateRecipe(it, name,
-                        getCookbookIfOneExists(it), Core.userProfile!!.credentials.address)},
+                        getCookbookIfOneExists(it), core.userProfile!!.credentials.address)},
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }
@@ -207,7 +209,7 @@ class TxPylonsDevEngineOnline {
         val name = "RTEST_${Instant.now().epochSecond}"
         basicTxTestFlow(
                 { emitUpdateRecipe(it, name, getCookbookIfOneExists(it),
-                        getRecipeIfOneExists(it), Core.userProfile!!.credentials.address)},
+                        getRecipeIfOneExists(it), core.userProfile!!.credentials.address)},
                 { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
         )
     }
@@ -240,7 +242,7 @@ class TxPylonsDevEngineOnline {
     @Test
     fun createsTrade () {
         basicTxTestFlow(
-                { emitCreateTrade(it, getItemIfOneExists(it), Core.userProfile!!.credentials.address)},
+                { emitCreateTrade(it, getItemIfOneExists(it), core.userProfile!!.credentials.address)},
                 { it, _ -> println("do trade chk later") }
         )
     }
@@ -269,7 +271,7 @@ class TxPylonsDevEngineOnline {
     @Test
     fun createsTradeForCancel () {
         basicTxTestFlow(
-                { emitCreateTrade(it, getItemIfOneExists(it), Core.userProfile!!.credentials.address)},
+                { emitCreateTrade(it, getItemIfOneExists(it), core.userProfile!!.credentials.address)},
                 { it, id -> println("do trade chk later") }
         )
     }

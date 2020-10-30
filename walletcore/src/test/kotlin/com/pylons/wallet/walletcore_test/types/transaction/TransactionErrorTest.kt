@@ -14,18 +14,19 @@ import org.junit.jupiter.api.fail
 import java.lang.Exception
 
 class TransactionErrorTest {
+    val core = Core().use()
 
     private val config = Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))
     private val key = InternalPrivKeyStore.BANK_TEST_KEY
 
     init {
-        if (!Core.isReady()) {
-            Core.start(config, "")
-            val engine = Core.engine as TxPylonsDevEngine
+        if (!core.isReady()) {
+            core.start(config, "")
+            val engine = core.engine as TxPylonsDevEngine
             engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
-            UserData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
+            core.userData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)
             engine.cryptoHandler.importKeysFromUserData()
-            Core.userProfile = MyProfile.default
+            core.userProfile = MyProfile.getDefault(core)
         }
     }
 
@@ -35,7 +36,7 @@ class TransactionErrorTest {
     @Test
     fun error() {
         val tx = try {
-            Core.engine.sendItems("abc", listOf()).submit()
+            core.engine.sendItems("abc", listOf()).submit()
         } catch (e : NullPointerException) {
             fail("tx is null")
         } catch (e : Exception) {
@@ -53,7 +54,7 @@ class TransactionErrorTest {
     */
     @Test
     fun codeRawLogError() {
-        val tx = Core.engine.createTrade(listOf(CoinInput("pylon", 5)), listOf(), listOf(), listOf(), "")
+        val tx = core.engine.createTrade(listOf(CoinInput("pylon", 5)), listOf(), listOf(), listOf(), "")
         tx.submit()
 
         Assertions.assertEquals(null, tx.id)
@@ -67,7 +68,7 @@ class TransactionErrorTest {
     */
     @Test
     fun signatureVerificationError() {
-        val tx = Core.engine.applyRecipe("", listOf())
+        val tx = core.engine.applyRecipe("", listOf())
         tx.submit()
 
         Assertions.assertEquals(null, tx.id)
@@ -83,8 +84,8 @@ class TransactionErrorTest {
     @Test
     fun acceptedTXError() {
         runBlocking {
-            Core.engine.getMyProfileState()
-            val tx = Core.engine.applyRecipe("", listOf())
+            core.engine.getMyProfileState()
+            val tx = core.engine.applyRecipe("", listOf())
             tx.submit()
 
             Assertions.assertNotEquals(null, tx.id)
@@ -94,7 +95,7 @@ class TransactionErrorTest {
 
             delay(5000)
 
-            val txResult = tx.id?.let { Core.getTransaction(it) } ?: fail("txResult is null")
+            val txResult = tx.id?.let { core.getTransaction(it) } ?: fail("txResult is null")
 
             Assertions.assertEquals(tx.id, txResult.id)
             Assertions.assertEquals(18, txResult.code)

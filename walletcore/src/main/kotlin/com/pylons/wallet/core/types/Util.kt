@@ -20,8 +20,8 @@ internal fun Double.s() : String {
 }
 
 @ExperimentalUnsignedTypes
-internal fun baseJsonWeldFlow (msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String {
-    val cryptoHandler = (Core.engine as TxPylonsEngine).cryptoHandler
+internal fun Core.baseJsonWeldFlow (msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String {
+    val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
     val signable = baseSignTemplate(signComponent, sequence, accountNumber, gas)
     Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
     val signBytes = signable.toByteArray(Charsets.UTF_8)

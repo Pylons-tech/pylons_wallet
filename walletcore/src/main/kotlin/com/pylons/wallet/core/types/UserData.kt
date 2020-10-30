@@ -2,12 +2,14 @@ package com.pylons.wallet.core.types
 
 import com.pylons.wallet.core.Core
 
+const val userDataFormatVersion : String = "1.0.0"
+
 /**
  * Object representing persistent data stored on local storage.
  * Used to configure com.pylons.wallet.core's initial state when starting.
  */
 @ExperimentalUnsignedTypes
-object UserData {
+class UserData(val core : Core) {
     class Model {
         var dataSets : Map<String, MutableMap<String, String>>? = mutableMapOf()
         val version : String? = null
@@ -22,7 +24,7 @@ object UserData {
      * UserData that it corresponds to, we can handle older JSON
      * documents as a special case down the road, if needed.
      */
-    const val version : String = "1.0.0"
+
 
     fun parseFromJson(json: String) {
 
@@ -36,7 +38,7 @@ object UserData {
     }
 
     fun initializeUserData () {
-        dataSets = Core.engine.getInitialDataSets()
+        dataSets = core.engine.getInitialDataSets()
     }
 
     fun exportAsJson () : String {

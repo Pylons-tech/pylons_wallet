@@ -1,6 +1,8 @@
 package com.pylons.wallet.core.engine.crypto
 
-internal class CryptoNull : CryptoHandler() {
+import com.pylons.wallet.core.Core
+
+internal class CryptoNull(core : Core) : CryptoHandler(core) {
     override fun generateNewKeys () {
         println("CryptoNull doesn't generate keys")
     }

@@ -11,22 +11,34 @@ import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.types.*
+import com.pylons.wallet.core.types.tx.msg.Msg
+import com.pylons.wallet.ipc.Message
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.util.encoders.Hex
 
+/**
+ * The number of times the core will retry valid-but-rejected transactions.
+ * (For instance: if the remote profile doesn't have the resources to apply a recipe.)
+ */
+internal const val rejectedTxRetryTimes = 3
+/**
+ * The amount of time (in milliseconds) to wait before retrying such operations.
+ */
+internal const val retryDelay : Long = 500 // milliseconds
+
+const val VERSION_STRING = "0.0.1a"
+
 @ExperimentalUnsignedTypes
-object Core {
-    /**
-     * The number of times the core will retry valid-but-rejected transactions.
-     * (For instance: if the remote profile doesn't have the resources to apply a recipe.)
-     */
-    internal const val rejectedTxRetryTimes = 3
-    /**
-     * The amount of time (in milliseconds) to wait before retrying such operations.
-     */
-    internal const val retryDelay : Long = 500 // milliseconds
-    var engine: Engine = NoEngine()
+class Core {
+    companion object {
+        var current : Core? = null
+            private set
+    }
+
+    val userData = UserData(this)
+    val lowLevel = LowLevel(this)
+    var engine: Engine = NoEngine(this)
         private set
     var userProfile: MyProfile? = null
     internal var profilesBuffer : Set<Profile> = setOf()
@@ -37,7 +49,6 @@ object Core {
     var suspendedAction : String? = null
         internal set
     internal val klaxon = Klaxon()
-    const val VERSION_STRING = "0.0.1a"
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
 
     var onWipeUserData : (() -> Unit)? = null
@@ -46,7 +57,7 @@ object Core {
         private set
 
     internal fun tearDown () {
-        engine = NoEngine()
+        engine = NoEngine(this)
         userProfile = null
         sane = false
         started = false
@@ -62,9 +73,9 @@ object Core {
             null -> null
             else -> {
                 engine.dumpCredentials(userProfile!!.credentials)
-                println(UserData.dataSets["__CRYPTO_COSMOS__"]!!["key"])
-                println(UserData.exportAsJson())
-                UserData.exportAsJson()
+                println(userData.dataSets["__CRYPTO_COSMOS__"]!!["key"])
+                println(userData.exportAsJson())
+                userData.exportAsJson()
             }
         }
     }
@@ -80,6 +91,7 @@ object Core {
                         PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(
                                 Hex.decode(keyString))))
         userProfile = MyProfile(
+                this,
                 credentials = TxPylonsEngine.Credentials(address),
                 strings = mapOf("name" to "Jack"),
                 items = listOf(),
@@ -96,25 +108,31 @@ object Core {
         statusBlock = engine.getStatusBlock()
     }
 
+    fun use() : Core {
+        Msg.useCore(this)
+        Message.useCore(this)
+        return this
+    }
+
     fun start (cfg: Config, userJson : String) {
         config = cfg
         engine = when (config!!.backend) {
-            Backend.LIVE -> TxPylonsEngine()
-            Backend.LIVE_DEV -> TxPylonsDevEngine()
-            Backend.NONE -> NoEngine()
+            Backend.LIVE -> TxPylonsEngine(this)
+            Backend.LIVE_DEV -> TxPylonsDevEngine(this)
+            Backend.NONE -> NoEngine(this)
         }
         runBlocking {
             try {
-                UserData.parseFromJson(userJson)
+                userData.parseFromJson(userJson)
                 userProfile = when (userJson) {
                     "" -> null
-                    else -> MyProfile.fromUserData()
+                    else -> MyProfile.fromUserData(this@Core)
                 }
             } catch (e : Exception) { // Eventually: we should recover properly from bad data
                 Logger.implementation.log(LogEvent.USER_DATA_PARSE_FAIL,
                         """{"message":"${e.message.orEmpty()}","stackTrace":"${e.stackTrace!!.contentDeepToString()}","badUserData":$userJson}""",
                         LogTag.malformedData)
-                UserData.dataSets = engine.getInitialDataSets()
+                userData.dataSets = engine.getInitialDataSets()
                 userProfile = null
             }
             sane = true

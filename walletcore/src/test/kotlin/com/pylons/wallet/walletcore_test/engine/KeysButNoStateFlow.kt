@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import java.security.Security
 
 class KeysButNoStateFlow {
+    val core = Core().use()
 
     @ExperimentalUnsignedTypes
     @Test
@@ -24,7 +25,7 @@ class KeysButNoStateFlow {
             "__CRYPTO_COSMOS__": {"key": "${Hex.toHexString(kp.secretKey().bytesArray())}"}, 
             "__TXPYLONSALPHA__": {"address": "$addr"}}, "version" : null}
         """.trimIndent()
-        Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), data)
-        assert(Core.engine.getMyProfileState() == null)
+        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), data)
+        assert(core.engine.getMyProfileState() == null)
     }
 }
