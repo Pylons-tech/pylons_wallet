@@ -8,11 +8,11 @@ import com.pylons.wallet.ipc.demoflow
 import org.junit.jupiter.api.Test
 
 class FirstDemoflowTest {
-    val core = Core().use()
+    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1"))).use()
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         HttpWire.verbose = true
-        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1")), "")
+        core.start("")
         val engine = core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {

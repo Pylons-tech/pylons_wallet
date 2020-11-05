@@ -22,7 +22,7 @@ import java.util.*
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class TxPylonsDevEngineOnline {
-    val core = Core().use()
+    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
 
     companion object {
         var exportedKey : String? = null
@@ -72,7 +72,7 @@ class TxPylonsDevEngineOnline {
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         HttpWire.verbose = true
-        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+        core.start("")
         val engine = core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {

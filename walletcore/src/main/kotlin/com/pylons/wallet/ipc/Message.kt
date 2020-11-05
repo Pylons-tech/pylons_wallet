@@ -3,12 +3,16 @@ package com.pylons.wallet.ipc
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.Multicore
+import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.types.*
 import com.pylons.wallet.core.types.Transaction.Companion.submitAll
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.recipe.Recipe
+import org.apache.tuweni.bytes.Bytes
+import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.util.encoders.Hex
 import java.lang.StringBuilder
 import java.util.*
@@ -320,6 +324,36 @@ sealed class Message {
                     privateKey = keys[0],
                     publicKey = keys[1]
             ).pack()
+        }
+    }
+
+    class AddKeypair(
+            val privkey : String? = null
+    ) : Message() {
+        companion object{
+            fun deserialize(json : String) = klaxon.parse<AddKeypair>(json)
+        }
+
+        override fun resolve(): Response {
+            if (!Multicore.enabled) throw Exception("Multicore is not enabled")
+            val kp = PylonsSECP256K1.KeyPair.fromSecretKey(
+                    PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(privkey!!)))
+            val credentials = TxPylonsEngine.Credentials(TxPylonsEngine.getAddressString(CryptoCosmos.getAddressFromKeyPair(kp).toArray()))
+            Multicore.addCore(kp)
+            return ProfileResponse(listOf(core!!.getProfile(credentials.address)!!)).pack()
+        }
+    }
+
+    class SwitchKeys : Message() {
+        val address : String? = null
+        companion object{
+            fun deserialize(json : String) = klaxon.parse<SwitchKeys>(json)
+        }
+
+        override fun resolve(): Response {
+            if (!Multicore.enabled) throw Exception("Multicore is not enabled")
+            val core = Multicore.switchCore(address!!)
+            return ProfileResponse(listOf(core.getProfile(address)!!)).pack()
         }
     }
 

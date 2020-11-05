@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 
 class TendermintAddressTest {
-    val core = Core().use()
+    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
     private val KNOWN_GOOD = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
 
     @Test
     fun generatesAddress () {
-        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+        core.start("")
         val engine = core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         core.userData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to InternalPrivKeyStore.BANK_TEST_KEY)

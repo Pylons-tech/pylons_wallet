@@ -17,13 +17,13 @@ import java.security.Security
 
 @ExperimentalUnsignedTypes
 class TxPylonsDevEngineOffline {
-    val core = Core().use()
+    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
 
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         Security.addProvider(BouncyCastleProvider())
-        core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+        core.start("")
         val engine = core.engine as TxPylonsDevEngine
         engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
         if (key != null) {

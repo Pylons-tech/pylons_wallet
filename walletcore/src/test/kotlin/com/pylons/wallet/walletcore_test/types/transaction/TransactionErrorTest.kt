@@ -14,14 +14,13 @@ import org.junit.jupiter.api.fail
 import java.lang.Exception
 
 class TransactionErrorTest {
-    val core = Core().use()
+    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
 
-    private val config = Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))
     private val key = InternalPrivKeyStore.BANK_TEST_KEY
 
     init {
         if (!core.isReady()) {
-            core.start(config, "")
+            core.start("")
             val engine = core.engine as TxPylonsDevEngine
             engine.cryptoHandler = engine.getNewCryptoHandler() as CryptoCosmos
             core.userData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to key)

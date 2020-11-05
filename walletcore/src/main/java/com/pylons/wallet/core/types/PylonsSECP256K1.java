@@ -19,6 +19,10 @@ import static java.nio.file.StandardOpenOption.READ;
 import static org.apache.tuweni.crypto.Hash.sha2_256;
 import static org.apache.tuweni.crypto.SECP256K1.Parameters.CURVE;
 import static org.apache.tuweni.io.file.Files.atomicReplace;
+
+import com.pylons.wallet.core.Core;
+import com.pylons.wallet.core.engine.Engine;
+import com.pylons.wallet.core.engine.crypto.CryptoCosmos;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.MutableBytes;
@@ -816,6 +820,15 @@ public final class PylonsSECP256K1 {
          */
         public void store(Path file) throws IOException {
             secretKey.store(file);
+        }
+
+        /**
+         * Use these keys for signing with the current core.
+         */
+        public void use() {
+            CryptoCosmos cc = new CryptoCosmos(Core.Companion.getCurrent());
+            cc.setKeyPair(this);
+            Core.Companion.getCurrent().getEngine().setCryptoHandler(cc);
         }
     }
 

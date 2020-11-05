@@ -30,7 +30,7 @@ internal const val retryDelay : Long = 500 // milliseconds
 const val VERSION_STRING = "0.0.1a"
 
 @ExperimentalUnsignedTypes
-class Core {
+class Core(val config : Config) {
     companion object {
         var current : Core? = null
             private set
@@ -52,9 +52,6 @@ class Core {
     var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
 
     var onWipeUserData : (() -> Unit)? = null
-
-    var config : Config? = null
-        private set
 
     internal fun tearDown () {
         engine = NoEngine(this)
@@ -109,14 +106,14 @@ class Core {
     }
 
     fun use() : Core {
+        current = this
         Msg.useCore(this)
         Message.useCore(this)
         return this
     }
 
-    fun start (cfg: Config, userJson : String) {
-        config = cfg
-        engine = when (config!!.backend) {
+    fun start (userJson : String) {
+        engine = when (config.backend) {
             Backend.LIVE -> TxPylonsEngine(this)
             Backend.LIVE_DEV -> TxPylonsDevEngine(this)
             Backend.NONE -> NoEngine(this)
@@ -124,7 +121,7 @@ class Core {
         runBlocking {
             try {
                 userData.parseFromJson(userJson)
-                userProfile = when (userJson) {
+                if (userProfile == null) userProfile = when (userJson) {
                     "" -> null
                     else -> MyProfile.fromUserData(this@Core)
                 }
@@ -133,7 +130,6 @@ class Core {
                         """{"message":"${e.message.orEmpty()}","stackTrace":"${e.stackTrace!!.contentDeepToString()}","badUserData":$userJson}""",
                         LogTag.malformedData)
                 userData.dataSets = engine.getInitialDataSets()
-                userProfile = null
             }
             sane = true
             started = true
