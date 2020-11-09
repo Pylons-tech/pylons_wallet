@@ -1,16 +1,26 @@
 package com.pylons.devdevwallet
 
-import com.beust.klaxon.JsonObject
-import com.pylons.wallet.core.types.klaxon
-import org.apache.commons.codec.binary.Base64
+import com.pylons.wallet.core.logging.LogEvent
+import com.pylons.wallet.core.logging.LogTag
+import org.apache.commons.lang3.SystemUtils
 import java.io.*
+import java.nio.file.Files
+import java.nio.file.Path
 import java.time.Instant
-import java.util.*
 
 class JvmLogger : com.pylons.wallet.core.logging.Logger() {
     private val logTimeout : Long = 60 // in seconds
     private val filename = "log.txt"
-    private val dir = Datastore.getPersistentDirectory()
+    private val dir = getPersistentDirectory()
+
+    private fun getPersistentDirectory () : String {
+        val path = Path.of(SystemUtils.USER_HOME + "\\pylons")
+        if (!Files.exists(path)) {
+            Files.createDirectories(path)
+            implementation.log(LogEvent.MISC, path.toString(), LogTag.info)
+        }
+        return path.toString()
+    }
 
     override fun log(evt : String, msg: String, tag: String) {
         val startTime = Instant.now()

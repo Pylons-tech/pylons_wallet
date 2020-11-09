@@ -1,10 +1,10 @@
 package com.pylons.devdevwallet
 
-import java.net.*
-import java.nio.charset.Charset
+import com.pylons.wallet.core.Multicore
 import com.pylons.wallet.core.logging.*
+import com.pylons.wallet.core.types.Backend
+import com.pylons.wallet.core.types.Config
 import com.pylons.wallet.ipc.IPCLayer
-import com.pylons.wallet.ipc.UILayer
 import java.lang.Exception
 
 object Main {
@@ -16,14 +16,8 @@ object Main {
                 0 -> "127.0.0.1"
                 else -> args[0]
             }
-            val forcedPrivKey = when (args.size > 1) {
-                true -> args[1]
-                false -> ""
-            }
-            Datastore.setPrivKey(forcedPrivKey)
-            Datastore.setIp(preferredIP)
+            Multicore.enable(Config(Backend.LIVE_DEV, listOf("http://$preferredIP:1317")))
             Logger.implementation = JvmLogger()
-            Datastore.load()
             if (args.isEmpty()) {
                 Logger.implementation.log(
                         LogEvent.MISC,
