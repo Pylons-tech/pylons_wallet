@@ -8,12 +8,9 @@ import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.*
 import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Transaction.Companion.submitAll
 import com.pylons.wallet.core.types.tx.Trade
 import com.pylons.wallet.core.types.tx.recipe.Recipe
-import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.bytes.Bytes32
-import org.bouncycastle.util.encoders.Hex
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.reflect.full.companionObject
@@ -21,18 +18,6 @@ import kotlin.reflect.full.functions
 import kotlin.reflect.full.companionObjectInstance
 
 sealed class Message {
-    class ApplyRecipe(
-            var recipe : String? = null,
-            var cookbook : String? = null,
-            var itemInputs : List<String>? = null
-    ) : Message() {
-        companion object {
-            fun deserialize(json: String) = klaxon.parse<ApplyRecipe>(json)
-        }
-
-        override fun resolve() =
-                TxResponse(core!!.applyRecipe(recipe!!, cookbook!!, itemInputs!!)).pack()
-    }
 
     class CancelTrade (
             var tradeId : String? = null
@@ -125,6 +110,19 @@ sealed class Message {
         }
 
         override fun resolve() = TxResponse(core!!.batchEnableRecipe(recipes!!)).pack()
+    }
+
+    class ExecuteRecipe(
+            var recipe : String? = null,
+            var cookbook : String? = null,
+            var itemInputs : List<String>? = null
+    ) : Message() {
+        companion object {
+            fun deserialize(json: String) = klaxon.parse<ExecuteRecipe>(json)
+        }
+
+        override fun resolve() =
+                TxResponse(core!!.applyRecipe(recipe!!, cookbook!!, itemInputs!!)).pack()
     }
 
     class FulfillTrade(
@@ -220,6 +218,10 @@ sealed class Message {
         }
 
         override fun resolve(): Response {
+            if (Multicore.enabled && makeKeys == true) {
+                Multicore.addCore(null)
+                makeKeys = false // we made the keys!
+            }
             return when (makeKeys!!) {
                 // HACK: We shouldn't accept empty name field once names actually exist on the backend
                 true -> TxResponse(core!!.newProfile(name.orEmpty())).pack()

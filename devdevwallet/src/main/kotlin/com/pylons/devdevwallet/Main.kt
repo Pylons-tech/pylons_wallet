@@ -6,11 +6,14 @@ import com.pylons.wallet.core.types.Backend
 import com.pylons.wallet.core.types.Config
 import com.pylons.wallet.ipc.IPCLayer
 import java.lang.Exception
+import java.security.Security
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         println("starting devdevwallet")
+        Security.addProvider(BouncyCastleProvider())
         try {
             var preferredIP = when (args.size) {
                 0 -> "127.0.0.1"

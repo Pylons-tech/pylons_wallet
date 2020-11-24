@@ -106,6 +106,7 @@ class Core(val config : Config) {
     }
 
     fun use() : Core {
+        println("changing core")
         current = this
         Msg.useCore(this)
         Message.useCore(this)

@@ -18,7 +18,8 @@ object Multicore {
         config = cfg
     }
 
-    fun addCore (keyPair: PylonsSECP256K1.KeyPair) : Core {
+    fun addCore (kp: PylonsSECP256K1.KeyPair?) : Core {
+        var keyPair = kp ?: PylonsSECP256K1.KeyPair.random()
         val core = Core(config!!)
         val credentials = TxPylonsEngine.Credentials(TxPylonsEngine.getAddressString(CryptoCosmos.getAddressFromKeyPair(keyPair).toArray()))
         core.userProfile = MyProfile(
