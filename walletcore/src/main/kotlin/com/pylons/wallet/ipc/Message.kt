@@ -1,5 +1,6 @@
 package com.pylons.wallet.ipc
 
+import com.beust.klaxon.Converter
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
@@ -13,9 +14,8 @@ import com.pylons.wallet.core.types.tx.recipe.Recipe
 import org.apache.tuweni.bytes.Bytes32
 import java.lang.StringBuilder
 import java.util.*
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.KClass
+import kotlin.reflect.full.*
 
 sealed class Message {
 
@@ -162,7 +162,7 @@ sealed class Message {
         override fun resolve(): Response {
             val p = core!!.getProfile(address)
             val ls = mutableListOf<Profile>()
-            if (p != null) ls.add(p)
+            if (p != null) ls.add(Profile(p.address, p.strings, p.coins, p.items)) // hack because klaxon will die if we aren't specifically an instance of the base class
             return ProfileResponse(ls).pack()
         }
     }
