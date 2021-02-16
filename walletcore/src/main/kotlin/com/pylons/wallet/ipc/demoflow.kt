@@ -1,6 +1,8 @@
 package com.pylons.wallet.ipc
 
 import com.google.common.base.Ascii
+import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.types.StatusBlock
 import com.pylons.wallet.core.types.klaxon
 import java.util.*
 
@@ -51,7 +53,7 @@ fun demoflow () {
     val msgJson =
             Base64.getEncoder().encodeToString(
                     klaxon.toJsonString(msg).toByteArray(Charsets.US_ASCII))
-    val json = """{"type":"WalletServiceTest", "msg":"$msgJson"}"""
+    val json = """{"type":"WalletServiceTest", "msg":"$msgJson", "messageId":0, "clientId":0, "walletId":${IPCLayer.implementation.walletId}}"""
 
     fakeIpcJson = json
     IPCLayer.getNextMessage {

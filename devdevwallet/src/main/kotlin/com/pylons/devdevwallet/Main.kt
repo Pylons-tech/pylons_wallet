@@ -8,6 +8,11 @@ import com.pylons.wallet.ipc.IPCLayer
 import java.lang.Exception
 import java.security.Security
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.io.OutputStream
+import java.io.PrintStream
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.nio.charset.Charset
 
 object Main {
     @JvmStatic
@@ -32,8 +37,14 @@ object Main {
                 IPCLayer.getNextMessage { }
             }
         } catch (e : Exception) {
+            var ps = StringWriter()
+            var pw = PrintWriter(ps)
+            e.printStackTrace(pw)
+            Logger.implementation.log(LogEvent.REJECT_MESSAGE, ps.toString(), LogTag.walletError)
             Logger.implementation.log(LogEvent.REJECT_MESSAGE, e.stackTrace.contentToString(), LogTag.walletError)
             Logger.implementation.log(LogEvent.REJECT_MESSAGE, e.toString(), LogTag.walletError)
+            Logger.implementation.log(LogEvent.REJECT_MESSAGE, e.cause.toString(), LogTag.walletError)
+            Logger.implementation.log(LogEvent.REJECT_MESSAGE, e.cause?.stackTrace?.contentToString() ?: "", LogTag.walletError)
         }
     }
 }

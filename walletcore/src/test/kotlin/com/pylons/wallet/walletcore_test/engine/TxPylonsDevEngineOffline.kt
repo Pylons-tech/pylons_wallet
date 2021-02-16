@@ -80,41 +80,32 @@ class TxPylonsDevEngineOffline {
     @Test
     fun generateJson () {
         val fixture = """
-            {
-            "tx": {
-                "msg": 
-            [
-            {
-                "type": "pylons/GetPylons",
-                "value": {
-                "Amount": [
-                {
-                    "denom": "pylon",
-                    "amount": "500"
-                }
-                ],
-                "Requester": "DUMMYADDR"
-            }
-            }
-            ]
-        ,
-    
-                "fee": {
-                "amount": null,
-                "gas": "400000"
-            },
-                "signatures": [
-                {
-                    "pub_key": {
-                    "type": "tendermint/PubKeySecp256k1",
-                    "value": "ApUOHN/LEz1gJBCf1In3NO60UCQY5TjChIHyK84nbySM"
-                },
-                    "signature": "qXNrX+mlbAWxsx14BB+7WfjOyMsBac1BhN6UAetqhhhO+cSPuvm3IgpOHJB+ItGpH6hDRB77d7LYIJaL+tGT0w=="
-                }
-                ],
-                "memo": ""
-            },
-            "mode": "sync"
+        {
+        "tx":{
+        "msg":
+        [
+        {
+        "type":"pylons/GetPylons",
+        "value":{"Amount":[{"amount":"500","denom":"pylon"}],"Requester":"cosmos10s4mg25tu6termrk8egltfyme4q7sg3her239u"}
+        }
+        ],
+        
+        "fee":{
+        "amount":null,
+        "gas":"400000"
+        },
+        "signatures":[
+        {
+        "pub_key":{
+        "type":"tendermint/PubKeySecp256k1",
+        "value":"ApUOHN/LEz1gJBCf1In3NO60UCQY5TjChIHyK84nbySM"
+        },
+        "signature":"DHvh+CJTuWniwWJ0NHWQkzVptcaSa3X/E4iPklf7730PR2cMEXcTzDDO65TDQVM89IdpNxbULYT8P9uXr66A8Q=="
+        }
+        ],
+        "memo":""
+        },
+        "mode":"sync"
         }
         """.trimIndent().replace(" ", "")
         engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)

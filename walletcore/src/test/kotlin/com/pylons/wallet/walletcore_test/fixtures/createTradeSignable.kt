@@ -16,6 +16,7 @@ val createTradeSignable = CreateTrade(
                         "cookbookid1",
                         ItemInput(
                                 id = "",
+                                conditions = ConditionList(listOf(), listOf(), listOf()),
                                 doubles = listOf(),
                                 longs = listOf(),
                                 strings = listOf(

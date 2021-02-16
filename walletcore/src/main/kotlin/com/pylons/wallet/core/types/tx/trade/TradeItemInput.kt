@@ -17,6 +17,7 @@ data class TradeItemInput(
                         jsonObject.string("CookbookID") ?: "",
                         ItemInput(
                                 id  = jsonObject.obj("ItemInput")!!.string("ID")!!,
+                                conditions = ConditionList.fromJson(jsonObject.obj("Conditions"))?: ConditionList(listOf(), listOf(), listOf()),
                                 doubles = DoubleInputParam.listFromJson(jsonObject.obj("ItemInput")?.array("Doubles")),
                                 longs = LongInputParam.listFromJson(jsonObject.obj("ItemInput")?.array("Longs")),
                                 strings = StringInputParam.listFromJson(jsonObject.obj("ItemInput")?.array("Strings")),

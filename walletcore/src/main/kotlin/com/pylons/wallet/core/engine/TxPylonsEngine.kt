@@ -15,11 +15,13 @@ import com.pylons.wallet.core.internal.fuzzyLong
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.types.tx.Trade
+import com.pylons.wallet.core.types.tx.TxData
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.msg.*
 import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
+import java.io.FileNotFoundException
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.security.Security
@@ -268,8 +270,13 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
     }
 
     override fun getTransaction(id: String): Transaction {
-        val response = HttpWire.get("$nodeUrl/txs/$id")
-        return Transaction.parseTransactionResponse(id, response)
+        return try {
+            val response = HttpWire.get("$nodeUrl/txs/$id")
+            Transaction.parseTransactionResponse(id, response)
+        } catch (e : FileNotFoundException) {
+            Transaction(TxData("", "", listOf()), null, null, null,
+                    Transaction.State.TX_NOT_YET_COMMITTED, Transaction.ResponseCode.UNKNOWN_ERROR)
+        }
     }
 
     override fun listRecipes(): List<Recipe> {

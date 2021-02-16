@@ -51,6 +51,7 @@ val updateRecipeSignable = UpdateRecipe(
         itemInputs = listOf(
                 ItemInput(
                         id = "Raichu",
+                        conditions = ConditionList(listOf(), listOf(), listOf()),
                         doubles = listOf(),
                         longs = listOf(),
                         strings = listOf(

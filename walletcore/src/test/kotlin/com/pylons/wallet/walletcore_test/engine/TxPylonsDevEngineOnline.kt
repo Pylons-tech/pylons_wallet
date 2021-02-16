@@ -166,7 +166,7 @@ class TxPylonsDevEngineOnline {
     @Order(4)
     @Test
     fun getsCookbooks () {
-        val engine = engineSetup(InternalPrivKeyStore.BANK_TEST_KEY)
+        val engine = engineSetup(exportedKey)
         val a = engine.listCookbooks()
         assert(a.isNotEmpty())
     }
