@@ -22,8 +22,8 @@ val jfxModules = listOf("javafx.base", "javafx.controls", "javafx.graphics", "ja
 compileJava.destinationDir = compileKotlin.destinationDir
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
 }
 
 application {
@@ -69,7 +69,6 @@ runtime {
 
     imageZip.set(project.file("${project.buildDir}/image-zip/hello-image.zip"))
     jpackage {
-        jpackageHome = "C:\\Program Files\\Java\\jdk-14"
         skipInstaller = true
         imageName = "devwallet"
         mainClass = application.mainClassName
