@@ -9,7 +9,7 @@ import java.util.*
 var fakeIpcJson : String = ""
 
 @IPCLayer.Implementation
-class FakeIPC : IPCLayer() {
+class FakeIPC : IPCLayer(false) {
     override fun getNextJson(callback: (String) -> Unit) {
         callback(fakeIpcJson)
     }

@@ -16,7 +16,7 @@ private const val HANDSHAKE_MAGIC = "__PYLONS_WALLET_SERVER"
 private const val HANDSHAKE_REPLY_MAGIC = "__PYLONS_WALLET_CLIENT"
 
 @IPCLayer.Implementation
-class IpcLayer : IPCLayer() {
+class IpcLayer : IPCLayer(false) {
     companion object {
         private val ascii = Charset.forName("US-ASCII")
 

@@ -5,7 +5,7 @@ import kotlin.random.Random
 import kotlin.reflect.jvm.jvmName
 import kotlin.reflect.typeOf
 
-abstract class IPCLayer {
+abstract class IPCLayer(val permitUnboundOperations : Boolean) {
     var clientId : Int = 0
     var walletId : Int = Random.nextInt()
     var messageId : Int = 0
@@ -23,7 +23,7 @@ abstract class IPCLayer {
 
     annotation class OnGetNext
 
-    protected open fun initIpcChannel() { establishConnection(); initialized = true }
+    protected open fun initIpcChannel() { if (!permitUnboundOperations) establishConnection(); initialized = true }
     protected abstract fun getNextJson(callback: (String) -> Unit)
     protected open fun preprocessResponse(r :Message.Response,
                                           callback: (Message.Response) -> Unit) {callback(r)}
@@ -52,9 +52,9 @@ abstract class IPCLayer {
 
         private fun updateConnectionState() {
             implementation.connectionState = implementation.checkConnectionStatus()
-            if (implementation.connectionState == ConnectionState.NoClient)
+            if (implementation.connectionState == ConnectionState.NoClient && !implementation.permitUnboundOperations)
                 throw NoClientException()
-            else if (implementation.connectionState == ConnectionState.ConnectionBroken)
+            else if (implementation.connectionState == ConnectionState.ConnectionBroken && !implementation.permitUnboundOperations)
                 throw ConnectionBrokenException()
         }
 
