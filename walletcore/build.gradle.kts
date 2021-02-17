@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.pylons"
-version = "0.1a"
+version = "0.1"
 val ketheriumVer = "0.83.4"
 val bouncycastleVer = "1.64"
 val junitVer = "5.6.0"

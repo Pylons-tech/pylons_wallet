@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.pylons"
-version = "0.1a"
+version = "0.1"
 
 val compileKotlin: KotlinCompile by tasks
 val compileJava: JavaCompile by tasks
