@@ -7,7 +7,7 @@ plugins {
 
 group = "com.pylons"
 version = "0.1a"
-val ketheriumVer = "0.81.2"
+val ketheriumVer = "0.83.4"
 val bouncycastleVer = "1.64"
 val junitVer = "5.6.0"
 val useJava8 = project.hasProperty("java8")
