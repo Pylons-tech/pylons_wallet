@@ -24,7 +24,8 @@ configure<JavaPluginConvention> {
 
 application {
     applicationName = "Pylons DevDevWallet"
-    mainClassName = "com.pylons.devdevwallet.Main"
+    mainClass.set("com.pylons.devdevwallet.Main")
+    mainClassName = mainClass.get() // this is deprecated but evidently something in shadowjar is still using it
 }
 
 dependencies {
@@ -35,23 +36,21 @@ dependencies {
 
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("commons-codec:commons-codec:1.14")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.70")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.30")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.5")
     implementation("com.beust:klaxon:5.0.12")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
     implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
 
-    testCompile("junit", "junit", "4.12")
+    testImplementation("junit", "junit", "4.12")
 }
 
 runtime {
-
     imageZip.set(project.file("${project.buildDir}/image-zip/ddw-image.zip"))
     jpackage {
-        jpackageHome = "C:\\Program Files\\Java\\jdk-14"
         skipInstaller = true
         imageName = "devdevwallet"
-        mainClass = application.mainClassName
+        mainClass = application.mainClass.get()
     }
 
     //additive.set(true)
