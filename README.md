@@ -24,12 +24,8 @@ Console tool for emitting signatures manually to be compared against values gene
 
 ## Environment
 
-**TODO:** devwallet has a _really_ janky build process involving two separate JDKs. Is there any reason we can't migrate onto JDK 15 now?
-(It might break some dependencies, but it's worth doing if at all possible.)
-
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/download)
-- [JDK 11](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
-- [JDK 14](https://www.oracle.com/java/technologies/javase/jdk14-archive-downloads.html) (Used for running jpackage w/ JDK 11)
+- [JDK 15](https://www.oracle.com/java/technologies/javase-jdk15-downloads.html)
 - [Gradle](https://gradle.org/install/)
 - [Pylons node and REST client](https://github.com/Pylons-tech/pylons) must be installed for walletcore tests to work as expected.
 

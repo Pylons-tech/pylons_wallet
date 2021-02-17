@@ -1,11 +1,12 @@
 import kotlin.collections.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.beryx.runtime.*
 
 plugins {
     java
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow") version "5.1.0"
-    id("org.beryx.runtime") version "1.8.0"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("org.beryx.runtime") version "1.12.1"
     application
 }
 
@@ -50,12 +51,8 @@ runtime {
     jpackage {
         skipInstaller = true
         imageName = "devdevwallet"
-        mainClass = application.mainClass.get()
+        imageOptions = listOf("--win-console")
     }
-
-    //additive.set(true)
-
-    //modules.set(listOf("org.openjfx:javafx-base-12.0.1"))
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
 
 }
