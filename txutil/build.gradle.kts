@@ -1,6 +1,11 @@
+import kotlin.collections.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     java
     kotlin("jvm")
+    id("org.beryx.runtime") version "1.8.0"
+    application
 }
 
 group = "com.pylons"
@@ -14,6 +19,12 @@ repositories {
     google()
 }
 
+application {
+    applicationName = "txutil"
+    mainClassName = "com.pylons.txutil.Main"
+}
+
+
 dependencies {
     implementation(project(":walletcore"))
 
@@ -23,6 +34,24 @@ dependencies {
 
     testImplementation("junit:junit:4.12")
 }
+
+runtime {
+
+    imageZip.set(project.file("${project.buildDir}/image-zip/tu-image.zip"))
+    jpackage {
+        jpackageHome = "C:\\Program Files\\Java\\jdk-14"
+        skipInstaller = true
+        imageName = "txutil"
+        mainClass = application.mainClassName
+    }
+
+    //additive.set(true)
+
+    //modules.set(listOf("org.openjfx:javafx-base-12.0.1"))
+    options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+
+}
+
 
 tasks.compileKotlin.get().destinationDir = tasks.compileJava.get().destinationDir
 

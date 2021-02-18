@@ -8,13 +8,13 @@ plugins {
     java
     kotlin("jvm")
     id("org.openjfx.javafxplugin") version "0.0.8"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
-    id("org.beryx.runtime") version "1.12.1"
+    id("com.github.johnrengelman.shadow") version "5.1.0"
+    id("org.beryx.runtime") version "1.8.0"
     application
 }
 
 group = "com.pylons"
-version = "0.1"
+version = "0.1a"
 
 val compileKotlin: KotlinCompile by tasks
 val compileJava: JavaCompile by tasks
@@ -22,8 +22,8 @@ val jfxModules = listOf("javafx.base", "javafx.controls", "javafx.graphics", "ja
 compileJava.destinationDir = compileKotlin.destinationDir
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 application {
@@ -49,7 +49,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("com.google.protobuf:protobuf-java:3.11.4")
     implementation("commons-codec:commons-codec:1.14")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.30")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.70")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.5")
     implementation("com.beust:klaxon:5.0.12")
 
@@ -66,11 +66,18 @@ dependencies {
 
 
 runtime {
+
     imageZip.set(project.file("${project.buildDir}/image-zip/hello-image.zip"))
     jpackage {
+        jpackageHome = "C:\\Program Files\\Java\\jdk-14"
         skipInstaller = true
         imageName = "devwallet"
+        mainClass = application.mainClassName
     }
+
+    //additive.set(true)
+
+    //modules.set(listOf("org.openjfx:javafx-base-12.0.1"))
     options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
 
 }

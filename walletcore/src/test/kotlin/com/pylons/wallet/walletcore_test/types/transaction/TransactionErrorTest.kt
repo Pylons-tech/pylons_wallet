@@ -86,13 +86,8 @@ class TransactionErrorTest {
             core.engine.getMyProfileState()
             val tx = core.engine.applyRecipe("", listOf())
             tx.submit()
-            println("waiting for tx to resolve")
-            while (true) {
-                if (tx.state == Transaction.State.TX_NOT_YET_SENT) Thread.sleep(5000)
-                else break
-            }
-            assert(tx.id != null)
-            Assertions.assertNotEquals("", tx.id)
+
+            Assertions.assertNotEquals(null, tx.id)
             Assertions.assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
             Assertions.assertEquals(Transaction.ResponseCode.OK, tx.code)
             Assertions.assertEquals("", tx.raw_log)

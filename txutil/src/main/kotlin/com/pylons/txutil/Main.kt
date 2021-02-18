@@ -2,6 +2,7 @@ package com.pylons.txutil
 
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
+import com.pylons.wallet.core.ops.newProfile
 import com.pylons.wallet.core.LowLevel
 import com.pylons.wallet.core.ops.batchCreateCookbook
 import com.pylons.wallet.core.ops.getProfile
@@ -22,13 +23,14 @@ object Main {
         try {
             var op = args[0]
             val privkeyHex = args[1]
-            Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+            val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use();
+            core.start("");
             println(when (op) {
                 "SIGN_BYTES" -> try {
                     val accountNumber = args[2].toLong()
                     val sequence = args[3].toLong()
                     val msgJson = args[4]
-                    LowLevel.getSignBytes(privkeyHex, accountNumber, sequence, msgJson)
+                    LowLevel(core).getSignBytes(privkeyHex, accountNumber, sequence, msgJson)
                 } catch (e : Exception) {
                     error(e, "Exception occurred in walletcore")
                 }
@@ -36,12 +38,12 @@ object Main {
                     val accountNumber = args[2].toLong()
                     val sequence = args[3].toLong()
                     val msgJson = args[4]
-                    LowLevel.getSignedTx(privkeyHex, accountNumber, sequence, msgJson)
+                    LowLevel(core).getSignedTx(privkeyHex, accountNumber, sequence, msgJson)
                 } catch (e : Exception) {
                     error(e, "Exception occurred in walletcore")
                 }
                 "AUTO_CREATE_COOKBOOK" -> {
-                    doMessages(privkeyHex)
+                    doMessages(core, privkeyHex)
                 }
                 else -> "Invalid operation $op"
             })
@@ -51,23 +53,39 @@ object Main {
         }
     }
 
-    private fun doMessages (privkey : String) {
-        Core.newProfile("foo",
-                PylonsSECP256K1.KeyPair.fromSecretKey(
-                        PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(privkey))))
+    private fun doMessages(core: Core, privkey: String) {
+        core.newProfile("foo", PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(privkey))))
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
-        Core.getProfile()
-        Core.getPylons(50000)
+        core.getProfile("")
+        core.getPylons(50000)
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
-        Core.getProfile()
-        Core.batchCreateCookbook(
+        core.getProfile("")
+        core.batchCreateCookbook(
                 ids = mutableListOf(Calendar.getInstance().time.toInstant().toString()),
                 names = mutableListOf("tst_cookbook_name"),
                 developers = mutableListOf("addghjkllsdfdggdgjkkk"),
                 descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
                 versions = mutableListOf("1.0.0"),
+                supportEmails = mutableListOf("a@example.com"),
+                levels = mutableListOf(0),
+                costsPerBlock = mutableListOf(5))
+    }
+
+    private fun doS1(core: Core, privkey: String) {
+        core.batchCreateCookbook(
+                ids = mutableListOf(Calendar.getInstance().time.toInstant().toString()),
+                names = mutableListOf("tst_cookbook_name"),
+                supportEmails = mutableListOf("a@example.com"),
+                levels = mutableListOf(0),
+                costsPerBlock = mutableListOf(5))
+    }
+
+    private fun doS2(core: Core, privkey: String) {
+        core.getProfile("")
+        core.batchCreateCookbook(
+                ids = mutableListOf(Calendar.getInstance().time.toInstant().toString()),
                 supportEmails = mutableListOf("a@example.com"),
                 levels = mutableListOf(0),
                 costsPerBlock = mutableListOf(5))
