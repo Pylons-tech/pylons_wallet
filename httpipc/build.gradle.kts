@@ -15,7 +15,7 @@ val useJava8 = project.hasProperty("java8")
 configure<JavaPluginConvention> {
     val jVer = when (useJava8) {
         true -> JavaVersion.VERSION_1_8
-        false -> JavaVersion.VERSION_11
+        false -> JavaVersion.VERSION_15
     }
     sourceCompatibility = jVer
     targetCompatibility = jVer
@@ -80,7 +80,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         val jVer = when (useJava8) {
             true -> "1.8"
-            false -> "11"
+            false -> "15"
         }
         jvmTarget = jVer
         sourceCompatibility = jVer
