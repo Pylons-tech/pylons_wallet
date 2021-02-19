@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/devdevwallet" />
             <option value="$PROJECT_DIR$/devwallet" />
             <option value="$PROJECT_DIR$/httpipc" />
+            <option value="$PROJECT_DIR$/libkylons" />
             <option value="$PROJECT_DIR$/txutil" />
             <option value="$PROJECT_DIR$/walletcore" />
           </set>
