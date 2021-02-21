@@ -1,27 +1,24 @@
-package com.pylons.wallet.core.types
+package com.pylons.lib.types
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.pylons.wallet.core.logging.LogEvent
-import com.pylons.wallet.core.logging.LogTag
-import com.pylons.wallet.core.logging.Logger
-import com.pylons.wallet.core.types.tx.StdTx
-import com.pylons.wallet.core.types.tx.TxData
+import com.pylons.lib.types.tx.StdTx
+import com.pylons.lib.types.tx.TxData
 import java.util.*
 
 data class Transaction(
-        val txData: TxData = TxData("", "", listOf()),
-        val stdTx: StdTx? = null,
-        @Json(ignored = true)
-        val _id: String? = null,
-        @Json(ignored = true)
-        val resolver: ((Transaction) -> Unit)? = null,
-        @Json(ignored = true)
-        var state: State = State.TX_NOT_YET_SENT,
-        var code: ResponseCode = ResponseCode.OK,
-        var raw_log: String = ""
+    val txData: TxData = TxData("", "", listOf()),
+    val stdTx: StdTx? = null,
+    @Json(ignored = true)
+    val _id: String? = null,
+    @Json(ignored = true)
+    val resolver: ((Transaction) -> Unit)? = null,
+    @Json(ignored = true)
+    var state: State = State.TX_NOT_YET_SENT,
+    var code: ResponseCode = ResponseCode.OK,
+    var raw_log: String = ""
 ) {
     var id: String? = _id
         get() {
@@ -50,38 +47,16 @@ data class Transaction(
         }
     }
 
-
-    fun submit(): Transaction {
-        if (state != State.TX_NOT_YET_SENT) throw Exception("Transaction.submit() should only be called on" +
-                "Transactions of state TX_NOT_YET_SENT")
-        state = State.TX_NOT_YET_COMMITTED
-        state = try {
-            resolver?.invoke(this)
-            State.TX_ACCEPTED
-        } catch (e: Exception) {
-            // todo: this should get some data
-            Logger().log(LogEvent.TX_SUBMIT_EXCEPTION, e.toString(), LogTag.error)
-            State.TX_REFUSED
-        }
-        return this
-    }
-
     companion object {
-        fun List<Transaction>.submitAll() : List<Transaction> {
-            val ml = this.toMutableList()
-            ml.indices.forEach { ml[it] = ml[it].submit() }
-            return ml
-        }
-
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
             when {
                 doc.contains("code") -> {
                     return Transaction(
-                            stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                            _id = id,
-                            code = ResponseCode.of(doc.int("code")),
-                            raw_log = doc.string("raw_log") ?: "Unknown Error"
+                        stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                        _id = id,
+                        code = ResponseCode.of(doc.int("code")),
+                        raw_log = doc.string("raw_log") ?: "Unknown Error"
                     )
                 }
                 doc.containsKey("data") -> {
@@ -95,21 +70,21 @@ data class Transaction(
                         }
 
                         return Transaction(
-                                txData = TxData.fromJson(dataObject),
-                                stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                                _id = id
+                            txData = TxData.fromJson(dataObject),
+                            stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                            _id = id
                         )
                     } catch (e: Exception) {
                         return Transaction(
-                                stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                                _id = id
+                            stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                            _id = id
                         )
                     }
                 }
                 else -> {
                     return Transaction(
-                            stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
-                            _id = id
+                        stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                        _id = id
                     )
                 }
             }

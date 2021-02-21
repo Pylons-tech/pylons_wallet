@@ -1,7 +1,10 @@
 package com.pylons.lib
 
+import com.beust.klaxon.Klaxon
 import com.pylons.ipc.Message
 import com.pylons.lib.types.*
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.item.Item
 
 /**
@@ -10,6 +13,8 @@ import com.pylons.lib.types.tx.item.Item
  * return a tx (expect this to be messy)
  */
 abstract class Wallet {
+    val klaxon = Klaxon()
+
     /**
      * Signature for the method what we call to pass messages into the
      * wallet. IPC happens after this implementation.
@@ -40,6 +45,22 @@ abstract class Wallet {
      */
     fun registerProfile (callback: (Profile?) -> Unit) {
         sendMessage<Profile?>(Message.RegisterProfile()) {callback(it)}
+    }
+
+    fun placeForSale (item : Item, price : Long, callback: (Transaction?) -> Unit) {
+        sendMessage<Transaction?>(Message.CreateTrade(listOf(
+            klaxon.toJsonString(Coin("pylon", price))),
+            listOf(), listOf(), listOf(item.id))) {callback(it)}
+    }
+
+    fun getTrades(callback: (List<Trade>?) -> Unit) {
+        // the message to resolve this doesn't exist in walletcore rn! whoops!
+        // let's get that before we get ipc online ig
+        throw NotImplementedError()
+    }
+
+    fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
+        sendMessage<Transaction?>(Message.FulfillTrade(trade.id)) {callback(it)}
     }
 
     class Android : Wallet() {
