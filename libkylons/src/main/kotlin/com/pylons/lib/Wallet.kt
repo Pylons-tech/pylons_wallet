@@ -63,7 +63,7 @@ abstract class Wallet {
         sendMessage<Transaction?>(Message.FulfillTrade(trade.id)) {callback(it)}
     }
 
-    class Android : Wallet() {
+    class Android : Wallet(){
         override fun <T> sendMessage(message: Message, callback: (T) -> Unit) {
             TODO("Not yet implemented")
         }

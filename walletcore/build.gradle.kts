@@ -10,7 +10,7 @@ version = "0.1"
 val ketheriumVer = "0.83.4"
 val bouncycastleVer = "1.64"
 val junitVer = "5.6.0"
-val useJava8 = project.hasProperty("java8")
+val useJava8 = true
 
 configure<JavaPluginConvention> {
     val jVer = when (useJava8) {

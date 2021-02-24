@@ -5,4 +5,8 @@
 build
 
 # Ignore idea directory
-.idea
+.idea/
+.idea/*
+
+# Ignore local.properties
+local.properties
