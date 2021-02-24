@@ -9,10 +9,12 @@
 
 rootProject.name = "pylons_wallet"
 
-include(":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libkylons")
+include(":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libkylons",
+":androidipc")
 
 pluginManagement {
     repositories {
+        google()
         jcenter()
         gradlePluginPortal()
         mavenCentral()
