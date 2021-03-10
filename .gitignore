@@ -3,3 +3,10 @@
 
 # Ignore Gradle build output directory
 build
+
+# Ignore idea directory
+.idea/
+.idea/*
+
+# Ignore local.properties
+local.properties

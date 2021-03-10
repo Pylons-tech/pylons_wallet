@@ -5,12 +5,13 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.pylons"
+group = "com.pylons.lib"
 version = "0.1"
 val ketheriumVer = "0.83.4"
 val bouncycastleVer = "1.64"
 val junitVer = "5.6.0"
 val useJava8 = true
+//val usejava8 = false
 
 configure<JavaPluginConvention> {
     val jVer = when (useJava8) {
@@ -40,9 +41,7 @@ dependencies {
     implementation("com.google.guava:guava:28.2-jre")
     implementation("commons-codec:commons-codec:1.14")
     implementation("org.apache.commons:commons-lang3:3.9")
-    implementation("org.apache.tuweni:tuweni-bytes:0.10.0")
-    implementation("org.apache.tuweni:tuweni-io:0.10.0")
-    implementation("org.apache.tuweni:tuweni-units:0.10.0")
+    implementation("org.apache.tuweni:tuweni-crypto:0.10.0")
     implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
     implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
     implementation("com.beust:klaxon:5.0.12")

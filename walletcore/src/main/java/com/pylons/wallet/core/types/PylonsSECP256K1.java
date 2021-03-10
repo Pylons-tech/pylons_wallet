@@ -16,8 +16,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.file.StandardOpenOption.READ;
-import static org.apache.tuweni.crypto.Hash.sha2_256;
-import static org.apache.tuweni.crypto.SECP256K1.Parameters.CURVE;
 import static org.apache.tuweni.io.file.Files.atomicReplace;
 
 import com.pylons.wallet.core.Core;
@@ -27,18 +25,13 @@ import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.MutableBytes;
 import org.apache.tuweni.units.bigints.UInt256;
-import org.apache.tuweni.crypto.InvalidSEC256K1SecretKeyStoreException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 import java.util.Arrays;
 import javax.annotation.Nullable;
@@ -90,6 +83,22 @@ public final class PylonsSECP256K1 {
     private static final String ALGORITHM = "ECDSA";
     private static final String CURVE_NAME = "secp256k1";
     private static final String PROVIDER = "BC";
+
+    /**
+     * Digest using SHA2-256.
+     *
+     * @param input The input bytes to produce the digest for.
+     * @return A digest.
+     */
+    public static byte[] sha2_256(byte[] input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(input);
+            return md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Algorithm should be available but was not", e);
+        }
+    }
 
     // Lazily initialize parameters by using java initialization on demand
     public static final class Parameters {
@@ -233,7 +242,7 @@ public final class PylonsSECP256K1 {
      * @return The signature.
      */
     public static Signature sign(Bytes data, KeyPair keyPair) {
-        return signHashed(sha2_256(data), keyPair);
+        return signHashed(sha2_256(data.toArray()), keyPair);
     }
 
     /**
@@ -322,7 +331,7 @@ public final class PylonsSECP256K1 {
      * @return True if the verification is successful.
      */
     public static boolean verify(Bytes data, Signature signature, PublicKey publicKey) {
-        return verifyHashed(sha2_256(data), signature, publicKey);
+        return verifyHashed(sha2_256(data.toArray()), signature, publicKey);
     }
 
     /**
@@ -438,9 +447,9 @@ public final class PylonsSECP256K1 {
          * @param file The file to read the key from.
          * @return The private key.
          * @throws IOException On a filesystem error.
-         * @throws InvalidSEC256K1SecretKeyStoreException If the file does not contain a valid key.
+         * @throws Exception If the file does not contain a valid key.
          */
-        public static SecretKey load(Path file) throws IOException, InvalidSEC256K1SecretKeyStoreException {
+        public static SecretKey load(Path file) throws IOException, Exception {
             // use buffers for all secret key data transfer, so they can be overwritten on completion
             ByteBuffer byteBuffer = ByteBuffer.allocate(65);
             CharBuffer charBuffer = CharBuffer.allocate(64);
@@ -451,19 +460,19 @@ public final class PylonsSECP256K1 {
                 }
                 channel.close();
                 if (byteBuffer.remaining() > 1) {
-                    throw new InvalidSEC256K1SecretKeyStoreException();
+                    throw new Exception();
                 }
                 byteBuffer.flip();
                 for (int i = 0; i < 64; ++i) {
                     charBuffer.put((char) byteBuffer.get());
                 }
                 if (byteBuffer.limit() == 65 && byteBuffer.get(64) != '\n' && byteBuffer.get(64) != '\r') {
-                    throw new InvalidSEC256K1SecretKeyStoreException();
+                    throw new Exception();
                 }
                 charBuffer.flip();
                 return SecretKey.fromBytes(Bytes32.fromHexString(charBuffer));
             } catch (IllegalArgumentException ex) {
-                throw new InvalidSEC256K1SecretKeyStoreException();
+                throw new Exception();
             } finally {
                 Arrays.fill(byteBuffer.array(), (byte) 0);
                 Arrays.fill(charBuffer.array(), (char) 0);
@@ -625,7 +634,7 @@ public final class PylonsSECP256K1 {
          */
         @Nullable
         public static PublicKey recoverFromSignature(Bytes data, Signature signature) {
-            return recoverFromHashAndSignature(sha2_256(data), signature);
+            return recoverFromHashAndSignature(sha2_256(data.toArray()), signature);
         }
 
         /**
@@ -696,7 +705,7 @@ public final class PylonsSECP256K1 {
         public ECPoint asEcPoint() {
             // 0x04 is the prefix for uncompressed keys.
             Bytes val = Bytes.concatenate(Bytes.of(0x04), keyBytes);
-            return CURVE.getCurve().decodePoint(val.toArrayUnsafe());
+            return Parameters.CURVE.getCurve().decodePoint(val.toArrayUnsafe());
         }
 
         @Override
@@ -770,9 +779,9 @@ public final class PylonsSECP256K1 {
          * @param file The file containing a private key.
          * @return The key pair.
          * @throws IOException On a filesystem error.
-         * @throws InvalidSEC256K1SecretKeyStoreException If the file does not contain a valid key.
+         * @throws Exception If the file does not contain a valid key.
          */
-        public static KeyPair load(Path file) throws IOException, InvalidSEC256K1SecretKeyStoreException {
+        public static KeyPair load(Path file) throws IOException, Exception {
             return fromSecretKey(SecretKey.load(file));
         }
 
