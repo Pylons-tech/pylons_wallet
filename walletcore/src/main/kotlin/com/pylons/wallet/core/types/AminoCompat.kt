@@ -1,7 +1,7 @@
 package com.pylons.wallet.core.types
 
-import org.bouncycastle.jcajce.provider.digest.SHA256
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.jcajce.provider.digest.SHA256
+import org.spongycastle.util.encoders.Hex
 
 /**
  * Nasty little helper class containing hacky methods for dealing with weird Amino errata.

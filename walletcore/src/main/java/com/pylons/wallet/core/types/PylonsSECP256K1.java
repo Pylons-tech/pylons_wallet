@@ -38,22 +38,22 @@ import javax.annotation.Nullable;
 import javax.security.auth.Destroyable;
 
 import com.google.common.base.Objects;
-import org.bouncycastle.asn1.sec.SECNamedCurves;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.asn1.x9.X9IntegerConverter;
-import org.bouncycastle.crypto.agreement.ECDHBasicAgreement;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
-import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.bouncycastle.crypto.signers.ECDSASigner;
-import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
-import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
-import org.bouncycastle.math.ec.ECAlgorithms;
-import org.bouncycastle.math.ec.ECPoint;
-import org.bouncycastle.math.ec.FixedPointCombMultiplier;
-import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
+import org.spongycastle.asn1.sec.SECNamedCurves;
+import org.spongycastle.asn1.x9.X9ECParameters;
+import org.spongycastle.asn1.x9.X9IntegerConverter;
+import org.spongycastle.crypto.agreement.ECDHBasicAgreement;
+import org.spongycastle.crypto.digests.SHA256Digest;
+import org.spongycastle.crypto.params.ECDomainParameters;
+import org.spongycastle.crypto.params.ECPrivateKeyParameters;
+import org.spongycastle.crypto.params.ECPublicKeyParameters;
+import org.spongycastle.crypto.signers.ECDSASigner;
+import org.spongycastle.crypto.signers.HMacDSAKCalculator;
+import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
+import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.spongycastle.math.ec.ECAlgorithms;
+import org.spongycastle.math.ec.ECPoint;
+import org.spongycastle.math.ec.FixedPointCombMultiplier;
+import org.spongycastle.math.ec.custom.sec.SecP256K1Curve;
 
 /*
  * Adapted from the BitcoinJ ECKey (Apache 2 License) implementation:
@@ -82,7 +82,8 @@ public final class PylonsSECP256K1 {
 
     private static final String ALGORITHM = "ECDSA";
     private static final String CURVE_NAME = "secp256k1";
-    private static final String PROVIDER = "BC";
+    //private static final String PROVIDER = "BC";
+    private static final String PROVIDER = "SC";
 
     /**
      * Digest using SHA2-256.
@@ -110,7 +111,8 @@ public final class PylonsSECP256K1 {
 
         static {
             try {
-                Class.forName("org.bouncycastle.asn1.sec.SECNamedCurves");
+                //Class.forName("org.bouncycastle.asn1.sec.SECNamedCurves");
+                Class.forName("org.spongycastle.asn1.sec.SECNamedCurves");
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(
                         "BouncyCastle is not available on the classpath, see https://www.bouncycastle.org/latest_releases.html");
@@ -123,6 +125,7 @@ public final class PylonsSECP256K1 {
                 throw new IllegalStateException("secp256k1.n should be smaller than secp256k1.q, but is not");
             }
             try {
+                Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
                 KEY_PAIR_GENERATOR = KeyPairGenerator.getInstance(ALGORITHM, PROVIDER);
             } catch (NoSuchProviderException e) {
                 throw new IllegalStateException(

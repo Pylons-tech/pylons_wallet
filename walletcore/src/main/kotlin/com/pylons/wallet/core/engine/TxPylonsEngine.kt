@@ -19,8 +19,8 @@ import com.pylons.wallet.core.types.tx.TxData
 import com.pylons.wallet.core.types.tx.item.Item
 import com.pylons.wallet.core.types.tx.msg.*
 import com.pylons.wallet.core.types.tx.trade.TradeItemInput
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.jce.provider.BouncyCastleProvider
+import org.spongycastle.util.encoders.Hex
 import java.io.FileNotFoundException
 import java.lang.Exception
 import java.lang.StringBuilder

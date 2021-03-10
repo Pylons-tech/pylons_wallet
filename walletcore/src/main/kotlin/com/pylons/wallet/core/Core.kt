@@ -15,7 +15,7 @@ import com.pylons.wallet.core.types.tx.msg.Msg
 import com.pylons.wallet.ipc.Message
 import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import org.apache.tuweni.bytes.Bytes32
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.util.encoders.Hex
 
 /**
  * The number of times the core will retry valid-but-rejected transactions.

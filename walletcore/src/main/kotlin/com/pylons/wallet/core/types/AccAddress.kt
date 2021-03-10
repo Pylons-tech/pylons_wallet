@@ -2,7 +2,7 @@ package com.pylons.wallet.core.types
 
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.util.encoders.Hex
 
 @ExperimentalUnsignedTypes
 class AccAddress (val bytes : ByteArray = byteArrayOf()) {

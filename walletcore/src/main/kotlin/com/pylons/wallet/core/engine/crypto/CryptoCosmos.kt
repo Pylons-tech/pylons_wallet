@@ -10,8 +10,8 @@ import org.apache.tuweni.bytes.Bytes
 import com.pylons.wallet.core.types.UserData
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.bytes.MutableBytes
-import org.bouncycastle.jce.ECNamedCurveTable
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.jce.ECNamedCurveTable
+import org.spongycastle.util.encoders.Hex
 import java.security.MessageDigest
 import org.kethereum.bip32.*
 import org.kethereum.bip39.*
