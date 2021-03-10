@@ -1,12 +1,13 @@
- package com.pylons.wallet.core.types.tx.msg
+package com.pylons.lib.types.tx.msg
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Json
 import com.beust.klaxon.Parser
-import com.pylons.lib.types.tx.Coin
-import com.pylons.lib.types.tx.item.Item
-import com.pylons.lib.types.tx.recipe.*
-import com.pylons.lib.types.tx.trade.TradeItemInput
+import com.pylons.lib.JsonModelSerializer
+import com.pylons.lib.SerializationMode
+import com.pylons.lib.core.ICore
+import com.pylons.lib.types.*
+import com.pylons.lib.types.tx.*
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
@@ -18,8 +19,14 @@ private annotation class MsgType (
 
 @ExperimentalUnsignedTypes
 sealed class Msg() {
+    abstract fun serializeForIpc() : String
 
     companion object {
+        private var core : ICore? = null
+        fun useCore(core : ICore) {
+            Companion.core = core
+        }
+
         fun fromJson (json : String) : Msg? = fromJson(Parser.default().parse(json) as JsonObject)
 
         fun fromJson (jsonObject: JsonObject) : Msg? {
@@ -49,6 +56,25 @@ sealed class Msg() {
             return null
         }
     }
+
+    private fun toMsgJson () : String {
+        val msgType = this::class.annotations.find { it is MsgType } as? MsgType
+        return """
+            [
+            {
+                "type": "${msgType?.serializedAs.orEmpty()}",
+                "value": ${JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)}
+            }
+            ]"""
+    }
+
+    fun toSignedTx () : String {
+        val c = core!!.userProfile!!.credentials as TxPylonsEngine.Credentials
+        val crypto = (core!!.engine as TxPylonsEngine).cryptoCosmos
+        return core!!.baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey(), 400000)
+    }
+
+    fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
 
  @MsgType("pylons/CheckExecution")
@@ -60,6 +86,7 @@ sealed class Msg() {
          @property:[Json(name = "PayToComplete")]
          val payToComplete : Boolean
  ) : Msg() {
+     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
      companion object {
          @MsgParser
@@ -78,6 +105,7 @@ sealed class Msg() {
          @property:[Json(name = "Requester")]
          val sender : String
  ) : Msg() {
+     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
      companion object {
          @MsgParser
@@ -110,6 +138,7 @@ data class CreateCookbook (
         @property:[Json(name = "CostPerBlock")]
         val costPerBlock : Long
 ): Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -152,7 +181,9 @@ data class CreateRecipe (
         val sender : String
 
 
-):Msg() {
+): Msg() {
+
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -188,7 +219,9 @@ data class CreateTrade (
         val itemOutputs: List<Item>,
     @property:[Json(name = "Sender")]
         val sender : String
-):Msg() {
+): Msg() {
+
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -213,6 +246,7 @@ data class DisableRecipe(
         @property:[Json(name="Sender")]
         val sender : String
 ) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -232,6 +266,7 @@ data class EnableRecipe(
         @property:[Json(name="Sender")]
         val sender : String
 ) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -253,6 +288,7 @@ data class ExecuteRecipe(
         @property:[Json(name = "Sender")]
         val sender : String
 ) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -274,7 +310,8 @@ data class FulfillTrade (
         val itemIds : List<String>,
         @property:[Json(name = "Sender")]
         val sender : String
-):Msg() {
+): Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -294,7 +331,9 @@ data class CancelTrade (
         val tradeId : String,
         @property:[Json(name = "Sender")]
         val sender : String
-):Msg() {
+): Msg() {
+
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -314,6 +353,7 @@ data class GetPylons(
         @property:[Json(name = "Requester")]
         val sender : String
 ) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -335,6 +375,7 @@ data class SendCoins(
         @property:[Json(name = "Sender")]
         val sender : String
 ) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -363,6 +404,7 @@ data class UpdateCookbook(
         @property:[Json(name = "Sender")]
         val sender : String
 ): Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -390,6 +432,7 @@ data class UpdateItemString (
         @property:[Json(name = "Sender")]
         val sender: String
 ): Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -428,6 +471,8 @@ data class UpdateRecipe (
         val sender : String
 ): Msg() {
 
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
     companion object {
         @MsgParser
         fun parse (jsonObject: JsonObject) : UpdateRecipe {
@@ -457,6 +502,7 @@ data class SendItems(
         @property:[Json(name = "Sender")]
         val sender : String
 ) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser
@@ -483,6 +529,7 @@ data class GoogleIapGetPylons(
         @property:[Json(name = "Requester")]
         val sender : String
 ) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
     companion object {
         @MsgParser

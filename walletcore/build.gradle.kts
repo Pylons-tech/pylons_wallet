@@ -33,6 +33,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    project("::libkylons")
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(kotlin("reflect"))
@@ -44,9 +45,6 @@ dependencies {
     implementation("org.apache.tuweni:tuweni-bytes:0.10.0")
     implementation("org.apache.tuweni:tuweni-io:0.10.0")
     implementation("org.apache.tuweni:tuweni-units:0.10.0")
-    //replace with spongycastle
-    //implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
-    //implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
     implementation("com.madgag.spongycastle:core:$spongycastleVer")
     implementation("com.madgag.spongycastle:prov:$spongycastleVer")
     implementation("com.madgag.spongycastle:bcpkix-jdk15on:$spongycastleVer")

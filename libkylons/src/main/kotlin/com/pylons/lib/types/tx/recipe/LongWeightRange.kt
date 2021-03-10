@@ -3,8 +3,7 @@ package com.pylons.lib.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.pylons.lib.types.tx.item.fuzzyInt
-import com.pylons.lib.types.tx.item.fuzzyLong
+import com.pylons.lib.NeverQuoteWrap
 
 data class LongWeightRange(
         @property:[NeverQuoteWrap Json(name = "Upper")]

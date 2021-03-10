@@ -1,11 +1,12 @@
-package com.pylons.lib.types.tx
+package com.pylons.wallet.core.types.tx
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.pylons.wallet.core.types.Coin
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.recipe.CoinInput
-import com.pylons.lib.types.tx.trade.TradeItemInput
+import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 import java.lang.StringBuilder
 
 data class Trade(

@@ -1,8 +1,9 @@
-package com.pylons.lib.types.tx
+package com.pylons.wallet.core.types.tx
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
-import com.pylons.lib.types.tx.item.fuzzyLong
+import com.pylons.wallet.core.internal.fuzzyLong
+import com.pylons.wallet.core.types.Coin
 
 data class StdFee(
         @property:[Json(name = "amount")]

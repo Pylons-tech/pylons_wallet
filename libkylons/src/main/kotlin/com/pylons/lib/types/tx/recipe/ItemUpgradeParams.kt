@@ -2,6 +2,7 @@ package com.pylons.lib.types.tx.recipe
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
+import com.pylons.lib.NeverQuoteWrap
 
 data class ItemUpgradeParams(
     @property:[Json(name = "Doubles")]

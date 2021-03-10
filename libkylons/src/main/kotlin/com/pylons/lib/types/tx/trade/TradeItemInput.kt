@@ -1,4 +1,4 @@
-package com.pylons.lib.types.tx.trade
+package com.pylons.wallet.core.types.tx.trade
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray

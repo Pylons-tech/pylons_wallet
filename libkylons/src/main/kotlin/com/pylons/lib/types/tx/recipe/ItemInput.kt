@@ -22,7 +22,7 @@ data class ItemInput(
                 fun fromJson (jsonObject: JsonObject) : ItemInput =
                         ItemInput (
                                 id = jsonObject.string("ID")!!,
-                                conditions = ConditionList.fromJson(jsonObject.obj("Conditions"))?: ConditionList(listOf(), listOf(), listOf()),
+                                conditions = ConditionList.fromJson(jsonObject.obj("Conditions")) ?: ConditionList(listOf(), listOf(), listOf()),
                                 doubles = DoubleInputParam.listFromJson(jsonObject.array("Doubles")),
                                 longs = LongInputParam.listFromJson(jsonObject.array("Longs")),
                                 strings = StringInputParam.listFromJson(jsonObject.array("Strings")),
