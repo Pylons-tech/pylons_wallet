@@ -2,13 +2,11 @@ package com.pylons.wallet.walletcore_test.core
 
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Multicore
-import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.ops.getProfile
 import com.pylons.wallet.core.ops.newProfile
 import com.pylons.wallet.core.ops.walletServiceTest
-import com.pylons.wallet.core.types.*
+import com.pylons.lib.types.types.*
 import org.apache.tuweni.bytes.Bytes32
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.*

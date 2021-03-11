@@ -1,9 +1,12 @@
 package com.pylons.lib.core
 
-import com.pylons.lib.types.Transaction
+import com.pylons.lib.types.*
+import com.pylons.lib.types.credentials.ICredentials
 import com.pylons.lib.types.tx.Coin
-import com.pylons.wallet.core.types.tx.Trade
-import com.pylons.lib.types.tx.recipe.Recipe
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.types.tx.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 
 /***
  * Generic interface for transaction-handling layers.
@@ -52,13 +55,13 @@ interface IEngine {
 
     /** Create-trade message */
     fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                             coinOutputs : List<Coin>, itemOutputs : List<Item>,
-                             ExtraInfo : String) : Transaction
+                    coinOutputs : List<Coin>, itemOutputs : List<Item>,
+                    ExtraInfo : String) : Transaction
 
     /** Create-recipe message */
     fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                              outputs : List<WeightedOutput>) : Transaction
+                     coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
+                     outputs : List<WeightedOutput>) : Transaction
 
     /** Batch create-recipe message */
     fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
@@ -80,7 +83,7 @@ interface IEngine {
      * for serialization.
      *  TODO: why does this actually exist?
      */
-    fun dumpCredentials (credentials: MyProfile.Credentials)
+    fun dumpCredentials (credentials: ICredentials)
 
     fun fulfillTrade (tradeId : String, itemIds : List<String>) : Transaction
 
@@ -89,19 +92,19 @@ interface IEngine {
      * Generates a new Credentials object appropriate for our engine
      * type from the given mnemonic.
      */
-    fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : MyProfile.Credentials
+    fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : ICredentials
 
     /**
      * Generates a new Credentials object appropriate for our engine
      * type from keys in userdata.
      */
-    fun generateCredentialsFromKeys () : MyProfile.Credentials
+    fun generateCredentialsFromKeys () : ICredentials
 
     /**
      * Creates new, default Credentials object appropriate for engine
      * type.
      */
-    fun getNewCredentials () : MyProfile.Credentials
+    fun getNewCredentials () : ICredentials
 
     fun getProfileState (addr : String) : Profile?
 
@@ -111,7 +114,7 @@ interface IEngine {
     fun getPendingExecutions () : List<Execution>
 
     /** Get a new instance of a CryptoHandler object appropriate for engine type. */
-    fun getNewCryptoHandler() : CryptoHandler
+    fun getNewCryptoHandler() : ICryptoHandler
 
     /** Get the current status block. (Status block is returned w/ all IPC calls) */
     fun getStatusBlock() : StatusBlock

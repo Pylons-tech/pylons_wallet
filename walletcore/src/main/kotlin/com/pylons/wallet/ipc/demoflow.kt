@@ -1,9 +1,5 @@
 package com.pylons.wallet.ipc
 
-import com.google.common.base.Ascii
-import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.types.StatusBlock
-import com.pylons.wallet.core.types.klaxon
 import java.util.*
 
 var fakeIpcJson : String = ""

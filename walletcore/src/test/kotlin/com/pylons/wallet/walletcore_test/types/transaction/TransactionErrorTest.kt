@@ -4,8 +4,8 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.getTransaction
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.recipe.CoinInput
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.tx.recipe.CoinInput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions

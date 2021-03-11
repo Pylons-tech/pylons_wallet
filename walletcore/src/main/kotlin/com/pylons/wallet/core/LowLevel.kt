@@ -1,9 +1,9 @@
 package com.pylons.wallet.core
 
 import com.pylons.wallet.core.engine.TxPylonsEngine
-import com.pylons.wallet.core.types.AccAddress
-import com.pylons.wallet.core.types.PylonsSECP256K1
-import com.pylons.wallet.core.types.tx.msg.Msg
+import com.pylons.lib.types.types.AccAddress
+import com.pylons.lib.types.types.PylonsSECP256K1
+import com.pylons.lib.types.types.tx.msg.Msg
 import org.apache.commons.codec.binary.Hex.*
 import org.apache.tuweni.bytes.Bytes32
 

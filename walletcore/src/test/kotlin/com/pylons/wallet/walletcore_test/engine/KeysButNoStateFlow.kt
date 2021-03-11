@@ -3,8 +3,8 @@ package com.pylons.wallet.walletcore_test.engine
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.Backend
-import com.pylons.wallet.core.types.Config
+import com.pylons.lib.types.types.Backend
+import com.pylons.lib.types.types.Config
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test

@@ -4,12 +4,12 @@ import com.beust.klaxon.Klaxon
 import com.pylons.ipc.Message
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
-import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.recipe.CoinInput
 import com.pylons.lib.types.tx.recipe.EntriesList
 import com.pylons.lib.types.tx.recipe.ItemInput
 import com.pylons.lib.types.tx.recipe.WeightedOutput
+import com.pylons.lib.types.types.tx.Trade
 
 /**
  * Generic high-level interface between JVM clients and a Pylons wallet.

@@ -3,9 +3,9 @@ package com.pylons.wallet.core.ops
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Transaction.Companion.submitAll
-import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.Transaction.Companion.submitAll
+import com.pylons.lib.types.types.tx.recipe.*
 
 fun Core.batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                             blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,

@@ -1,14 +1,10 @@
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
-import com.pylons.wallet.core.types.klaxon
 import com.pylons.wallet.ipc.IPCLayer
 import com.pylons.wallet.ipc.Message
 import org.apache.commons.codec.binary.Hex
-import java.net.InetSocketAddress
 import java.net.ServerSocket
-import java.net.Socket
-import java.net.SocketOption
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 

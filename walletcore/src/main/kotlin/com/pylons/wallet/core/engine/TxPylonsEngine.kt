@@ -4,21 +4,21 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Execution
-import com.pylons.wallet.core.types.Transaction
-import com.pylons.wallet.core.types.tx.recipe.*
-import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.Execution
+import com.pylons.lib.types.types.Transaction
+import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
 import com.pylons.wallet.core.VERSION_STRING
 import com.pylons.wallet.core.internal.fuzzyLong
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
-import com.pylons.wallet.core.types.tx.Trade
-import com.pylons.wallet.core.types.tx.TxData
-import com.pylons.wallet.core.types.tx.item.Item
-import com.pylons.wallet.core.types.tx.msg.*
-import com.pylons.wallet.core.types.tx.trade.TradeItemInput
+import com.pylons.lib.types.types.tx.Trade
+import com.pylons.lib.types.types.tx.TxData
+import com.pylons.lib.types.types.tx.item.Item
+import com.pylons.lib.types.types.tx.msg.*
+import com.pylons.lib.types.types.tx.trade.TradeItemInput
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.spongycastle.util.encoders.Hex
 import java.io.FileNotFoundException
@@ -68,11 +68,6 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
     }
 
     // Credentials stuff
-
-    class Credentials (address : String) : MyProfile.Credentials (address) {
-        var sequence : Long = 0
-        var accountNumber : Long = 0
-    }
 
     // Wiring
 

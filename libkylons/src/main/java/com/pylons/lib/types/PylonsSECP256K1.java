@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.pylons.wallet.core.types;
+package com.pylons.lib.types;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -18,9 +18,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.file.StandardOpenOption.READ;
 import static org.apache.tuweni.io.file.Files.atomicReplace;
 
-import com.pylons.wallet.core.Core;
-import com.pylons.wallet.core.engine.Engine;
-import com.pylons.wallet.core.engine.crypto.CryptoCosmos;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.MutableBytes;
@@ -832,15 +829,6 @@ public final class PylonsSECP256K1 {
          */
         public void store(Path file) throws IOException {
             secretKey.store(file);
-        }
-
-        /**
-         * Use these keys for signing with the current core.
-         */
-        public void use() {
-            CryptoCosmos cc = new CryptoCosmos(Core.Companion.getCurrent());
-            cc.setKeyPair(this);
-            Core.Companion.getCurrent().getEngine().setCryptoHandler(cc);
         }
     }
 

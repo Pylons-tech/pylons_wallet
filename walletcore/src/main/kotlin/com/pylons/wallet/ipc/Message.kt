@@ -1,6 +1,5 @@
 package com.pylons.wallet.ipc
 
-import com.beust.klaxon.Converter
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.pylons.wallet.core.Core
@@ -8,13 +7,12 @@ import com.pylons.wallet.core.Multicore
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.*
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.Trade
-import com.pylons.wallet.core.types.tx.recipe.Recipe
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.tx.Trade
+import com.pylons.lib.types.types.tx.recipe.Recipe
 import org.apache.tuweni.bytes.Bytes32
 import java.lang.StringBuilder
 import java.util.*
-import kotlin.reflect.KClass
 import kotlin.reflect.full.*
 
 sealed class Message {

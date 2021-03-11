@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-import com.pylons.wallet.core.types.tx.msg.CreateCookbook
+import com.pylons.lib.types.types.tx.msg.CreateCookbook
 
 val createCookbookSignable = CreateCookbook(
         cookbookId = "",

@@ -3,14 +3,9 @@ package com.pylons.txutil
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.LowLevel
-import com.pylons.wallet.core.ops.batchCreateCookbook
-import com.pylons.wallet.core.ops.getProfile
-import com.pylons.wallet.core.ops.getPylons
-import com.pylons.wallet.core.ops.newProfile
-import com.pylons.wallet.core.types.Backend
-import com.pylons.wallet.core.types.Config
-import com.pylons.wallet.core.types.PylonsSECP256K1
-import com.pylons.wallet.core.types.klaxon
+import com.pylons.lib.types.types.Backend
+import com.pylons.lib.types.types.Config
+import com.pylons.lib.types.types.PylonsSECP256K1
 import org.apache.tuweni.bytes.Bytes32
 import java.lang.Exception
 import java.util.*

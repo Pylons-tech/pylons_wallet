@@ -3,12 +3,12 @@ package com.pylons.wallet.core.engine
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.engine.crypto.CryptoNull
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Execution
-import com.pylons.wallet.core.types.tx.Trade
-import com.pylons.wallet.core.types.tx.item.Item
-import com.pylons.wallet.core.types.tx.recipe.*
-import com.pylons.wallet.core.types.tx.trade.TradeItemInput
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.Execution
+import com.pylons.lib.types.types.tx.Trade
+import com.pylons.lib.types.types.tx.item.Item
+import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.types.tx.trade.TradeItemInput
 
 /**
  * Engine that throws NoEngineException on calling any function.

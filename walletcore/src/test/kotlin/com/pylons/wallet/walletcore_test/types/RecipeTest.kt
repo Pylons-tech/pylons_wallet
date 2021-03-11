@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.types
 
-import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.lib.types.types.tx.recipe.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

@@ -4,6 +4,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.pylons.lib.*
+import com.pylons.lib.internal.fuzzyLong
 
 data class Item(
         @property:[Json(name = "NodeVersion")]

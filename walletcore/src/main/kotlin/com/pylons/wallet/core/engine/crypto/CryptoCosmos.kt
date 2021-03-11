@@ -4,10 +4,9 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
-import com.pylons.wallet.core.types.PylonsSECP256K1
+import com.pylons.lib.types.types.PylonsSECP256K1
 import org.apache.commons.codec.binary.Base32
 import org.apache.tuweni.bytes.Bytes
-import com.pylons.wallet.core.types.UserData
 import org.apache.tuweni.bytes.Bytes32
 import org.apache.tuweni.bytes.MutableBytes
 import org.spongycastle.jce.ECNamedCurveTable

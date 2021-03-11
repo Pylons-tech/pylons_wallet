@@ -1,9 +1,8 @@
 package com.pylons.wallet.core.ops
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.constants.Keys
 import com.pylons.wallet.core.internal.*
-import com.pylons.wallet.core.types.*
+import com.pylons.lib.types.types.*
 import java.lang.Exception
 
 fun Core.applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>) : Transaction {

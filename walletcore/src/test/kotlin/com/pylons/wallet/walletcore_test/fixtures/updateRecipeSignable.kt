@@ -1,7 +1,7 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-import com.pylons.wallet.core.types.tx.msg.UpdateRecipe
-import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.lib.types.types.tx.msg.UpdateRecipe
+import com.pylons.lib.types.types.tx.recipe.*
 
 val updateRecipeSignable = UpdateRecipe(
         id = "id001",

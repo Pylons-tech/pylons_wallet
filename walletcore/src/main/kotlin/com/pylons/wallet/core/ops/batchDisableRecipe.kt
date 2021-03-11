@@ -1,8 +1,8 @@
 package com.pylons.wallet.core.ops
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Transaction.Companion.submitAll
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.Transaction.Companion.submitAll
 
 fun Core.batchDisableRecipe (recipes : List<String>) : List<Transaction> {
     val txs = engine.disableRecipes(

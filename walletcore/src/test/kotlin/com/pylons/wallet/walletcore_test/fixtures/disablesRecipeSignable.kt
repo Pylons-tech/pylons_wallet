@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-import com.pylons.wallet.core.types.tx.msg.DisableRecipe
+import com.pylons.lib.types.types.tx.msg.DisableRecipe
 
 val disableRecipeSignable = DisableRecipe(
         recipeId = "id0001",

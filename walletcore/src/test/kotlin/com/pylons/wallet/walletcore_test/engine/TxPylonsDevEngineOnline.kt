@@ -3,18 +3,15 @@ package com.pylons.wallet.walletcore_test.engine
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
-import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.item.Item
-import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.tx.item.Item
+import com.pylons.lib.types.types.tx.recipe.*
 import com.pylons.wallet.walletcore_test.fixtures.emitCreateRecipe
 import com.pylons.wallet.walletcore_test.fixtures.emitCreateTrade
 import com.pylons.wallet.walletcore_test.fixtures.emitUpdateRecipe
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.*
-import java.security.Security
 import java.time.Instant
 
 import java.util.*

@@ -1,11 +1,11 @@
 package com.pylons.wallet.core.ops
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.types.Coin
-import com.pylons.wallet.core.types.Transaction
-import com.pylons.wallet.core.types.tx.item.Item
-import com.pylons.wallet.core.types.tx.recipe.*
-import com.pylons.wallet.core.types.tx.trade.TradeItemInput
+import com.pylons.lib.types.types.Coin
+import com.pylons.lib.types.types.Transaction
+import com.pylons.lib.types.types.tx.item.Item
+import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.types.tx.trade.TradeItemInput
 
 @ExperimentalUnsignedTypes
 fun Core.createTrade (coinInputs: List<String>, itemInputs : List<String>,

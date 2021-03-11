@@ -2,7 +2,7 @@ package com.pylons.lib.core
 import com.pylons.lib.types.MyProfile
 import com.pylons.lib.types.StatusBlock
 import com.pylons.lib.types.UserData
-import kotlinx.coroutines.*
+import com.pylons.lib.types.PylonsSECP256K1
 
 @ExperimentalUnsignedTypes
 interface ICore {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pylons.wallet.core.types;
+package com.pylons.lib.types;
 
 import java.io.ByteArrayOutputStream;
 

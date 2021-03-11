@@ -3,7 +3,7 @@ package com.pylons.wallet.ipc_test
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.*
+import com.pylons.lib.types.types.*
 import com.pylons.wallet.ipc.Message
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test

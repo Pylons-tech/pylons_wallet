@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.types.tx
+package com.pylons.lib.types.types.tx
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject

@@ -1,24 +1,24 @@
 package com.pylons.lib.types
 
-import com.pylons.wallet.core.Core
+import com.pylons.lib.core.ICore
+import com.pylons.lib.types.credentials.ICredentials
+import com.pylons.lib.types.tx.Coin
 import com.pylons.wallet.core.constants.*
-import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.lib.types.tx.item.Item
 
 /**
  * Internal state representation of the user's own userProfile.
  */
 @ExperimentalUnsignedTypes
-class MyProfile (val core : Core, var credentials: Credentials,
+class MyProfile (val core : ICore, var credentials: ICredentials,
                  var lockedCoinDetails: LockedCoinDetails = LockedCoinDetails.default,
                  strings : Map<String, String>,
                  items : List<Item>,
                  coins : List<Coin>) :
         Profile(credentials.address, strings, coins, items) {
-    abstract class Credentials (var address : String) { }
 
     companion object {
-        fun getDefault(core : Core) = MyProfile(
+        fun getDefault(core : ICore) = MyProfile(
                 core = core,
                 credentials = core.engine.generateCredentialsFromKeys(),
                 strings = mapOf(),
@@ -26,9 +26,9 @@ class MyProfile (val core : Core, var credentials: Credentials,
                 coins = listOf()
         )
 
-        fun fromUserData (core : Core) : MyProfile? {
+        fun fromUserData (core : ICore) : MyProfile? {
             val data = core.userData.dataSets.getValue(core.engine.prefix)
-            (core.engine as TxPylonsEngine).cryptoHandler.importKeysFromUserData()
+            core.engine.cryptoHandler.importKeysFromUserData()
             val credentials = core.engine.generateCredentialsFromKeys()
             return when (val name = data.getOrDefault("name", "")) {
                 "" -> MyProfile(core, credentials = credentials, coins = listOf(), items = listOf(), strings = mutableMapOf())

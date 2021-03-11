@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.*
+import com.pylons.lib.types.types.*
 import org.opentest4j.AssertionFailedError
 import org.apache.commons.lang3.StringUtils.*
 import java.io.StringReader

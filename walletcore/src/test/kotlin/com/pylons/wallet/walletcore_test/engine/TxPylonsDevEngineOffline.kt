@@ -6,8 +6,8 @@ import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.ops.newProfile
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.msg.GetPylons
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.tx.msg.GetPylons
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
 import org.bouncycastle.jce.provider.BouncyCastleProvider

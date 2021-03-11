@@ -1,8 +1,8 @@
 package com.pylons.wallet.core.ops
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Transaction.Companion.submitAll
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.Transaction.Companion.submitAll
 
 fun Core.batchUpdateCookbook (names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
                               supportEmails : List<String>, ids : List<String>) : List<Transaction> {

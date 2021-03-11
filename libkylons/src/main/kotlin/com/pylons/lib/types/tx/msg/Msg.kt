@@ -3,11 +3,16 @@ package com.pylons.lib.types.tx.msg
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Json
 import com.beust.klaxon.Parser
+import com.pylons.lib.EmptyArray
 import com.pylons.lib.JsonModelSerializer
 import com.pylons.lib.SerializationMode
 import com.pylons.lib.core.ICore
-import com.pylons.lib.types.*
-import com.pylons.lib.types.tx.*
+import com.pylons.lib.klaxon
+import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
@@ -69,9 +74,9 @@ sealed class Msg() {
     }
 
     fun toSignedTx () : String {
-        val c = core!!.userProfile!!.credentials as TxPylonsEngine.Credentials
-        val crypto = (core!!.engine as TxPylonsEngine).cryptoCosmos
-        return core!!.baseJsonWeldFlow(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey(), 400000)
+        val c = core!!.userProfile!!.credentials as CosmosCredentials
+        val crypto = core!!.engine.cryptoHandler
+        return core!!.buildJsonForTxPost(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair?.publicKey(), 400000)
     }
 
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"

@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.types.tx
+package com.pylons.lib.types.types.tx
 
 import com.pylons.lib.types.tx.msg.Msg
 import com.beust.klaxon.*

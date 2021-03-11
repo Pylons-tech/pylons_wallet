@@ -2,10 +2,10 @@ package com.pylons.wallet.core
 
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.Config
-import com.pylons.wallet.core.types.LockedCoinDetails
-import com.pylons.wallet.core.types.MyProfile
-import com.pylons.wallet.core.types.PylonsSECP256K1
+import com.pylons.lib.types.types.Config
+import com.pylons.lib.types.types.LockedCoinDetails
+import com.pylons.lib.types.types.MyProfile
+import com.pylons.lib.types.types.PylonsSECP256K1
 
 object Multicore {
     private var config : Config? = null

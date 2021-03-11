@@ -10,10 +10,10 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.msg.Msg
+import com.pylons.lib.types.types.*
+import com.pylons.lib.types.types.tx.msg.Msg
 import com.pylons.wallet.ipc.Message
-import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
+import com.pylons.lib.types.types.PylonsSECP256K1 as PylonsSECP256K1
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Hex
 
