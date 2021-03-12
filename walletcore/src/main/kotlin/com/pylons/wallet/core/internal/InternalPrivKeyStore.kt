@@ -1,4 +1,4 @@
-package com.pylons.lib.types
+package com.pylons.wallet.core.internal
 
 /**
  * Object storing some named constants for hardcoded private keys.

@@ -76,7 +76,7 @@ sealed class Msg() {
     fun toSignedTx () : String {
         val c = core!!.userProfile!!.credentials as CosmosCredentials
         val crypto = core!!.engine.cryptoHandler
-        return core!!.buildJsonForTxPost(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair?.publicKey(), 400000)
+        return core!!.buildJsonForTxPost(toMsgJson(), toSignStruct(), c.accountNumber, c.sequence, crypto.keyPair!!.publicKey(), 400000)
     }
 
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"

@@ -3,6 +3,7 @@ package com.pylons.lib.types
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import com.pylons.lib.types.tx.Coin
 
 data class LockedCoinDescribe(
         @property:[Json(name = "ID")]

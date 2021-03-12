@@ -5,7 +5,7 @@ package com.pylons.lib.types
  */
 enum class Backend {
     /**
-     * No backend. Dummy engine, typically means core hasn't been bootstrapped yet.
+     * No backend. Dummy engine, typically means org.bitcoinj.core.core hasn't been bootstrapped yet.
      */
     NONE,
 

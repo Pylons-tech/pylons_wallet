@@ -3,9 +3,9 @@ package com.pylons.lib.core
 import com.pylons.lib.types.*
 import com.pylons.lib.types.credentials.ICredentials
 import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.recipe.*
-import com.pylons.lib.types.types.tx.*
 import com.pylons.lib.types.tx.trade.TradeItemInput
 
 /***

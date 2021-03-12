@@ -5,11 +5,7 @@ import org.spongycastle.util.encoders.Hex
 @ExperimentalUnsignedTypes
 class AccAddress (val bytes : ByteArray = byteArrayOf()) {
     companion object {
-        fun getAddressFromNode (nodeUrl : String, keyPair: PylonsSECP256K1.KeyPair) : String {
-            val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
-                    Hex.toHexString(CryptoCosmos.getCompressedPubkey(keyPair.publicKey()).toArray()))
-            return klaxon.parse<TxPylonsEngine.AddressResponse>(json)!!.Bech32Addr!!
-        }
+
 
         // AddrLen defines a valid address length
         const val addrLen = 20

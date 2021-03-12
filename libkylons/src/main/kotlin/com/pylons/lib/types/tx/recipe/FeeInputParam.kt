@@ -2,7 +2,7 @@ package com.pylons.lib.types.tx.recipe
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
-import com.pylons.wallet.core.internal.fuzzyLong
+import com.pylons.lib.internal.fuzzyLong
 
 data class FeeInputParam(
         @property:[Json(name = "MinValue")]

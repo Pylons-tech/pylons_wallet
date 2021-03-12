@@ -18,7 +18,7 @@ import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Hex
 
 /**
- * The number of times the core will retry valid-but-rejected transactions.
+ * The number of times the org.bitcoinj.core.core will retry valid-but-rejected transactions.
  * (For instance: if the remote profile doesn't have the resources to apply a recipe.)
  */
 internal const val rejectedTxRetryTimes = 3
@@ -106,7 +106,7 @@ class Core(val config : Config) {
     }
 
     fun use() : Core {
-        println("changing core")
+        println("changing org.bitcoinj.core.core")
         current = this
         Msg.useCore(this)
         Message.useCore(this)

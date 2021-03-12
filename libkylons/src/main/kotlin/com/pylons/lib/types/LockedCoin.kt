@@ -2,6 +2,7 @@ package com.pylons.lib.types
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
+import com.pylons.lib.types.tx.Coin
 
 data class LockedCoin(
         @property:[Json(name = "NodeVersion")]

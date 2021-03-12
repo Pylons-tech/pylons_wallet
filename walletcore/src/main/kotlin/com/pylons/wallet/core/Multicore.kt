@@ -39,7 +39,7 @@ object Multicore {
 
     fun switchCore (address : String) : Core {
         return when (loadedCores[address]) {
-            null -> throw Exception("No loaded core w/ address of $address")
+            null -> throw Exception("No loaded org.bitcoinj.core.core w/ address of $address")
             else -> loadedCores[address]!!.use()
         }
     }

@@ -1,15 +1,16 @@
 package com.pylons.lib.types
 
-import com.pylons.wallet.core.Core
+import com.pylons.lib.core.ICore
+import com.pylons.lib.klaxon
 
 const val userDataFormatVersion : String = "1.0.0"
 
 /**
  * Object representing persistent data stored on local storage.
- * Used to configure com.pylons.wallet.core's initial state when starting.
+ * Used to configure com.pylons.wallet.org.bitcoinj.core.core's initial state when starting.
  */
 @ExperimentalUnsignedTypes
-class UserData(val core : Core) {
+class UserData(val core : ICore) {
     class Model {
         var dataSets : Map<String, MutableMap<String, String>>? = mutableMapOf()
         val version : String? = null

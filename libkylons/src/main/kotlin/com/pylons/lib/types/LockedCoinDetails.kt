@@ -2,15 +2,16 @@ package com.pylons.lib.types
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
+import com.pylons.lib.types.tx.Coin
 
 data class LockedCoinDetails(
-        @property:[Json(name = "Sender")]
+    @property:[Json(name = "Sender")]
         val sender: String,
-        @property:[Json(name = "Amount")]
+    @property:[Json(name = "Amount")]
         val amount: List<Coin>,
-        @property:[Json(name = "LockCoinTrades")]
+    @property:[Json(name = "LockCoinTrades")]
         val lockCoinTrades: List<LockedCoinDescribe>,
-        @property:[Json(name = "LockCoinExecs")]
+    @property:[Json(name = "LockCoinExecs")]
         val lockCoinExecs: List<LockedCoinDescribe>
 ) {
     companion object {

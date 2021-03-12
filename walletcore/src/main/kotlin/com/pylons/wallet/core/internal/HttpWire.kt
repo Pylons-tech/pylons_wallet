@@ -1,10 +1,12 @@
-package com.pylons.lib.types
+package com.pylons.wallet.core.internal
 
+import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.logging.LogTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.spongycastle.util.encoders.Hex
 import java.io.*
 import java.lang.Exception
 import java.net.HttpURLConnection
@@ -17,6 +19,12 @@ object HttpWire {
     private const val RETRIES = 3
     private const val RETRY_DELAY = 1000.toLong()
     var verbose = false
+
+    fun getAddressFromNode (nodeUrl : String, keyPair: PylonsSECP256K1.KeyPair) : String {
+        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
+                Hex.toHexString(CryptoCosmos.getCompressedPubkey(keyPair.publicKey()).toArray()))
+        return klaxon.parse<TxPylonsEngine.AddressResponse>(json)!!.Bech32Addr!!
+    }
 
     /**
      * Fires an http GET request at the given URL; returns the received page as a string.

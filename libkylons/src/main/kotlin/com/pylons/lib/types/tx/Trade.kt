@@ -1,9 +1,8 @@
-package com.pylons.lib.types.types.tx
+package com.pylons.lib.types.tx
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.pylons.lib.types.types.Coin
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.recipe.CoinInput
 import com.pylons.lib.types.tx.trade.TradeItemInput
@@ -38,7 +37,8 @@ data class Trade(
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.obj("result")!!.array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
-                list.add(Trade(
+                list.add(
+                    Trade(
                         nodeVersion = it.string("NodeVersion")!!,
                         id = it.string("ID")!!,
                         coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),

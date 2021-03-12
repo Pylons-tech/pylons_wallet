@@ -1,4 +1,4 @@
-package com.pylons.lib.types.types.tx
+package com.pylons.lib.types.tx
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray

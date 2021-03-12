@@ -35,7 +35,7 @@ class MulticoreTest {
     private val altTestCredentials = TxPylonsEngine.Credentials(TxPylonsEngine.getAddressString(CryptoCosmos.getAddressFromKeyPair(altTestKeys).toArray()))
 
     /**
-     * Can we enable multi-core?
+     * Can we enable multi-org.bitcoinj.core.core?
      */
     @Test
     @Order(0)
@@ -45,7 +45,7 @@ class MulticoreTest {
     }
 
     /**
-     * Can we add a core and verify that it has the correct credentials?
+     * Can we add a org.bitcoinj.core.core and verify that it has the correct credentials?
      */
     @Test
     @Order(1)
@@ -57,7 +57,7 @@ class MulticoreTest {
     }
 
     /**
-     * Can we use the newly-added core to resolve operations?
+     * Can we use the newly-added org.bitcoinj.core.core to resolve operations?
      */
     @Test
     @Order(2)
@@ -67,7 +67,7 @@ class MulticoreTest {
     }
 
     /**
-     * Can we add another core and start using it?
+     * Can we add another org.bitcoinj.core.core and start using it?
      */
     @Test
     @Order(3)
@@ -80,7 +80,7 @@ class MulticoreTest {
     }
 
     /**
-     * Can we grab the first core again and use it?
+     * Can we grab the first org.bitcoinj.core.core again and use it?
      */
     @Test
     @Order(4)

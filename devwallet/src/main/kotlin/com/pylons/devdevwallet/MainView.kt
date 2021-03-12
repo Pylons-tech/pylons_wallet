@@ -32,7 +32,7 @@ class MainView : View() {
     companion object {
         private fun getCoreStatusString (version: String, started : Boolean, sane : Boolean,
         suspendedAction : String) : String =
-                ("pylons devwallet core v$version " +
+                ("pylons devwallet org.bitcoinj.core.core v$version " +
                         "started: $started, sane: $sane " +
                         "[suspended action: " +
                         "${if (suspendedAction == "") "none" else suspendedAction}]")
