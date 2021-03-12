@@ -58,7 +58,8 @@ dependencies {
     implementation("com.github.walleth.kethereum:bip39:$ketheriumVer")
     implementation("com.github.walleth.kethereum:bip39_wordlist_en:$ketheriumVer")
     implementation("com.github.walleth.kethereum:crypto_api:$ketheriumVer")
-    implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
+    //implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
+    implementation("com.github.walleth.kethereum:crypto_impl_spongycastle:$ketheriumVer")
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
     implementation("io.github.classgraph:classgraph:4.8.87")
 

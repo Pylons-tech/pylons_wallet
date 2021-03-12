@@ -111,6 +111,7 @@ public final class PylonsSECP256K1 {
 
         static {
             try {
+                Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
                 //Class.forName("org.bouncycastle.asn1.sec.SECNamedCurves");
                 Class.forName("org.spongycastle.asn1.sec.SECNamedCurves");
             } catch (ClassNotFoundException e) {
@@ -125,7 +126,7 @@ public final class PylonsSECP256K1 {
                 throw new IllegalStateException("secp256k1.n should be smaller than secp256k1.q, but is not");
             }
             try {
-                Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+
                 KEY_PAIR_GENERATOR = KeyPairGenerator.getInstance(ALGORITHM, PROVIDER);
             } catch (NoSuchProviderException e) {
                 throw new IllegalStateException(
