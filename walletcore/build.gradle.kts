@@ -33,7 +33,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    project("::libkylons")
+    implementation(project(":libkylons"))
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(kotlin("reflect"))

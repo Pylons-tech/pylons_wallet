@@ -1,9 +1,8 @@
-package com.pylons.wallet.ipc
+package com.pylons.ipc
 
 import io.github.classgraph.*
 import kotlin.random.Random
 import kotlin.reflect.jvm.jvmName
-import kotlin.reflect.typeOf
 
 abstract class IPCLayer(val permitUnboundOperations : Boolean) {
     var clientId : Int = 0
@@ -25,7 +24,7 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
 
     protected open fun initIpcChannel() { if (!permitUnboundOperations) establishConnection(); initialized = true }
     protected abstract fun getNextJson(callback: (String) -> Unit)
-    protected open fun preprocessResponse(r :Message.Response,
+    protected open fun preprocessResponse(r : Message.Response,
                                           callback: (Message.Response) -> Unit) {callback(r)}
     protected open fun cleanup() {}
     abstract fun establishConnection()

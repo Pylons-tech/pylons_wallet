@@ -4,7 +4,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.types.types.*
-import com.pylons.wallet.ipc.demoflow
+import com.pylons.ipc.demoflow
 import org.junit.jupiter.api.Test
 
 class FirstDemoflowTest {

@@ -1,8 +1,5 @@
 package com.pylons.lib.core
-import com.pylons.lib.types.MyProfile
-import com.pylons.lib.types.StatusBlock
-import com.pylons.lib.types.UserData
-import com.pylons.lib.types.PylonsSECP256K1
+import com.pylons.lib.types.*
 
 @ExperimentalUnsignedTypes
 interface ICore {
@@ -44,6 +41,40 @@ interface ICore {
     fun isReady () : Boolean {
         return sane && started
     }
+
+    fun getProfile (addr : String?) : Profile?
+
+    fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>) : Transaction
+
+    fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
+                             supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction>
+
+    fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
+                                    blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
+                                    outputTables : List<String>, outputs : List<String>) : List<Transaction>
+
+    fun batchDisableRecipe (recipes : List<String>) : List<Transaction>
+
+    fun batchEnableRecipe (recipes : List<String>) : List<Transaction>
+
+    fun batchUpdateCookbook (names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
+                             supportEmails : List<String>, ids : List<String>) : List<Transaction>
+
+    fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
+                           blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
+                           outputTables : List<String>, outputs : List<String>) : List<Transaction>
+
+    fun cancelTrade(tradeId : String) : Transaction
+
+    fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
+
+    fun createTrade (coinInputs: List<String>, itemInputs : List<String>,
+                     coinOutputs : List<String>, itemOutputs : List<String>,
+                     extraInfo : String) : Transaction
+
+    fun fulfillTrade(tradeId : String, itemIds : List<String>) : Transaction
+
+    fun getCookbooks () : List<Cookbook>
 
     fun buildJsonForTxPost(msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String
 }

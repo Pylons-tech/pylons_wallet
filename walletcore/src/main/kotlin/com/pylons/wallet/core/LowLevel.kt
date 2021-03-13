@@ -1,5 +1,6 @@
 package com.pylons.wallet.core
 
+import com.pylons.lib.core.ILowLevel
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.lib.types.types.AccAddress
 import com.pylons.lib.types.types.PylonsSECP256K1
@@ -8,7 +9,7 @@ import org.apache.commons.codec.binary.Hex.*
 import org.apache.tuweni.bytes.Bytes32
 
 @ExperimentalUnsignedTypes
-class LowLevel (private val core : Core) {
+class LowLevel (private val core : Core) : ILowLevel {
     private val local = """http://127.0.0.1:1317"""
     private val nodeUrl = getUrl()
 

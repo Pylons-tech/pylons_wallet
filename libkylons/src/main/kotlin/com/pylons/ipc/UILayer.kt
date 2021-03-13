@@ -1,8 +1,6 @@
-package com.pylons.wallet.ipc
+package com.pylons.ipc
 
 import io.github.classgraph.ClassGraph
-import io.github.classgraph.MethodInfo
-import java.util.*
 import kotlin.reflect.jvm.jvmName
 
 abstract class UILayer {

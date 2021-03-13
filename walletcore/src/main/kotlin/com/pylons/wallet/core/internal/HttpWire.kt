@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.internal
 
+import com.pylons.lib.types.PylonsSECP256K1
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.Logger
@@ -11,6 +12,8 @@ import java.io.*
 import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
+import com.pylons.lib.klaxon
+import com.pylons.wallet.core.engine.TxPylonsEngine
 
 /**
  * Object handling low-level network operations.

@@ -1,4 +1,4 @@
-package com.pylons.wallet.ipc
+package com.pylons.ipc
 
 import java.util.*
 

@@ -3,22 +3,14 @@ package com.pylons.wallet.core.engine
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.engine.crypto.CryptoHandler
-import com.pylons.lib.types.types.*
-import com.pylons.lib.types.types.Execution
-import com.pylons.lib.types.types.Transaction
-import com.pylons.lib.types.types.tx.recipe.*
-import com.pylons.lib.types.types.PylonsSECP256K1 as PylonsSECP256K1
 import com.beust.klaxon.*
+import com.pylons.lib.core.ICryptoHandler
+import com.pylons.lib.core.IEngine
+import com.pylons.lib.internal.fuzzyLong
 import com.pylons.wallet.core.VERSION_STRING
-import com.pylons.wallet.core.internal.fuzzyLong
+import com.pylons.wallet.core.internal.HttpWire
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
-import com.pylons.lib.types.types.tx.Trade
-import com.pylons.lib.types.types.tx.TxData
-import com.pylons.lib.types.types.tx.item.Item
-import com.pylons.lib.types.types.tx.msg.*
-import com.pylons.lib.types.types.tx.trade.TradeItemInput
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.spongycastle.util.encoders.Hex
 import java.io.FileNotFoundException
@@ -26,9 +18,20 @@ import java.lang.Exception
 import java.lang.StringBuilder
 import java.security.Security
 import java.util.*
+import com.pylons.lib.klaxon
+import com.pylons.lib.types.*
+import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.credentials.ICredentials
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.TxData
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.msg.*
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 
 @ExperimentalUnsignedTypes
-open class TxPylonsEngine(core : Core) : Engine(core) {
+open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     init {
         Security.removeProvider("BC")
         Security.addProvider(BouncyCastleProvider())
@@ -42,7 +45,7 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
     override val backendType: Backend = Backend.LIVE
     override val usesMnemonic: Boolean = true
     override val isDevEngine: Boolean = false
-    override var cryptoHandler: CryptoHandler = CryptoCosmos(core)
+    override var cryptoHandler: ICryptoHandler = CryptoCosmos(core)
     val cryptoCosmos get() = cryptoHandler as CryptoCosmos
     internal val nodeUrl = getUrl()
 
@@ -71,9 +74,9 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
 
     // Wiring
 
-    protected fun handleTx (func : (Credentials) -> String) : Transaction {
+    protected fun handleTx (func : (ICredentials) -> String) : Transaction {
         return Transaction(resolver =  {
-            val response = postTxJson(func(core.userProfile!!.credentials as Credentials))
+            val response = postTxJson(func(core.userProfile!!.credentials))
             val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
 
             val code = jsonObject.int("code")
@@ -143,8 +146,7 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
                 ).toSignedTx()
             }
 
-    override fun dumpCredentials(credentials: MyProfile.Credentials) {
-        val c = credentials as Credentials
+    override fun dumpCredentials(credentials: ICredentials) {
         core.userData.dataSets["__CRYPTO_COSMOS__"]!!["key"] = cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
     }
@@ -166,12 +168,12 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
                 ).toSignedTx()
             }
 
-    override fun generateCredentialsFromKeys() : MyProfile.Credentials {
+    override fun generateCredentialsFromKeys() : ICredentials {
         val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
-        return Credentials(addrString)
+        return CosmosCredentials(addrString)
     }
 
-    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): MyProfile.Credentials {
+    override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String): ICredentials {
         //val bip39 = Bip39(EnglishDictionary.instance())
         //val seed = bip39.createSeed(mnemonic, passphrase)
         //SECP256K1.SecretKey.
@@ -186,13 +188,13 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
         return mutableMapOf("__CRYPTO_COSMOS__" to cryptoTable, "__TXPYLONSALPHA__" to engineTable)
     }
 
-    override fun getNewCredentials(): MyProfile.Credentials {
+    override fun getNewCredentials(): ICredentials {
         //val addrString = getAddressFromNode(cryptoCosmos.keyPair!!.publicKey())
         val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
-        return Credentials(addrString)
+        return CosmosCredentials(addrString)
     }
 
-    override fun getNewCryptoHandler(): CryptoHandler = CryptoCosmos(core)
+    override fun getNewCryptoHandler(): ICryptoHandler = CryptoCosmos(core)
 
     override fun getMyProfileState(): MyProfile? {
         println("myProfile path")
@@ -209,7 +211,7 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
                 val coins = Coin.listFromJson(value.array("coins"))
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject).obj("result")!!
                 val items = Item.listFromJson(valueItems.array("Items"))
-                val credentials = (core.userProfile!!.credentials as Credentials)
+                val credentials = core.userProfile!!.credentials as CosmosCredentials
                 credentials.accountNumber = accountNumber
                 credentials.sequence = sequence
                 core.userProfile?.coins = coins
@@ -269,7 +271,8 @@ open class TxPylonsEngine(core : Core) : Engine(core) {
             val response = HttpWire.get("$nodeUrl/txs/$id")
             Transaction.parseTransactionResponse(id, response)
         } catch (e : FileNotFoundException) {
-            Transaction(TxData("", "", listOf()), null, null, null,
+            Transaction(
+                TxData("", "", listOf()), null, null, null,
                     Transaction.State.TX_NOT_YET_COMMITTED, Transaction.ResponseCode.UNKNOWN_ERROR)
         }
     }
