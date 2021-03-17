@@ -4,6 +4,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.logging.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.beust.klaxon.*
+import com.pylons.lib.PubKeyUtil
 import com.pylons.lib.core.ICryptoHandler
 import com.pylons.lib.core.IEngine
 import com.pylons.lib.internal.fuzzyLong
@@ -59,7 +60,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
 
     fun getAddressFromNode (key : PylonsSECP256K1.PublicKey) : String {
         val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
-                Hex.toHexString(CryptoCosmos.getCompressedPubkey(key).toArray()))
+                Hex.toHexString(PubKeyUtil.getCompressedPubkey(key).toArray()))
         return klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
     }
 
@@ -169,7 +170,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             }
 
     override fun generateCredentialsFromKeys() : ICredentials {
-        val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
+        val addrString = getAddressString(PubKeyUtil.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
         return CosmosCredentials(addrString)
     }
 
@@ -190,7 +191,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
 
     override fun getNewCredentials(): ICredentials {
         //val addrString = getAddressFromNode(cryptoCosmos.keyPair!!.publicKey())
-        val addrString = getAddressString(CryptoCosmos.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
+        val addrString = getAddressString(PubKeyUtil.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
         return CosmosCredentials(addrString)
     }
 

@@ -1,5 +1,6 @@
 package com.pylons.wallet.core.internal
 
+import com.pylons.lib.PubKeyUtil
 import com.pylons.lib.types.PylonsSECP256K1
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.logging.LogEvent
@@ -25,7 +26,7 @@ object HttpWire {
 
     fun getAddressFromNode (nodeUrl : String, keyPair: PylonsSECP256K1.KeyPair) : String {
         val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
-                Hex.toHexString(CryptoCosmos.getCompressedPubkey(keyPair.publicKey()).toArray()))
+                Hex.toHexString(PubKeyUtil.getCompressedPubkey(keyPair.publicKey()).toArray()))
         return klaxon.parse<TxPylonsEngine.AddressResponse>(json)!!.Bech32Addr!!
     }
 

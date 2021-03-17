@@ -1,10 +1,10 @@
 package com.pylons.wallet.walletcore_test.types
 
-import com.pylons.lib.types.types.Coin
-import com.pylons.lib.types.types.tx.Trade
-import com.pylons.lib.types.types.tx.item.Item
-import com.pylons.lib.types.types.tx.recipe.*
-import com.pylons.lib.types.types.tx.trade.TradeItemInput
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

@@ -1,7 +1,7 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
-import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.tx.recipe.*
 
 fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, rId : String, sender : String) =
         engine.updateRecipe (

@@ -16,10 +16,7 @@ import com.pylons.lib.types.credentials.CosmosCredentials
 import com.pylons.lib.types.tx.Coin
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.msg.Msg
-import com.pylons.lib.types.tx.recipe.CoinInput
-import com.pylons.lib.types.tx.recipe.EntriesList
-import com.pylons.lib.types.tx.recipe.ItemInput
-import com.pylons.lib.types.tx.recipe.WeightedOutput
+import com.pylons.lib.types.tx.recipe.*
 import com.pylons.lib.types.tx.trade.TradeItemInput
 import kotlinx.coroutines.*
 
@@ -33,6 +30,7 @@ import com.pylons.wallet.core.logging.Logger
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex
+import java.io.StringReader
 
 /**
  * The number of times the org.bitcoinj.core.core will retry valid-but-rejected transactions.
@@ -310,4 +308,38 @@ class Core(val config : Config) : ICore {
         engine.fulfillTrade(tradeId, itemIds).submit()
 
     override fun getCookbooks () : List<Cookbook> = engine.listCookbooks()
+
+    override fun getPendingExecutions () : List<Execution> = engine.getPendingExecutions()
+
+    override fun getPylons (q : Long) : Transaction = engine.getPylons(q).submit()
+
+    override fun getRecipes () : List<Recipe> = engine.listRecipes()
+
+    override fun getTransaction(txHash : String): Transaction = engine.getTransaction(txHash)
+
+    override fun googleIapGetPylons (productId: String, purchaseToken : String, receiptData : String,
+                                 signature : String) : Transaction = engine.googleIapGetPylons(productId,
+        purchaseToken, receiptData, signature).submit()
+
+    override fun newProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction {
+        println("kp: $kp")
+        return engine.registerNewProfile(name, kp).submit()
+    }
+
+    override fun sendCoins (coins : String, receiver : String) : Transaction =
+        engine.sendCoins(
+            Coin.listFromJson(klaxon.parseJsonArray(StringReader(coins)) as JsonArray<JsonObject>),
+            receiver).submit()
+
+    override fun setItemString (itemId : String, field : String, value : String) =
+        engine.setItemFieldString(itemId, field, value).submit()
+
+    override fun walletServiceTest(string: String): String = "Wallet service test OK input $string"
+
+    override fun walletUiTest() : String = "Wallet UI test OK"
+
+    override fun wipeUserData () {
+        tearDown()
+        onWipeUserData?.invoke()
+    }
 }

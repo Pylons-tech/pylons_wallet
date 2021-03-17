@@ -1,17 +1,19 @@
 package com.pylons.wallet.walletcore_test.engine
 
+import com.pylons.lib.PubKeyUtil
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.ops.newProfile
-import com.pylons.lib.types.types.*
-import com.pylons.lib.types.types.tx.msg.GetPylons
+import com.pylons.lib.types.*
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.msg.GetPylons
+import com.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.jce.provider.BouncyCastleProvider
+import org.spongycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
 import java.security.Security
 
@@ -54,15 +56,15 @@ class TxPylonsDevEngineOffline {
         val engine = engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
         engine.getMyProfileState()
         val pubkey = engine.cryptoCosmos.keyPair!!.publicKey()
-        val addr = CryptoCosmos.getAddressFromPubkey(pubkey)
+        val addr = PubKeyUtil.getAddressFromPubkey(pubkey)
         assertEquals(core.userProfile!!.credentials.address, TxPylonsEngine.getAddressString(addr.toArray()))
     }
 
     @Test
     fun roundTripDecompressPubkey () {
         val pubkeyAsBytes = Hex.decode(compressedPubkey)
-        val decompressed = CryptoCosmos.getUncompressedPubkey(pubkeyAsBytes)
-        val recompressed = CryptoCosmos.getCompressedPubkey(decompressed)
+        val decompressed = PubKeyUtil.getUncompressedPubkey(pubkeyAsBytes)
+        val recompressed = PubKeyUtil.getCompressedPubkey(decompressed)
         println(Hex.toHexString(recompressed.toArray()))
         assertArrayEquals(pubkeyAsBytes, recompressed.toArray())
     }

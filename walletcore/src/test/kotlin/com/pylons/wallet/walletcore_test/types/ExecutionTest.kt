@@ -1,7 +1,7 @@
 package com.pylons.wallet.walletcore_test.types
 
-import com.pylons.lib.types.types.Coin
-import com.pylons.lib.types.types.Execution
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.Execution
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

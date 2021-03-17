@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-import com.pylons.lib.types.types.tx.msg.ExecuteRecipe
+import com.pylons.lib.types.tx.msg.ExecuteRecipe
 
 val executeRecipeSignable = ExecuteRecipe(
         recipeId = "id0001",

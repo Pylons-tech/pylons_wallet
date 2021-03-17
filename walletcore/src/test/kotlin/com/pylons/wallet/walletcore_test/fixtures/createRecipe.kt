@@ -1,7 +1,7 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
-import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.tx.recipe.*
 
 fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, sender : String) = engine.createRecipe(
         blockInterval = 0,

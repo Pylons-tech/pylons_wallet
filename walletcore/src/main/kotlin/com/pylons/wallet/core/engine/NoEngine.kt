@@ -1,15 +1,18 @@
 package com.pylons.wallet.core.engine
 
+import com.pylons.lib.core.ICryptoHandler
 import com.pylons.lib.core.IEngine
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.engine.crypto.CryptoNull
-import com.pylons.lib.types.types.*
-import com.pylons.lib.types.types.Execution
-import com.pylons.lib.types.types.tx.Trade
-import com.pylons.lib.types.types.tx.item.Item
-import com.pylons.lib.types.types.tx.recipe.*
-import com.pylons.lib.types.types.tx.trade.TradeItemInput
+import com.pylons.lib.types.*
+import com.pylons.lib.types.Execution
+import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.credentials.ICredentials
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 
 /**
  * Engine that throws NoEngineException on calling any function.
@@ -19,7 +22,7 @@ import com.pylons.lib.types.types.tx.trade.TradeItemInput
 internal class NoEngine(core : Core) : Engine(core), IEngine {
     override val prefix: String = "__NOENGINE__"
     override val backendType: Backend = Backend.NONE
-    override var cryptoHandler: CryptoHandler = CryptoNull(core)
+    override var cryptoHandler: ICryptoHandler = CryptoNull(core)
     override val usesMnemonic: Boolean = false
     override val isDevEngine: Boolean = false
 
@@ -46,7 +49,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun disableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun dumpCredentials(credentials: MyProfile.Credentials) =
+    override fun dumpCredentials(credentials: ICredentials) =
             throw NoEngineException()
 
     override fun enableRecipe(id: String): Transaction  =
@@ -58,13 +61,13 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun cancelTrade(tradeId: String): Transaction =
             throw NoEngineException()
 
-    override fun generateCredentialsFromKeys(): MyProfile.Credentials =
+    override fun generateCredentialsFromKeys(): CosmosCredentials =
             throw NoEngineException()
 
     override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String) =
             throw NoEngineException()
 
-    override fun getNewCredentials(): MyProfile.Credentials =
+    override fun getNewCredentials(): CosmosCredentials =
             throw NoEngineException()
 
     override fun getProfileState(addr: String) = throw NoEngineException()

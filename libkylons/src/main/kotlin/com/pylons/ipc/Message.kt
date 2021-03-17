@@ -10,9 +10,10 @@ import java.lang.StringBuilder
 import java.util.*
 import kotlin.reflect.full.*
 import com.pylons.lib.klaxon
-import com.pylons.lib.types.Profile
-import com.pylons.lib.types.PylonsSECP256K1
+import com.pylons.lib.types.*
 import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.recipe.Recipe
 
 sealed class Message {
 
@@ -324,7 +325,7 @@ sealed class Message {
             val keys = core!!.dumpKeys()
             return KeyResponse(
                     address = core!!.userProfile!!.address,
-                    name = core!!.userProfile!!.getName().orEmpty(),
+                    name = core!!.userProfile!!.strings["name"].orEmpty(),
                     privateKey = keys[0],
                     publicKey = keys[1]
             ).wait().pack()
@@ -343,7 +344,7 @@ sealed class Message {
             val kp = PylonsSECP256K1.KeyPair.fromSecretKey(
                     PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(privkey!!)))
             val credentials = CosmosCredentials(PubKeyUtil.getAddressString(PubKeyUtil.getAddressFromKeyPair(kp).toArray()))
-            IMulticore.instance.addCore(kp)
+            IMulticore.instance!!.addCore(kp)
             return ProfileResponse(listOf(core!!.getProfile(credentials.address)!!)).wait().pack()
         }
     }

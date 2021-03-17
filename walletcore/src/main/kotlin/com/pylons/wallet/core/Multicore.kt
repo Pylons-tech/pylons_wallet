@@ -1,5 +1,6 @@
 package com.pylons.wallet.core
 
+import com.pylons.lib.PubKeyUtil
 import com.pylons.lib.core.IMulticore
 import com.pylons.lib.types.Config
 import com.pylons.lib.types.LockedCoinDetails
@@ -8,6 +9,7 @@ import com.pylons.lib.types.PylonsSECP256K1
 import com.pylons.lib.types.credentials.CosmosCredentials
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
+import com.pylons.wallet.core.internal.HttpWire
 
 object Multicore : IMulticore {
     @ExperimentalUnsignedTypes
@@ -23,7 +25,7 @@ object Multicore : IMulticore {
     override fun addCore (kp: PylonsSECP256K1.KeyPair?) : Core {
         var keyPair = kp ?: PylonsSECP256K1.KeyPair.random()
         val core = Core(IMulticore.config!!)
-        val credentials = CosmosCredentials(TxPylonsEngine.getAddressString(CryptoCosmos.getAddressFromKeyPair(keyPair).toArray()))
+        val credentials = CosmosCredentials(TxPylonsEngine.getAddressString(PubKeyUtil.getAddressFromKeyPair(keyPair).toArray()))
         core.userProfile = MyProfile(
                 core = core,
                 credentials = credentials,

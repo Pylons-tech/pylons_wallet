@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.types
 
-import com.pylons.lib.types.types.Cookbook
+import com.pylons.lib.types.Cookbook
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

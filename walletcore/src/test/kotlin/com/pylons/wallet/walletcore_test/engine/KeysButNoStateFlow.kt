@@ -1,12 +1,13 @@
 package com.pylons.wallet.walletcore_test.engine
 
+import com.pylons.lib.PubKeyUtil
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.lib.types.types.Backend
-import com.pylons.lib.types.types.Config
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.util.encoders.Hex
+import com.pylons.lib.types.Backend
+import com.pylons.lib.types.Config
+import org.spongycastle.jce.provider.BouncyCastleProvider
+import org.spongycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
 import java.security.Security
 
@@ -17,8 +18,8 @@ class KeysButNoStateFlow {
     @Test
     fun keysExistButNoState () {
         Security.addProvider(BouncyCastleProvider())
-        val kp = CryptoCosmos.generateKeyPairFromMnemonic(CryptoCosmos.generateMnemonic())
-        val addr = TxPylonsEngine.getAddressString(CryptoCosmos.getAddressFromKeyPair(kp).toArray())
+        val kp = PubKeyUtil.generateKeyPairFromMnemonic(PubKeyUtil.generateMnemonic())
+        val addr = TxPylonsEngine.getAddressString(PubKeyUtil.getAddressFromKeyPair(kp).toArray())
         // get startup json for this keypair
         val data = """
             {"dataSets" : {

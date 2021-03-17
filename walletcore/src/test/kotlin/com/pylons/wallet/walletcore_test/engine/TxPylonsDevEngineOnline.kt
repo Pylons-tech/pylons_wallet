@@ -1,16 +1,20 @@
 package com.pylons.wallet.walletcore_test.engine
 
+import com.pylons.lib.PubKeyUtil
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.lib.types.types.*
-import com.pylons.lib.types.types.tx.item.Item
-import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.*
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.wallet.core.internal.HttpWire
+import com.pylons.wallet.core.internal.InternalPrivKeyStore
 import com.pylons.wallet.walletcore_test.fixtures.emitCreateRecipe
 import com.pylons.wallet.walletcore_test.fixtures.emitCreateTrade
 import com.pylons.wallet.walletcore_test.fixtures.emitUpdateRecipe
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.util.encoders.Hex
 import org.junit.jupiter.api.*
 import java.time.Instant
 
@@ -95,7 +99,7 @@ class TxPylonsDevEngineOnline {
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine, String) -> Unit)?) {
         val engine = engineSetup(exportedKey)
         core.updateStatusBlock()
-        println("pubkey: ${CryptoCosmos.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
+        println("pubkey: ${PubKeyUtil.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
         println("getting profile state...")
         engine.getMyProfileState()
         //val oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence

@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.logging
 
 import java.util.*
+import com.pylons.lib.klaxon
 
 /**
  * Generic class for Logging Things.

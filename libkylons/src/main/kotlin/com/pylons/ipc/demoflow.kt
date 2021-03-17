@@ -1,6 +1,7 @@
 package com.pylons.ipc
 
 import java.util.*
+import com.pylons.lib.klaxon
 
 var fakeIpcJson : String = ""
 

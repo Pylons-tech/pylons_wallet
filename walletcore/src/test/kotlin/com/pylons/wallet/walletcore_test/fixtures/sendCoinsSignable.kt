@@ -1,8 +1,7 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-import com.pylons.lib.types.types.Coin
-import com.pylons.lib.types.types.tx.msg.SendCoins
-import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.msg.SendCoins
 
 val sendCoinsSignable = SendCoins(
         amount = listOf(

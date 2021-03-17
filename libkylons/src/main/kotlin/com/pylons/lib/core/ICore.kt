@@ -1,5 +1,6 @@
 package com.pylons.lib.core
 import com.pylons.lib.types.*
+import com.pylons.lib.types.tx.recipe.Recipe
 
 @ExperimentalUnsignedTypes
 interface ICore {
@@ -75,6 +76,29 @@ interface ICore {
     fun fulfillTrade(tradeId : String, itemIds : List<String>) : Transaction
 
     fun getCookbooks () : List<Cookbook>
+
+    fun getPendingExecutions () : List<Execution>
+
+    fun getPylons (q : Long) : Transaction
+
+    fun getRecipes () : List<Recipe>
+
+    fun getTransaction(txHash : String): Transaction
+
+    fun googleIapGetPylons (productId: String, purchaseToken : String, receiptData : String,
+                            signature : String) : Transaction
+
+    fun newProfile (name : String, kp : PylonsSECP256K1.KeyPair? = null) : Transaction
+
+    fun sendCoins (coins : String, receiver : String) : Transaction
+
+    fun setItemString (itemId : String, field : String, value : String) : Transaction
+
+    fun walletServiceTest(string: String): String
+
+    fun walletUiTest() : String
+
+    fun wipeUserData ()
 
     fun buildJsonForTxPost(msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String
 }

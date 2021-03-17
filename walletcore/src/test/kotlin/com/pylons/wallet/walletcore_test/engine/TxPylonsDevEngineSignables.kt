@@ -1,15 +1,18 @@
 package com.pylons.wallet.walletcore_test.engine
 
+import com.pylons.lib.baseJsonTemplateForTxSignature
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.lib.types.types.*
+import com.pylons.lib.types.*
+import com.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.opentest4j.AssertionFailedError
 import org.apache.commons.lang3.StringUtils.*
 import java.io.StringReader
+import com.pylons.lib.klaxon
 
 class TxPylonsDevEngineSignables {
     val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
@@ -35,7 +38,7 @@ class TxPylonsDevEngineSignables {
         var fixture = engine.queryTxBuilder(msgType)
         fixture = klaxon.parseJsonObject(StringReader(fixture)).obj("result")!!.toJsonString()
         println("generating sign struct")
-        val signable = baseSignTemplate(signableFun(engine), 0, 0, 200000)
+        val signable = baseJsonTemplateForTxSignature(signableFun(engine), 0, 0, 200000)
         println("generated: ${signableFun(engine)}")
         try {
             assertEquals(fixture, signable)

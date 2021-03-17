@@ -1,8 +1,8 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
-import com.pylons.lib.types.types.tx.item.Item
-import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
 
 fun emitCreateTrade (engine : TxPylonsDevEngine, item : Item, sender : String) = engine.createTrade(
         coinInputs = listOf(CoinInput(

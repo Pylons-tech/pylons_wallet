@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-import com.pylons.lib.types.types.tx.recipe.*
+import com.pylons.lib.types.tx.recipe.*
 
 val basicItemOutput = ItemOutput(
         id = "",
