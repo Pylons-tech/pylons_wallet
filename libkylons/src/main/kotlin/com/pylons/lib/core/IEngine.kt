@@ -111,6 +111,8 @@ interface IEngine {
     /** Get the balances of the user account. */
     fun getMyProfileState () : MyProfile?
 
+    fun getCompletedExecutions() : List<Execution>
+
     fun getPendingExecutions () : List<Execution>
 
     /** Get a new instance of a CryptoHandler object appropriate for engine type. */

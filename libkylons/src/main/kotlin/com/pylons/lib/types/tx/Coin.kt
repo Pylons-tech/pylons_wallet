@@ -3,6 +3,7 @@ package com.pylons.lib.types.tx
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import com.pylons.lib.EmptyArray
 import com.pylons.lib.internal.fuzzyLong
 
 /**

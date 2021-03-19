@@ -14,6 +14,7 @@ import com.pylons.lib.types.*
 import com.pylons.lib.types.Transaction.Companion.submitAll
 import com.pylons.lib.types.credentials.CosmosCredentials
 import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.msg.Msg
 import com.pylons.lib.types.tx.recipe.*
@@ -337,6 +338,15 @@ class Core(val config : Config) : ICore {
     override fun walletServiceTest(string: String): String = "Wallet service test OK input $string"
 
     override fun walletUiTest() : String = "Wallet UI test OK"
+
+    override fun listCompletedExecutions(): List<Execution> {
+        engine.getPendingExecutions()
+        TODO("Not yet implemented")
+    }
+
+    override fun listTrades(): List<Trade> {
+        TODO("Not yet implemented")
+    }
 
     override fun wipeUserData () {
         tearDown()

@@ -133,5 +133,6 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun getLockedCoinDetails(): LockedCoinDetails =
             throw NoEngineException()
 
-
+    override fun getCompletedExecutions(): List<Execution> =
+        throw NoEngineException()
 }

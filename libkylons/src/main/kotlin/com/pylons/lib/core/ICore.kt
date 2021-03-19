@@ -1,5 +1,6 @@
 package com.pylons.lib.core
 import com.pylons.lib.types.*
+import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.recipe.Recipe
 
 @ExperimentalUnsignedTypes
@@ -99,6 +100,10 @@ interface ICore {
     fun walletUiTest() : String
 
     fun wipeUserData ()
+
+    fun listCompletedExecutions () : List<Execution>
+
+    fun listTrades () : List<Trade>
 
     fun buildJsonForTxPost(msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String
 }

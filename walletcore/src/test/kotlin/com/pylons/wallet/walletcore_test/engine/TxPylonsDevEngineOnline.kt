@@ -83,6 +83,8 @@ class TxPylonsDevEngineOnline {
         }
         else engine.cryptoHandler.generateNewKeys()
         core.userProfile = MyProfile.getDefault(core)
+        println(key)
+        if (key != null) assertEquals(key, Hex.toHexString(engine.cryptoHandler.keyPair?.secretKey()?.bytesArray()))
         return engine
     }
 
@@ -97,6 +99,7 @@ class TxPylonsDevEngineOnline {
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) = basicTxTestFlow(txFun, null)
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine, String) -> Unit)?) {
+        println(exportedKey)
         val engine = engineSetup(exportedKey)
         core.updateStatusBlock()
         println("pubkey: ${PubKeyUtil.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")

@@ -251,6 +251,12 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         return Execution.getListFromJson(json)
     }
 
+    override fun getCompletedExecutions(): List<Execution> {
+        // one of these should not work
+        val json = HttpWire.get("$nodeUrl/pylons/list_executions/${core.userProfile!!.credentials.address}")
+        return Execution.getListFromJson(json)
+    }
+
     override fun getPylons(q: Long): Transaction =
             handleTx {
                 GetPylons(
