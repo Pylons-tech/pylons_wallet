@@ -84,9 +84,9 @@ abstract class Wallet {
         itemInputs: List<ItemInput>,
         outputTable: EntriesList,
         outputs: List<WeightedOutput>,
-        callback: (Transaction?) -> Unit
+        callback: (String?) -> Unit
     ) {
-        sendMessage <Transaction>(
+        sendMessage <String>(
             Message.CreateRecipes(
                 listOf(name),
                 listOf(cookbook),
@@ -103,7 +103,7 @@ abstract class Wallet {
 
     class Android : Wallet() {
         override fun <T> sendMessage(message: Message, callback: (T) -> Unit) {
-            callback(Transaction(TxData(klaxon.toJsonString(message), "", listOf())) as T)
+            callback(klaxon.toJsonString(message) as T)
         }
 
         override fun exists(callback: (Boolean) -> Unit) {
