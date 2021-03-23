@@ -28,8 +28,8 @@ fun Double.s() : String {
 
 fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, gas: Long) : String =
     """{
-            "tx": {
-                "msg": $msg,
+        "tx": {
+            "msg": $msg,
     
                 "fee": {
                 "amount": null,
