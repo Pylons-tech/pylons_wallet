@@ -8,6 +8,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
 import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.msg.GetPylons
 import com.pylons.lib.types.tx.recipe.*
 import com.pylons.wallet.core.internal.HttpWire
 import com.pylons.wallet.core.internal.InternalPrivKeyStore
@@ -55,5 +56,11 @@ class ExportVarious {
         println("pubkey: ${engine.cryptoCosmos.keyPair!!.publicKey()!!.bytes().toHexString()}")
         println("compressed pubkey: ${PubKeyUtil.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
         println("status: ${core.statusBlock.toJson()}")
+
+        val msg = GetPylons(listOf(Coin("pylon", 500)), core.userProfile!!.credentials.address)
+        println("STRUCT")
+        println(msg.toSignStruct())
+        println("SIGNED")
+        println(msg.toSignedTx())
     }
 }
