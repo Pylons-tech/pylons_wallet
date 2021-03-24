@@ -4,6 +4,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.pylons.lib.EmptyArray
+import com.pylons.lib.QuotedJsonNumeral
 import com.pylons.lib.internal.fuzzyLong
 
 /**
@@ -12,7 +13,7 @@ import com.pylons.lib.internal.fuzzyLong
 data class Coin(
         @property:[Json(name = "denom")]
         val denom: String = "",
-        @property:[Json(name = "amount")]
+        @property:[Json(name = "amount") QuotedJsonNumeral]
         val amount: Long = 0
 ) {
     companion object {

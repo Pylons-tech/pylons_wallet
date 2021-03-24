@@ -7,22 +7,18 @@ import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
-import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.msg.GetPylons
-import com.pylons.lib.types.tx.recipe.*
 import com.pylons.wallet.core.internal.HttpWire
 import com.pylons.wallet.core.internal.InternalPrivKeyStore
-import com.pylons.wallet.walletcore_test.fixtures.emitCreateRecipe
-import com.pylons.wallet.walletcore_test.fixtures.emitCreateTrade
-import com.pylons.wallet.walletcore_test.fixtures.emitUpdateRecipe
 import org.spongycastle.util.encoders.Hex
 import org.junit.jupiter.api.*
-import java.time.Instant
-
-import java.util.*
 
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+// This was used for regression testing in tracking down a particularly nasty
+// signature bug. It's not really a test and it needs to be rewritten to actually
+// log this info somewhere useful. TODO: rewrite this as a test that actually
+// uses known-good fixtures to sanity check our output to ensure this never happens again.
 class ExportVarious {
     val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
 
