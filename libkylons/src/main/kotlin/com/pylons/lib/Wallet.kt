@@ -4,8 +4,12 @@ import com.beust.klaxon.Klaxon
 import com.pylons.ipc.Message
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
-import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.CoinInput
+import com.pylons.lib.types.tx.recipe.EntriesList
+import com.pylons.lib.types.tx.recipe.ItemInput
+import com.pylons.lib.types.tx.recipe.WeightedOutput
+import com.pylons.lib.types.tx.Trade
 
 /**
  * Generic high-level interface between JVM clients and a Pylons wallet.
@@ -61,6 +65,15 @@ abstract class Wallet {
 
     fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
         sendMessage<Transaction?>(Message.FulfillTrade(trade.id)) {callback(it)}
+    }
+
+    fun createRecipe(name : String, cookbook : String, description : String,
+                     blockInterval : Long, coinInputs : List<CoinInput>,
+                     itemInputs: List<ItemInput>, outputTable : EntriesList,
+                     outputs : List<WeightedOutput>, callback: (Transaction?) -> Unit) {
+        sendMessage<Transaction>(Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
+        listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
+        listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it)}
     }
 
     class Android : Wallet(){

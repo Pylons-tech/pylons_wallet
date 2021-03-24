@@ -3,7 +3,8 @@ package com.pylons.lib.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.pylons.lib.types.tx.item.fuzzyLong
+import com.pylons.lib.*
+import com.pylons.lib.internal.fuzzyLong
 
 data class CoinInput (
         @property:[Json(name = "Coin")]

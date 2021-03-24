@@ -2,17 +2,14 @@ package com.pylons.devdevwallet
 
 import com.pylons.wallet.core.Multicore
 import com.pylons.wallet.core.logging.*
-import com.pylons.wallet.core.types.Backend
-import com.pylons.wallet.core.types.Config
-import com.pylons.wallet.ipc.IPCLayer
+import com.pylons.lib.types.Backend
+import com.pylons.lib.types.Config
+import com.pylons.ipc.IPCLayer
 import java.lang.Exception
 import java.security.Security
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import java.io.OutputStream
-import java.io.PrintStream
+import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.nio.charset.Charset
 
 object Main {
     @JvmStatic

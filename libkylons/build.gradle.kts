@@ -8,7 +8,7 @@ plugins {
 group = "com.pylons.lib"
 version = "0.1"
 val ketheriumVer = "0.83.4"
-val bouncycastleVer = "1.64"
+val spongyCastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
 val useJava8 = true
 //val usejava8 = false
@@ -42,8 +42,10 @@ dependencies {
     implementation("commons-codec:commons-codec:1.14")
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("org.apache.tuweni:tuweni-crypto:0.10.0")
-    implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
-    implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
+    implementation("com.madgag.spongycastle:core:$spongyCastleVer")
+    implementation("com.madgag.spongycastle:prov:$spongyCastleVer")
+    implementation("com.madgag.spongycastle:bcpkix-jdk15on:$spongyCastleVer")
+    implementation("com.madgag.spongycastle:bcpg-jdk15on:$spongyCastleVer")
     implementation("com.beust:klaxon:5.0.12")
     implementation("com.github.komputing:kbip44:0.1")
     implementation("com.github.walleth.kethereum:bip32:$ketheriumVer")

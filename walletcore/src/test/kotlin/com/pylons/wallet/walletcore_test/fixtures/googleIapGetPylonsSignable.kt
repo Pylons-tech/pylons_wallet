@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.fixtures
 
-import com.pylons.wallet.core.types.tx.msg.GoogleIapGetPylons
+import com.pylons.lib.types.tx.msg.GoogleIapGetPylons
 
 val googleIapGetPylonsSignable = GoogleIapGetPylons(
         productId = "your.product.id",

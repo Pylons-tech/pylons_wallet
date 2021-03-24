@@ -1,8 +1,14 @@
 package com.pylons.wallet.core.engine.crypto
 
+import com.pylons.lib.core.ICryptoHandler
+import com.pylons.lib.types.PylonsSECP256K1
 import com.pylons.wallet.core.Core
 
-internal class CryptoNull(core : Core) : CryptoHandler(core) {
+internal class CryptoNull(val core : Core) : ICryptoHandler {
+    override var keyPair: PylonsSECP256K1.KeyPair?
+        get() = TODO("Not yet implemented")
+        set(value) {}
+
     override fun generateNewKeys () {
         println("CryptoNull doesn't generate keys")
     }

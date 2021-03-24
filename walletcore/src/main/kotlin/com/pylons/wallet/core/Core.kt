@@ -1,6 +1,24 @@
 package com.pylons.wallet.core
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
+import com.pylons.ipc.Message
+import com.pylons.lib.PubKeyUtil
+import com.pylons.lib.baseJsonTemplateForTxPost
+import com.pylons.lib.baseJsonTemplateForTxSignature
+import com.pylons.lib.core.ICore
+import com.pylons.lib.core.IEngine
+import com.pylons.lib.core.ILowLevel
+import com.pylons.lib.types.*
+import com.pylons.lib.types.Transaction.Companion.submitAll
+import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.msg.Msg
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 import kotlinx.coroutines.*
 
 import com.pylons.wallet.core.constants.*
@@ -10,15 +28,13 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.wallet.core.logging.LogEvent
 import com.pylons.wallet.core.logging.LogTag
 import com.pylons.wallet.core.logging.Logger
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.msg.Msg
-import com.pylons.wallet.ipc.Message
-import com.pylons.wallet.core.types.PylonsSECP256K1 as PylonsSECP256K1
 import org.apache.tuweni.bytes.Bytes32
-import org.bouncycastle.util.encoders.Hex
+import org.spongycastle.util.encoders.Base64
+import org.spongycastle.util.encoders.Hex
+import java.io.StringReader
 
 /**
- * The number of times the core will retry valid-but-rejected transactions.
+ * The number of times the org.bitcoinj.core.core will retry valid-but-rejected transactions.
  * (For instance: if the remote profile doesn't have the resources to apply a recipe.)
  */
 internal const val rejectedTxRetryTimes = 3
@@ -30,28 +46,24 @@ internal const val retryDelay : Long = 500 // milliseconds
 const val VERSION_STRING = "0.0.1a"
 
 @ExperimentalUnsignedTypes
-class Core(val config : Config) {
+class Core(val config : Config) : ICore {
     companion object {
         var current : Core? = null
             private set
     }
 
-    val userData = UserData(this)
-    val lowLevel = LowLevel(this)
-    var engine: Engine = NoEngine(this)
-        private set
-    var userProfile: MyProfile? = null
+    override val userData = UserData(this)
+    override val lowLevel : ILowLevel = LowLevel(this)
+    override var engine: IEngine = NoEngine(this)
+    override var userProfile: MyProfile? = null
     internal var profilesBuffer : Set<Profile> = setOf()
-    var sane : Boolean = false
-        private set
-    var started : Boolean = false
-        private set
-    var suspendedAction : String? = null
-        internal set
+    override var sane : Boolean = false
+    override var started : Boolean = false
+    override var suspendedAction : String? = null
     internal val klaxon = Klaxon()
-    var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
+    override var statusBlock : StatusBlock = StatusBlock(-1, 0.0, VERSION_STRING)
 
-    var onWipeUserData : (() -> Unit)? = null
+    override var onWipeUserData : (() -> Unit)? = null
 
     internal fun tearDown () {
         engine = NoEngine(this)
@@ -65,7 +77,7 @@ class Core(val config : Config) {
      * Serializes persistent user data as a JSON string. All wallet apps will need to take care of calling
      * backupUserData() and storing the results in local storage on their own.
      */
-    fun backupUserData () : String? {
+    override fun backupUserData () : String? {
         return when (userProfile) {
             null -> null
             else -> {
@@ -77,11 +89,11 @@ class Core(val config : Config) {
         }
     }
 
-    fun setProfile (myProfile: MyProfile) {
+    override fun setProfile (myProfile: MyProfile) {
         userProfile = myProfile
     }
 
-    fun forceKeys (keyString : String, address : String) {
+    override fun forceKeys (keyString : String, address : String) {
         val engine = engine as TxPylonsEngine
         engine.cryptoCosmos.keyPair =
                 PylonsSECP256K1.KeyPair.fromSecretKey(
@@ -89,31 +101,31 @@ class Core(val config : Config) {
                                 Hex.decode(keyString))))
         userProfile = MyProfile(
                 this,
-                credentials = TxPylonsEngine.Credentials(address),
+                credentials = CosmosCredentials(address),
                 strings = mapOf("name" to "Jack"),
                 items = listOf(),
                 coins = listOf())
     }
 
-    fun dumpKeys () : List<String> {
+    override fun dumpKeys () : List<String> {
         val cc = engine.cryptoHandler as CryptoCosmos
         return listOf(Hex.toHexString(cc.keyPair!!.secretKey().bytesArray()),
                 Hex.toHexString(cc.keyPair!!.publicKey().bytesArray()))
     }
 
-    fun updateStatusBlock () {
+    override fun updateStatusBlock () {
         statusBlock = engine.getStatusBlock()
     }
 
-    fun use() : Core {
-        println("changing core")
+    override fun use() : Core {
+        println("changing org.bitcoinj.core.core")
         current = this
         Msg.useCore(this)
         Message.useCore(this)
         return this
     }
 
-    fun start (userJson : String) {
+    override fun start (userJson : String) {
         engine = when (config.backend) {
             Backend.LIVE -> TxPylonsEngine(this)
             Backend.LIVE_DEV -> TxPylonsDevEngine(this)
@@ -137,9 +149,209 @@ class Core(val config : Config) {
         }
     }
 
-    var onCompletedOperation : (() -> Unit)? = null
+    override var onCompletedOperation : (() -> Unit)? = null
 
-    fun isReady () : Boolean {
+    override fun isReady () : Boolean {
         return sane && started
+    }
+
+    override fun buildJsonForTxPost(
+        msg: String,
+        signComponent: String,
+        accountNumber: Long,
+        sequence: Long,
+        pubkey: PylonsSECP256K1.PublicKey,
+        gas: Long
+    ): String {
+        val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
+        val signable = baseJsonTemplateForTxSignature(signComponent, sequence, accountNumber, gas)
+        Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
+        val signBytes = signable.toByteArray(Charsets.UTF_8)
+        val signatureBytes = cryptoHandler.signature(signBytes)
+        val signature = Base64.toBase64String(signatureBytes)
+        return baseJsonTemplateForTxPost(msg, Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()), signature, 400000)
+    }
+
+    fun getProfile() = getProfile(null)
+
+    override fun getProfile (addr : String?) : Profile? {
+        return when (addr) {
+            // note: both null and "" are valid here. it depends on the serialization behavior
+            // on the other side of the ipc link. so we have to check against both.
+            null -> engine.getMyProfileState() as Profile?
+            "" -> engine.getMyProfileState() as Profile?
+            else -> engine.getProfileState(addr)
+        }
+    }
+
+    override fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>) : Transaction {
+        // HACK: list recipes, then search to find ours
+        val arr = engine.listRecipes()
+        var r : String? = null
+        arr.forEach {
+            if (it.cookbookId == cookbook && it.name == recipe) {
+                r = it.id
+            }
+        }
+        if (r == null) throw java.lang.Exception("Recipe $cookbook/$recipe does not exist")
+        return engine.applyRecipe(r!!, itemInputs).submit()
+    }
+
+    override fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
+                                  supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction> {
+        val txs = engine.createCookbooks(
+            ids = ids,
+            names = names,
+            developers = developers,
+            descriptions = descriptions,
+            versions = versions,
+            supportEmails = supportEmails,
+            levels = levels,
+            costsPerBlock = costsPerBlock
+        ).toMutableList()
+        return txs.submitAll()
+    }
+
+    override fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
+                                blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
+                                outputTables : List<String>, outputs : List<String>) : List<Transaction> {
+        val mItemInputs = mutableListOf<List<ItemInput>>()
+        itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        val mCoinInputs = mutableListOf<List<CoinInput>>()
+        coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        val mOutputTables = mutableListOf<EntriesList>()
+        outputTables.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
+        val mOutputs = mutableListOf<List<WeightedOutput>>()
+        outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        val txs =  engine.createRecipes(
+            names = names,
+            cookbookIds = cookbooks,
+            descriptions = descriptions,
+            blockIntervals = blockIntervals,
+            coinInputs = mCoinInputs,
+            itemInputs = mItemInputs,
+            entries = mOutputTables,
+            outputs = mOutputs
+        ).toMutableList()
+        return txs.submitAll()
+    }
+
+    override fun batchDisableRecipe (recipes : List<String>) : List<Transaction> {
+        val txs = engine.disableRecipes(
+            recipes = recipes
+        ).toMutableList()
+        return txs.submitAll()
+    }
+
+    override fun batchEnableRecipe (recipes : List<String>) : List<Transaction> {
+        val txs = engine.enableRecipes(
+            recipes = recipes
+        ).toMutableList()
+        return txs.submitAll()
+    }
+
+    override fun batchUpdateCookbook (names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
+                                  supportEmails : List<String>, ids : List<String>) : List<Transaction> {
+        val txs = engine.updateCookbooks(
+            ids = ids,
+            names = names,
+            developers = developers,
+            descriptions = descriptions,
+            versions = versions,
+            supportEmails = supportEmails
+        ).toMutableList()
+        return txs.submitAll()
+    }
+
+    override fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
+                                blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
+                                outputTables : List<String>, outputs : List<String>) : List<Transaction> {
+        val mItemInputs = mutableListOf<List<ItemInput>>()
+        itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        val mCoinInputs = mutableListOf<List<CoinInput>>()
+        coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        val mOutputTables = mutableListOf<EntriesList>()
+        outputTables.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
+        val mOutputs = mutableListOf<List<WeightedOutput>>()
+        outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        val txs = engine.updateRecipes(
+            ids = ids,
+            names = names,
+            cookbookIds = cookbooks,
+            descriptions = descriptions,
+            blockIntervals = blockIntervals,
+            coinInputs = mCoinInputs,
+            itemInputs = mItemInputs,
+            entries = mOutputTables,
+            outputs = mOutputs
+        ).toMutableList()
+        return txs.submitAll()
+    }
+
+    override fun cancelTrade(tradeId : String) = engine.cancelTrade(tradeId).submit()
+
+    override fun checkExecution(id : String, payForCompletion : Boolean) =
+        engine.checkExecution(id, payForCompletion).submit()
+
+    override fun createTrade (coinInputs: List<String>, itemInputs : List<String>,
+                          coinOutputs : List<String>, itemOutputs : List<String>,
+                          extraInfo : String) : Transaction {
+        val mItemInputs = mutableListOf<TradeItemInput>()
+        itemInputs.forEach { mItemInputs.add(TradeItemInput.fromJson(klaxon.parse(it)!!)) }
+        val mCoinInputs = mutableListOf<CoinInput>()
+        coinInputs.forEach { mCoinInputs.add(CoinInput.fromJson(klaxon.parse(it)!!)) }
+        val mCoinOutputs = mutableListOf<Coin>()
+        coinOutputs.forEach { mCoinOutputs.add(Coin.fromJson(klaxon.parse(it)!!)) }
+        val mItemOutputs = mutableListOf<Item>()
+        itemOutputs.forEach { mItemOutputs.add(Item.fromJson(klaxon.parse(it)!!)) }
+        return engine.createTrade(mCoinInputs, mItemInputs, mCoinOutputs, mItemOutputs, extraInfo).submit()
+    }
+
+    override fun fulfillTrade(tradeId : String, itemIds : List<String>) : Transaction =
+        engine.fulfillTrade(tradeId, itemIds).submit()
+
+    override fun getCookbooks () : List<Cookbook> = engine.listCookbooks()
+
+    override fun getPendingExecutions () : List<Execution> = engine.getPendingExecutions()
+
+    override fun getPylons (q : Long) : Transaction = engine.getPylons(q).submit()
+
+    override fun getRecipes () : List<Recipe> = engine.listRecipes()
+
+    override fun getTransaction(txHash : String): Transaction = engine.getTransaction(txHash)
+
+    override fun googleIapGetPylons (productId: String, purchaseToken : String, receiptData : String,
+                                 signature : String) : Transaction = engine.googleIapGetPylons(productId,
+        purchaseToken, receiptData, signature).submit()
+
+    override fun newProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction {
+        println("kp: $kp")
+        return engine.registerNewProfile(name, kp).submit()
+    }
+
+    override fun sendCoins (coins : String, receiver : String) : Transaction =
+        engine.sendCoins(
+            Coin.listFromJson(klaxon.parseJsonArray(StringReader(coins)) as JsonArray<JsonObject>),
+            receiver).submit()
+
+    override fun setItemString (itemId : String, field : String, value : String) =
+        engine.setItemFieldString(itemId, field, value).submit()
+
+    override fun walletServiceTest(string: String): String = "Wallet service test OK input $string"
+
+    override fun walletUiTest() : String = "Wallet UI test OK"
+
+    override fun listCompletedExecutions(): List<Execution> {
+        engine.getPendingExecutions()
+        TODO("Not yet implemented")
+    }
+
+    override fun listTrades(): List<Trade> {
+        TODO("Not yet implemented")
+    }
+
+    override fun wipeUserData () {
+        tearDown()
+        onWipeUserData?.invoke()
     }
 }

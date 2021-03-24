@@ -1,6 +1,6 @@
 package com.pylons.wallet.walletcore_test.types
 
-import com.pylons.wallet.core.types.AccAddress
+import com.pylons.lib.types.AccAddress
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import java.security.KeyPairGenerator

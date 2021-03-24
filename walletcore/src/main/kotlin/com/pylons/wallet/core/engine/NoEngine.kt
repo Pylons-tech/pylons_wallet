@@ -1,24 +1,28 @@
 package com.pylons.wallet.core.engine
 
+import com.pylons.lib.core.ICryptoHandler
+import com.pylons.lib.core.IEngine
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.engine.crypto.CryptoHandler
 import com.pylons.wallet.core.engine.crypto.CryptoNull
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Execution
-import com.pylons.wallet.core.types.tx.Trade
-import com.pylons.wallet.core.types.tx.item.Item
-import com.pylons.wallet.core.types.tx.recipe.*
-import com.pylons.wallet.core.types.tx.trade.TradeItemInput
+import com.pylons.lib.types.*
+import com.pylons.lib.types.Execution
+import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.credentials.ICredentials
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 
 /**
  * Engine that throws NoEngineException on calling any function.
  * We don't want Core.Engine to be nullable, but it needs to be initialized to something
  * before Core.Start() is called, so it's initialized to this.
  */
-internal class NoEngine(core : Core) : Engine(core) {
+internal class NoEngine(core : Core) : Engine(core), IEngine {
     override val prefix: String = "__NOENGINE__"
     override val backendType: Backend = Backend.NONE
-    override var cryptoHandler: CryptoHandler = CryptoNull(core)
+    override var cryptoHandler: ICryptoHandler = CryptoNull(core)
     override val usesMnemonic: Boolean = false
     override val isDevEngine: Boolean = false
 
@@ -45,7 +49,7 @@ internal class NoEngine(core : Core) : Engine(core) {
     override fun disableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun dumpCredentials(credentials: MyProfile.Credentials) =
+    override fun dumpCredentials(credentials: ICredentials) =
             throw NoEngineException()
 
     override fun enableRecipe(id: String): Transaction  =
@@ -57,13 +61,13 @@ internal class NoEngine(core : Core) : Engine(core) {
     override fun cancelTrade(tradeId: String): Transaction =
             throw NoEngineException()
 
-    override fun generateCredentialsFromKeys(): MyProfile.Credentials =
+    override fun generateCredentialsFromKeys(): CosmosCredentials =
             throw NoEngineException()
 
     override fun generateCredentialsFromMnemonic(mnemonic: String, passphrase: String) =
             throw NoEngineException()
 
-    override fun getNewCredentials(): MyProfile.Credentials =
+    override fun getNewCredentials(): CosmosCredentials =
             throw NoEngineException()
 
     override fun getProfileState(addr: String) = throw NoEngineException()
@@ -129,5 +133,6 @@ internal class NoEngine(core : Core) : Engine(core) {
     override fun getLockedCoinDetails(): LockedCoinDetails =
             throw NoEngineException()
 
-
+    override fun getCompletedExecutions(): List<Execution> =
+        throw NoEngineException()
 }

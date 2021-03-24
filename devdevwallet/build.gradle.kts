@@ -13,7 +13,7 @@ plugins {
 group = "com.pylons"
 version = "0.1"
 
-val bouncycastleVer = "1.64"
+val spongycastleVer = "1.58.0.0"
 val compileKotlin: KotlinCompile by tasks
 val compileJava: JavaCompile by tasks
 compileJava.destinationDir = compileKotlin.destinationDir
@@ -30,6 +30,7 @@ application {
 }
 
 dependencies {
+    implementation(project(":libkylons"))
     implementation(project(":walletcore"))
     implementation(project(":httpipc"))
 
@@ -40,8 +41,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.30")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.5")
     implementation("com.beust:klaxon:5.0.12")
-    implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
-    implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
+    implementation("com.madgag.spongycastle:bcpkix-jdk15on:$spongycastleVer")
+    implementation("com.madgag.spongycastle:prov:$spongycastleVer")
 
     testImplementation("junit", "junit", "4.12")
 }

@@ -1,8 +1,8 @@
 package com.pylons.wallet.walletcore_test.types
 
-import com.pylons.wallet.core.types.Bech32Cosmos
+import com.pylons.lib.types.Bech32Cosmos
 import org.junit.jupiter.api.Test
-import org.bouncycastle.jcajce.provider.digest.SHA256
+import org.spongycastle.jcajce.provider.digest.SHA256
 
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*

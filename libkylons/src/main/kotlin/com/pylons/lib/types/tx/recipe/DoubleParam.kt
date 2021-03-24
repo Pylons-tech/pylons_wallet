@@ -5,13 +5,13 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class DoubleParam (
-        @property:[Json(name = "Rate")]
+    @property:[Json(name = "Rate")]
         val rate : String,
-        @property:[Json(name = "Key")]
+    @property:[Json(name = "Key")]
         val key : String,
-        @property:[Json(name = "WeightRanges")]
+    @property:[Json(name = "WeightRanges")]
         val weightRanges : List<DoubleWeightRange>,
-        @property:[Json(name = "Program")]
+    @property:[Json(name = "Program")]
         val program : String) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : DoubleParam =

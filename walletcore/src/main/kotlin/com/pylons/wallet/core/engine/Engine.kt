@@ -1,13 +1,15 @@
 package com.pylons.wallet.core.engine
 
+import com.pylons.lib.core.ICryptoHandler
+import com.pylons.lib.core.IEngine
+import com.pylons.lib.types.*
+import com.pylons.lib.types.credentials.ICredentials
+import com.pylons.lib.types.tx.Coin
+import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.item.Item
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.lib.types.tx.trade.TradeItemInput
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.engine.crypto.CryptoHandler
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.Execution
-import com.pylons.wallet.core.types.tx.Trade
-import com.pylons.wallet.core.types.tx.item.Item
-import com.pylons.wallet.core.types.tx.recipe.*
-import com.pylons.wallet.core.types.tx.trade.TradeItemInput
 
 /***
  * Generic interface for transaction-handling layers.
@@ -16,64 +18,64 @@ import com.pylons.wallet.core.types.tx.trade.TradeItemInput
  * will do the dirty work of binding that functionality to low-level blockchain
  * systems, in effect acting as "drivers."
  */
-abstract class Engine(val core : Core) {
+abstract class Engine(val core : Core) : IEngine {
     /**
      * Identifier string, unique per Engine implementation.
      * Used to identify the engine type associated with a given dataset
      * when we dump the datastore to XML.
      */
-    abstract val prefix : String
+    abstract override val prefix : String
 
     /** Specifies the TX-handling backend associated with an Engine instance. */
-    abstract val backendType : Backend
+    abstract override val backendType : Backend
 
     /** Identifies whether or not we're using BIP44 mnemonics when doing keygen. */
-    abstract val usesMnemonic : Boolean
+    abstract override val usesMnemonic : Boolean
 
     /** Should this engine have access to developer-use methods? */
-    abstract val isDevEngine : Boolean
+    abstract override val isDevEngine : Boolean
 
     /** The current CryptoHandler instance associated with this engine */
-    abstract var cryptoHandler : CryptoHandler
+    abstract override var cryptoHandler : ICryptoHandler
 
     /** Enable-recipe message */
-    abstract fun enableRecipe(id : String) : Transaction
+    abstract override fun enableRecipe(id : String) : Transaction
 
     /** Batch enable-recipe message */
-    fun enableRecipes(recipes : List<String>) : List<Transaction> {
+    override fun enableRecipes(recipes : List<String>) : List<Transaction> {
         val txs = mutableListOf<Transaction>()
         recipes.forEach { txs.add(enableRecipe(it)) }
         return txs
     }
 
     /** Disable-recipe message */
-    abstract fun disableRecipe(id : String) : Transaction
+    abstract override fun disableRecipe(id : String) : Transaction
 
     /** Batch enable-recipe message */
-    fun disableRecipes(recipes : List<String>) : List<Transaction> {
+    override fun disableRecipes(recipes : List<String>) : List<Transaction> {
         val txs = mutableListOf<Transaction>()
         recipes.forEach { txs.add(disableRecipe(it)) }
         return txs
     }
 
     /** Execute-recipe message */
-    abstract fun applyRecipe(id : String, itemIds : List<String>) : Transaction
+    abstract override fun applyRecipe(id : String, itemIds : List<String>) : Transaction
 
     /** Check-execution message */
-    abstract fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
+    abstract override fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
     /** Create-trade message */
-    abstract fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                             coinOutputs : List<Coin>, itemOutputs : List<Item>,
-                             ExtraInfo : String) : Transaction
+    abstract override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
+                                      coinOutputs : List<Coin>, itemOutputs : List<Item>,
+                                      ExtraInfo : String) : Transaction
 
     /** Create-recipe message */
-    abstract fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                              outputs : List<WeightedOutput>) : Transaction
+    abstract override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
+                                       coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
+                                       outputs : List<WeightedOutput>) : Transaction
 
     /** Batch create-recipe message */
-    fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
+    override fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
                       itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
                       outputs: List<List<WeightedOutput>>) : List<Transaction> {
@@ -97,11 +99,11 @@ abstract class Engine(val core : Core) {
     }
 
     /** Create-cookbook message */
-    abstract fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
-                                 supportEmail : String, level : Long, costPerBlock : Long) : Transaction
+    abstract override fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
+                                          supportEmail : String, level : Long, costPerBlock : Long) : Transaction
 
     /** Batch create-cookbook message */
-    fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
+    override fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
                         versions : List<String>, supportEmails: List<String>, levels : List<Long>,
                         costsPerBlock : List<Long>) : List<Transaction> {
         val count = names.size
@@ -128,73 +130,74 @@ abstract class Engine(val core : Core) {
      * for serialization.
      *  TODO: why does this actually exist?
      */
-    abstract fun dumpCredentials (credentials: MyProfile.Credentials)
+    abstract override fun dumpCredentials (credentials: ICredentials)
 
-    abstract fun fulfillTrade (tradeId : String, itemIds : List<String>) : Transaction
+    abstract override fun fulfillTrade (tradeId : String, itemIds : List<String>) : Transaction
 
-    abstract fun cancelTrade (tradeId : String) : Transaction
+    abstract override fun cancelTrade (tradeId : String) : Transaction
     /**
      * Generates a new Credentials object appropriate for our engine
      * type from the given mnemonic.
      */
-    abstract fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : MyProfile.Credentials
+    abstract override fun generateCredentialsFromMnemonic (mnemonic : String, passphrase : String) : ICredentials
 
     /**
      * Generates a new Credentials object appropriate for our engine
      * type from keys in userdata.
      */
-    abstract fun generateCredentialsFromKeys () : MyProfile.Credentials
+    abstract override fun generateCredentialsFromKeys () : ICredentials
 
     /**
      * Creates new, default Credentials object appropriate for engine
      * type.
      */
-    abstract fun getNewCredentials () : MyProfile.Credentials
+    abstract override fun getNewCredentials () : ICredentials
 
-    abstract fun getProfileState (addr : String) : Profile?
+    abstract override fun getProfileState (addr : String) : Profile?
 
     /** Get the balances of the user account. */
-    abstract fun getMyProfileState () : MyProfile?
+    @ExperimentalUnsignedTypes
+    abstract override fun getMyProfileState () : MyProfile?
 
-    abstract fun getPendingExecutions () : List<Execution>
+    abstract override fun getPendingExecutions () : List<Execution>
 
     /** Get a new instance of a CryptoHandler object appropriate for engine type. */
-    abstract fun getNewCryptoHandler() : CryptoHandler
+    abstract override fun getNewCryptoHandler() : ICryptoHandler
 
     /** Get the current status block. (Status block is returned w/ all IPC calls) */
-    abstract fun getStatusBlock() : StatusBlock
+    abstract override fun getStatusBlock() : StatusBlock
 
     /**
      * Retrieves transaction w/ the given ID.
      * (In an engine built to implement Cosmos functionality, this is the txhash)
      */
-    abstract fun getTransaction (id : String) : Transaction
+    abstract override fun getTransaction (id : String) : Transaction
 
     /** Registers a new profile under given name. */
-    abstract fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
+    abstract override fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
 
-    abstract fun createChainAccount () : Transaction
+    abstract override fun createChainAccount () : Transaction
 
     /** Calls non-IAP get pylons endpoint. Shouldn't work against production nodes. */
-    abstract fun getPylons (q : Long) : Transaction
+    abstract override fun getPylons (q : Long) : Transaction
 
     /** Calls Google IAP get pylons endpoint. */
-    abstract fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
+    abstract override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
 
-    abstract fun checkGoogleIapOrder(purchaseToken: String) : Boolean
+    abstract override fun checkGoogleIapOrder(purchaseToken: String) : Boolean
 
     /** Gets initial userdata tables for the engine type. */
-    abstract fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
+    abstract override fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
 
     /** Calls send pylons endpoint. */
-    abstract fun sendCoins (coins : List<Coin>, receiver : String) : Transaction
+    abstract override fun sendCoins (coins : List<Coin>, receiver : String) : Transaction
 
     /** Update-cookbook message */
-    abstract fun updateCookbook (id : String, developer : String, description : String, version : String,
-                                 supportEmail : String) : Transaction
+    abstract override fun updateCookbook (id : String, developer : String, description : String, version : String,
+                                          supportEmail : String) : Transaction
 
     /** Batch update-cookbook message */
-    fun updateCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
+    override fun updateCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
                         versions : List<String>, supportEmails: List<String>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
@@ -213,11 +216,11 @@ abstract class Engine(val core : Core) {
     }
 
     /** Update-recipe message */
-    abstract fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>) : Transaction
+    abstract override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
+                                       coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>) : Transaction
 
     /** Batch update-recipe message */
-    fun updateRecipes (ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
+    override fun updateRecipes (ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                        blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
                        entries : List<EntriesList>, outputs: List<List<WeightedOutput>>) : List<Transaction> {
         val count = names.size
@@ -241,18 +244,20 @@ abstract class Engine(val core : Core) {
     }
 
     /** List recipes query */
-    abstract fun listRecipes () : List<Recipe>
+    abstract override fun listRecipes () : List<Recipe>
 
     /** List cookbooks query */
-    abstract fun listCookbooks () : List<Cookbook>
+    abstract override fun listCookbooks () : List<Cookbook>
 
-    abstract fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
+    abstract override fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
 
-    abstract fun listTrades () : List<Trade>
+    abstract override fun listTrades () : List<Trade>
 
-    abstract fun sendItems(receiver: String, itemIds: List<String>) : Transaction
+    abstract override fun sendItems(receiver: String, itemIds: List<String>) : Transaction
 
-    abstract fun getLockedCoins () : LockedCoin
+    abstract override fun getLockedCoins () : LockedCoin
 
-    abstract fun getLockedCoinDetails () : LockedCoinDetails
+    abstract override fun getLockedCoinDetails () : LockedCoinDetails
+
+    abstract override fun getCompletedExecutions(): List<Execution>
 }

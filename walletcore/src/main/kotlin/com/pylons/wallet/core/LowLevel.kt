@@ -1,14 +1,17 @@
 package com.pylons.wallet.core
 
+import com.pylons.lib.core.ILowLevel
 import com.pylons.wallet.core.engine.TxPylonsEngine
-import com.pylons.wallet.core.types.AccAddress
-import com.pylons.wallet.core.types.PylonsSECP256K1
-import com.pylons.wallet.core.types.tx.msg.Msg
+import com.pylons.lib.types.AccAddress
+import com.pylons.lib.types.PylonsSECP256K1
+import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.tx.msg.Msg
+import com.pylons.wallet.core.internal.HttpWire
 import org.apache.commons.codec.binary.Hex.*
 import org.apache.tuweni.bytes.Bytes32
 
 @ExperimentalUnsignedTypes
-class LowLevel (private val core : Core) {
+class LowLevel (private val core : Core) : ILowLevel {
     private val local = """http://127.0.0.1:1317"""
     private val nodeUrl = getUrl()
 
@@ -20,13 +23,13 @@ class LowLevel (private val core : Core) {
     }
 
     private fun setup (privkeyHex : String, accountNumber : Long, sequence : Long) {
-        core.forceKeys(privkeyHex, AccAddress.getAddressFromNode(nodeUrl,
+        core.forceKeys(privkeyHex, HttpWire.getAddressFromNode(nodeUrl,
                 PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(decodeHex(privkeyHex))))))
-        (core.userProfile!!.credentials as TxPylonsEngine.Credentials).accountNumber = accountNumber
-        (core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence = sequence
+        (core.userProfile!!.credentials as CosmosCredentials).accountNumber = accountNumber
+        (core.userProfile!!.credentials as CosmosCredentials).sequence = sequence
     }
 
-    fun getSignedTx (privkeyHex : String, accountNumber : Long, sequence : Long, msgJson : String) : String {
+    override fun getSignedTx (privkeyHex : String, accountNumber : Long, sequence : Long, msgJson : String) : String {
         setup(privkeyHex, accountNumber, sequence)
         return when (val msg = Msg.fromJson(msgJson)) {
             null -> "invalid message"
@@ -34,7 +37,7 @@ class LowLevel (private val core : Core) {
         }
     }
 
-    fun getSignBytes (privkeyHex : String, accountNumber : Long, sequence : Long, msgJson : String) : String {
+    override fun getSignBytes (privkeyHex : String, accountNumber : Long, sequence : Long, msgJson : String) : String {
         setup(privkeyHex, accountNumber, sequence)
         return when (val msg = Msg.fromJson(msgJson)) {
             null -> "invalid message"

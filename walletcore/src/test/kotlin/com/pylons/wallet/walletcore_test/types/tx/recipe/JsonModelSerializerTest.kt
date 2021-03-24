@@ -1,9 +1,9 @@
 package com.pylons.wallet.walletcore_test.types.tx.recipe
 
 import com.beust.klaxon.Json
-import com.pylons.wallet.core.types.tx.recipe.JsonModelSerializer
-import com.pylons.wallet.core.types.tx.recipe.QuotedJsonNumeral
-import com.pylons.wallet.core.types.tx.recipe.SerializationMode
+import com.pylons.lib.JsonModelSerializer
+import com.pylons.lib.QuotedJsonNumeral
+import com.pylons.lib.SerializationMode
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 

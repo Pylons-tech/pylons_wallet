@@ -4,11 +4,11 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 
 data class EntriesList(
-    @property:[Json(name = "CoinOutputs")]
+        @property:[Json(name = "CoinOutputs")]
         val coinOutputs : List<CoinOutput>,
-    @property:[Json(name = "ItemModifyOutputs")]
+        @property:[Json(name = "ItemModifyOutputs")]
         val itemModifyOutputs : List<ItemModifyOutput>?,
-    @property:[Json(name = "ItemOutputs")]
+        @property:[Json(name = "ItemOutputs")]
         val itemOutputs : List<ItemOutput>)  {
 
         companion object {

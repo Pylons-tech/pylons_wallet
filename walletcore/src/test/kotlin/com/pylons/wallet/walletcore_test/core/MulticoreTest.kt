@@ -1,16 +1,16 @@
 package com.pylons.wallet.walletcore_test.core
 
+import com.pylons.lib.PubKeyUtil
+import com.pylons.lib.core.IMulticore
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.Multicore
-import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.ops.getProfile
-import com.pylons.wallet.core.ops.newProfile
-import com.pylons.wallet.core.ops.walletServiceTest
-import com.pylons.wallet.core.types.*
+import com.pylons.lib.types.*
+import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.apache.tuweni.bytes.Bytes32
-import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.*
 import java.security.Security
 
@@ -31,23 +31,24 @@ class MulticoreTest {
     private val testKeys =
             PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)))
     private val altTestKeys =
-            PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(InternalPrivKeyStore.TUWENI_FIXTURES_SECRET)))
+            PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(
+                InternalPrivKeyStore.TUWENI_FIXTURES_SECRET)))
     // todo: this is really ugly; we need to make this much lower-friction
-    private val testCredentials = TxPylonsEngine.Credentials(TxPylonsEngine.getAddressString(CryptoCosmos.getAddressFromKeyPair(testKeys).toArray()))
-    private val altTestCredentials = TxPylonsEngine.Credentials(TxPylonsEngine.getAddressString(CryptoCosmos.getAddressFromKeyPair(altTestKeys).toArray()))
+    private val testCredentials = CosmosCredentials(TxPylonsEngine.getAddressString(PubKeyUtil.getAddressFromKeyPair(testKeys).toArray()))
+    private val altTestCredentials = CosmosCredentials(TxPylonsEngine.getAddressString(PubKeyUtil.getAddressFromKeyPair(altTestKeys).toArray()))
 
     /**
-     * Can we enable multi-core?
+     * Can we enable multi-org.bitcoinj.core.core?
      */
     @Test
     @Order(0)
     fun enableMulticore() {
         Multicore.enable(config)
-        assert(Multicore.enabled)
+        assert(IMulticore.enabled)
     }
 
     /**
-     * Can we add a core and verify that it has the correct credentials?
+     * Can we add a org.bitcoinj.core.core and verify that it has the correct credentials?
      */
     @Test
     @Order(1)
@@ -59,7 +60,7 @@ class MulticoreTest {
     }
 
     /**
-     * Can we use the newly-added core to resolve operations?
+     * Can we use the newly-added org.bitcoinj.core.core to resolve operations?
      */
     @Test
     @Order(2)
@@ -69,7 +70,7 @@ class MulticoreTest {
     }
 
     /**
-     * Can we add another core and start using it?
+     * Can we add another org.bitcoinj.core.core and start using it?
      */
     @Test
     @Order(3)
@@ -82,7 +83,7 @@ class MulticoreTest {
     }
 
     /**
-     * Can we grab the first core again and use it?
+     * Can we grab the first org.bitcoinj.core.core again and use it?
      */
     @Test
     @Order(4)

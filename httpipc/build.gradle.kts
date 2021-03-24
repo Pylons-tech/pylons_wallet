@@ -8,7 +8,7 @@ plugins {
 group = "com.pylons"
 version = "0.1a"
 val ketheriumVer = "0.81.2"
-val bouncycastleVer = "1.64"
+val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
 val useJava8 = project.hasProperty("java8")
 
@@ -32,6 +32,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation(project(":libkylons"))
     implementation(project(":walletcore"))
 
     implementation(kotlin("stdlib-jdk8"))
@@ -43,15 +44,15 @@ dependencies {
     implementation("commons-codec:commons-codec:1.14")
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("org.apache.tuweni:tuweni-crypto:0.10.0")
-    implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
-    implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
+    implementation("com.madgag.spongycastle:prov:$spongycastleVer")
+    implementation("com.madgag.spongycastle:bcpkix-jdk15on:$spongycastleVer")
     implementation("com.beust:klaxon:5.0.12")
     implementation("com.github.komputing:kbip44:0.1")
     implementation("com.github.walleth.kethereum:bip32:$ketheriumVer")
     implementation("com.github.walleth.kethereum:bip39:$ketheriumVer")
     implementation("com.github.walleth.kethereum:bip39_wordlist_en:$ketheriumVer")
     implementation("com.github.walleth.kethereum:crypto_api:$ketheriumVer")
-    implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
+    implementation("com.github.walleth.kethereum:crypto_impl_spongycastle:$ketheriumVer")
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
     implementation("io.github.classgraph:classgraph:4.8.87")
 

@@ -37,7 +37,8 @@ data class Trade(
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.obj("result")!!.array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
-                list.add(Trade(
+                list.add(
+                    Trade(
                         nodeVersion = it.string("NodeVersion")!!,
                         id = it.string("ID")!!,
                         coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),

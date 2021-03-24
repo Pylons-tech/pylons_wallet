@@ -3,42 +3,8 @@ package com.pylons.lib.types.tx.item
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
-import java.lang.ClassCastException
-
-fun JsonObject.fuzzyDouble(key : String) : Double {
-    return when (val v= this.getValue(key)) {
-        is String -> this.string(key)!!.toDouble()
-        is Number -> this.double(key)!!
-        else -> throw ClassCastException("$v is not convertible to Double")
-    }
-}
-
-fun JsonObject.fuzzyFloat(key : String) : Float {
-    return when (val v= this.getValue(key)) {
-        is String -> this.string(key)!!.toFloat()
-        is Number -> this.float(key)!!
-        else -> throw ClassCastException("$v is not convertible to Float")
-    }
-}
-
-fun JsonObject.fuzzyInt(key : String) : Int {
-    return when (val v= this.getValue(key)) {
-        is String -> this.string(key)!!.toInt()
-        is Number -> this.int(key)!!
-        else -> throw ClassCastException("$v is not convertible to Int")
-    }
-}
-
-fun JsonObject.fuzzyLong(key : String) : Long {
-    return when (val v= this.getValue(key)) {
-        is String -> this.string(key)!!.toLong()
-        is Number -> this.long(key)!!
-        else -> throw ClassCastException("$v is not convertible to Long")
-    }
-}
-
-private val klaxon = Klaxon()
+import com.pylons.lib.*
+import com.pylons.lib.internal.fuzzyLong
 
 data class Item(
         @property:[Json(name = "NodeVersion")]
@@ -57,17 +23,20 @@ data class Item(
         val tradable: Boolean,
         @property:[Json(name = "LastUpdate")]
         val lastUpdate: Long,
-        @property:[Json(name = "Doubles")]
+        @property:[Json(name = "Doubles") QuotedJsonNumeral]
         val doubles: Map<String, Double>,
-        @property:[Json(name = "Longs")]
+        @property:[Json(name = "Longs") QuotedJsonNumeral]
         val longs: Map<String, Long>,
         @property:[Json(name = "Strings")]
         val strings: Map<String, String>,
         @property:[Json(name = "TransferFee")]
         val transferFee: Long
 ) {
-    fun serialize(): String {
-        return klaxon.toJsonString(this)
+    fun serialize(mode: SerializationMode? = null): String {
+        return when (mode) {
+            null -> klaxon.toJsonString(this)
+            else -> JsonModelSerializer.serialize(mode, this)
+        }
     }
 
     companion object {
