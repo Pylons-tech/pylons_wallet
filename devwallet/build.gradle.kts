@@ -39,6 +39,7 @@ javafx {
 val javaFXOptions = the<JavaFXOptions>()
 
 dependencies {
+    implementation(project(":libkylons"))
     implementation(project(":walletcore"))
 
     implementation(kotlin("stdlib-jdk8"))

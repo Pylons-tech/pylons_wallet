@@ -1,7 +1,7 @@
 package com.pylons.devdevwallet
 
-import com.pylons.wallet.ipc.Message
-import com.pylons.wallet.ipc.UILayer
+import com.pylons.ipc.Message
+import com.pylons.ipc.UILayer
 
 @UILayer.Implementation
 class UiLayer : UILayer() {

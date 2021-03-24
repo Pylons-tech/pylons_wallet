@@ -172,6 +172,8 @@ class Core(val config : Config) : ICore {
         return baseJsonTemplateForTxPost(msg, Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()), signature, 400000)
     }
 
+    fun getProfile() = getProfile(null)
+
     override fun getProfile (addr : String?) : Profile? {
         return when (addr) {
             // note: both null and "" are valid here. it depends on the serialization behavior
