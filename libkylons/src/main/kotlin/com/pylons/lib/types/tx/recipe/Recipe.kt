@@ -3,7 +3,7 @@ package com.pylons.lib.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import com.pylons.lib.types.tx.item.fuzzyLong
+import com.pylons.lib.internal.fuzzyLong
 import java.lang.StringBuilder
 
 data class Recipe(

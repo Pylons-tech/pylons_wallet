@@ -1,8 +1,8 @@
 package com.pylons.wallet.walletcore_test.types.transaction
 
-import com.pylons.wallet.core.types.Transaction
-import com.pylons.wallet.core.types.tx.*
-import com.pylons.wallet.core.types.tx.msg.ExecuteRecipe
+import com.pylons.lib.types.Transaction
+import com.pylons.lib.types.tx.*
+import com.pylons.lib.types.tx.msg.ExecuteRecipe
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

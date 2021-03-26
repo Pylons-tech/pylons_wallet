@@ -3,8 +3,9 @@ package com.pylons.wallet.ipc_test
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.ipc.demoflow
+import com.pylons.lib.types.*
+import com.pylons.ipc.demoflow
+import com.pylons.wallet.core.internal.HttpWire
 import org.junit.jupiter.api.Test
 
 class FirstDemoflowTest {

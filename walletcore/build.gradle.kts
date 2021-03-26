@@ -8,7 +8,6 @@ plugins {
 group = "com.pylons"
 version = "0.1"
 val ketheriumVer = "0.83.4"
-val bouncycastleVer = "1.64"
 val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
 val useJava8 = true
@@ -33,20 +32,17 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation(project(":libkylons"))
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
-
     implementation("com.google.guava:guava:28.2-jre")
     implementation("commons-codec:commons-codec:1.14")
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("org.apache.tuweni:tuweni-bytes:0.10.0")
     implementation("org.apache.tuweni:tuweni-io:0.10.0")
     implementation("org.apache.tuweni:tuweni-units:0.10.0")
-    //replace with spongycastle
-    //implementation("org.bouncycastle:bcprov-jdk15on:$bouncycastleVer")
-    //implementation("org.bouncycastle:bcpkix-jdk15on:$bouncycastleVer")
     implementation("com.madgag.spongycastle:core:$spongycastleVer")
     implementation("com.madgag.spongycastle:prov:$spongycastleVer")
     implementation("com.madgag.spongycastle:bcpkix-jdk15on:$spongycastleVer")
@@ -58,12 +54,12 @@ dependencies {
     implementation("com.github.walleth.kethereum:bip39:$ketheriumVer")
     implementation("com.github.walleth.kethereum:bip39_wordlist_en:$ketheriumVer")
     implementation("com.github.walleth.kethereum:crypto_api:$ketheriumVer")
-    implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
+    implementation("com.github.walleth.kethereum:crypto_impl_spongycastle:$ketheriumVer")
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
     implementation("io.github.classgraph:classgraph:4.8.87")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVer")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
 }
 
 val jar by tasks.getting(Jar::class) {

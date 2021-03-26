@@ -1,9 +1,10 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.types.*
-import com.pylons.wallet.core.types.tx.msg.*
-import com.pylons.wallet.core.types.tx.recipe.*
+import com.pylons.lib.types.*
+import com.pylons.lib.types.tx.msg.*
+import com.pylons.lib.types.tx.recipe.*
+import com.pylons.wallet.core.internal.HttpWire
 
 class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
     override val isDevEngine: Boolean = true

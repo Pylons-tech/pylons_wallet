@@ -47,7 +47,28 @@ data class Transaction(
         }
     }
 
+    fun submit(): Transaction {
+        if (state != State.TX_NOT_YET_SENT) throw Exception("Transaction.submit() should only be called on" +
+                "Transactions of state TX_NOT_YET_SENT")
+        state = State.TX_NOT_YET_COMMITTED
+        state = try {
+            resolver?.invoke(this)
+            State.TX_ACCEPTED
+        } catch (e: Exception) {
+            // todo: this should get some data
+            //Logger().log(LogEvent.TX_SUBMIT_EXCEPTION, e.toString(), LogTag.error)
+            State.TX_REFUSED
+        }
+        return this
+    }
+
     companion object {
+        fun List<Transaction>.submitAll() : List<Transaction> {
+            val ml = this.toMutableList()
+            ml.indices.forEach { ml[it] = ml[it].submit() }
+            return ml
+        }
+
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
             when {

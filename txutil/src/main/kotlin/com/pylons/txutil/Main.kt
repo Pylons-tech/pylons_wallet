@@ -2,18 +2,14 @@ package com.pylons.txutil
 
 import com.beust.klaxon.JsonObject
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.LowLevel
-import com.pylons.wallet.core.ops.batchCreateCookbook
-import com.pylons.wallet.core.ops.getProfile
-import com.pylons.wallet.core.ops.getPylons
-import com.pylons.wallet.core.ops.newProfile
-import com.pylons.wallet.core.types.Backend
-import com.pylons.wallet.core.types.Config
-import com.pylons.wallet.core.types.PylonsSECP256K1
-import com.pylons.wallet.core.types.klaxon
+import com.pylons.lib.types.Backend
+import com.pylons.lib.types.Config
+import com.pylons.lib.types.PylonsSECP256K1
+import com.pylons.wallet.core.Multicore
 import org.apache.tuweni.bytes.Bytes32
 import java.lang.Exception
 import java.util.*
+import com.pylons.lib.klaxon
 
 @ExperimentalUnsignedTypes
 object Main {
@@ -22,13 +18,13 @@ object Main {
         try {
             var op = args[0]
             val privkeyHex = args[1]
-            Core.start(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")), "")
+            Multicore.enable(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")))
             println(when (op) {
                 "SIGN_BYTES" -> try {
                     val accountNumber = args[2].toLong()
                     val sequence = args[3].toLong()
                     val msgJson = args[4]
-                    LowLevel.getSignBytes(privkeyHex, accountNumber, sequence, msgJson)
+                    Core.current!!.lowLevel.getSignBytes(privkeyHex, accountNumber, sequence, msgJson)
                 } catch (e : Exception) {
                     error(e, "Exception occurred in walletcore")
                 }
@@ -36,7 +32,7 @@ object Main {
                     val accountNumber = args[2].toLong()
                     val sequence = args[3].toLong()
                     val msgJson = args[4]
-                    LowLevel.getSignedTx(privkeyHex, accountNumber, sequence, msgJson)
+                    Core.current!!.lowLevel.getSignedTx(privkeyHex, accountNumber, sequence, msgJson)
                 } catch (e : Exception) {
                     error(e, "Exception occurred in walletcore")
                 }
@@ -52,17 +48,17 @@ object Main {
     }
 
     private fun doMessages (privkey : String) {
-        Core.newProfile("foo",
+        Core.current!!.newProfile("foo",
                 PylonsSECP256K1.KeyPair.fromSecretKey(
                         PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(privkey))))
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
-        Core.getProfile()
-        Core.getPylons(50000)
+        Core.current!!.getProfile()
+        Core.current!!.getPylons(50000)
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
-        Core.getProfile()
-        Core.batchCreateCookbook(
+        Core.current!!.getProfile()
+        Core.current!!.batchCreateCookbook(
                 ids = mutableListOf(Calendar.getInstance().time.toInstant().toString()),
                 names = mutableListOf("tst_cookbook_name"),
                 developers = mutableListOf("addghjkllsdfdggdgjkkk"),

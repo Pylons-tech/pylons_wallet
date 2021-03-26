@@ -1,10 +1,12 @@
 package com.pylons.wallet.walletcore_test.engine
 
+import com.pylons.lib.PubKeyUtil
 import com.pylons.wallet.core.Core
 import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.types.*
+import com.pylons.lib.types.*
+import com.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -21,7 +23,7 @@ class TendermintAddressTest {
         core.userData.dataSets["__CRYPTO_COSMOS__"] = mutableMapOf("key" to InternalPrivKeyStore.BANK_TEST_KEY)
         engine.cryptoHandler.importKeysFromUserData()
         val generated = TxPylonsEngine.getAddressString(
-                CryptoCosmos.getAddressFromKeyPair(engine.cryptoCosmos.keyPair!!).toArray())
+                PubKeyUtil.getAddressFromKeyPair(engine.cryptoCosmos.keyPair!!).toArray())
         assertEquals(KNOWN_GOOD, generated,
                 "Address mismatch w/ pubkey ${engine.cryptoCosmos.keyPair!!.publicKey().toHexString()} - " +
                         "expected: ${getDisplayString(KNOWN_GOOD)}\n" +

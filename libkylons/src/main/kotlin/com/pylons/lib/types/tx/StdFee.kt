@@ -2,7 +2,7 @@ package com.pylons.lib.types.tx
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
-import com.pylons.lib.types.tx.item.fuzzyLong
+import com.pylons.lib.internal.fuzzyLong
 
 data class StdFee(
         @property:[Json(name = "amount")]
