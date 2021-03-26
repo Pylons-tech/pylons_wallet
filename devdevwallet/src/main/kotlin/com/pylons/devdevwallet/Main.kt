@@ -1,7 +1,7 @@
 package com.pylons.devdevwallet
 
 import com.pylons.wallet.core.Multicore
-import com.pylons.wallet.core.logging.*
+import com.pylons.lib.logging.*
 import com.pylons.lib.types.Backend
 import com.pylons.lib.types.Config
 import com.pylons.ipc.IPCLayer

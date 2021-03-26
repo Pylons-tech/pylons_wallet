@@ -2,10 +2,9 @@ package com.pylons.wallet.core.internal
 
 import com.pylons.lib.PubKeyUtil
 import com.pylons.lib.types.PylonsSECP256K1
-import com.pylons.wallet.core.engine.crypto.CryptoCosmos
-import com.pylons.wallet.core.logging.LogEvent
-import com.pylons.wallet.core.logging.Logger
-import com.pylons.wallet.core.logging.LogTag
+import com.pylons.lib.logging.LogEvent
+import com.pylons.lib.logging.Logger
+import com.pylons.lib.logging.LogTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.spongycastle.util.encoders.Hex

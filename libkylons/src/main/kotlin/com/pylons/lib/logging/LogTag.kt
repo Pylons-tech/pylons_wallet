@@ -1,4 +1,4 @@
-package com.pylons.wallet.core.logging
+package com.pylons.lib.logging
 
 object LogTag {
     const val info = "INFO"
