@@ -3,15 +3,14 @@ package com.pylons.wallet.core.engine.crypto
 import com.pylons.lib.PubKeyUtil
 import com.pylons.lib.core.ICryptoHandler
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.logging.LogEvent
-import com.pylons.wallet.core.logging.LogTag
-import com.pylons.wallet.core.logging.Logger
+import com.pylons.lib.logging.LogEvent
+import com.pylons.lib.logging.LogTag
+import com.pylons.lib.logging.Logger
 import com.pylons.lib.types.PylonsSECP256K1
 import org.apache.commons.codec.binary.Base32
 import org.apache.tuweni.bytes.Bytes
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Hex
-import org.kethereum.bip39.*
 
 class CryptoCosmos(val core : Core) : ICryptoHandler {
     override fun getPrefix() : String = "__CRYPTO_COSMOS__"
