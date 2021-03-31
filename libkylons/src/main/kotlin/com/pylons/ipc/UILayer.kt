@@ -12,7 +12,8 @@ abstract class UILayer {
     companion object {
         val uiHooks : MutableList<Message.UiHook> = mutableListOf()
 
-        private val implementation : UILayer = findImplementation()
+        //private val implementation : UILayer = findImplementation()
+        private lateinit var implementation : UILayer // = findImplementation()
 
         private fun findImplementation () : UILayer {
             val scanResult = ClassGraph().enableAllInfo().acceptPackages().scan()
@@ -21,6 +22,10 @@ abstract class UILayer {
             else if (!c[0].extendsSuperclass(UILayer::class.qualifiedName))
                 throw Exception("${c[0].name} does not extend UILayer")
             return c[0].loadClass().getConstructor().newInstance() as UILayer
+        }
+
+        fun SetImplentation(impl: UILayer) {
+            implementation = impl
         }
 
         fun addUiHook(uiHook: Message.UiHook) : Message.UiHook {

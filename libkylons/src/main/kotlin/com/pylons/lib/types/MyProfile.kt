@@ -3,7 +3,7 @@ package com.pylons.lib.types
 import com.pylons.lib.core.ICore
 import com.pylons.lib.types.credentials.ICredentials
 import com.pylons.lib.types.tx.Coin
-import com.pylons.wallet.core.constants.*
+import com.pylons.wallet.libkylons.constants.*
 import com.pylons.lib.types.tx.item.Item
 
 /**

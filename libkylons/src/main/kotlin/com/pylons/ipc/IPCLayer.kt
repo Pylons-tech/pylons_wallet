@@ -46,7 +46,7 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
     }
 
     companion object {
-        val implementation : IPCLayer = findImplementation()
+        lateinit var implementation : IPCLayer //findImplementation()
         private val onGetNextList : List<MethodInfo> = findAllOnGetNextMethods()
 
         private fun updateConnectionState() {
@@ -98,6 +98,10 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
                     }
                 }
             }
+        }
+
+        fun SetImplementation(impl:IPCLayer){
+            implementation = impl
         }
 
         fun handleResponse(r : Message.Response) {

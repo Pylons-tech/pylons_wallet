@@ -1,7 +1,7 @@
 package com.pylons.devdevwallet
 
 import com.pylons.wallet.core.Multicore
-import com.pylons.wallet.core.logging.*
+import com.pylons.lib.logging.*
 import com.pylons.lib.types.Backend
 import com.pylons.lib.types.Config
 import com.pylons.ipc.IPCLayer
@@ -17,6 +17,7 @@ object Main {
         println("starting devdevwallet")
         Security.addProvider(BouncyCastleProvider())
         try {
+
             var preferredIP = when (args.size) {
                 0 -> "127.0.0.1"
                 else -> args[0]

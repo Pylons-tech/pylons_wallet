@@ -57,7 +57,7 @@ dependencies {
     implementation("io.github.classgraph:classgraph:4.8.87")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVer")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
 }
 
 val jar by tasks.getting(Jar::class) {
