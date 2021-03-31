@@ -371,12 +371,12 @@ sealed class Message {
         fun match(json: String) : Message? {
             println("Trying to match message \n$json")
             val jsonObject = Parser.default().parse(StringBuilder(json)) as JsonObject
-            IPCLayer.implementation.messageId = jsonObject.int("messageId")!!
-            println("Set messageId to ${IPCLayer.implementation.messageId}")
+            IPCLayer.implementation!!.messageId = jsonObject.int("messageId")!!
+            println("Set messageId to ${IPCLayer.implementation!!.messageId}")
             val cid = jsonObject.int("clientId")
             val mid = jsonObject.int("walletId")
-            if (cid != IPCLayer.implementation.clientId || mid != IPCLayer.implementation.walletId)
-                throw Exception("Client/wallet ID mismatch - got ${jsonObject.int("clientId").toString()} ${jsonObject.int("walletId").toString()}, expected ${IPCLayer.implementation.clientId} ${IPCLayer.implementation.walletId}")
+            if (cid != IPCLayer.implementation!!.clientId || mid != IPCLayer.implementation!!.walletId)
+                throw Exception("Client/wallet ID mismatch - got ${jsonObject.int("clientId").toString()} ${jsonObject.int("walletId").toString()}, expected ${IPCLayer.implementation!!.clientId} ${IPCLayer.implementation!!.walletId}")
             val type = jsonObject.string("type")!!
             val msg =
                     Base64.getDecoder().decode(
@@ -418,8 +418,8 @@ sealed class Message {
 
     abstract class ResponseData {
         fun pack () : Response = Response(
-            IPCLayer.implementation.messageId,
-                IPCLayer.implementation.clientId, IPCLayer.implementation.walletId,
+            IPCLayer.implementation!!.messageId,
+                IPCLayer.implementation!!.clientId, IPCLayer.implementation!!.walletId,
                 core!!.statusBlock, this)
 
         open fun wait () : ResponseData = this

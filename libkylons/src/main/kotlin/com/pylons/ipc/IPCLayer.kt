@@ -1,6 +1,6 @@
 package com.pylons.ipc
 
-import io.github.classgraph.*
+import java.lang.reflect.Method
 import kotlin.random.Random
 import kotlin.reflect.jvm.jvmName
 
@@ -17,8 +17,6 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
         Connected,
         ConnectionBroken
     }
-
-    annotation class Implementation
 
     annotation class OnGetNext
 
@@ -46,52 +44,41 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
     }
 
     companion object {
-        val implementation : IPCLayer = findImplementation()
-        private val onGetNextList : List<MethodInfo> = findAllOnGetNextMethods()
+        var implementation : IPCLayer? = null
+        private val onGetNextList : List<Method> = findAllOnGetNextMethods()
 
         private fun updateConnectionState() {
-            implementation.connectionState = implementation.checkConnectionStatus()
-            if (implementation.connectionState == ConnectionState.NoClient && !implementation.permitUnboundOperations)
+            implementation!!.connectionState = implementation!!.checkConnectionStatus()
+            if (implementation!!.connectionState == ConnectionState.NoClient && !implementation!!.permitUnboundOperations)
                 throw NoClientException()
-            else if (implementation.connectionState == ConnectionState.ConnectionBroken && !implementation.permitUnboundOperations)
+            else if (implementation!!.connectionState == ConnectionState.ConnectionBroken && !implementation!!.permitUnboundOperations)
                 throw ConnectionBrokenException()
         }
 
-        private fun findImplementation () : IPCLayer {
-            val scanResult = ClassGraph().enableAllInfo().acceptPackages().scan()
-            val c = scanResult.getClassesWithAnnotation(Implementation::class.jvmName)
-            if (c.size == 0) throw Exception("No registered implementation of IPCLayer in classpath")
-            else if (!c[0].extendsSuperclass(IPCLayer::class.qualifiedName))
-                throw Exception("${c[0].name} does not extend IPCLayer")
-            return c[0].loadClass().getConstructor().newInstance() as IPCLayer
-        }
-
-        private fun findAllOnGetNextMethods () : List<MethodInfo> {
-            val m = mutableListOf<MethodInfo>()
-            val scanResult = ClassGraph().enableAllInfo().acceptPackages().scan()
-            scanResult.allClasses.forEach { classInfo ->
-                classInfo.methodInfo.forEach {
-                    if (it.hasAnnotation(OnGetNext::class.qualifiedName)) m.add(it)
-                }
+        private fun findAllOnGetNextMethods () : List<Method> {
+            val ls = mutableListOf<Method>()
+            implementation!!::class.java.declaredMethods.forEach {
+                if (it.getAnnotation(OnGetNext::class.java) != null)
+                    ls.add(it)
             }
-            return m
+            return ls
         }
 
-        fun onUiReleased(uiHook: Message.UiHook) = implementation.onUiReleased(uiHook)
+        fun onUiReleased(uiHook: Message.UiHook) = implementation!!.onUiReleased(uiHook)
 
         fun getNextMessage(callback : (Message) -> Unit) {
             safelyDoIpcOperation {
-                implementation.getNextJson {
+                implementation?.getNextJson {
                     println("got: \n$it")
                     val msg = Message.match(it)
                     println("matched!")
                     when (msg) {
-                        null -> implementation.reject(it)
+                        null -> implementation!!.reject(it)
                         else -> {
                             onGetNextList.forEach { method ->
-                                method.loadClassAndGetMethod().invoke(method.classInfo, msg)
+                                method.invoke(implementation, msg)
                             }
-                            implementation.onMessage(msg)
+                            implementation!!.onMessage(msg)
                             println("trying to do callback")
                             callback(msg)
                         }
@@ -102,25 +89,25 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
 
         fun handleResponse(r : Message.Response) {
             safelyDoIpcOperation {
-                implementation.preprocessResponse(r) {
-                    implementation.submit(r)
-                    implementation.cleanup()
+                implementation!!.preprocessResponse(r) {
+                    implementation!!.submit(r)
+                    implementation!!.cleanup()
                 }
             }
         }
 
         private fun safelyDoIpcOperation (action : () -> Unit) {
-            if (!implementation.initialized) implementation.initIpcChannel()
+            if (!implementation!!.initialized) implementation!!.initIpcChannel()
             try {
                 updateConnectionState()
                 action()
             } catch (e : Exception) {
                 when (e) {
                     is NoClientException -> {
-                        implementation.establishConnection()
+                        implementation!!.establishConnection()
                     }
                     is ConnectionBrokenException -> {
-                        implementation.connectionBroken()
+                        implementation!!.connectionBroken()
                     }
                     else -> throw e // todo: this should do some logging before it dies
                 }

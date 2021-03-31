@@ -12,8 +12,7 @@ import com.pylons.lib.klaxon
 private const val HANDSHAKE_MAGIC = "__PYLONS_WALLET_SERVER"
 private const val HANDSHAKE_REPLY_MAGIC = "__PYLONS_WALLET_CLIENT"
 
-@IPCLayer.Implementation
-class IpcLayer : IPCLayer(false) {
+class HttpIPCLayer : IPCLayer(false) {
     companion object {
         private val ascii = Charset.forName("US-ASCII")
 
@@ -77,7 +76,7 @@ class IpcLayer : IPCLayer(false) {
 
         private fun checkForHandshake(): String {
             val pid = ProcessHandle.current().pid()
-            val byteBuffer = ByteBuffer.allocate(Long.SIZE_BYTES + 4).putInt(implementation.walletId).putLong(pid)
+            val byteBuffer = ByteBuffer.allocate(Long.SIZE_BYTES + 4).putInt(implementation!!.walletId).putLong(pid)
             writeBytes(ascii.encode(HANDSHAKE_MAGIC).array() + byteBuffer.array())
             println("getting reply now")
             return getStringRaw()
@@ -94,7 +93,7 @@ class IpcLayer : IPCLayer(false) {
                         LogTag.walletError)
             }
             println("bar")
-            implementation.clientId = handshakeReply.removePrefix(HANDSHAKE_REPLY_MAGIC).toInt()
+            implementation!!.clientId = handshakeReply.removePrefix(HANDSHAKE_REPLY_MAGIC).toInt()
             println("handshake OK")
             writeString("OKfillerfillerfillerfillerfillerfiller")
         }

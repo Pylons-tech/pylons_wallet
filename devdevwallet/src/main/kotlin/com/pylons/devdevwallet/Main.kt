@@ -1,10 +1,12 @@
 package com.pylons.devdevwallet
 
+import HttpIPCLayer
 import com.pylons.wallet.core.Multicore
 import com.pylons.wallet.core.logging.*
 import com.pylons.lib.types.Backend
 import com.pylons.lib.types.Config
 import com.pylons.ipc.IPCLayer
+import com.pylons.ipc.UILayer
 import java.lang.Exception
 import java.security.Security
 import org.spongycastle.jce.provider.BouncyCastleProvider
@@ -15,6 +17,8 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         println("starting devdevwallet")
+        IPCLayer.implementation = HttpIPCLayer()
+        UILayer.implementation = DevDevWalletUILayer()
         Security.addProvider(BouncyCastleProvider())
         try {
             var preferredIP = when (args.size) {
