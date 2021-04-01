@@ -37,6 +37,10 @@ class FakeUI : UILayer() {
 
     }
 
+    override fun onConfirmUiHook(uiHook: Message.UiHook) {
+
+    }
+
     override fun onReleaseUiHook(uiHook: Message.UiHook) {
 
     }

@@ -394,9 +394,16 @@ sealed class Message {
     }
 
     open class UiHook(val msg : Message) {
-
+        var response : Message.Response? = null
         var live : Boolean = true
             private set
+        var confirmed : Boolean = false
+            private set
+
+        fun confirm() : UiHook {
+            confirmed = true
+            return this
+        }
 
         fun release() : UiHook {
             live = false
@@ -458,7 +465,7 @@ sealed class Message {
         // This simplifies the way we need to deal w/ UI interactions - every message creates
         // a ui hook; it's just that some of them don't actually need to do any work before they're
         // done with it.
-        return UILayer.releaseUiHook(UILayer.addUiHook(UiHook(this)))
+        return UILayer.releaseUiHook(UILayer.confirmUiHook(UILayer.addUiHook(UiHook(this))))
     }
 
     abstract fun resolve() : Response

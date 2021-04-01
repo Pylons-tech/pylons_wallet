@@ -39,13 +39,23 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
         msg.ui()
     }
 
+    fun onUiConfirmed (uiHook: Message.UiHook) {
+        uiHook.response = uiHook.msg.resolve()
+        handleResponse(uiHook.response!!)
+    }
+
     fun onUiReleased (uiHook: Message.UiHook) {
-        handleResponse(uiHook.msg.resolve())
+        // Unclear on what if anything needs to be done here rn
     }
 
     companion object {
         var implementation : IPCLayer? = null
-        private val onGetNextList : List<Method> = findAllOnGetNextMethods()
+            set(value) { field = value; init() }
+        private lateinit var onGetNextList : List<Method>
+
+        private fun init () {
+            onGetNextList = findAllOnGetNextMethods()
+        }
 
         private fun updateConnectionState() {
             implementation!!.connectionState = implementation!!.checkConnectionStatus()
@@ -63,8 +73,6 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
             }
             return ls
         }
-
-        fun onUiReleased(uiHook: Message.UiHook) = implementation!!.onUiReleased(uiHook)
 
         fun getNextMessage(callback : (Message) -> Unit) {
             safelyDoIpcOperation {
