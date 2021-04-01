@@ -54,7 +54,6 @@ dependencies {
     implementation("com.github.walleth.kethereum:crypto_api:$ketheriumVer")
     implementation("com.github.walleth.kethereum:crypto_impl_bouncycastle:$ketheriumVer")
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
-    implementation("io.github.classgraph:classgraph:4.8.87")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")

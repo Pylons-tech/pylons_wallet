@@ -5,7 +5,6 @@ import com.pylons.lib.klaxon
 
 var fakeIpcJson : String = ""
 
-@IPCLayer.Implementation
 class FakeIPC : IPCLayer(false) {
     override fun getNextJson(callback: (String) -> Unit) {
         callback(fakeIpcJson)
@@ -33,9 +32,12 @@ class FakeIPC : IPCLayer(false) {
 
 }
 
-@UILayer.Implementation
 class FakeUI : UILayer() {
     override fun onAddUiHook(uiHook: Message.UiHook) {
+
+    }
+
+    override fun onConfirmUiHook(uiHook: Message.UiHook) {
 
     }
 
@@ -46,11 +48,13 @@ class FakeUI : UILayer() {
 }
 
 fun demoflow () {
+    IPCLayer.implementation = FakeIPC()
+    UILayer.implementation = FakeUI()
     val msg = Message.WalletServiceTest("input")
     val msgJson =
             Base64.getEncoder().encodeToString(
                     klaxon.toJsonString(msg).toByteArray(Charsets.US_ASCII))
-    val json = """{"type":"WalletServiceTest", "msg":"$msgJson", "messageId":0, "clientId":0, "walletId":${IPCLayer.implementation.walletId}}"""
+    val json = """{"type":"WalletServiceTest", "msg":"$msgJson", "messageId":0, "clientId":0, "walletId":${IPCLayer.implementation!!.walletId}}"""
 
     fakeIpcJson = json
     IPCLayer.getNextMessage {
