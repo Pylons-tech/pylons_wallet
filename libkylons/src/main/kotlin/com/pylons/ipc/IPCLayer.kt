@@ -44,6 +44,11 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
         handleResponse(uiHook.response!!)
     }
 
+    fun onUiRejected (uiHook: Message.UiHook) {
+        uiHook.response = Message.RejectResponse().wait().pack()
+        handleResponse(uiHook.response!!)
+    }
+
     fun onUiReleased (uiHook: Message.UiHook) {
         // Unclear on what if anything needs to be done here rn
     }
@@ -88,6 +93,7 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
                             }
                             implementation!!.onMessage(msg)
                             println("trying to do callback")
+
                             callback(msg)
                         }
                     }

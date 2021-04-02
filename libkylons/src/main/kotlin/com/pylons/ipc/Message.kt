@@ -408,8 +408,16 @@ sealed class Message {
         var confirmed : Boolean = false
             private set
 
+        var rejected: Boolean = false
+            private set
+
         fun confirm() : UiHook {
             confirmed = true
+            return this
+        }
+
+        fun reject() : UiHook {
+            rejected = true
             return this
         }
 
@@ -448,6 +456,8 @@ sealed class Message {
     class TradeResponse (val trades : List<Trade>) : ResponseData()
     class TestResponse(val output : String) : ResponseData()
 
+    class RejectResponse(): ResponseData()
+
     class TxResponse : ResponseData {
         val transactions : List<Transaction>
         constructor(txs : List<Transaction>) {
@@ -473,7 +483,10 @@ sealed class Message {
         // This simplifies the way we need to deal w/ UI interactions - every message creates
         // a ui hook; it's just that some of them don't actually need to do any work before they're
         // done with it.
-        return UILayer.releaseUiHook(UILayer.confirmUiHook(UILayer.addUiHook(UiHook(this))))
+        //return UILayer.releaseUiHook(UILayer.confirmUiHook(UILayer.addUiHook(UiHook(this))))
+
+        //break main ui loop
+        return UILayer.addUiHook(UiHook(this))
     }
 
     abstract fun resolve() : Response

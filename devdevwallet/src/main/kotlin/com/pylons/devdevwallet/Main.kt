@@ -21,6 +21,7 @@ object Main {
         UILayer.implementation = DevDevWalletUILayer()
         Security.addProvider(BouncyCastleProvider())
         try {
+
             var preferredIP = when (args.size) {
                 0 -> "127.0.0.1"
                 else -> args[0]
