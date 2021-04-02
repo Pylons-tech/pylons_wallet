@@ -1,0 +1,29 @@
+package com.pylons.ipc
+
+import io.github.classgraph.ClassGraph
+import kotlin.reflect.jvm.jvmName
+
+abstract class ClientIpcHelper {
+
+    annotation class Implementation
+
+    protected abstract fun writeString(s: String)
+
+    companion object {
+        val IMPLEMENTATION: ClientIpcHelper = findImplementation()
+
+        private fun findImplementation(): ClientIpcHelper {
+            val scanResult = ClassGraph().enableAllInfo().acceptPackages().scan()
+            val c = scanResult.getClassesWithAnnotation(Implementation::class.jvmName)
+            if (c.size == 0) throw Exception("No registered implementation of ClientIpcHelper in classpath")
+            else if (!c[0].extendsSuperclass(ClientIpcHelper::class.qualifiedName))
+                throw Exception("${c[0].name} does not extend ClientIpcHelper")
+            return c[0].loadClass().getConstructor().newInstance() as ClientIpcHelper
+        }
+
+        fun callWriteString(s: String) {
+            IMPLEMENTATION.writeString(s)
+        }
+    }
+
+}
