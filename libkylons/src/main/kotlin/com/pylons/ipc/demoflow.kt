@@ -34,10 +34,21 @@ class FakeIPC : IPCLayer(false) {
 
 class FakeUI : UILayer() {
     override fun onAddUiHook(uiHook: Message.UiHook) {
+        //in the UI thread or some where else call one of this
+        //if to continue the ui flow call UILayer.confirmUiHook()
+        //else to reject call UILayer.rejectUiHook()
 
+        //UILayer.confirmUiHook(UILayer.uiHooks.last())
+        //UILayer.rejectUiHook(UILayer.uiHooks.last())
+        UILayer.confirmUiHook(uiHook)
+        //UILayer.rejectUiHook(uiHook)
     }
 
     override fun onConfirmUiHook(uiHook: Message.UiHook) {
+
+    }
+
+    override fun onRejectUiHook(uiHook: Message.UiHook) {
 
     }
 

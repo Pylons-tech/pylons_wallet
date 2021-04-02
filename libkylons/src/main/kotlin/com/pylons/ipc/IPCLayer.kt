@@ -6,7 +6,7 @@ import kotlin.reflect.jvm.jvmName
 
 abstract class IPCLayer(val permitUnboundOperations : Boolean) {
     var clientId : Int = 0
-    var walletId : Int = 0 //Random.nextInt()
+    var walletId : Int = Random.nextInt()
     var messageId : Int = 0
 
     class NoClientException : Exception() { }
@@ -41,6 +41,11 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
 
     fun onUiConfirmed (uiHook: Message.UiHook) {
         uiHook.response = uiHook.msg.resolve()
+        handleResponse(uiHook.response!!)
+    }
+
+    fun onUiRejected (uiHook: Message.UiHook) {
+        uiHook.response = Message.RejectResponse().wait().pack()
         handleResponse(uiHook.response!!)
     }
 
@@ -88,15 +93,12 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
                             }
                             implementation!!.onMessage(msg)
                             println("trying to do callback")
+
                             callback(msg)
                         }
                     }
                 }
             }
-        }
-
-        fun SetImplementation(impl:IPCLayer){
-            implementation = impl
         }
 
         fun handleResponse(r : Message.Response) {
