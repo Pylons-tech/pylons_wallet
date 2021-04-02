@@ -1,7 +1,7 @@
 package com.pylons.wallet.core.engine
 
 import com.pylons.wallet.core.Core
-import com.pylons.wallet.core.logging.Logger
+import com.pylons.lib.logging.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.beust.klaxon.*
 import com.pylons.lib.PubKeyUtil
@@ -10,8 +10,8 @@ import com.pylons.lib.core.IEngine
 import com.pylons.lib.internal.fuzzyLong
 import com.pylons.wallet.core.VERSION_STRING
 import com.pylons.wallet.core.internal.HttpWire
-import com.pylons.wallet.core.logging.LogEvent
-import com.pylons.wallet.core.logging.LogTag
+import com.pylons.lib.logging.LogEvent
+import com.pylons.lib.logging.LogTag
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.spongycastle.util.encoders.Hex
 import java.io.FileNotFoundException

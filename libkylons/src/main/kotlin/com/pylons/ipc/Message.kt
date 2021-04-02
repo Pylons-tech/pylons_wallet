@@ -153,6 +153,14 @@ sealed class Message {
         override fun resolve() = ExecutionResponse(core!!.getPendingExecutions()).wait().pack()
     }
 
+    class GetTrades : Message() {
+        companion object {
+            fun deserialize(json : String) = klaxon.parse<GetTrades>(json)
+        }
+
+        override fun resolve() = TradeResponse(core!!.listTrades()).wait().pack()
+    }
+
     class GetProfile(
             var address : String? = null
     ) : Message() {

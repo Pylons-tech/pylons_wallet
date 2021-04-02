@@ -1,14 +1,14 @@
 package com.pylons.devdevwallet
 
-import com.pylons.wallet.core.logging.LogEvent
-import com.pylons.wallet.core.logging.LogTag
+import com.pylons.lib.logging.LogEvent
+import com.pylons.lib.logging.LogTag
 import org.apache.commons.lang3.SystemUtils
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
 
-class JvmLogger : com.pylons.wallet.core.logging.Logger() {
+class JvmLogger : com.pylons.lib.logging.Logger() {
     private val logTimeout : Long = 60 // in seconds
     private val filename = "log.txt"
     private val dir = getPersistentDirectory()

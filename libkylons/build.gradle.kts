@@ -56,7 +56,7 @@ dependencies {
     implementation("com.github.walleth.kethereum:model:$ketheriumVer")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVer")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
 }
 
 val jar by tasks.getting(Jar::class) {
