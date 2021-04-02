@@ -2,8 +2,7 @@ package com.pylons.ipc
 
 import com.pylons.lib.klaxon
 
-@IPCLayer.Implementation
-class HttpIpc : IPCLayer(false) {
+class HttpIpcLayer : IPCLayer(false) {
     override fun establishConnection() {
         println("establishing connection")
         HttpIpcWire.doHandshake()
