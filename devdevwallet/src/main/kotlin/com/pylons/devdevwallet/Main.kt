@@ -1,6 +1,6 @@
 package com.pylons.devdevwallet
 
-import HttpIPCLayer
+import com.pylons.ipc.HttpIpcLayer
 import com.pylons.wallet.core.Multicore
 import com.pylons.lib.logging.*
 import com.pylons.lib.types.Backend
@@ -17,7 +17,7 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         println("starting devdevwallet")
-        IPCLayer.implementation = HttpIPCLayer()
+        IPCLayer.implementation = HttpIpcLayer()
         UILayer.implementation = DevDevWalletUILayer()
         Security.addProvider(BouncyCastleProvider())
         try {

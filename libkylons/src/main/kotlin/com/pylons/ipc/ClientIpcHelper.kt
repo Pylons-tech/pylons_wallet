@@ -1,11 +1,6 @@
 package com.pylons.ipc
 
-import io.github.classgraph.ClassGraph
-import kotlin.reflect.jvm.jvmName
-
 abstract class ClientIpcHelper {
-
-    annotation class Implementation
 
     protected abstract fun writeString(s: String)
 
