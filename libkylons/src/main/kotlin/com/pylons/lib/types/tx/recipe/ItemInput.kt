@@ -29,10 +29,10 @@ data class ItemInput(
                                 transferFee = FeeInputParam.fromJson(jsonObject.obj("TransferFee"))
                         )
 
-                fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<ItemInput> {
+                fun listFromJson (jsonArray: JsonArray<ItemInput>?) : List<ItemInput> {
                         if (jsonArray == null) return listOf()
                         val ls = mutableListOf<ItemInput>()
-                        jsonArray.forEach { ls.add(fromJson(it)) }
+                        jsonArray.forEach { ls.add(it) }
                         return ls
                 }
         }

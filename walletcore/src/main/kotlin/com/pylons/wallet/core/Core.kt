@@ -216,13 +216,17 @@ class Core(val config : Config) : ICore {
                                 blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
                                 outputTables : List<String>, outputs : List<String>) : List<Transaction> {
         val mItemInputs = mutableListOf<List<ItemInput>>()
-        itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        itemInputs.forEach { mItemInputs.add(klaxon.parseArray(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()
-        coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        coinInputs.forEach { mCoinInputs.add(klaxon.parseArray(it)?: JsonArray()) }
         val mOutputTables = mutableListOf<EntriesList>()
-        outputTables.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
+        outputTables.forEach { mOutputTables.add(klaxon.parse(it)?: EntriesList(listOf(), listOf(), listOf())) }
         val mOutputs = mutableListOf<List<WeightedOutput>>()
-        outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        outputs.forEach {
+            println(it)
+            val arr = klaxon.parseArray<WeightedOutput>(it) ?: JsonArray()
+            mOutputs.add(arr.toList())
+        }
         val txs =  engine.createRecipes(
             names = names,
             cookbookIds = cookbooks,
@@ -267,7 +271,7 @@ class Core(val config : Config) : ICore {
                                 blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
                                 outputTables : List<String>, outputs : List<String>) : List<Transaction> {
         val mItemInputs = mutableListOf<List<ItemInput>>()
-        itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        itemInputs.forEach { mItemInputs.add(klaxon.parseArray<ItemInput>(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()
         coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
         val mOutputTables = mutableListOf<EntriesList>()

@@ -16,6 +16,12 @@ import kotlin.reflect.KClass
  * Generic high-level interface between JVM clients and a Pylons wallet.
  */
 abstract class Wallet {
+    companion object {
+        fun android() : AndroidWallet = AndroidWallet.instance
+
+        fun devDevWallet() : DevDevWallet = DevDevWallet.instance
+    }
+
     /**
      * Signature for the method what we call to pass messages into the
      * wallet. IPC happens after this implementation.
@@ -71,13 +77,9 @@ abstract class Wallet {
         listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as Transaction?)}
     }
 
-    fun android() : AndroidWallet = AndroidWallet.instance
-
-    fun devDevWallet() : DevDevWallet = DevDevWallet.instance
-
     class AndroidWallet : Wallet(){
         companion object {
-            val instance : AndroidWallet = AndroidWallet()
+            val instance : AndroidWallet by lazy {AndroidWallet()}
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
@@ -91,7 +93,7 @@ abstract class Wallet {
 
     class DevDevWallet : Wallet() {
         companion object {
-            val instance : DevDevWallet = DevDevWallet()
+            val instance : DevDevWallet by lazy {DevDevWallet()}
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
