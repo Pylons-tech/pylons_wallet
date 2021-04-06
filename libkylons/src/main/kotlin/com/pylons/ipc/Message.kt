@@ -379,12 +379,12 @@ sealed class Message {
         fun match(json: String) : Message? {
             println("Trying to match message \n$json")
             val jsonObject = Parser.default().parse(StringBuilder(json)) as JsonObject
-            IPCLayer.implementation.messageId = jsonObject.int("messageId")!!
-            println("Set messageId to ${IPCLayer.implementation.messageId}")
+            IPCLayer.implementation!!.messageId = jsonObject.int("messageId")!!
+            println("Set messageId to ${IPCLayer.implementation!!.messageId}")
             val cid = jsonObject.int("clientId")
             val mid = jsonObject.int("walletId")
-            if (cid != IPCLayer.implementation.clientId || mid != IPCLayer.implementation.walletId)
-                throw Exception("Client/wallet ID mismatch - got ${jsonObject.int("clientId").toString()} ${jsonObject.int("walletId").toString()}, expected ${IPCLayer.implementation.clientId} ${IPCLayer.implementation.walletId}")
+            if (cid != IPCLayer.implementation!!.clientId || mid != IPCLayer.implementation!!.walletId)
+                throw Exception("Client/wallet ID mismatch - got ${jsonObject.int("clientId").toString()} ${jsonObject.int("walletId").toString()}, expected ${IPCLayer.implementation!!.clientId} ${IPCLayer.implementation!!.walletId}")
             val type = jsonObject.string("type")!!
             val msg =
                     Base64.getDecoder().decode(
@@ -402,9 +402,24 @@ sealed class Message {
     }
 
     open class UiHook(val msg : Message) {
-
+        var response : Message.Response? = null
         var live : Boolean = true
             private set
+        var confirmed : Boolean = false
+            private set
+
+        var rejected: Boolean = false
+            private set
+
+        fun confirm() : UiHook {
+            confirmed = true
+            return this
+        }
+
+        fun reject() : UiHook {
+            rejected = true
+            return this
+        }
 
         fun release() : UiHook {
             live = false
@@ -426,8 +441,8 @@ sealed class Message {
 
     abstract class ResponseData {
         fun pack () : Response = Response(
-            IPCLayer.implementation.messageId,
-                IPCLayer.implementation.clientId, IPCLayer.implementation.walletId,
+            IPCLayer.implementation!!.messageId,
+                IPCLayer.implementation!!.clientId, IPCLayer.implementation!!.walletId,
                 core!!.statusBlock, this)
 
         open fun wait () : ResponseData = this
@@ -440,6 +455,8 @@ sealed class Message {
     class ProfileResponse (val profiles : List<Profile>) : ResponseData()
     class TradeResponse (val trades : List<Trade>) : ResponseData()
     class TestResponse(val output : String) : ResponseData()
+
+    class RejectResponse(): ResponseData()
 
     class TxResponse : ResponseData {
         val transactions : List<Transaction>
@@ -466,7 +483,10 @@ sealed class Message {
         // This simplifies the way we need to deal w/ UI interactions - every message creates
         // a ui hook; it's just that some of them don't actually need to do any work before they're
         // done with it.
-        return UILayer.releaseUiHook(UILayer.addUiHook(UiHook(this)))
+        //return UILayer.releaseUiHook(UILayer.confirmUiHook(UILayer.addUiHook(UiHook(this))))
+
+        //break main ui loop
+        return UILayer.addUiHook(UiHook(this))
     }
 
     abstract fun resolve() : Response
