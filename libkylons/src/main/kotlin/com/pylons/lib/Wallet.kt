@@ -1,6 +1,6 @@
 package com.pylons.lib
 
-import com.pylons.ipc.ClientIpcHelper
+import com.pylons.ipc.DroidIpcWire
 import com.pylons.ipc.HttpIpcWire
 import com.pylons.ipc.Message
 import com.pylons.lib.types.*
@@ -95,21 +95,15 @@ abstract class Wallet {
             val instance: AndroidWallet = AndroidWallet()
         }
 
-        var mCallback: ((Any?) -> Unit)? = null
-        var mOutType: KClass<*>? = null
-
         override fun sendMessage(outType: KClass<*>, message: Message, callback: (Any?) -> Unit) {
-            mOutType = outType
-            mCallback = callback
 
-            ClientIpcHelper.callWriteString(klaxon.toJsonString(message))
-        }
+            DroidIpcWire.writeMessage(klaxon.toJsonString(message))
 
-        fun onMessageReceived(message: Message) {
-            mCallback!!(klaxon.parser(mOutType).parse(message.toString()))
+            callback(klaxon.parser(outType).parse(DroidIpcWire.readMessage().orEmpty()))
         }
 
         override fun exists(callback: (Boolean) -> Unit) {
+            callback(true)
         }
     }
 
