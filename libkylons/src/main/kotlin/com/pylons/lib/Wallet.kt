@@ -10,6 +10,11 @@ import com.pylons.lib.types.tx.recipe.EntriesList
 import com.pylons.lib.types.tx.recipe.ItemInput
 import com.pylons.lib.types.tx.recipe.WeightedOutput
 import com.pylons.lib.types.tx.Trade
+import java.sql.Time
+import java.time.Instant
+import java.util.*
+import kotlin.random.Random
+import kotlin.random.nextUInt
 import kotlin.reflect.KClass
 
 /**
@@ -75,6 +80,13 @@ abstract class Wallet {
         sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
         listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
         listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as Transaction?)}
+    }
+
+    fun createAutoCookbook(profile: Profile, callback: (Transaction?) -> Unit) {
+        sendMessage(Transaction::class, Message.CreateCookbooks(listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
+            listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"), listOf("autocookbook_${profile.address}"),
+            listOf("autocookbook for use by managed appliations"), listOf("1.0.0"), listOf("support@pylons.tech"),
+            listOf(1), listOf(0))) {callback(it as Transaction?)} // i don't exactly know what the correct way to handle level/costs is atm
     }
 
     class AndroidWallet : Wallet(){

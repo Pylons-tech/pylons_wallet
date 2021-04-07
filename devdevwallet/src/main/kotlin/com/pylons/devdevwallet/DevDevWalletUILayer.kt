@@ -12,6 +12,10 @@ class DevDevWalletUILayer : UILayer() {
 
     }
 
+    override fun onRejectUiHook(uiHook: Message.UiHook) {
+        TODO("Not yet implemented")
+    }
+
     override fun onReleaseUiHook(uiHook: Message.UiHook) {
 
     }
