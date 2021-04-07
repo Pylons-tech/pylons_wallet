@@ -61,7 +61,7 @@ abstract class Wallet {
     fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
         sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {callback(it as Transaction?)}
     }
-
+    /*
     fun createRecipe(name : String, cookbook : String, description : String,
                      blockInterval : Long, coinInputs : List<CoinInput>,
                      itemInputs: List<ItemInput>, outputTable : EntriesList,
@@ -70,6 +70,17 @@ abstract class Wallet {
         listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
         listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as Transaction?)}
     }
+    */
+
+    fun createRecipe(name : String, cookbook : String, description : String,
+                     blockInterval : Long, coinInputs : List<CoinInput>,
+                     itemInputs: List<ItemInput>, outputTable : EntriesList,
+                     outputs : List<WeightedOutput>, callback: (String?) -> Unit) {
+        sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
+            listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
+            listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as String?)}
+    }
+
 
     fun android() : AndroidWallet = AndroidWallet.instance
 
