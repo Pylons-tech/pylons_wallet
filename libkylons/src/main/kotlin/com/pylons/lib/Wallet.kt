@@ -72,6 +72,27 @@ abstract class Wallet {
     }
     */
 
+    fun createCookbook(ids : List<String>,
+                       names : List<String>,
+                       developers : List<String>,
+                       descriptions : List<String>,
+                       versions : List<String>,
+                       supportEmails : List<String>,
+                       levels : List<Long>,
+                       costsPerBlock : List<Long>,
+                       callback: (String?)->Unit) {
+        sendMessage(Transaction::class, Message.CreateCookbooks(
+            ids = ids,
+            names = names,
+            developers = developers,
+            descriptions = descriptions,
+            versions = versions,
+            supportEmails = supportEmails,
+            levels = levels,
+            costsPerBlock = costsPerBlock
+        )){callback(it as String?)}
+    }
+
     fun createRecipe(name : String, cookbook : String, description : String,
                      blockInterval : Long, coinInputs : List<CoinInput>,
                      itemInputs: List<ItemInput>, outputTable : EntriesList,

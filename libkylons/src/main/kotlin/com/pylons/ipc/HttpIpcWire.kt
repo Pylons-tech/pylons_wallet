@@ -82,7 +82,7 @@ object HttpIpcWire {
         // run on Android devices. Reflection is obv. considerably slower, but that doesn't
         // matter b/c we only grab the PID once when we attach to a process.
         val pid = (Class.forName("java.lang.ProcessHandle").getMethod("current").invoke(null) as ProcessHandle).pid()
-        val byteBuffer = ByteBuffer.allocate(Long.SIZE_BYTES + 4).putInt(IPCLayer.implementation.walletId).putLong(pid)
+        val byteBuffer = ByteBuffer.allocate(Long.SIZE_BYTES + 4).putInt(IPCLayer.implementation?.walletId!!).putLong(pid)
         writeBytes(ascii.encode(HANDSHAKE_MAGIC).array() + byteBuffer.array())
         println("getting reply now")
         return getStringRaw()
@@ -99,7 +99,7 @@ object HttpIpcWire {
                 LogTag.walletError)
         }
         println("bar")
-        IPCLayer.implementation.clientId = handshakeReply.removePrefix(HANDSHAKE_REPLY_MAGIC).toInt()
+        IPCLayer.implementation?.clientId = handshakeReply.removePrefix(HANDSHAKE_REPLY_MAGIC).toInt()
         println("handshake OK")
         writeString("OKfillerfillerfillerfillerfillerfiller")
     }
