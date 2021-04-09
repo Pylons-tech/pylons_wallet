@@ -15,6 +15,10 @@ import kotlin.reflect.KClass
 /**
  * Generic high-level interface between JVM clients and a Pylons wallet.
  */
+/**
+ * tierre!!!: Here sets the callback parameter as String not the return object type
+ * currently object type casting is the problem
+ */
 abstract class Wallet {
     /**
      * Signature for the method what we call to pass messages into the
@@ -30,45 +34,45 @@ abstract class Wallet {
     /**
      * Get current profile, or null if none exists.
      */
-    fun fetchProfile (callback: (Profile?) -> Unit) {
-        sendMessage(Profile::class, Message.GetProfile()) {callback(it as Profile?)}
+    fun fetchProfile (address : String?, callback: (String?) -> Unit) {
+        sendMessage(Profile::class, Message.GetProfile(address)) {callback(it as String?)}
     }
 
     /**
      * Get a list of all items owned by current profile.
      */
-    fun listItems(callback: (List<Item>) -> Unit) {
-        sendMessage(Profile::class, Message.GetProfile()) {callback((it as Profile?)?.items.orEmpty())}
+    fun listItems(callback: (String?) -> Unit) {
+        sendMessage(Profile::class, Message.GetProfile()) {callback((it as String?))}
     }
 
     /**
      * Register a new profile.
      */
-    fun registerProfile (callback: (Profile?) -> Unit) {
-        sendMessage(Profile::class, Message.RegisterProfile()) {callback(it as Profile?)}
+    fun registerProfile (callback: (String?) -> Unit) {
+        sendMessage(Profile::class, Message.RegisterProfile()) {callback(it as String?)}
     }
 
-    fun placeForSale (item : Item, price : Long, callback: (Transaction?) -> Unit) {
+    fun placeForSale (item : Item, price : Long, callback: (String?) -> Unit) {
         sendMessage(Transaction::class, Message.CreateTrade(listOf(
             klaxon.toJsonString(Coin("pylon", price))),
-            listOf(), listOf(), listOf(item.id))) {callback(it as Transaction?)}
+            listOf(), listOf(), listOf(item.id))) {callback(it as String?)}
     }
 
-    fun getTrades(callback: (List<Trade>?) -> Unit) {
-        sendMessage(List::class, Message.GetTrades()) {callback(it as List<Trade>?)}
+    fun getTrades(callback: (String?) -> Unit) {
+        sendMessage(List::class, Message.GetTrades()) {callback(it as String?)}
     }
 
-    fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
-        sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {callback(it as Transaction?)}
+    fun buyItem (trade : Trade, callback: (String?) -> Unit) {
+        sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {callback(it as String?)}
     }
     /*
     fun createRecipe(name : String, cookbook : String, description : String,
                      blockInterval : Long, coinInputs : List<CoinInput>,
                      itemInputs: List<ItemInput>, outputTable : EntriesList,
-                     outputs : List<WeightedOutput>, callback: (Transaction?) -> Unit) {
+                     outputs : List<WeightedOutput>, callback: (String?) -> Unit) {
         sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
         listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
-        listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as Transaction?)}
+        listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as String?)}
     }
     */
 
@@ -91,6 +95,12 @@ abstract class Wallet {
             levels = levels,
             costsPerBlock = costsPerBlock
         )){callback(it as String?)}
+    }
+
+    fun listCookbooks(callback: (String?)->Unit) {
+        sendMessage(Cookbook::class, Message.GetCookbooks()){
+            callback(it as String?)
+        }
     }
 
     fun createRecipe(name : String, cookbook : String, description : String,
