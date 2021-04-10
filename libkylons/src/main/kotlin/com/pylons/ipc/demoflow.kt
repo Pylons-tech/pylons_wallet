@@ -22,7 +22,7 @@ class FakeIPC : IPCLayer(false) {
         println("fake break connection")
     }
 
-    override fun submit(r: Message.Response) {
+    override fun submit(r: Response) {
         println("fake submit ${klaxon.toJsonString(r)}")
     }
 

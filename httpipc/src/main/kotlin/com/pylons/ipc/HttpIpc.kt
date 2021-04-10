@@ -29,7 +29,7 @@ class HttpIpcLayer : IPCLayer(false) {
         HttpIpcWire.writeString("""{"rejected_message":"$json"}""")
     }
 
-    override fun submit(r: Message.Response) {
+    override fun submit(r: Response) {
         HttpIpcWire.writeString(klaxon.toJsonString(r))
     }
 }
