@@ -13,6 +13,9 @@ class DevDevWalletUILayer : UILayer() {
 
     }
 
+    override fun onRejectUiHook(uiHook: Message.UiHook) {
+    }
+
     override fun onReleaseUiHook(uiHook: Message.UiHook) {
 
     }

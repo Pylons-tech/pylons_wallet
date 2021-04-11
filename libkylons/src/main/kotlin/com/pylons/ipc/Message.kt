@@ -470,8 +470,12 @@ sealed class Message {
         override fun wait(): ResponseData {
             for (tx in transactions) {
                 if (tx.id != null) {
+                    var retries = 0
                     var code = core!!.getTransaction(tx.id!!).code
-                    while (code != Transaction.ResponseCode.OK) code = core!!.getTransaction(tx.id!!).code
+                    while (code != Transaction.ResponseCode.OK && retries < 12 ) {
+                        code = core!!.getTransaction(tx.id!!).code
+                        retries++
+                    }
                 }
             }
             return this

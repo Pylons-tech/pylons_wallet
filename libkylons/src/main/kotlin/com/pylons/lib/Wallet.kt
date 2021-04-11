@@ -10,6 +10,7 @@ import com.pylons.lib.types.tx.recipe.EntriesList
 import com.pylons.lib.types.tx.recipe.ItemInput
 import com.pylons.lib.types.tx.recipe.WeightedOutput
 import com.pylons.lib.types.tx.Trade
+import java.time.Instant
 import kotlin.reflect.KClass
 
 /**
@@ -65,16 +66,6 @@ abstract class Wallet {
     fun buyItem (trade : Trade, callback: (String?) -> Unit) {
         sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {callback(it as String?)}
     }
-    /*
-    fun createRecipe(name : String, cookbook : String, description : String,
-                     blockInterval : Long, coinInputs : List<CoinInput>,
-                     itemInputs: List<ItemInput>, outputTable : EntriesList,
-                     outputs : List<WeightedOutput>, callback: (String?) -> Unit) {
-        sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
-        listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
-        listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as String?)}
-    }
-    */
 
     fun createCookbook(ids : List<String>,
                        names : List<String>,
@@ -95,6 +86,21 @@ abstract class Wallet {
             levels = levels,
             costsPerBlock = costsPerBlock
         )){callback(it as String?)}
+    }
+
+    fun createAutoCookbook(profile: Profile, callback: (String?) -> Unit) {
+        sendMessage(
+            Transaction::class, Message.CreateCookbooks(
+                listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
+                listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
+                listOf("autocookbook_${profile.address}"),
+                listOf("autocookbook for use by managed appliations"),
+                listOf("1.0.0"),
+                listOf("support@pylons.tech"),
+                listOf(1),
+                listOf(0)
+            )
+        ) { callback(it as String?) } // i don't exactly know what the correct way to handle level/costs is atm
     }
 
     fun listCookbooks(callback: (String?)->Unit) {
