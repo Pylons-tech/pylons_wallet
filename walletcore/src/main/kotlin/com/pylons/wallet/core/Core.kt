@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.pylons.ipc.Message
+import com.pylons.ipc.Response
 import com.pylons.lib.PubKeyUtil
 import com.pylons.lib.baseJsonTemplateForTxPost
 import com.pylons.lib.baseJsonTemplateForTxSignature
@@ -122,6 +123,7 @@ class Core(val config : Config) : ICore {
         current = this
         Msg.useCore(this)
         Message.useCore(this)
+        Response.useCore(this)
         return this
     }
 
@@ -217,17 +219,17 @@ class Core(val config : Config) : ICore {
                                 outputTables : List<String>, outputs : List<String>) : List<Transaction> {
         // klaxon.parse<JsonArray<JsonObject>>
         val mItemInputs = mutableListOf<List<ItemInput>>()
-        //itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
-        itemInputs.forEach { mItemInputs.add(klaxon.parseArray<ItemInput>(it)!!) }
+        itemInputs.forEach { mItemInputs.add(klaxon.parseArray(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()
-        //coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
-        coinInputs.forEach { mCoinInputs.add(klaxon.parseArray<CoinInput>(it)!!) }
+        coinInputs.forEach { mCoinInputs.add(klaxon.parseArray(it)?: JsonArray()) }
         val mOutputTables = mutableListOf<EntriesList>()
-        //outputTables.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
-        outputTables.forEach { mOutputTables.add(klaxon.parse<EntriesList>(it)!!) }
+        outputTables.forEach { mOutputTables.add(klaxon.parse(it)?: EntriesList(listOf(), listOf(), listOf())) }
         val mOutputs = mutableListOf<List<WeightedOutput>>()
-        //outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
-        outputs.forEach { mOutputs.add(klaxon.parseArray<WeightedOutput>(it)!!) }
+        outputs.forEach {
+            println(it)
+            val arr = klaxon.parseArray<WeightedOutput>(it) ?: JsonArray()
+            mOutputs.add(arr.toList())
+        }
         val txs =  engine.createRecipes(
             names = names,
             cookbookIds = cookbooks,
@@ -272,7 +274,7 @@ class Core(val config : Config) : ICore {
                                 blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
                                 outputTables : List<String>, outputs : List<String>) : List<Transaction> {
         val mItemInputs = mutableListOf<List<ItemInput>>()
-        itemInputs.forEach { mItemInputs.add(ItemInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
+        itemInputs.forEach { mItemInputs.add(klaxon.parseArray<ItemInput>(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()
         coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
         val mOutputTables = mutableListOf<EntriesList>()

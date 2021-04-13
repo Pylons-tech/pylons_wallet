@@ -5,6 +5,7 @@ import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.types.*
 import com.pylons.ipc.Message
+import com.pylons.lib.types.tx.recipe.*
 import com.pylons.wallet.core.internal.HttpWire
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
@@ -31,7 +32,14 @@ internal class IpcTest {
     }
 
     @Test
-    fun HandleMsg () {
-        // TODO: what is this even supposed to be?
+    fun handleBatchCreateRecipe () {
+        val weightedOutputs = listOf(com.pylons.lib.klaxon.toJsonString(listOf(com.pylons.lib.klaxon.toJsonString(WeightedOutput(listOf(), "")))))
+        val coinInputs = listOf(com.pylons.lib.klaxon.toJsonString(listOf(CoinInput("foo", 0))))
+        val itemInputs = listOf(com.pylons.lib.klaxon.toJsonString(listOf(ItemInput("bar", ConditionList(listOf(), listOf(), listOf()), listOf(), listOf(), listOf(), FeeInputParam(0, 0)))))
+        Message.CreateRecipes(listOf("name"), listOf("foo"), listOf("descr"),
+        listOf(0), coinInputs, itemInputs,
+        listOf(com.pylons.lib.klaxon.toJsonString(EntriesList(listOf(), listOf(), listOf()))),
+        weightedOutputs).resolve()
+        // this obv. won't work atm but i just wanna see how it deserializes
     }
 }

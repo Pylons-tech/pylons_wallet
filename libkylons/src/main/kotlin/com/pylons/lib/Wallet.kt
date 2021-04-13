@@ -5,11 +5,8 @@ import com.pylons.ipc.Message
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
 import com.pylons.lib.types.tx.item.Item
-import com.pylons.lib.types.tx.recipe.CoinInput
-import com.pylons.lib.types.tx.recipe.EntriesList
-import com.pylons.lib.types.tx.recipe.ItemInput
-import com.pylons.lib.types.tx.recipe.WeightedOutput
 import com.pylons.lib.types.tx.Trade
+import com.pylons.lib.types.tx.recipe.*
 import java.time.Instant
 import kotlin.reflect.KClass
 
@@ -21,6 +18,11 @@ import kotlin.reflect.KClass
  * currently object type casting is the problem
  */
 abstract class Wallet {
+    companion object {
+        fun android() : AndroidWallet = AndroidWallet.instance
+
+        fun devDevWallet() : DevDevWallet = DevDevWallet.instance
+    }
     /**
      * Signature for the method what we call to pass messages into the
      * wallet. IPC happens after this implementation.
@@ -118,6 +120,12 @@ abstract class Wallet {
             listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as String?)}
     }
 
+    fun listRecipes(callback: (String?)->Unit) {
+        sendMessage(Recipe::class, Message.GetRecipes()) {
+            callback(it as String?)
+        }
+    }
+
 
     fun android() : AndroidWallet = AndroidWallet.instance
 
@@ -125,7 +133,7 @@ abstract class Wallet {
 
     class AndroidWallet : Wallet(){
         companion object {
-            val instance : AndroidWallet = AndroidWallet()
+            val instance : AndroidWallet by lazy {AndroidWallet()}
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
@@ -139,7 +147,7 @@ abstract class Wallet {
 
     class DevDevWallet : Wallet() {
         companion object {
-            val instance : DevDevWallet = DevDevWallet()
+            val instance : DevDevWallet by lazy {DevDevWallet()}
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {

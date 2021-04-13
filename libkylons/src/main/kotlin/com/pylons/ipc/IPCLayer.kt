@@ -22,13 +22,13 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
 
     protected open fun initIpcChannel() { if (!permitUnboundOperations) establishConnection(); initialized = true }
     protected abstract fun getNextJson(callback: (String) -> Unit)
-    protected open fun preprocessResponse(r : Message.Response,
-                                          callback: (Message.Response) -> Unit) {callback(r)}
+    protected open fun preprocessResponse(r : Response,
+                                          callback: (Response) -> Unit) {callback(r)}
     protected open fun cleanup() {}
     abstract fun establishConnection()
     abstract fun checkConnectionStatus() : ConnectionState
     abstract fun connectionBroken()
-    abstract fun submit (r : Message.Response)
+    abstract fun submit (r : Response)
     abstract fun reject (json : String)
 
     var connectionState : ConnectionState = ConnectionState.NoClient
@@ -45,7 +45,7 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
     }
 
     fun onUiRejected (uiHook: Message.UiHook) {
-        uiHook.response = Message.RejectResponse().wait().pack()
+        uiHook.response = Response.emit(uiHook.msg, false)
         handleResponse(uiHook.response!!)
     }
 
@@ -101,8 +101,10 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
             }
         }
 
-        fun handleResponse(r : Message.Response) {
+        fun handleResponse(r : Response) {
+            println("handleResponse safelyDoIpcOperation")
             safelyDoIpcOperation {
+                println("preprocessResponse")
                 implementation!!.preprocessResponse(r) {
                     implementation!!.submit(r)
                     implementation!!.cleanup()

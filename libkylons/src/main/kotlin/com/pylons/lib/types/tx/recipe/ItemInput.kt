@@ -1,8 +1,8 @@
 package com.pylons.lib.types.tx.recipe
 
-import com.beust.klaxon.Json
-import com.beust.klaxon.JsonArray
-import com.beust.klaxon.JsonObject
+import com.beust.klaxon.*
+import com.pylons.lib.klaxon
+import kotlin.reflect.jvm.jvmErasure
 
 data class ItemInput(
     @property:[Json(name = "ID")]
