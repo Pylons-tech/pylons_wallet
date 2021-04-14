@@ -1,5 +1,8 @@
 package com.pylons.ipc
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import com.pylons.lib.core.ICore
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
@@ -7,11 +10,13 @@ import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.msg.*
 import com.pylons.lib.types.tx.recipe.Recipe
+import com.pylons.lib.klaxon
+import java.lang.StringBuilder
 
 private const val MAX_TX_WAIT_RETRIES = 12
 
 class Response (
-    val message: Message,
+    val message: Message?,
     val accepted : Boolean,
     val messageId : Int,
     val clientId : Int,
@@ -38,7 +43,6 @@ class Response (
     companion object {
         protected var core : ICore? = null
         fun useCore(core : ICore) {
-            println("ICore current ${Companion.core}")
             Companion.core = core
         }
 
@@ -52,14 +56,11 @@ class Response (
                  tradesIn : List<String> = listOf(), tradesOut: List<Trade> = listOf(),
                  unstructured: List<String> = listOf(), txs : List<Transaction> = listOf()) : Response {
 
-            println("ICore current ${Companion.core}")
 
             val prf = core!!.getProfile(null)
 
-            println("profile: ${prf}")
 
             // Before doing anything that changes state: retrieve all the inputs
-            println("getCookbooks")
 
             val mCookbooksIn = mutableListOf<Cookbook>()
             if (cookbooksIn.isNotEmpty()) {
@@ -77,7 +78,6 @@ class Response (
                 }
             }
 
-            println("getPendingExecutions")
             val mExecutionsIn = mutableListOf<Execution>()
             if (executionsIn.isNotEmpty()) {
                 // we need better exec handling, getpendingexecutions isn't really enough
@@ -89,7 +89,6 @@ class Response (
                     }
                 }
             }
-            println("items iter")
             val mItemsIn = mutableListOf<Item>()
             if (itemsIn.isNotEmpty()) {
                 val items = prf!!.items
@@ -100,7 +99,6 @@ class Response (
                     }
                 }
             }
-            println("getProfile")
             val mProfilesIn = mutableListOf<Profile>()
             if (profilesIn.isNotEmpty()) {
                 profilesIn.forEach {
@@ -111,7 +109,6 @@ class Response (
                     }
                 }
             }
-            println("getRecipes")
             val mRecipesIn = mutableListOf<Recipe>()
             if (recipesIn.isNotEmpty()) {
                 val recipes = core!!.getRecipes()
@@ -122,7 +119,6 @@ class Response (
                     }
                 }
             }
-            println("listTrades")
             val mTradesIn = mutableListOf<Trade>()
             if (tradesIn.isNotEmpty()) {
                 val trades = core!!.listTrades()
@@ -135,7 +131,6 @@ class Response (
             }
 
             // That's done, so now we can actually deal w/ txs
-            println("getTransaction")
 
             val mTxs = mutableListOf<Transaction>()
             txs.forEach {
@@ -148,6 +143,8 @@ class Response (
                     }
                     mTxs.add(tx) // TODO: proper error handling (this doesn't have failed txs at all)
                 }
+                else
+                    mTxs.add(it) //failed txs from various reason
             }
 
             val mCoinsOut = coinsOut.toMutableList()
@@ -157,7 +154,6 @@ class Response (
             val mTradesOut = tradesOut.toMutableList()
             val mItemsOut = itemsOut.toMutableList()
             // ...but now we have to inspect the emitted transaction and populate the various output fields
-            println("tranaction switch")
             mTxs.forEach { transaction ->
                 transaction.stdTx?.msg?.forEach { it ->
                     when (it::javaClass) {
@@ -256,10 +252,12 @@ class Response (
                     }
                 }
             }
-            println("mProfilesOut")
             val mProfilesOut = profilesOut.toMutableList()
-            if (txs.isNotEmpty()) mProfilesOut.add(core!!.getProfile(null)!!)
-            println("make reponse")
+            if (txs.isNotEmpty()){
+                val prof = core!!.getProfile(null)!!
+                mProfilesOut.add(Profile(prof.address, prof.strings, prof.coins, prof.items) )
+
+            }
             return Response(message, accepted, IPCLayer.implementation!!.messageId, IPCLayer.implementation!!.clientId,
             IPCLayer.implementation!!.walletId, core!!.statusBlock, coinsIn, mCoinsOut, mCookbooksIn, mCookbooksOut,
                 mExecutionsIn, mExecutionsOut, mItemsIn, mItemsOut, mProfilesIn, mProfilesOut, mRecipesIn, mRecipesOut,

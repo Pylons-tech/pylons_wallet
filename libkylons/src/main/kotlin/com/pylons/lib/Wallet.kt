@@ -100,7 +100,8 @@ abstract class Wallet {
                 listOf("1.0.0"),
                 listOf("support@pylons.tech"),
                 listOf(1),
-                listOf(0)
+                //where this bug comes from? if no CostsForBlocks then, it return error transaction
+                listOf(1)
             )
         ) { callback(it as String?) } // i don't exactly know what the correct way to handle level/costs is atm
     }
