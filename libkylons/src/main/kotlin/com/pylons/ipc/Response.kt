@@ -12,6 +12,9 @@ import com.pylons.lib.types.tx.msg.*
 import com.pylons.lib.types.tx.recipe.Recipe
 import com.pylons.lib.klaxon
 import java.lang.StringBuilder
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.functions
 
 private const val MAX_TX_WAIT_RETRIES = 12
 
@@ -262,6 +265,60 @@ class Response (
             IPCLayer.implementation!!.walletId, core!!.statusBlock, coinsIn, mCoinsOut, mCookbooksIn, mCookbooksOut,
                 mExecutionsIn, mExecutionsOut, mItemsIn, mItemsOut, mProfilesIn, mProfilesOut, mRecipesIn, mRecipesOut,
                 mTradesIn, mTradesOut, mTxs, unstructured)
+        }
+
+        /**
+         * deserialze string to Response Object
+         * @param1: messageType:String class type of Message
+         * @param2: msg:String? json string of Response
+         */
+        fun deserialize(messageType:String, msg: String?): Response? {
+
+            val jsonObj = Parser.default().parse(StringBuilder(msg)) as JsonObject
+
+            //parse message
+            val msgObj = jsonObj.obj("message")?.toJsonString()
+            println("Message String: ${msgObj}")
+            var message:Message? = null
+
+            //notice!!! this takes a bit long. should find out the fastest way to deserialize Message
+            Message::class.sealedSubclasses.forEach { kClass ->
+                if (kClass.simpleName == messageType) {
+                    println("attempting to parse Message ${kClass.simpleName}")
+                    //here how to convert to Message Obj
+                    val func = kClass.companionObject?.functions?.find { it.name == "deserialize" }
+                    message = func?.call(kClass.companionObjectInstance, msgObj) as Message?
+
+                }
+            }
+
+
+            //Response Initialization
+            //notice!!! any other way for fastest deserialzing?
+            return Response(
+                message =  message,
+                accepted = jsonObj.boolean("accepted")!!,
+                messageId = jsonObj.int("messageId")!!,
+                clientId  = jsonObj.int("clientId")!!,
+                walletId = jsonObj.int("walletId")!!,
+                statusBlock = klaxon.parseFromJsonObject<StatusBlock>(jsonObj.obj("statusBlock")!!)!!,
+                coinsIn = klaxon.parseFromJsonArray<Coin>(jsonObj.array<JsonObject>("coinsIn")!!)!!,
+                coinsOut  = klaxon.parseFromJsonArray<Coin>(jsonObj.array<JsonObject>("coinsOut")!!)!!,
+                cookbooksIn = klaxon.parseFromJsonArray<Cookbook>(jsonObj.array<JsonObject>("cookbooksIn")!!)!!,
+                cookbooksOut = klaxon.parseFromJsonArray<Cookbook>(jsonObj.array<JsonObject>("cookbooksOut")!!)!!,
+                executionsIn  = klaxon.parseFromJsonArray<Execution>(jsonObj.array<JsonObject>("executionsIn")!!)!!,
+                executionsOut  = klaxon.parseFromJsonArray<Execution>(jsonObj.array<JsonObject>("executionsOut")!!)!!,
+                itemsIn = klaxon.parseFromJsonArray<Item>(jsonObj.array<JsonObject>("itemsIn")!!)!!,
+                itemsOut = klaxon.parseFromJsonArray<Item>(jsonObj.array<JsonObject>("itemsOut")!!)!!,
+                profilesIn = klaxon.parseFromJsonArray<Profile>(jsonObj.array<JsonObject>("profilesIn")!!)!!,
+                profilesOut = klaxon.parseFromJsonArray<Profile>(jsonObj.array<JsonObject>("profilesOut")!!)!!,
+                recipesIn = klaxon.parseFromJsonArray<Recipe>(jsonObj.array<JsonObject>("recipesIn")!!)!!,
+                recipesOut = klaxon.parseFromJsonArray<Recipe>(jsonObj.array<JsonObject>("recipesOut")!!)!!,
+                tradesIn = klaxon.parseFromJsonArray<Trade>(jsonObj.array<JsonObject>("tradesIn")!!)!!,
+                tradesOut = klaxon.parseFromJsonArray<Trade>(jsonObj.array<JsonObject>("tradesIn")!!)!!,
+                txs = klaxon.parseFromJsonArray<Transaction>(jsonObj.array<JsonObject>("txs")!!)!!,
+                unstructured = klaxon.parseFromJsonArray<String>(jsonObj.array<JsonObject>("unstructured")!!)!!
+            )
         }
     }
 }

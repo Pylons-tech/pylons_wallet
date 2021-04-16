@@ -1,7 +1,9 @@
 package com.pylons.lib
 
+import com.pylons.ipc.DroidIpcWire
 import com.pylons.ipc.HttpIpcWire
 import com.pylons.ipc.Message
+import com.pylons.ipc.Response
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
 import com.pylons.lib.types.tx.item.Item
@@ -36,40 +38,103 @@ abstract class Wallet {
 
     /**
      * Get current profile, or null if none exists.
+     * @return: Profile
      */
-    fun fetchProfile (address : String?, callback: (String?) -> Unit) {
-        sendMessage(Profile::class, Message.GetProfile(address)) {callback(it as String?)}
+    fun fetchProfile (address : String?, callback: (Profile?) -> Unit) {
+        sendMessage(Profile::class, Message.GetProfile(address)) {
+            val response = it as Response
+            var profile:Profile? = null
+
+            if(response.profilesOut.isNotEmpty()){
+                profile = response.profilesOut.get(0)
+            }
+            callback(profile)
+        }
     }
 
     /**
      * Get a list of all items owned by current profile.
+     * @return: List<Item>
      */
-    fun listItems(callback: (String?) -> Unit) {
-        sendMessage(Profile::class, Message.GetProfile()) {callback((it as String?))}
+    fun listItems(callback: (List<Item>) -> Unit) {
+        sendMessage(Profile::class, Message.GetProfile()) {
+            val response = it as Response
+            var mItems = mutableListOf<Item>()
+            if (response.profilesOut.isNotEmpty()) {
+                response.profilesOut.get(0).items.forEach{
+                    mItems.add(it)
+                }
+            }
+            callback((mItems.toList()))
+        }
     }
 
     /**
      * Register a new profile.
+     * @return: Profile?
      */
-    fun registerProfile (callback: (String?) -> Unit) {
-        sendMessage(Profile::class, Message.RegisterProfile()) {callback(it as String?)}
+    fun registerProfile (callback: (Profile?) -> Unit) {
+        sendMessage(Profile::class, Message.RegisterProfile()) {
+            val response = it as Response
+            var profile:Profile? = null
+            if(response.profilesOut.isNotEmpty()) {
+                profile = response.profilesOut.get(0)
+            }
+            callback(profile)
+        }
     }
 
-    fun placeForSale (item : Item, price : Long, callback: (String?) -> Unit) {
+    /**
+     * CreateTrade
+     * @return: Transaction?
+     */
+    fun placeForSale (item : Item, price : Long, callback: (Transaction?) -> Unit) {
         sendMessage(Transaction::class, Message.CreateTrade(listOf(
             klaxon.toJsonString(Coin("pylon", price))),
-            listOf(), listOf(), listOf(item.id))) {callback(it as String?)}
+            listOf(), listOf(), listOf(item.id))) {
+            val response = it as Response
+            var tx:Transaction? = null
+            if (response.txs.isNotEmpty()) {
+                tx = response.txs.get(0)
+            }
+
+            callback(tx)
+        }
     }
 
-    fun getTrades(callback: (String?) -> Unit) {
-        sendMessage(List::class, Message.GetTrades()) {callback(it as String?)}
+    /**
+     * GetTrades
+     * @return: List<Trade>
+     */
+    fun getTrades(callback: (List<Trade>) -> Unit) {
+        sendMessage(List::class, Message.GetTrades()) {
+            val response = it as Response
+            val trades = response.tradesOut
+            callback(trades)
+        }
     }
 
-    fun buyItem (trade : Trade, callback: (String?) -> Unit) {
-        sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {callback(it as String?)}
+    /**
+     * FulfillTrade
+     * @return: Transaction?
+     */
+    fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
+        sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {
+            val response = it as Response
+            var tx:Transaction? = null
+            if (response.txs.isNotEmpty()) {
+                tx = response.txs.get(0)
+            }
+
+            callback(tx)
+        }
     }
 
-    fun createCookbook(ids : List<String>,
+    /**
+     * CreateCookbooks
+     * @return List<Cookbook>
+     */
+    fun createCookbooks(ids : List<String>,
                        names : List<String>,
                        developers : List<String>,
                        descriptions : List<String>,
@@ -77,7 +142,7 @@ abstract class Wallet {
                        supportEmails : List<String>,
                        levels : List<Long>,
                        costsPerBlock : List<Long>,
-                       callback: (String?)->Unit) {
+                       callback: (List<Cookbook>)->Unit) {
         sendMessage(Transaction::class, Message.CreateCookbooks(
             ids = ids,
             names = names,
@@ -87,10 +152,17 @@ abstract class Wallet {
             supportEmails = supportEmails,
             levels = levels,
             costsPerBlock = costsPerBlock
-        )){callback(it as String?)}
+        )){
+            val response = it as Response
+            callback(response.cookbooksOut)
+        }
     }
 
-    fun createAutoCookbook(profile: Profile, callback: (String?) -> Unit) {
+    /**
+     * CreateAutoCookbook
+     * @return: Cookbook?
+     */
+    fun createAutoCookbook(profile: Profile, callback: (Cookbook?) -> Unit) {
         sendMessage(
             Transaction::class, Message.CreateCookbooks(
                 listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
@@ -103,27 +175,56 @@ abstract class Wallet {
                 //where this bug comes from? if no CostsForBlocks then, it return error transaction
                 listOf(1)
             )
-        ) { callback(it as String?) } // i don't exactly know what the correct way to handle level/costs is atm
+        ) {
+            val response =  it as Response
+            var cookbook:Cookbook? = null
+            if (response.cookbooksOut.isNotEmpty()) {
+                cookbook = response.cookbooksOut.get(0)
+            }
+            callback(cookbook)
+        } // i don't exactly know what the correct way to handle level/costs is atm
     }
 
-    fun listCookbooks(callback: (String?)->Unit) {
+    /**
+     * listCookbooks
+     * @return: List<Cookbook>
+     */
+    fun listCookbooks(callback: (List<Cookbook>)->Unit) {
         sendMessage(Cookbook::class, Message.GetCookbooks()){
-            callback(it as String?)
+            val response = it as Response
+            callback(response.cookbooksOut)
         }
     }
 
+    /**
+     * createRecipe
+     * @return: Transaction?
+     */
     fun createRecipe(name : String, cookbook : String, description : String,
                      blockInterval : Long, coinInputs : List<CoinInput>,
                      itemInputs: List<ItemInput>, outputTable : EntriesList,
-                     outputs : List<WeightedOutput>, callback: (String?) -> Unit) {
+                     outputs : List<WeightedOutput>, callback: (Transaction?) -> Unit) {
         sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
             listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
-            listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {callback(it as String?)}
+            listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {
+            val response = it as Response
+            var tx:Transaction? = null
+            if (response.txs.isNotEmpty()) {
+                tx = response.txs.get(0)
+            }
+            callback(tx)
+        }
     }
 
-    fun listRecipes(callback: (String?)->Unit) {
+    /**
+     * listRecipes
+     *  @return: List<Recipe>
+     */
+    fun listRecipes(callback: (List<Recipe>)->Unit) {
         sendMessage(Recipe::class, Message.GetRecipes()) {
-            callback(it as String?)
+            val response = it as Response
+
+            callback(response.recipesOut)
         }
     }
 
@@ -138,11 +239,19 @@ abstract class Wallet {
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
-            TODO("Not yet implemented")
+            DroidIpcWire.writeMessage(klaxon.toJsonString(message))
+
+            val msg = DroidIpcWire.readMessage()
+            if (msg != null){
+                val messageType = message::class.java.simpleName
+                val response = Response.deserialize(messageType, msg)
+                callback(response)
+            }
         }
 
         override fun exists(callback: (Boolean) -> Unit) {
-            TODO("Not yet implemented")
+            //what's this?
+            callback(true)
         }
     }
 
