@@ -1,6 +1,7 @@
 package com.pylons.lib
 
 import com.pylons.ipc.HttpIpcWire
+import com.pylons.ipc.DroidIpcWire
 import com.pylons.ipc.Message
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
