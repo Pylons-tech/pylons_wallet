@@ -95,11 +95,12 @@ abstract class Wallet {
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
-            TODO("Not yet implemented")
+            DroidIpcWire.writeMessage(klaxon.toJsonString(message))
+            callback(klaxon.parser(outType).parse(DroidIpcWire.readMessage().orEmpty()))
         }
 
         override fun exists(callback: (Boolean) -> Unit) {
-            TODO("Not yet implemented")
+            callback(true)
         }
     }
 
