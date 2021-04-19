@@ -239,7 +239,7 @@ abstract class Wallet {
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
-            DroidIpcWire.writeMessage(klaxon.toJsonString(message))
+            DroidIpcWire.writeMessage(DroidIpcWire.makeRequestMessage(message))
 
             val msg = DroidIpcWire.readMessage()
             if (msg != null){

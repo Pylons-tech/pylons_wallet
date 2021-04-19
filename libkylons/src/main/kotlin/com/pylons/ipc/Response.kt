@@ -273,12 +273,11 @@ class Response (
          * @param2: msg:String? json string of Response
          */
         fun deserialize(messageType:String, msg: String?): Response? {
-
+            println("messageType:${messageType} msg: ${msg}")
             val jsonObj = Parser.default().parse(StringBuilder(msg)) as JsonObject
 
             //parse message
             val msgObj = jsonObj.obj("message")?.toJsonString()
-            println("Message String: ${msgObj}")
             var message:Message? = null
 
             //notice!!! this takes a bit long. should find out the fastest way to deserialize Message
@@ -288,9 +287,9 @@ class Response (
                     //here how to convert to Message Obj
                     val func = kClass.companionObject?.functions?.find { it.name == "deserialize" }
                     message = func?.call(kClass.companionObjectInstance, msgObj) as Message?
-
                 }
             }
+
 
 
             //Response Initialization
@@ -316,7 +315,7 @@ class Response (
                 recipesOut = klaxon.parseFromJsonArray<Recipe>(jsonObj.array<JsonObject>("recipesOut")!!)!!,
                 tradesIn = klaxon.parseFromJsonArray<Trade>(jsonObj.array<JsonObject>("tradesIn")!!)!!,
                 tradesOut = klaxon.parseFromJsonArray<Trade>(jsonObj.array<JsonObject>("tradesIn")!!)!!,
-                txs = klaxon.parseFromJsonArray<Transaction>(jsonObj.array<JsonObject>("txs")!!)!!,
+                txs = Transaction.listFromJson(jsonObj.array<JsonObject>("txs")!!),
                 unstructured = klaxon.parseFromJsonArray<String>(jsonObj.array<JsonObject>("unstructured")!!)!!
             )
         }

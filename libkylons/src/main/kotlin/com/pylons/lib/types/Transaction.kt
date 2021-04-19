@@ -69,6 +69,37 @@ data class Transaction(
             return ml
         }
 
+        /**
+         * listFromJson
+         * parse Response's txs only, carefully use in other cases
+         */
+        fun listFromJson(jsonArray: JsonArray<JsonObject>): List<Transaction> {
+            val list = mutableListOf<Transaction>()
+            jsonArray.forEach {
+                val doc = it
+                var stdTx:StdTx? = null
+                var txData:TxData? = null
+                when {
+                    doc.obj("stdTx") != null ->{
+                        //do not need other data
+                        //stdTx = StdTx.fromJson(doc.obj("stdTx")!!)
+                    }
+                }
+
+                list.add(
+                    Transaction(
+                        stdTx = stdTx,
+                        txData = TxData.fromJson(doc.obj("txData")!!),
+                        raw_log = doc.string("raw_log")!!,
+                        code = ResponseCode.valueOf(doc.string("code")!!),
+                        _id = doc.string("id")
+                    )
+                )
+            }
+
+            return list
+        }
+
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
             when {
