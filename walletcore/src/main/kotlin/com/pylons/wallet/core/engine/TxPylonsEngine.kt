@@ -283,6 +283,14 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
                     Transaction.State.TX_NOT_YET_COMMITTED, Transaction.ResponseCode.UNKNOWN_ERROR)
         }
     }
+    override fun getTransactions(request: String): List<Transaction> {
+        return try {
+            val response = HttpWire.get("$nodeUrl/txs?$request")
+            return Transaction.parseTransactionList(response)
+        } catch (e : FileNotFoundException) {
+            listOf()
+        }
+    }
 
     override fun listRecipes(): List<Recipe> {
         val json = HttpWire.get("$nodeUrl/pylons/list_recipe/${core.userProfile!!.credentials.address}")
@@ -366,6 +374,12 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun getLockedCoinDetails(): LockedCoinDetails {
         val response = HttpWire.get("$nodeUrl/pylons/get_locked_coin_details/${core.userProfile!!.credentials.address}")
         return LockedCoinDetails.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!)
+    }
+
+    override fun getTxHistory(address: String): List<Transaction> {
+        val sender = getTransactions("transfer.sender=$address")
+        val recipient = getTransactions("transfer.recipient=$address")
+        return sender + recipient // TODO: we want to sort these newest-first
     }
 
     // Unimplemented engine method stubs

@@ -135,4 +135,12 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
 
     override fun getCompletedExecutions(): List<Execution> =
         throw NoEngineException()
+
+    override fun getTxHistory(address: String): List<Transaction> {
+        throw NoEngineException()
+    }
+
+    override fun getTransactions(request: String): List<Transaction> {
+        throw NoEngineException()
+    }
 }

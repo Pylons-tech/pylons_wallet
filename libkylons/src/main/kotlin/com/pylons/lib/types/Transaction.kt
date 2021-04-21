@@ -69,6 +69,10 @@ data class Transaction(
             return ml
         }
 
+        fun parseTransactionList (response: String) : List<Transaction> {
+            TODO("write this")
+        }
+
         fun parseTransactionResponse(id: String, response: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
             when {

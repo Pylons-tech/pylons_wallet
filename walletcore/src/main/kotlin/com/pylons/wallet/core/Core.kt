@@ -358,4 +358,8 @@ class Core(val config : Config) : ICore {
         tearDown()
         onWipeUserData?.invoke()
     }
+
+    override fun getTxHistory(address: String): List<Transaction> {
+        return engine.getTxHistory(address)
+    }
 }

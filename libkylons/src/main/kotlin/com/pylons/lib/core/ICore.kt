@@ -85,6 +85,7 @@ interface ICore {
     fun getRecipes () : List<Recipe>
 
     fun getTransaction(txHash : String): Transaction
+    fun getTxHistory(address: String) : List<Transaction>
 
     fun googleIapGetPylons (productId: String, purchaseToken : String, receiptData : String,
                             signature : String) : Transaction

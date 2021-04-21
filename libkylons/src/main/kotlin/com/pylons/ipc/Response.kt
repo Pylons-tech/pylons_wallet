@@ -45,7 +45,7 @@ data class Response private constructor (
                  recipesIn: List<String> = listOf(), recipesOut: List<Recipe> = listOf(),
                  tradesIn : List<String> = listOf(), tradesOut: List<Trade> = listOf(),
                  unstructured: List<String> = listOf(), txs : List<Transaction> = listOf()) : Response {
-            val prf = ICore.current!!.getProfile(null)
+            val prf = ICore.current?.getProfile(null)
 
             // Before doing anything that changes state: retrieve all the inputs
 
@@ -244,8 +244,14 @@ data class Response private constructor (
 
             val mProfilesOut = profilesOut.toMutableList()
             if (txs.isNotEmpty()) mProfilesOut.add(ICore.current!!.getProfile(null)!!)
+            // Mock up a statusblock for ipc tests if ICore.current isn't set
+            // (we'll have crashed before here in real-world applications anyway)
+            val sb = when (ICore.current) {
+                null -> StatusBlock(0, 0.0, "DUMMY_STATUS_BLOCK")
+                else -> ICore.current!!.statusBlock
+            }
             return Response(message, accepted, IPCLayer.implementation!!.messageId, IPCLayer.implementation!!.clientId,
-            IPCLayer.implementation!!.walletId, ICore.current!!.statusBlock, coinsIn, mCoinsOut, mCookbooksIn, mCookbooksOut,
+            IPCLayer.implementation!!.walletId, sb, coinsIn, mCoinsOut, mCookbooksIn, mCookbooksOut,
                 mExecutionsIn, mExecutionsOut, mItemsIn, mItemsOut, mProfilesIn, mProfilesOut, mRecipesIn, mRecipesOut,
                 mTradesIn, mTradesOut, mTxs, unstructured)
         }

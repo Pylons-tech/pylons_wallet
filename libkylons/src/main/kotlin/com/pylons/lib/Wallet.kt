@@ -89,6 +89,10 @@ abstract class Wallet {
             listOf(1), listOf(0))) {callback(it as Transaction?)} // i don't exactly know what the correct way to handle level/costs is atm
     }
 
+    fun getTxHistory(profile : Profile, callback: (List<Transaction>) -> Unit) {
+
+    }
+
     class AndroidWallet : Wallet(){
         companion object {
             val instance : AndroidWallet by lazy {AndroidWallet()}

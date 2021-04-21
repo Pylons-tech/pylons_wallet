@@ -5,6 +5,7 @@ import com.pylons.wallet.core.engine.TxPylonsDevEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.types.*
 import com.pylons.ipc.Message
+import com.pylons.lib.core.ICore
 import com.pylons.lib.types.tx.recipe.*
 import com.pylons.wallet.core.internal.HttpWire
 import org.junit.jupiter.api.MethodOrderer

@@ -178,4 +178,7 @@ interface IEngine {
     fun getLockedCoins () : LockedCoin
 
     fun getLockedCoinDetails () : LockedCoinDetails
+
+    fun getTxHistory (address : String) : List<Transaction>
+    fun getTransactions(request : String) : List<Transaction>
 }

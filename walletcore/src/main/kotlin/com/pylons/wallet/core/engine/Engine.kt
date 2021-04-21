@@ -260,4 +260,7 @@ abstract class Engine(val core : Core) : IEngine {
     abstract override fun getLockedCoinDetails () : LockedCoinDetails
 
     abstract override fun getCompletedExecutions(): List<Execution>
+
+    abstract override fun getTxHistory(address: String): List<Transaction>
+    abstract override fun getTransactions(request : String) : List<Transaction>
 }
