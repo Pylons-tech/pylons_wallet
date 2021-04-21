@@ -24,6 +24,8 @@ abstract class Wallet {
         fun android() : AndroidWallet = AndroidWallet.instance
 
         fun devDevWallet() : DevDevWallet = DevDevWallet.instance
+
+        var isInitiated:Boolean = false
     }
     /**
      * Signature for the method what we call to pass messages into the
@@ -35,6 +37,12 @@ abstract class Wallet {
      * True if an IPC target exists; false otherwise.
      */
     abstract fun exists (callback : (Boolean) -> Unit)
+
+    fun initWallet(appName: String, appClassName:String, callback:(Boolean) -> Unit) {
+        val ret = DroidIpcWire.DoHandshake(appName, appClassName)
+        isInitiated = ret
+        callback(ret)
+    }
 
     /**
      * Get current profile, or null if none exists.

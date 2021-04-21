@@ -12,8 +12,6 @@ abstract class DroidIpcWire {
 
     protected abstract fun readString(): String?
 
-    protected abstract fun doHandshake(s: String): String?
-
     companion object {
         val HANDSHAKE_MAGIC = "__PYLONS_WALLET_SERVER"
         val HANDSHAKE_REPLY_MAGIC = "__PYLONS_WALLET_CLIENT"
@@ -44,25 +42,36 @@ abstract class DroidIpcWire {
             var appName: String = ""
         )
 
+        /**
+         * DoHandshake
+         * return true if handshake succeed, or false when fails
+         */
+        fun DoHandshake(appName: String, appClassName: String):Boolean {
+            Companion.appName = appName
+            try{
+                val msg = HandshakeReplyMsg(
+                    MAGIC_REPLY = HANDSHAKE_REPLY_MAGIC,
+                    clientId = clientId.toString(),
+                    appName = appName
+                )
+                val str_msg = klaxon.toJsonString(msg)
+                writeMessage("${HANDSHAKE_REPLY_MAGIC}${str_msg}")
+                println("IPC Reply HandShake Msg sent ${str_msg}")
 
-        fun DoHandshake(){
-            val msg = HandshakeReplyMsg(
-                MAGIC_REPLY = HANDSHAKE_REPLY_MAGIC,
-                clientId = clientId.toString(),
-                appName = appName
-            )
-            val str_msg = klaxon.toJsonString(msg)
-            println("IPC HandShake Msg sent ${str_msg}")
-            Thread.sleep(1000)
-            val ret_msg = implementation!!.doHandshake(str_msg)
-
-            if (ret_msg != null) {
-                val server_msg = klaxon.parse<HandshakeMsg>(ret_msg!!)
-                if (server_msg?.MAGIC == HANDSHAKE_MAGIC) {
-                    walletId = server_msg.walletId.toInt()
+                val ret_msg = readMessage()
+                if(ret_msg != null){
+                    val server_msg = klaxon.parse<HandshakeMsg>(ret_msg.removePrefix(HANDSHAKE_MAGIC)!!)
+                    if (server_msg?.MAGIC == HANDSHAKE_MAGIC) {
+                        walletId = server_msg.walletId.toInt()
+                        return true
+                    }
                 }
             }
-            println("IPC HandShake Msg received ${ret_msg}")
+            catch(e:Error) {
+                println("DoHandshake error: ${e}")
+            }
+
+            return false
         }
 
         fun makeRequestMessage(message: Message) : String {
@@ -75,6 +84,7 @@ abstract class DroidIpcWire {
         }
 
         fun writeMessage(s: String) {
+            //wallet handshake not intiated
             implementation!!.writeString(s)
         }
 
@@ -88,6 +98,7 @@ abstract class DroidIpcWire {
                     Thread.sleep(100)
                     elapsedMillis += 100L
                 } else {
+                    //if handshake msg, then handle handshake, else continue flow
                     return ret
                 }
 
