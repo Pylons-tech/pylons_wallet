@@ -387,6 +387,33 @@ sealed class Message {
         }
     }
 
+    /**
+     * BuyPylons
+     * do wallet UI action for buy pylons
+     * wallet ui set txHash of the Purchase Transaction
+     * return Purchase Transaction to counterpart
+     */
+    class BuyPylons: Message() {
+
+        //
+        var txHash:String? = null
+
+        companion object{
+            fun deserialize(json: String) = klaxon.parse<BuyPylons>(json)
+        }
+
+        override fun resolve(): Response {
+            //transactions can fail
+            if (txHash.isNullOrEmpty()) {
+                return Response.emit(this, true)
+            }
+
+            return Response.emit(this, true,
+                txs=listOf(core!!.getTransaction(txHash!!))
+            )
+        }
+    }
+
     companion object {
         protected var core : ICore? = null
         fun useCore(core : ICore) {

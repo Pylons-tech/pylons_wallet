@@ -236,6 +236,21 @@ abstract class Wallet {
         }
     }
 
+    /**
+     * BuyPylons
+     * @return: Transaction?
+     */
+    fun BuyPylons(callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.BuyPylons()) {
+            val response = it as Response
+            var tx: Transaction? = null
+            if(response.txs.isNotEmpty()) {
+                tx = response.txs.get(0)
+            }
+            callback(tx)
+        }
+    }
+
 
     fun android() : AndroidWallet = AndroidWallet.instance
 
