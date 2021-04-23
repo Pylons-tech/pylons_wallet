@@ -23,6 +23,7 @@ abstract class DroidIpcWire {
         var walletId : Int = 0
         var messageId : Int = 0
         var appName = ""
+        var appPkgName = ""
 
         data class HandshakeMsg(
             @property:[Json(name = "MAGIC")]
@@ -39,20 +40,28 @@ abstract class DroidIpcWire {
             @property:[Json(name = "clientId")]
             var clientId:String="",
             @property:[Json(name = "appName")]
-            var appName: String = ""
+            var appName: String = "",
+            @property:[Json(name = "appPkgName")]
+            var appPkgName: String = ""
         )
 
         /**
          * DoHandshake
+         * handshake with apps and wallet when establishing ipc connection
+         * apps send cliendId, appName, appClassName to wallet
+         * wallet respond with walletId
+         *
          * return true if handshake succeed, or false when fails
          */
-        fun DoHandshake(appName: String, appClassName: String):Boolean {
+        fun DoHandshake(appName: String, appPkgName: String):Boolean {
             Companion.appName = appName
+            Companion.appPkgName = appPkgName
             try{
                 val msg = HandshakeReplyMsg(
                     MAGIC_REPLY = HANDSHAKE_REPLY_MAGIC,
                     clientId = clientId.toString(),
-                    appName = appName
+                    appName = appName,
+                    appPkgName = appPkgName
                 )
                 val str_msg = klaxon.toJsonString(msg)
                 writeMessage("${HANDSHAKE_REPLY_MAGIC}${str_msg}")

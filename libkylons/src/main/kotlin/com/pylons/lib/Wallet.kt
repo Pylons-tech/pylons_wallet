@@ -38,15 +38,31 @@ abstract class Wallet {
      */
     abstract fun exists (callback : (Boolean) -> Unit)
 
-    fun initWallet(appName: String, appClassName:String, callback:(Boolean) -> Unit) {
-        val ret = DroidIpcWire.DoHandshake(appName, appClassName)
+    /**
+     * initWallet(appName: String, appClassName:String, callback:(Boolean) -> Unit)
+     * call after ipc connection first establishes.
+     * initiates Handshake with wallet
+     *
+     * @param   appName: String - caller app's Display Name
+     * @param   appPkgName: String - app's Package Name
+     *
+     * @return  when initiation success return true, else return false
+     */
+    fun initWallet(appName: String, appPkgName:String, callback:(Boolean) -> Unit) {
+        val ret = DroidIpcWire.DoHandshake(appName, appPkgName)
         isInitiated = ret
         callback(ret)
     }
 
     /**
-     * Get current profile, or null if none exists.
-     * @return: Profile
+     * fetchProfile (address : String?, callback: (Profile?) -> Unit)
+     * retrieves wallet core profile for given address
+     * if address is null, return current wallet core profile
+     * if no wallet core exists, return null
+     *
+     * @param   address: String? - wallet core address to be fetched
+     * @param   callback: (Profile?)
+     *
      */
     fun fetchProfile (address : String?, callback: (Profile?) -> Unit) {
         sendMessage(Profile::class, Message.GetProfile(address)) {
@@ -61,8 +77,10 @@ abstract class Wallet {
     }
 
     /**
-     * Get a list of all items owned by current profile.
-     * @return: List<Item>
+     * listItems(callback: (List<Item>) -> Unit)
+     * retrieves item list of current core
+     *
+     * @return List<Item> - list of Items
      */
     fun listItems(callback: (List<Item>) -> Unit) {
         sendMessage(Profile::class, Message.GetProfile()) {
@@ -78,8 +96,11 @@ abstract class Wallet {
     }
 
     /**
-     * Register a new profile.
-     * @return: Profile?
+     * registerProfile (callback: (Profile?) -> Unit)
+     * register new Core account.
+     * return Profile of current registered Core if success, else return null
+     *
+     * @return Profile?
      */
     fun registerProfile (callback: (Profile?) -> Unit) {
         sendMessage(Profile::class, Message.RegisterProfile()) {
@@ -93,8 +114,13 @@ abstract class Wallet {
     }
 
     /**
-     * CreateTrade
-     * @return: Transaction?
+     * placeForSale (item : Item, price : Long, callback: (Transaction?) -> Unit)
+     * Create Trade
+     * Sell Item Only
+     *
+     * @param item:Item     item info to be in Trade
+     * @param price:Long    wish price in pylons
+     * @return Transaction?
      */
     fun placeForSale (item : Item, price : Long, callback: (Transaction?) -> Unit) {
         sendMessage(Transaction::class, Message.CreateTrade(listOf(
@@ -111,8 +137,10 @@ abstract class Wallet {
     }
 
     /**
-     * GetTrades
-     * @return: List<Trade>
+     * getTrades(callback: (List<Trade>) -> Unit)
+     * retrieve all Trade List
+     *
+     * @return List<Trade>
      */
     fun getTrades(callback: (List<Trade>) -> Unit) {
         sendMessage(List::class, Message.GetTrades()) {
@@ -123,8 +151,11 @@ abstract class Wallet {
     }
 
     /**
+     * buyItem (trade : Trade, callback: (Transaction?) -> Unit)
      * FulfillTrade
-     * @return: Transaction?
+     *
+     * @param trade
+     * @return Transaction?
      */
     fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
         sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {
@@ -140,6 +171,15 @@ abstract class Wallet {
 
     /**
      * CreateCookbooks
+     *
+     * @param ids
+     * @param names
+     * @param developers
+     * @param descriptions
+     * @param versions
+     * @param supportEmails
+     * @param levels
+     * @param costsPerBlock
      * @return List<Cookbook>
      */
     fun createCookbooks(ids : List<String>,
@@ -168,7 +208,8 @@ abstract class Wallet {
 
     /**
      * CreateAutoCookbook
-     * @return: Cookbook?
+     *
+     * @return Cookbook?
      */
     fun createAutoCookbook(profile: Profile, callback: (Cookbook?) -> Unit) {
         sendMessage(
@@ -194,8 +235,10 @@ abstract class Wallet {
     }
 
     /**
-     * listCookbooks
-     * @return: List<Cookbook>
+     * listCookbooks(callback: (List<Cookbook>)->Unit)
+     * retrieve cookbooks for current account
+     *
+     * @return List<Cookbook>
      */
     fun listCookbooks(callback: (List<Cookbook>)->Unit) {
         sendMessage(Cookbook::class, Message.GetCookbooks()){
@@ -206,7 +249,8 @@ abstract class Wallet {
 
     /**
      * createRecipe
-     * @return: Transaction?
+     *
+     * @return Transaction?
      */
     fun createRecipe(name : String, cookbook : String, description : String,
                      blockInterval : Long, coinInputs : List<CoinInput>,
@@ -226,7 +270,9 @@ abstract class Wallet {
 
     /**
      * listRecipes
-     *  @return: List<Recipe>
+     * retrieve all recipe list
+     *
+     *  @return List<Recipe>
      */
     fun listRecipes(callback: (List<Recipe>)->Unit) {
         sendMessage(Recipe::class, Message.GetRecipes()) {
@@ -237,8 +283,64 @@ abstract class Wallet {
     }
 
     /**
+     * executeRecipe
+     *
+     * @param recipe - recipe Name
+     * @param cookbook - cookbook Id
+     * @param itemInputs - list of item inputs names for recipe execution
+     * @return return transaction of the recipe execution when success, else return null.
+     *
+     */
+    fun executeRecipe(recipe: String, cookbook: String, itemInputs: List<String>, callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.ExecuteRecipe(recipe, cookbook, itemInputs)){
+            val response = it as Response
+            var tx: Transaction? = null
+            if(response.txs.isNotEmpty()) {
+                tx = response.txs.get(0)
+            }
+            callback(tx)
+        }
+    }
+
+    /**
+     * enableRecipe
+     *
+     * @param recipeId recipe id to be enabled
+     * @return Transaction?
+     */
+    fun enableRecipe(recipeId:String, callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.EnableRecipes(listOf(recipeId))){
+            val response = it as Response
+            var tx: Transaction? = null
+            if(response.txs.isNotEmpty()) {
+                tx = response.txs.get(0)
+            }
+            callback(tx)
+        }
+    }
+
+    /**
+     * disableRecipe
+     *
+     * @param recipeId recipe id to be enabled
+     * @return Transaction?
+     */
+    fun disableRecipe(recipeId:String, callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.DisableRecipes(listOf(recipeId))){
+            val response = it as Response
+            var tx: Transaction? = null
+            if(response.txs.isNotEmpty()) {
+                tx = response.txs.get(0)
+            }
+            callback(tx)
+        }
+    }
+
+    /**
      * BuyPylons
-     * @return: Transaction?
+     * under construction
+     *
+     * @return Transaction?
      */
     fun BuyPylons(callback: (Transaction?)->Unit) {
         sendMessage(Transaction::class, Message.BuyPylons()) {
