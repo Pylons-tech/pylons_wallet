@@ -156,7 +156,11 @@ class Response (
             val mRecipesOut = recipesOut.toMutableList()
             val mTradesOut = tradesOut.toMutableList()
             val mItemsOut = itemsOut.toMutableList()
+
             // ...but now we have to inspect the emitted transaction and populate the various output fields
+            // modified  by Tierre - this field never working properly.
+            // transaction.stdTx?.msg type never coming as expected
+            // msg::javaClass not coming as in this switch cases
             mTxs.forEach { transaction ->
                 transaction.stdTx?.msg?.forEach { it ->
                     when (it::javaClass) {

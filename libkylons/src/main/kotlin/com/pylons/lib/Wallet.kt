@@ -190,7 +190,7 @@ abstract class Wallet {
                        supportEmails : List<String>,
                        levels : List<Long>,
                        costsPerBlock : List<Long>,
-                       callback: (List<Cookbook>)->Unit) {
+                       callback: (List<Transaction>)->Unit) {
         sendMessage(Transaction::class, Message.CreateCookbooks(
             ids = ids,
             names = names,
@@ -202,16 +202,16 @@ abstract class Wallet {
             costsPerBlock = costsPerBlock
         )){
             val response = it as Response
-            callback(response.cookbooksOut)
+            callback(response.txs)
         }
     }
 
     /**
      * CreateAutoCookbook
      *
-     * @return Cookbook?
+     * @return Transaction?
      */
-    fun createAutoCookbook(profile: Profile, callback: (Cookbook?) -> Unit) {
+    fun createAutoCookbook(profile: Profile, callback: (Transaction?) -> Unit) {
         sendMessage(
             Transaction::class, Message.CreateCookbooks(
                 listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
@@ -226,11 +226,12 @@ abstract class Wallet {
             )
         ) {
             val response =  it as Response
-            var cookbook:Cookbook? = null
-            if (response.cookbooksOut.isNotEmpty()) {
-                cookbook = response.cookbooksOut.get(0)
+            var tx:Transaction? = null
+            if(response.txs.isNotEmpty()){
+                tx = response.txs.get(0)
+
             }
-            callback(cookbook)
+            callback(tx)
         } // i don't exactly know what the correct way to handle level/costs is atm
     }
 
