@@ -161,7 +161,9 @@ class Response (
             // modified  by Tierre - this field never working properly.
             // transaction.stdTx?.msg type never coming as expected
             // msg::javaClass not coming as in this switch cases
+
             mTxs.forEach { transaction ->
+                println("transaction.stdTx?.msg?.javaClass ${transaction.stdTx?.msg?.javaClass}")
                 transaction.stdTx?.msg?.forEach { it ->
                     when (it::javaClass) {
                         //CancelTrade::javaClass -> {

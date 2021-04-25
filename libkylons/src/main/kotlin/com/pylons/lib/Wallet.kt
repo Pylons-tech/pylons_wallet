@@ -172,6 +172,9 @@ abstract class Wallet {
     /**
      * CreateCookbooks
      *
+     * Cookbook Id Naming Convention: ${main_cookbook_code}_${appName}_${identifier}_${identifier}
+     * Cookbook Id should contains Cookbook Creator App's Name
+
      * @param ids
      * @param names
      * @param developers
@@ -208,16 +211,21 @@ abstract class Wallet {
 
     /**
      * CreateAutoCookbook
+     * Cookbook is unique per app/ per pylons account
+     * Cookbook Id Naming Convention: ${main_cookbook_code}_${appName}_${identifier}_${identifier}
+     * Cookbook Id should contains Cookbook Creator App's Name
      *
      * @return Transaction?
      */
-    fun createAutoCookbook(profile: Profile, callback: (Transaction?) -> Unit) {
+    fun createAutoCookbook(profile: Profile, appName:String, callback: (Transaction?) -> Unit) {
         sendMessage(
             Transaction::class, Message.CreateCookbooks(
-                listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
-                listOf("autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
-                listOf("autocookbook_${profile.address}"),
-                listOf("autocookbook for use by managed appliations"),
+                //listOf("${appName}_autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
+                //listOf("${appName}_autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
+                listOf("${appName}_autocookbook_${profile.address}"),
+                listOf("${appName}_autocookbook_${profile.address}"),
+                listOf("${appName}_autocookbook_${profile.address}"),
+                listOf("${appName} autocookbook for use by managed appliations"),
                 listOf("1.0.0"),
                 listOf("support@pylons.tech"),
                 listOf(1),
