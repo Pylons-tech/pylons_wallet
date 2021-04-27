@@ -39,22 +39,6 @@ abstract class Wallet {
     abstract fun exists (callback : (Boolean) -> Unit)
 
     /**
-     * initWallet(appName: String, appClassName:String, callback:(Boolean) -> Unit)
-     * call after ipc connection first establishes.
-     * initiates Handshake with wallet
-     *
-     * @param   appName: String - caller app's Display Name
-     * @param   appPkgName: String - app's Package Name
-     *
-     * @return  when initiation success return true, else return false
-     */
-    fun initWallet(appName: String, appPkgName:String, callback:(Boolean) -> Unit) {
-        val ret = DroidIpcWire.DoHandshake(appName, appPkgName)
-        isInitiated = ret
-        callback(ret)
-    }
-
-    /**
      * fetchProfile (address : String?, callback: (Profile?) -> Unit)
      * retrieves wallet core profile for given address
      * if address is null, return current wallet core profile
@@ -351,7 +335,7 @@ abstract class Wallet {
      *
      * @return Transaction?
      */
-    fun BuyPylons(callback: (Transaction?)->Unit) {
+    fun buyPylons(callback: (Transaction?)->Unit) {
         sendMessage(Transaction::class, Message.BuyPylons()) {
             val response = it as Response
             var tx: Transaction? = null
@@ -370,6 +354,22 @@ abstract class Wallet {
     class AndroidWallet : Wallet(){
         companion object {
             val instance : AndroidWallet by lazy {AndroidWallet()}
+        }
+
+        /**
+         * initWallet(appName: String, appClassName:String, callback:(Boolean) -> Unit)
+         * call after ipc connection first establishes.
+         * initiates Handshake with wallet
+         *
+         * @param   appName: String - caller app's Display Name
+         * @param   appPkgName: String - app's Package Name
+         *
+         * @return  when initiation success return true, else return false
+         */
+        fun initWallet(appName: String, appPkgName:String, callback:(Boolean) -> Unit) {
+            val ret = DroidIpcWire.DoHandshake(appName, appPkgName)
+            isInitiated = ret
+            callback(ret)
         }
 
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
