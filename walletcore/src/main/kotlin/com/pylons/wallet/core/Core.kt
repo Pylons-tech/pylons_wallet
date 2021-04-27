@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.pylons.ipc.Message
+import com.pylons.ipc.Response
 import com.pylons.lib.PubKeyUtil
 import com.pylons.lib.baseJsonTemplateForTxPost
 import com.pylons.lib.baseJsonTemplateForTxSignature
@@ -122,6 +123,7 @@ class Core(val config : Config) : ICore {
         current = this
         Msg.useCore(this)
         Message.useCore(this)
+        Response.useCore(this)
         return this
     }
 
@@ -215,6 +217,7 @@ class Core(val config : Config) : ICore {
     override fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                 blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
                                 outputTables : List<String>, outputs : List<String>) : List<Transaction> {
+        // klaxon.parse<JsonArray<JsonObject>>
         val mItemInputs = mutableListOf<List<ItemInput>>()
         itemInputs.forEach { mItemInputs.add(klaxon.parseArray(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()

@@ -1,5 +1,8 @@
 package com.pylons.ipc
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import com.pylons.lib.core.ICore
 import com.pylons.lib.types.*
 import com.pylons.lib.types.tx.Coin
@@ -7,11 +10,16 @@ import com.pylons.lib.types.tx.Trade
 import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.msg.*
 import com.pylons.lib.types.tx.recipe.Recipe
+import com.pylons.lib.klaxon
+import java.lang.StringBuilder
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.functions
 
 private const val MAX_TX_WAIT_RETRIES = 12
 
-data class Response private constructor (
-    val message: Message,
+class Response (
+    val message: Message?,
     val accepted : Boolean,
     val messageId : Int,
     val clientId : Int,
@@ -36,6 +44,11 @@ data class Response private constructor (
                                         // we don't really want end-users using exportkeys or anything else that uses unstructured data
 ) {
     companion object {
+        protected var core : ICore? = null
+        fun useCore(core : ICore) {
+            Companion.core = core
+        }
+
         @ExperimentalUnsignedTypes
         fun emit(message: Message, accepted: Boolean, coinsIn: List<Coin> = listOf(), coinsOut: List<Coin> = listOf(),
                  cookbooksIn: List<String> = listOf(), cookbooksOut: List<Cookbook> = listOf(),
@@ -45,7 +58,10 @@ data class Response private constructor (
                  recipesIn: List<String> = listOf(), recipesOut: List<Recipe> = listOf(),
                  tradesIn : List<String> = listOf(), tradesOut: List<Trade> = listOf(),
                  unstructured: List<String> = listOf(), txs : List<Transaction> = listOf()) : Response {
-            val prf = ICore.current!!.getProfile(null)
+
+
+            val prf = core!!.getProfile(null)
+
 
             // Before doing anything that changes state: retrieve all the inputs
 
@@ -56,7 +72,7 @@ data class Response private constructor (
                  * be pretty fuckin' untenable in production. We absolutely need to have a way to retrieve single
                  * cookbooks by ID (or, better yet, sets of cookbooks by a list of ids) before it gets to that.
                  */
-                val cbs = ICore.current!!.getCookbooks()
+                val cbs = core!!.getCookbooks()
                 cookbooksIn.forEach {
                     val id = it
                     cbs.forEach {
@@ -68,7 +84,7 @@ data class Response private constructor (
             val mExecutionsIn = mutableListOf<Execution>()
             if (executionsIn.isNotEmpty()) {
                 // we need better exec handling, getpendingexecutions isn't really enough
-                val execs = ICore.current!!.getPendingExecutions()
+                val execs = core!!.getPendingExecutions()
                 executionsIn.forEach {
                     val id = it
                     execs.forEach {
@@ -76,7 +92,6 @@ data class Response private constructor (
                     }
                 }
             }
-
             val mItemsIn = mutableListOf<Item>()
             if (itemsIn.isNotEmpty()) {
                 val items = prf!!.items
@@ -87,21 +102,19 @@ data class Response private constructor (
                     }
                 }
             }
-
             val mProfilesIn = mutableListOf<Profile>()
             if (profilesIn.isNotEmpty()) {
                 profilesIn.forEach {
                     if (it == prf?.address) mProfilesIn.add(prf)
                     else {
-                        val profile = ICore.current!!.getProfile(it)
+                        val profile = core!!.getProfile(it)
                         if (profile != null) mProfilesIn.add(profile)
                     }
                 }
             }
-
             val mRecipesIn = mutableListOf<Recipe>()
             if (recipesIn.isNotEmpty()) {
-                val recipes = ICore.current!!.getRecipes()
+                val recipes = core!!.getRecipes()
                 recipesIn.forEach {
                     val id = it
                     recipes.forEach {
@@ -109,10 +122,9 @@ data class Response private constructor (
                     }
                 }
             }
-
             val mTradesIn = mutableListOf<Trade>()
             if (tradesIn.isNotEmpty()) {
-                val trades = ICore.current!!.listTrades()
+                val trades = core!!.listTrades()
                 tradesIn.forEach {
                     val id = it
                     trades.forEach {
@@ -127,13 +139,15 @@ data class Response private constructor (
             txs.forEach {
                 if (it.id != null) {
                     var retries = 0
-                    var tx = ICore.current!!.getTransaction(it.id!!)
+                    var tx = core!!.getTransaction(it.id!!)
                     while (tx.code != Transaction.ResponseCode.OK && retries < MAX_TX_WAIT_RETRIES) {
-                        tx = ICore.current!!.getTransaction(it.id!!)
+                        tx = core!!.getTransaction(it.id!!)
                         retries++
                     }
                     mTxs.add(tx) // TODO: proper error handling (this doesn't have failed txs at all)
                 }
+                else
+                    mTxs.add(it) //failed txs from various reason
             }
 
             val mCoinsOut = coinsOut.toMutableList()
@@ -142,8 +156,14 @@ data class Response private constructor (
             val mRecipesOut = recipesOut.toMutableList()
             val mTradesOut = tradesOut.toMutableList()
             val mItemsOut = itemsOut.toMutableList()
+
             // ...but now we have to inspect the emitted transaction and populate the various output fields
+            // modified  by Tierre - this field never working properly.
+            // transaction.stdTx?.msg type never coming as expected
+            // msg::javaClass not coming as in this switch cases
+
             mTxs.forEach { transaction ->
+                println("transaction.stdTx?.msg?.javaClass ${transaction.stdTx?.msg?.javaClass}")
                 transaction.stdTx?.msg?.forEach { it ->
                     when (it::javaClass) {
                         //CancelTrade::javaClass -> {
@@ -241,13 +261,69 @@ data class Response private constructor (
                     }
                 }
             }
-
             val mProfilesOut = profilesOut.toMutableList()
-            if (txs.isNotEmpty()) mProfilesOut.add(ICore.current!!.getProfile(null)!!)
+            if (txs.isNotEmpty()){
+                val prof = core!!.getProfile(null)!!
+                mProfilesOut.add(Profile(prof.address, prof.strings, prof.coins, prof.items) )
+
+            }
             return Response(message, accepted, IPCLayer.implementation!!.messageId, IPCLayer.implementation!!.clientId,
-            IPCLayer.implementation!!.walletId, ICore.current!!.statusBlock, coinsIn, mCoinsOut, mCookbooksIn, mCookbooksOut,
+            IPCLayer.implementation!!.walletId, core!!.statusBlock, coinsIn, mCoinsOut, mCookbooksIn, mCookbooksOut,
                 mExecutionsIn, mExecutionsOut, mItemsIn, mItemsOut, mProfilesIn, mProfilesOut, mRecipesIn, mRecipesOut,
                 mTradesIn, mTradesOut, mTxs, unstructured)
+        }
+
+        /**
+         * deserialze string to Response Object
+         * @param1: messageType:String class type of Message
+         * @param2: msg:String? json string of Response
+         */
+        fun deserialize(messageType:String, msg: String?): Response? {
+            println("messageType:${messageType} msg: ${msg}")
+            val jsonObj = Parser.default().parse(StringBuilder(msg)) as JsonObject
+
+            //parse message
+            val msgObj = jsonObj.obj("message")?.toJsonString()
+            var message:Message? = null
+
+            //notice!!! this takes a bit long. should find out the fastest way to deserialize Message
+            Message::class.sealedSubclasses.forEach { kClass ->
+                if (kClass.simpleName == messageType) {
+                    println("attempting to parse Message ${kClass.simpleName}")
+                    //here how to convert to Message Obj
+                    val func = kClass.companionObject?.functions?.find { it.name == "deserialize" }
+                    message = func?.call(kClass.companionObjectInstance, msgObj) as Message?
+                }
+            }
+
+
+
+            //Response Initialization
+            //notice!!! any other way for fastest deserialzing?
+            return Response(
+                message =  message,
+                accepted = jsonObj.boolean("accepted")!!,
+                messageId = jsonObj.int("messageId")!!,
+                clientId  = jsonObj.int("clientId")!!,
+                walletId = jsonObj.int("walletId")!!,
+                statusBlock = klaxon.parseFromJsonObject<StatusBlock>(jsonObj.obj("statusBlock")!!)!!,
+                coinsIn = klaxon.parseFromJsonArray<Coin>(jsonObj.array<JsonObject>("coinsIn")!!)!!,
+                coinsOut  = klaxon.parseFromJsonArray<Coin>(jsonObj.array<JsonObject>("coinsOut")!!)!!,
+                cookbooksIn = klaxon.parseFromJsonArray<Cookbook>(jsonObj.array<JsonObject>("cookbooksIn")!!)!!,
+                cookbooksOut = klaxon.parseFromJsonArray<Cookbook>(jsonObj.array<JsonObject>("cookbooksOut")!!)!!,
+                executionsIn  = klaxon.parseFromJsonArray<Execution>(jsonObj.array<JsonObject>("executionsIn")!!)!!,
+                executionsOut  = klaxon.parseFromJsonArray<Execution>(jsonObj.array<JsonObject>("executionsOut")!!)!!,
+                itemsIn = klaxon.parseFromJsonArray<Item>(jsonObj.array<JsonObject>("itemsIn")!!)!!,
+                itemsOut = klaxon.parseFromJsonArray<Item>(jsonObj.array<JsonObject>("itemsOut")!!)!!,
+                profilesIn = klaxon.parseFromJsonArray<Profile>(jsonObj.array<JsonObject>("profilesIn")!!)!!,
+                profilesOut = klaxon.parseFromJsonArray<Profile>(jsonObj.array<JsonObject>("profilesOut")!!)!!,
+                recipesIn = klaxon.parseFromJsonArray<Recipe>(jsonObj.array<JsonObject>("recipesIn")!!)!!,
+                recipesOut = klaxon.parseFromJsonArray<Recipe>(jsonObj.array<JsonObject>("recipesOut")!!)!!,
+                tradesIn = klaxon.parseFromJsonArray<Trade>(jsonObj.array<JsonObject>("tradesIn")!!)!!,
+                tradesOut = klaxon.parseFromJsonArray<Trade>(jsonObj.array<JsonObject>("tradesIn")!!)!!,
+                txs = Transaction.listFromJson(jsonObj.array<JsonObject>("txs")!!),
+                unstructured = klaxon.parseFromJsonArray<String>(jsonObj.array<JsonObject>("unstructured")!!)!!
+            )
         }
     }
 }

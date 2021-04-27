@@ -102,7 +102,9 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
         }
 
         fun handleResponse(r : Response) {
+            println("handleResponse safelyDoIpcOperation")
             safelyDoIpcOperation {
+                println("preprocessResponse")
                 implementation!!.preprocessResponse(r) {
                     implementation!!.submit(r)
                     implementation!!.cleanup()

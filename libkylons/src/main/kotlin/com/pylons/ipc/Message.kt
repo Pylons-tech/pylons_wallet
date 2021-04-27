@@ -184,7 +184,9 @@ sealed class Message {
         override fun resolve(): Response {
             val p = core!!.getProfile(address)
             val ls = mutableListOf<Profile>()
+
             if (p != null) ls.add(Profile(p.address, p.strings, p.coins, p.items)) // hack because klaxon will die if we aren't specifically an instance of the base class
+            println("GetProfile Response")
             return Response.emit(this, true, profilesOut = ls)
         }
     }
@@ -382,6 +384,33 @@ sealed class Message {
             if (!IMulticore.enabled) throw Exception("Multicore is not enabled")
             val core = IMulticore.instance!!.switchCore(address!!)
             return Response.emit(this, true, profilesOut = listOf(core.getProfile(address)!!))
+        }
+    }
+
+    /**
+     * BuyPylons
+     * do wallet UI action for buy pylons
+     * wallet ui set txHash of the Purchase Transaction
+     * return Purchase Transaction to counterpart
+     */
+    class BuyPylons: Message() {
+
+        //
+        var txHash:String? = null
+
+        companion object{
+            fun deserialize(json: String) = klaxon.parse<BuyPylons>(json)
+        }
+
+        override fun resolve(): Response {
+            //transactions can fail
+            if (txHash.isNullOrEmpty()) {
+                return Response.emit(this, true)
+            }
+
+            return Response.emit(this, true,
+                txs=listOf(core!!.getTransaction(txHash!!))
+            )
         }
     }
 
