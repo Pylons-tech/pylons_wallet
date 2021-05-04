@@ -68,8 +68,6 @@ abstract class DroidIpcWire {
          * return true if handshake succeed, or false when fails
          */
         fun doHandshake(appName: String, appPkgName: String): Boolean {
-            Companion.appName = appName
-            Companion.appPkgName = appPkgName
             try {
                 val msg = HandshakeReplyMsg(
                     MAGIC_REPLY = HANDSHAKE_REPLY_MAGIC,
@@ -83,7 +81,7 @@ abstract class DroidIpcWire {
 
                 val ret_msg = readMessage()
                 if (ret_msg != null) {
-                    val server_msg = klaxon.parse<HandshakeMsg>(ret_msg.removePrefix(HANDSHAKE_MAGIC)!!)
+                    val server_msg = klaxon.parse<HandshakeMsg>(ret_msg.removePrefix(HANDSHAKE_MAGIC))
                     if (server_msg?.MAGIC == HANDSHAKE_MAGIC) {
                         walletId = server_msg.walletId.toInt()
                         return true
