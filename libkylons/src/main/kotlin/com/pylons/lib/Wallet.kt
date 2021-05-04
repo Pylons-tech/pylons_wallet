@@ -356,22 +356,6 @@ abstract class Wallet {
             val instance : AndroidWallet by lazy {AndroidWallet()}
         }
 
-        /**
-         * initWallet(appName: String, appClassName:String, callback:(Boolean) -> Unit)
-         * call after ipc connection first establishes.
-         * initiates Handshake with wallet
-         *
-         * @param   appName: String - caller app's Display Name
-         * @param   appPkgName: String - app's Package Name
-         *
-         * @return  when initiation success return true, else return false
-         */
-        fun initWallet(appName: String, appPkgName:String, callback:(Boolean) -> Unit) {
-            val ret = DroidIpcWire.DoHandshake(appName, appPkgName)
-            isInitiated = ret
-            callback(ret)
-        }
-
         override fun sendMessage(outType : KClass<*>, message: Message, callback: (Any?) -> Unit) {
             DroidIpcWire.writeMessage(DroidIpcWire.makeRequestMessage(message))
 
