@@ -53,7 +53,7 @@ abstract class DroidIpcWire {
          *
          * return true if handshake succeed, or false when fails
          */
-        fun DoHandshake(appName: String, appPkgName: String):Boolean {
+        fun doHandshake(appName: String, appPkgName: String):Boolean {
             Companion.appName = appName
             Companion.appPkgName = appPkgName
             try{
