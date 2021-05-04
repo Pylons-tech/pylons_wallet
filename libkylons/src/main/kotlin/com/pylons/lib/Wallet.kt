@@ -24,8 +24,6 @@ abstract class Wallet {
         fun android() : AndroidWallet = AndroidWallet.instance
 
         fun devDevWallet() : DevDevWallet = DevDevWallet.instance
-
-        var isInitiated:Boolean = false
     }
     /**
      * Signature for the method what we call to pass messages into the

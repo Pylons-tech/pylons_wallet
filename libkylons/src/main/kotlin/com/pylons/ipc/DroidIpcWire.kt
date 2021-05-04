@@ -56,7 +56,6 @@ abstract class DroidIpcWire {
          */
         fun establishConnection(appName: String, appPkgName: String, callback: (Boolean) -> Unit) {
             val ret = doHandshake(appName, appPkgName)
-            isInitiated = ret
             callback(ret)
         }
 
