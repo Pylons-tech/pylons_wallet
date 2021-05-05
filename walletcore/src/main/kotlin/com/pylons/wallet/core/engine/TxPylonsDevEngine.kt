@@ -39,7 +39,9 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
                         entries = entries,
                         outputs = outputs,
                         blockInterval = blockInterval,
-                        sender = it.address
+                        sender = it.address,
+                        extraInfo = "",
+                        recipeId = ""
                 ).toSignedTx()
             }
 

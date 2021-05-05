@@ -104,5 +104,9 @@ fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
     """.trimIndent()
 }
 
+fun testProto():String{
+    MsgGrpc
+}
+
 fun baseJsonTemplateForTxSignature (msg: String, sequence: Long, accountNumber: Long, gas: Long) =
     """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
