@@ -17,6 +17,21 @@ enum class SerializationMode {
     ALL
 }
 
+enum class 	BroadcastMode {
+    BroadcastMode_BROADCAST_MODE_UNSPECIFIED,
+    // BROADCAST_MODE_BLOCK defines a tx broadcasting mode where the client waits for
+    // the tx to be committed in a block.
+    BroadcastMode_BROADCAST_MODE_BLOCK,
+    // BROADCAST_MODE_SYNC defines a tx broadcasting mode where the client waits for
+    // a CheckTx execution response only.
+    BroadcastMode_BROADCAST_MODE_SYNC,
+    // BROADCAST_MODE_ASYNC defines a tx broadcasting mode where the client returns
+    // immediately.
+    BroadcastMode_BROADCAST_MODE_ASYNC
+
+}
+
+
 private val base64 = Base64.getEncoder()
 fun Double.s() : String {
     val s = this.toString()
@@ -26,7 +41,9 @@ fun Double.s() : String {
     }
 }
 
+//tierre: modified tx structure
 fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, gas: Long) : String =
+    /*
     """{
         "tx": {
             "msg": $msg,
@@ -48,6 +65,44 @@ fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, g
             },
             "mode": "sync"
         }"""
+        */
+    """
+    {
+    "body":{
+        "messages": $msg,
+        "memo":"",
+        "timeout_height":"0",
+        "extension_options":[],
+        "non_critical_extension_options":[]
+       },
+    "auth_info":{
+        "signer_infos":[],
+        "fee":{
+            "amount":[],
+            "gas_limit":"200000",
+            "payer":"",
+            "granter":""
+        }
+    },
+    "signatures":[
+        "pub_key": {
+            "type": "tendermint/PubKeySecp256k1",
+            "value": "$pubkey"
+        },
+        "signature": "$signature"
+    ]
+   }
+    """.trimIndent()
+
+// tierre: /cosmos/tx/v1beta1/txs data type
+fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
+    return """
+        {
+            "tx_bytes": ${base64.encode(msg.toByteArray())},
+            "mode": ${mode.name}
+        }
+    """.trimIndent()
+}
 
 fun baseJsonTemplateForTxSignature (msg: String, sequence: Long, accountNumber: Long, gas: Long) =
     """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""

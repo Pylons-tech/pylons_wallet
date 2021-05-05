@@ -107,9 +107,12 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         })
     }
 
+    //tierre modify for new node server
     private fun postTxJson (json : String) : String {
-        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
-        val response = HttpWire.post("""$nodeUrl/txs""", json)
+        //Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
+        //val response = HttpWire.post("""$nodeUrl/txs""", json)
+        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
+        val response = HttpWire.post("""$nodeUrl//cosmos/tx/v1beta1/txs""", json)
         Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response
     }
