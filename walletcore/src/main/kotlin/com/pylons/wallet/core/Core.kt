@@ -171,6 +171,7 @@ class Core(val config : Config) : ICore {
         val signBytes = signable.toByteArray(Charsets.UTF_8)
         val signatureBytes = cryptoHandler.signature(signBytes)
         val signature = Base64.toBase64String(signatureBytes)
+
         return baseJsonTemplateForTxPost(msg, Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()), signature, 400000)
     }
 

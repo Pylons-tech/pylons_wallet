@@ -1,14 +1,9 @@
 import kotlin.collections.*
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.plugins
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
+
 
 plugins {
     java
     kotlin("jvm")
-    id("com.google.protobuf")
 }
 
 group = "com.pylons.lib"
@@ -39,15 +34,11 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    protobuf(project(":protos"))
+    implementation(project(":proto-stub"))
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
-
-    api("io.grpc:grpc-protobuf:${rootProject.ext["grpcVersion"]}")
-    api("com.google.protobuf:protobuf-java-util:${rootProject.ext["protobufVersion"]}")
-    api("io.grpc:grpc-kotlin-stub:${rootProject.ext["grpcKotlinVersion"]}")
 
 
     implementation("com.google.guava:guava:28.2-jre")
@@ -69,30 +60,11 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
+
+    implementation("com.google.protobuf:protobuf-java:${rootProject.ext["protobufVersion"]}")
+    implementation("com.google.protobuf:protobuf-java-util:${rootProject.ext["protobufVersion"]}")
 }
 
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:${rootProject.ext["protobufVersion"]}"
-    }
-    plugins {
-        id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:${rootProject.ext["grpcVersion"]}"
-        }
-        id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:${rootProject.ext["grpcKotlinVersion"]}:jdk7@jar"
-        }
-    }
-    generateProtoTasks {
-        all().forEach {
-            it.plugins {
-                id("grpc")
-                id("grpckt")
-            }
-        }
-    }
-}
 
 val jar by tasks.getting(Jar::class) {
     manifest {
@@ -120,4 +92,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         jvmTarget = jVer
         sourceCompatibility = jVer
     }
+}
+sourceSets["main"].java.srcDir("build/generated/source/proto/main/java")
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<Javadoc> {
+    options.encoding = "UTF-8"
 }

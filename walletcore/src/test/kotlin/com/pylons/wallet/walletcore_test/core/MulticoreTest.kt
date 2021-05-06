@@ -105,4 +105,6 @@ class MulticoreTest {
         // We don't care if it's accepted, just that we can make a signature
         assert(tx.state == Transaction.State.TX_ACCEPTED || tx.state == Transaction.State.TX_REFUSED)
     }
+
+
 }

@@ -1,8 +1,10 @@
 package com.pylons.lib
 
 import com.beust.klaxon.Klaxon
+import com.pylons.lib.types.tx.msg.Msg
+import pylons.Tx
+import java.io.ByteArrayOutputStream
 import java.util.*
-
 val klaxon = Klaxon()
 
 annotation class QuotedJsonNumeral(val serializationMode : SerializationMode = SerializationMode.ALL)
@@ -34,6 +36,7 @@ enum class 	BroadcastMode {
 
 private val base64 = Base64.getEncoder()
 fun Double.s() : String {
+
     val s = this.toString()
     return when (s.substring(s.length - 2, s.length)) {
         ".0" -> s.replace(".0", "")
@@ -104,9 +107,6 @@ fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
     """.trimIndent()
 }
 
-fun testProto():String{
-    MsgGrpc
-}
 
 fun baseJsonTemplateForTxSignature (msg: String, sequence: Long, accountNumber: Long, gas: Long) =
     """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
