@@ -157,6 +157,8 @@ class Core(val config : Config) : ICore {
         return sane && started
     }
 
+
+    //to-do: Tierre cosmos v1beta1 Tx build Json from Tx proto
     override fun buildJsonForTxPost(
         msg: String,
         signComponent: String,

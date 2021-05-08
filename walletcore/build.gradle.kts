@@ -35,6 +35,9 @@ dependencies {
     implementation(project(":libkylons"))
     implementation(kotlin("stdlib-jdk8"))
 
+    //protobuf lib
+    implementation(project(":proto-stub"))
+
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
     implementation("com.google.guava:guava:28.2-jre")
@@ -60,6 +63,11 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
+
+    //protobuf lib
+    implementation("com.google.protobuf:protobuf-java:${rootProject.ext["protobufVersion"]}")
+    implementation("com.google.protobuf:protobuf-java-util:${rootProject.ext["protobufVersion"]}")
+
 }
 
 val jar by tasks.getting(Jar::class) {
@@ -89,3 +97,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         sourceCompatibility = jVer
     }
 }
+
+//include protobuf generated classes
+sourceSets["main"].java.srcDir("build/generated/source/proto/main/java")

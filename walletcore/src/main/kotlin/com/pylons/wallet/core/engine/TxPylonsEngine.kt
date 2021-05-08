@@ -4,7 +4,7 @@ import com.pylons.wallet.core.Core
 import com.pylons.lib.logging.Logger
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.beust.klaxon.*
-import com.pylons.lib.PubKeyUtil
+import com.pylons.lib.*
 import com.pylons.lib.core.ICryptoHandler
 import com.pylons.lib.core.IEngine
 import com.pylons.lib.internal.fuzzyLong
@@ -19,7 +19,6 @@ import java.lang.Exception
 import java.lang.StringBuilder
 import java.security.Security
 import java.util.*
-import com.pylons.lib.klaxon
 import com.pylons.lib.types.*
 import com.pylons.lib.types.credentials.CosmosCredentials
 import com.pylons.lib.types.credentials.ICredentials
@@ -30,6 +29,7 @@ import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.msg.*
 import com.pylons.lib.types.tx.recipe.*
 import com.pylons.lib.types.tx.trade.TradeItemInput
+import java.io.ByteArrayOutputStream
 
 @ExperimentalUnsignedTypes
 open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
@@ -108,6 +108,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     //tierre modify for new node server
+    //cosmos/v1/base/beta1 Tx proto
     private fun postTxJson (json : String) : String {
         //Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
         //val response = HttpWire.post("""$nodeUrl/txs""", json)

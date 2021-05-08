@@ -93,6 +93,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         sourceCompatibility = jVer
     }
 }
+
 sourceSets["main"].java.srcDir("build/generated/source/proto/main/java")
 
 tasks.withType<JavaCompile> {

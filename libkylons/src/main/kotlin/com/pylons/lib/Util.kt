@@ -82,7 +82,7 @@ fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, g
         "signer_infos":[],
         "fee":{
             "amount":[],
-            "gas_limit":"200000",
+            "gas_limit":"$gas",
             "payer":"",
             "granter":""
         }
@@ -99,9 +99,17 @@ fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, g
 
 // tierre: /cosmos/tx/v1beta1/txs data type
 fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
+
+    val proto_msg =  ProtoJsonUtil.fromJson(msg, type)
+    val stream = ByteArrayOutputStream()
+
+    if(proto_msg != null) {
+        proto_msg.writeTo(stream)
+    }
+
     return """
         {
-            "tx_bytes": ${base64.encode(msg.toByteArray())},
+            "tx_bytes": ${base64.encode(stream.toByteArray())},
             "mode": ${mode.name}
         }
     """.trimIndent()
@@ -109,4 +117,4 @@ fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
 
 
 fun baseJsonTemplateForTxSignature (msg: String, sequence: Long, accountNumber: Long, gas: Long) =
-    """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","msgs":$msg,"sequence":"$sequence"}"""
+    """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","messages":$msg,"sequence":"$sequence"}"""
