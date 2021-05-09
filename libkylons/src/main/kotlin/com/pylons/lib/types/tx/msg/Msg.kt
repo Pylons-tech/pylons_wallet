@@ -77,6 +77,7 @@ sealed class Msg() {
             ]"""
     }
 
+    //Tierre modify here for signed Tx
     fun toSignedTx () : String {
         val c = core!!.userProfile!!.credentials as CosmosCredentials
         val crypto = core!!.engine.cryptoHandler

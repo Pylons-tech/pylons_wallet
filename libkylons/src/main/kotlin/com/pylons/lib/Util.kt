@@ -97,9 +97,10 @@ fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, g
    }
     """.trimIndent()
 
-// tierre: /cosmos/tx/v1beta1/txs data type
+// tierre: should totally modify this part
+// /cosmos/tx/v1beta1/txs data type
 fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
-
+    val type = ""
     val proto_msg =  ProtoJsonUtil.fromJson(msg, type)
     val stream = ByteArrayOutputStream()
 
@@ -115,6 +116,6 @@ fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
     """.trimIndent()
 }
 
-
+//tierre: should totally modify this part
 fun baseJsonTemplateForTxSignature (msg: String, sequence: Long, accountNumber: Long, gas: Long) =
     """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","messages":$msg,"sequence":"$sequence"}"""

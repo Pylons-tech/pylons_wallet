@@ -4,8 +4,18 @@ import com.google.protobuf.MessageOrBuilder
 import com.google.protobuf.util.JsonFormat
 import java.lang.reflect.InvocationTargetException
 import com.google.protobuf.AbstractMessage.Builder
+import com.google.protobuf.ByteString
+import com.pylons.lib.core.ICore
+import com.pylons.lib.logging.LogEvent
+import com.pylons.lib.logging.LogTag
+import com.pylons.lib.logging.Logger
+import cosmos.crypto.secp256k1.Keys
+import cosmos.tx.v1beta1.TxOuterClass
+import org.spongycastle.util.encoders.Base64.toBase64String
 import pylons.Tx
+import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.util.*
 
 
 object ProtoJsonUtil {
@@ -91,8 +101,58 @@ object ProtoJsonUtil {
     }
      */
 
+    class TxProtoBuilder {
+        companion object {
+        }
 
-    fun buildProtoTxBuilder(body: String, authInfo: String) {
+
+        public var txRaw = TxOuterClass.TxRaw.newBuilder()
+
+
+        fun addSignature(privKey:Keys.PrivKey, signDoc: TxOuterClass.SignDoc ) {
+            val cryptoHandler = ICore.current?.engine?.cryptoHandler
+
+            val signDocOutputStream = ByteArrayOutputStream()
+            signDoc.writeTo(signDocOutputStream)
+            val sig = cryptoHandler?.signature(signDocOutputStream.toByteArray())
+
+            this.txRaw.addSignatures(ByteString.copyFrom(sig))
+        }
+
+        fun signDoc(accountNumber: Long, chain_id:String):TxOuterClass.SignDoc? {
+            val builder = TxOuterClass.SignDoc
+                .newBuilder()
+                .setBodyBytes(txRaw.bodyBytes)
+                .setAuthInfoBytes(txRaw.authInfoBytes)
+                .setChainId(chain_id)
+                .setAccountNumber(accountNumber)
+
+            return builder.build()
+        }
+
+        fun txBytes(txraw: TxOuterClass.TxRaw): String? {
+            val txRawOutputStream = ByteArrayOutputStream()
+            txraw.writeTo(txRawOutputStream)
+            return Base64.getEncoder().encodeToString(txRawOutputStream.toByteArray())
+        }
+
+
+        fun buildProtoTxBuilder(body: String, authInfo: String) {
+
+            val txBodyBuilder = TxOuterClass.TxBody.newBuilder()
+            JsonFormat.parser().ignoringUnknownFields().merge(body, txBodyBuilder)
+            val txBodyOutputStream = ByteArrayOutputStream()
+            txBodyBuilder.build().writeTo(txBodyOutputStream)
+
+            val txAuthBuilder = TxOuterClass.AuthInfo.newBuilder()
+            JsonFormat.parser().ignoringUnknownFields().merge(authInfo, txAuthBuilder)
+            val txAuthOutputStream = ByteArrayOutputStream()
+            txAuthBuilder.build().writeTo(txAuthOutputStream)
+
+            txRaw.setBodyBytes(ByteString.copyFrom(txBodyOutputStream.toByteArray()))
+            txRaw.setAuthInfoBytes(ByteString.copyFrom(txAuthOutputStream.toByteArray()))
+        }
     }
+
 
 }
