@@ -106,5 +106,16 @@ class MulticoreTest {
         assert(tx.state == Transaction.State.TX_ACCEPTED || tx.state == Transaction.State.TX_REFUSED)
     }
 
+    @Test
+    @Order(6)
+    fun testCreateAccount() {
+        // todo: this should actually take a keypair as an argument
+        Multicore.enable(config)
+        val c = Multicore.addCore(null)
+        val prof = Core.current?.newProfile("aaa", null)
+
+        assert(Core.current == c)
+        assert(c.userProfile!!.credentials.address == testCredentials.address)
+    }
 
 }

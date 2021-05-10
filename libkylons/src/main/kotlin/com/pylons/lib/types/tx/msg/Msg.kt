@@ -110,7 +110,7 @@ sealed class Msg() {
      }
  }
 
- @MsgType("/pylons.MsgCreateAccount")
+ @MsgType("pylons.MsgCreateAccount")
  data class CreateAccount(
          @property:[Json(name = "Requester")]
          val sender : String

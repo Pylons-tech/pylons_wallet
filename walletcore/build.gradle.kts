@@ -36,8 +36,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     //protobuf lib
-    implementation(project(":proto-stub"))
-
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
     implementation("com.google.guava:guava:28.2-jre")
@@ -65,8 +63,10 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
 
     //protobuf lib
-    implementation("com.google.protobuf:protobuf-java:${rootProject.ext["protobufVersion"]}")
-    implementation("com.google.protobuf:protobuf-java-util:${rootProject.ext["protobufVersion"]}")
+    api("io.grpc:grpc-protobuf:${rootProject.ext["grpcVersion"]}")
+    api("com.google.protobuf:protobuf-java:${rootProject.ext["protobufVersion"]}")
+    api("com.google.protobuf:protobuf-java-util:${rootProject.ext["protobufVersion"]}")
+    api("io.grpc:grpc-kotlin-stub:${rootProject.ext["grpcKotlinVersion"]}")
 
 }
 

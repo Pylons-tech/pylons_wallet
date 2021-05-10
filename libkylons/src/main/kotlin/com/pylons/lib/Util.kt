@@ -2,7 +2,6 @@ package com.pylons.lib
 
 import com.beust.klaxon.Klaxon
 import com.pylons.lib.types.tx.msg.Msg
-import pylons.Tx
 import java.io.ByteArrayOutputStream
 import java.util.*
 val klaxon = Klaxon()
@@ -20,16 +19,16 @@ enum class SerializationMode {
 }
 
 enum class 	BroadcastMode {
-    BroadcastMode_BROADCAST_MODE_UNSPECIFIED,
+    BROADCAST_MODE_UNSPECIFIED,
     // BROADCAST_MODE_BLOCK defines a tx broadcasting mode where the client waits for
     // the tx to be committed in a block.
-    BroadcastMode_BROADCAST_MODE_BLOCK,
+    BROADCAST_MODE_BLOCK,
     // BROADCAST_MODE_SYNC defines a tx broadcasting mode where the client waits for
     // a CheckTx execution response only.
-    BroadcastMode_BROADCAST_MODE_SYNC,
+    BROADCAST_MODE_SYNC,
     // BROADCAST_MODE_ASYNC defines a tx broadcasting mode where the client returns
     // immediately.
-    BroadcastMode_BROADCAST_MODE_ASYNC
+    BROADCAST_MODE_ASYNC
 
 }
 
@@ -99,18 +98,11 @@ fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, g
 
 // tierre: should totally modify this part
 // /cosmos/tx/v1beta1/txs data type
-fun baseTemplateForTxs(msg: String, mode: BroadcastMode):String{
-    val type = ""
-    val proto_msg =  ProtoJsonUtil.fromJson(msg, type)
-    val stream = ByteArrayOutputStream()
-
-    if(proto_msg != null) {
-        proto_msg.writeTo(stream)
-    }
+fun baseTemplateForTxs(tx_bytes: String, mode: BroadcastMode):String{
 
     return """
         {
-            "tx_bytes": ${base64.encode(stream.toByteArray())},
+            "tx_bytes": ${tx_bytes},
             "mode": ${mode.name}
         }
     """.trimIndent()

@@ -5,9 +5,7 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.pylons.ipc.Message
 import com.pylons.ipc.Response
-import com.pylons.lib.PubKeyUtil
-import com.pylons.lib.baseJsonTemplateForTxPost
-import com.pylons.lib.baseJsonTemplateForTxSignature
+import com.pylons.lib.*
 import com.pylons.lib.core.ICore
 import com.pylons.lib.core.IEngine
 import com.pylons.lib.core.ILowLevel
@@ -206,6 +204,18 @@ class Core(val config : Config) : ICore {
     }
      *
      */
+    /**
+     * ORG Code:
+     *
+    val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
+    val signable = baseJsonTemplateForTxSignature(signComponent, sequence, accountNumber, gas)
+    Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
+    val signBytes = signable.toByteArray(Charsets.UTF_8)
+    val signatureBytes = cryptoHandler.signature(signBytes)
+    val signature = Base64.toBase64String(signatureBytes)
+
+    return baseJsonTemplateForTxPost(msg, Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()), signature, 400000)
+    */
 
     override fun buildJsonForTxPost(
         msg: String,
@@ -215,14 +225,18 @@ class Core(val config : Config) : ICore {
         pubkey: PylonsSECP256K1.PublicKey,
         gas: Long
     ): String {
-        val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
-        val signable = baseJsonTemplateForTxSignature(signComponent, sequence, accountNumber, gas)
-        Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
-        val signBytes = signable.toByteArray(Charsets.UTF_8)
-        val signatureBytes = cryptoHandler.signature(signBytes)
-        val signature = Base64.toBase64String(signatureBytes)
 
-        return baseJsonTemplateForTxPost(msg, Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()), signature, 400000)
+        val builder = ProtoJsonUtil.TxProtoBuilder()
+
+        val authInfo = builder.buildAuthInfo(Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()),sequence,gas)
+        val bodyInfo = builder.buildTxbody(msg)
+        builder.buildProtoTxBuilder(bodyInfo, authInfo)
+        val signDoc = builder.signDoc(accountNumber, "pylonschain")
+
+        val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
+        builder.addSignature(cryptoHandler, signDoc!!)
+
+        return baseTemplateForTxs(builder.txBytes()!!, BroadcastMode.BROADCAST_MODE_BLOCK)
     }
 
     fun getProfile() = getProfile(null)

@@ -1,18 +1,13 @@
 package com.pylons.lib
+import com.google.protobuf.Any
+import com.google.protobuf.ByteString
 import com.google.protobuf.Message
 import com.google.protobuf.MessageOrBuilder
+import com.google.protobuf.TypeRegistry
 import com.google.protobuf.util.JsonFormat
-import java.lang.reflect.InvocationTargetException
-import com.google.protobuf.AbstractMessage.Builder
-import com.google.protobuf.ByteString
-import com.pylons.lib.core.ICore
-import com.pylons.lib.logging.LogEvent
-import com.pylons.lib.logging.LogTag
-import com.pylons.lib.logging.Logger
-import cosmos.crypto.secp256k1.Keys
+import com.pylons.lib.core.ICryptoHandler
 import cosmos.tx.v1beta1.TxOuterClass
-import org.spongycastle.util.encoders.Base64.toBase64String
-import pylons.Tx
+import pylons.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.*
@@ -33,24 +28,24 @@ object ProtoJsonUtil {
     //Tierre; hard coded every msg here but we should find design pattern for it
     fun findTxProtoMatch(type: String): Message? {
         when(type) {
-            "/pylons.MsgCreateAccount"->{ return Tx.MsgCreateAccount.getDefaultInstance() }
-            "/pylons.MsgCheckExecution"->{ return Tx.MsgCheckExecution.getDefaultInstance() }
-            "/pylons.MsgCreateCookbook"->{ return Tx.MsgCreateCookbook.getDefaultInstance() }
-            "/pylons.MsgCreateRecipe"->{ return Tx.MsgCreateRecipe.getDefaultInstance() }
-            "/pylons.MsgCreateTrade"->{ return Tx.MsgCreateTrade.getDefaultInstance() }
-            "/pylons.MsgDisableRecipe"->{ return Tx.MsgDisableRecipe.getDefaultInstance() }
-            "/pylons.MsgDisableTrade"->{ return Tx.MsgDisableTrade.getDefaultInstance() }
-            "/pylons.MsgEnableRecipe"->{ return Tx.MsgEnableRecipe.getDefaultInstance() }
-            "/pylons.MsgExecuteRecipe"->{ return Tx.MsgExecuteRecipe.getDefaultInstance() }
-            "/pylons.MsgEnableTrade"->{ return Tx.MsgEnableTrade.getDefaultInstance() }
-            "/pylons.MsgFiatItem"->{ return Tx.MsgFiatItem.getDefaultInstance() }
-            "/pylons.MsgFulfillTrade"->{ return Tx.MsgFulfillTrade.getDefaultInstance() }
-            "/pylons.MsgGetPylons"->{ return Tx.MsgGetPylons.getDefaultInstance() }
-            "/pylons.MsgGoogleIAPGetPylons"->{ return Tx.MsgGoogleIAPGetPylons.getDefaultInstance() }
-            "/pylons.MsgSendCoins"->{ return Tx.MsgSendCoins.getDefaultInstance() }
-            "/pylons.MsgUpdateItemString"->{ return Tx.MsgUpdateItemString.getDefaultInstance() }
-            "/pylons.MsgUpdateCookbook"->{ return Tx.MsgUpdateCookbook.getDefaultInstance() }
-            "/pylons.MsgUpdateRecipe"->{ return Tx.MsgUpdateRecipe.getDefaultInstance() }
+            "/pylons.MsgCreateAccount"->{ return MsgCreateAccount.getDefaultInstance() }
+            "/pylons.MsgCheckExecution"->{ return MsgCheckExecution.getDefaultInstance() }
+            "/pylons.MsgCreateCookbook"->{ return MsgCreateCookbook.getDefaultInstance() }
+            "/pylons.MsgCreateRecipe"->{ return MsgCreateRecipe.getDefaultInstance() }
+            "/pylons.MsgCreateTrade"->{ return MsgCreateTrade.getDefaultInstance() }
+            "/pylons.MsgDisableRecipe"->{ return MsgDisableRecipe.getDefaultInstance() }
+            "/pylons.MsgDisableTrade"->{ return MsgDisableTrade.getDefaultInstance() }
+            "/pylons.MsgEnableRecipe"->{ return MsgEnableRecipe.getDefaultInstance() }
+            "/pylons.MsgExecuteRecipe"->{ return MsgExecuteRecipe.getDefaultInstance() }
+            "/pylons.MsgEnableTrade"->{ return MsgEnableTrade.getDefaultInstance() }
+            "/pylons.MsgFiatItem"->{ return MsgFiatItem.getDefaultInstance() }
+            "/pylons.MsgFulfillTrade"->{ return MsgFulfillTrade.getDefaultInstance() }
+            "/pylons.MsgGetPylons"->{ return MsgGetPylons.getDefaultInstance() }
+            "/pylons.MsgGoogleIAPGetPylons"->{ return MsgGoogleIAPGetPylons.getDefaultInstance() }
+            "/pylons.MsgSendCoins"->{ return MsgSendCoins.getDefaultInstance() }
+            "/pylons.MsgUpdateItemString"->{ return MsgUpdateItemString.getDefaultInstance() }
+            "/pylons.MsgUpdateCookbook"->{ return MsgUpdateCookbook.getDefaultInstance() }
+            "/pylons.MsgUpdateRecipe"->{ return MsgUpdateRecipe.getDefaultInstance() }
             ""->{return null }
             null->{return null }
         }
@@ -102,15 +97,11 @@ object ProtoJsonUtil {
      */
 
     class TxProtoBuilder {
-        companion object {
-        }
-
 
         public var txRaw = TxOuterClass.TxRaw.newBuilder()
 
 
-        fun addSignature(privKey:Keys.PrivKey, signDoc: TxOuterClass.SignDoc ) {
-            val cryptoHandler = ICore.current?.engine?.cryptoHandler
+        fun addSignature(cryptoHandler: ICryptoHandler, signDoc: TxOuterClass.SignDoc ) {
 
             val signDocOutputStream = ByteArrayOutputStream()
             signDoc.writeTo(signDocOutputStream)
@@ -130,14 +121,67 @@ object ProtoJsonUtil {
             return builder.build()
         }
 
-        fun txBytes(txraw: TxOuterClass.TxRaw): String? {
+        fun txBytes(): String? {
             val txRawOutputStream = ByteArrayOutputStream()
-            txraw.writeTo(txRawOutputStream)
+            txRaw.build().writeTo(txRawOutputStream)
             return Base64.getEncoder().encodeToString(txRawOutputStream.toByteArray())
+        }
+
+        fun buildTxbody(messages:String): String {
+            return """
+            {
+                "messages": $messages,
+                "memo":"",
+                "timeout_height":"0",
+                "extension_options":[],
+                "non_critical_extension_options":[]
+            }
+            """.trimIndent()
+        }
+
+        fun buildAuthInfo(pubKey:String, sequence: Long, gas_limit: Long):String {
+            return """
+            {
+                "signer_infos":[ {
+                    "public_key": {"type_url":"/cosmos.crypto.secp256k1.PubKey","key":"$pubKey"},
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_DIRECT"
+                        }
+                    },
+                    "sequence": $sequence
+                    }
+                ],
+                "fee":{
+                    "amount":[],
+                    "gas_limit":"$gas_limit",
+                    "payer":"",
+                    "granter":""
+                }
+            }
+            """.trimIndent()
         }
 
 
         fun buildProtoTxBuilder(body: String, authInfo: String) {
+
+            val registry: TypeRegistry = TypeRegistry.newBuilder().add(TxOuterClass.TxBody.getDescriptor())
+                .add(MsgCreateAccount.getDescriptor())
+                .build()
+            val printer = JsonFormat.printer().usingTypeRegistry(registry)
+            val parser = JsonFormat.parser().usingTypeRegistry(registry)
+
+            val test_msg = MsgCreateAccount.newBuilder().setRequester("12123412341234").build()
+            val test_body = TxOuterClass.TxBody.newBuilder().addMessages( Any.pack(test_msg)).build()
+            val test_json = printer.print(test_body)
+
+
+            val test_txBodyBuilder = TxOuterClass.TxBody.newBuilder()
+            parser.ignoringUnknownFields().merge(body, test_txBodyBuilder)
+
+
+            val msg = MsgCreateAccount.newBuilder().setRequester("12341234123").build()
+            val desc = msg.descriptorForType
 
             val txBodyBuilder = TxOuterClass.TxBody.newBuilder()
             JsonFormat.parser().ignoringUnknownFields().merge(body, txBodyBuilder)
