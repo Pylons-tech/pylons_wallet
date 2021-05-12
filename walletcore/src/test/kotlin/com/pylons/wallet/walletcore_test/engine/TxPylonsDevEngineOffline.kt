@@ -83,31 +83,27 @@ class TxPylonsDevEngineOffline {
     fun generateJson () {
         val fixture = """
         {
-        "tx":{
-        "msg":
-        [
-        {
-        "type":"pylons/GetPylons",
-        "value":{"Amount":[{"amount":"500","denom":"pylon"}],"Requester":"cosmos10s4mg25tu6termrk8egltfyme4q7sg3her239u"}
-        }
-        ],
-        
-        "fee":{
-        "amount":null,
-        "gas":"400000"
+        "body":{
+            "messages":[{
+                "@type":"/pylons.MsgGetPylons",
+                "Amount":[{"denom":"pylon","amount":"500"}],
+                "Requester":"cosmos1d8j4mpzltspqdguz0r56nncajuuaj72e7kq5yw"
+            }],
+            "memo":"",
+            "timeout_height":"0",
+            "extension_options":[],
+            "non_critical_extension_options":[]
         },
-        "signatures":[
-        {
-        "pub_key":{
-        "type":"tendermint/PubKeySecp256k1",
-        "value":"ApUOHN/LEz1gJBCf1In3NO60UCQY5TjChIHyK84nbySM"
+        "auth_info":{
+            "signer_infos":[],
+            "fee":{
+                "amount":[],
+                "gas_limit":"0",
+                "payer":"",
+                "granter":""
+            }
         },
-        "signature":"DHvh+CJTuWniwWJ0NHWQkzVptcaSa3X/E4iPklf7730PR2cMEXcTzDDO65TDQVM89IdpNxbULYT8P9uXr66A8Q=="
-        }
-        ],
-        "memo":""
-        },
-        "mode":"sync"
+        "signatures":[]
         }
         """.trimIndent().replace(" ", "")
         engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)

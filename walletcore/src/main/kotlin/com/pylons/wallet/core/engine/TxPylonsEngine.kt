@@ -29,7 +29,7 @@ import com.pylons.lib.types.tx.item.Item
 import com.pylons.lib.types.tx.msg.*
 import com.pylons.lib.types.tx.recipe.*
 import com.pylons.lib.types.tx.trade.TradeItemInput
-import java.io.ByteArrayOutputStream
+import com.pylons.wallet.core.internal.ProtoJsonUtil
 
 @ExperimentalUnsignedTypes
 open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
@@ -75,19 +75,25 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
 
     // Wiring
 
+    //modify Transaction Response
+    /**
+     * {  "tx_response": {    "height": "30707",    "txhash": "C8C06DDB0437666BF6531399F1B875443CB48F4513D5AC8B6398A9A37FC0F3B9",    "codespace": "",    "code": 0,    "data": "0A3D0A0E6372656174655F6163636F756E74122B0A207375636365737366756C6C79206372656174656420746865206163636F756E74120753756363657373",    "raw_log": "[{\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"create_account\"}]}]}]",    "logs": [      {        "msg_index": 0,        "log": "",        "events": [          {            "type": "message",            "attributes": [              {                "key": "action",                "value": "create_account"              }            ]          }        ]      }    ],    "info": "",    "gas_wanted": "400000",    "gas_used": "33100",    "tx": null,    "timestamp": ""  }}
+     */
+
     protected fun handleTx (func : (ICredentials) -> String) : Transaction {
         return Transaction(resolver =  {
             val response = postTxJson(func(core.userProfile!!.credentials))
             val jsonObject = Parser.default().parse(StringBuilder(response)) as JsonObject
+            val txObj = jsonObject.obj("tx_response") ?: throw Exception("Node returned null tx_response")
 
-            val code = jsonObject.int("code")
-            if (code != null) {
+            val code = txObj.int("code")
+            if (code != null && Transaction.ResponseCode.of(code) != Transaction.ResponseCode.OK) {
                 it.code = Transaction.ResponseCode.of(code)
-                it.raw_log = jsonObject.string("raw_log") ?: "Unknown Error"
-                throw Exception("Node returned error code $code for message - ${jsonObject.string("raw_log")}")
+                it.raw_log = txObj.string("raw_log") ?: "Unknown Error"
+                throw Exception("Node returned error code $code for message - ${txObj.string("raw_log")}")
             }
 
-            val error = jsonObject.string("error")
+            val error = txObj.string("error")
             if (error != null) {
                 it.code = Transaction.ResponseCode.UNKNOWN_ERROR
                 it.raw_log = error
@@ -95,7 +101,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             }
 
             // TODO: we should be doing smth else w/ this jsonobject?
-            val txhash = jsonObject.string("txhash")
+            val txhash = txObj.string("txhash")
             if (txhash != null) {
                 it.id = txhash
             } else {
@@ -113,7 +119,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         //Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
         //val response = HttpWire.post("""$nodeUrl/txs""", json)
         Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
-        val response = HttpWire.post("""$nodeUrl//cosmos/tx/v1beta1/txs""", json)
+        val response = HttpWire.post("""$nodeUrl/cosmos/tx/v1beta1/txs""", json)
         Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response
     }
@@ -280,7 +286,10 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun getTransaction(id: String): Transaction {
         return try {
             val response = HttpWire.get("$nodeUrl/txs/$id")
-            Transaction.parseTransactionResponse(id, response)
+            //Transaction.parseTransactionResponse(id, response)
+            val dataString = ProtoJsonUtil.TxProtoResponseParser(response)
+            Transaction.parseTransactionResponse(id, response, dataString!!)
+
         } catch (e : FileNotFoundException) {
             Transaction(
                 TxData("", "", listOf()), null, null, null,

@@ -1,8 +1,14 @@
 import kotlin.collections.*
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 
 plugins {
     java
     kotlin("jvm")
+    id("com.google.protobuf")
 }
 
 group = "com.pylons"
@@ -32,6 +38,7 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    protobuf(project(":protos"))
     implementation(project(":libkylons"))
     implementation(kotlin("stdlib-jdk8"))
 
@@ -70,6 +77,29 @@ dependencies {
 
 }
 
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${rootProject.ext["protobufVersion"]}"
+    }
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:${rootProject.ext["grpcVersion"]}"
+        }
+        id("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:${rootProject.ext["grpcKotlinVersion"]}:jdk7@jar"
+        }
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                id("grpc")
+                id("grpckt")
+            }
+        }
+    }
+}
+
 val jar by tasks.getting(Jar::class) {
     manifest {
         attributes["Class-Path"] = configurations.compile.get().joinToString { "$name " }
@@ -100,3 +130,12 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 //include protobuf generated classes
 sourceSets["main"].java.srcDir("build/generated/source/proto/main/java")
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType<Javadoc> {
+    options.encoding = "UTF-8"
+}
+

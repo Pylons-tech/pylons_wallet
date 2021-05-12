@@ -3,6 +3,7 @@ package com.pylons.wallet.walletcore_test.types.transaction
 import com.pylons.lib.types.Transaction
 import com.pylons.lib.types.tx.*
 import com.pylons.lib.types.tx.msg.ExecuteRecipe
+import com.pylons.wallet.core.internal.ProtoJsonUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -387,14 +388,16 @@ class TransactionTest {
                 TxDataOutput("COIN", "loudcoin", 2, ""),
                 TxDataOutput("ITEM", "", 0, "cosmos1sx8wmlcm7l7rulg7fam56ngxge4fsvxq76q28c0617c9e0-07ad-4052-96a0-d143c4ce015f")
         ))
-        val tx = Transaction.parseTransactionResponse("706D5C01916B0243CE44C99BE2C27CEC38B9BF60BBEA9B17C7EFF7A4370DE9A0", executeRecipeResponse)
+        val dataString = ProtoJsonUtil.TxProtoResponseParser(executeRecipeResponse)
+        val tx = Transaction.parseTransactionResponse("706D5C01916B0243CE44C99BE2C27CEC38B9BF60BBEA9B17C7EFF7A4370DE9A0", executeRecipeResponse, dataString)
         Assertions.assertEquals(expected, tx.txData)
     }
 
     @Test
     fun getTransactionErrorResponse() {
         val expected = TxData("", "", listOf())
-        val tx = Transaction.parseTransactionResponse("BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03", errorResponse)
+        val dataString = ProtoJsonUtil.TxProtoResponseParser(errorResponse)
+        val tx = Transaction.parseTransactionResponse("BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03", errorResponse, dataString)
         Assertions.assertEquals(expected, tx.txData)
 
         val expectedTransaction = Transaction(
@@ -414,7 +417,8 @@ class TransactionTest {
         val expected = TxData("successfully completed the execution", "Success", listOf(
                 TxDataOutput("ITEM", "", 0, "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337c07589a5-eeda-47d7-a80e-bf61652d025c")
         ))
-        val tx = Transaction.parseTransactionResponse("A85DCD7536C991657DD7D352760A6D0C18A8A7C634B33C7EDCC8CB2C9324E40C", checkExecutionResponse)
+        val dataString = ProtoJsonUtil.TxProtoResponseParser(checkExecutionResponse)
+        val tx = Transaction.parseTransactionResponse("A85DCD7536C991657DD7D352760A6D0C18A8A7C634B33C7EDCC8CB2C9324E40C", checkExecutionResponse, dataString)
         Assertions.assertEquals(expected, tx.txData)
     }
 
@@ -425,7 +429,8 @@ class TransactionTest {
     @Test
     fun getTransactionUpdateRecipeResponse() {
         val expected = TxData("successfully updated the recipe", "Success", listOf())
-        val tx = Transaction.parseTransactionResponse("E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61", updateRecipeResponse)
+        val dataString = ProtoJsonUtil.TxProtoResponseParser(updateRecipeResponse)
+        val tx = Transaction.parseTransactionResponse("E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61", updateRecipeResponse, dataString)
         Assertions.assertEquals(expected, tx.txData)
     }
 
@@ -436,7 +441,8 @@ class TransactionTest {
     @Test
     fun getTransactionInvalidData() {
         val expected = TxData("", "", listOf())
-        val tx = Transaction.parseTransactionResponse("E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61", invalidDataResponse)
+        val dataString = ProtoJsonUtil.TxProtoResponseParser(invalidDataResponse)
+        val tx = Transaction.parseTransactionResponse("E1DA899DC546450BBDD3CBA5C5746DDF5038DF78DCEA924005C6A36DBFA76F61", invalidDataResponse, dataString)
         Assertions.assertEquals(expected, tx.txData)
     }
 }

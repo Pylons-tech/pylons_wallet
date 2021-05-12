@@ -27,6 +27,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.logging.LogEvent
 import com.pylons.lib.logging.LogTag
 import com.pylons.lib.logging.Logger
+import com.pylons.wallet.core.internal.ProtoJsonUtil
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex

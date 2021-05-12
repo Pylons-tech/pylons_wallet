@@ -102,8 +102,8 @@ fun baseTemplateForTxs(tx_bytes: String, mode: BroadcastMode):String{
 
     return """
         {
-            "tx_bytes": ${tx_bytes},
-            "mode": ${mode.name}
+            "tx_bytes": "${tx_bytes}",
+            "mode": "${mode.name}"
         }
     """.trimIndent()
 }
