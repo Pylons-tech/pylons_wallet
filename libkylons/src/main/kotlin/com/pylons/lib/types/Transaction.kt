@@ -149,8 +149,6 @@ data class Transaction(
 
         fun parseTransactionResponse(id: String, response: String, data: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
-            val type = doc.obj("tx")?.obj("value")?.string("type").orEmpty()
-
             when {
                 doc.contains("code") -> {
                     return Transaction(

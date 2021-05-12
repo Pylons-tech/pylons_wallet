@@ -21,6 +21,10 @@ private annotation class MsgType (
         val serializedAs : String
 )
 
+private annotation class MsgResType(
+    val serializedAs: String
+)
+
 @ExperimentalUnsignedTypes
 sealed class Msg() {
     abstract fun serializeForIpc() : String
@@ -34,7 +38,7 @@ sealed class Msg() {
         fun fromJson (json : String) : Msg? = fromJson(Parser.default().parse(json) as JsonObject)
 
         fun fromJson (jsonObject: JsonObject) : Msg? {
-            val identifier = jsonObject["@type"] as String
+            val identifier = jsonObject["type"] as String
             val msgType = findMsgType(identifier)
                     ?:
                 throw Exception("No type matches message type $identifier")
@@ -45,8 +49,12 @@ sealed class Msg() {
 
         private fun findMsgType(type : String) : KClass<out Msg>? {
             Msg::class.sealedSubclasses.forEach {
-                val msgType = it.findAnnotation<MsgType>()
+                var msgType = it.findAnnotation<MsgType>()
                 if (msgType?.serializedAs == type) return it
+
+                var msgResType = it.findAnnotation<MsgResType>()
+                if (msgResType?.serializedAs == type) return it
+
             }
             return null
         }
@@ -88,6 +96,7 @@ sealed class Msg() {
 }
 //wonder this type is correct in new server protobuf
  @MsgType("/pylons.MsgCheckExecution")
+ @MsgResType("pylons/CheckExecution")
  data class CheckExecution (
          @property:[Json(name = "ExecID")]
          val execId : String,
@@ -111,6 +120,7 @@ sealed class Msg() {
  }
 
  @MsgType("/pylons.MsgCreateAccount")
+ @MsgResType("pylons/CreateAccount")
  data class CreateAccount(
          @property:[Json(name = "Requester")]
          val sender : String
@@ -128,6 +138,7 @@ sealed class Msg() {
  }
 
 @MsgType("/pylons.MsgCreateCookbook")
+@MsgResType("pylons/CreateCookbook")
 data class CreateCookbook (
         @property:[Json(name = "CookbookID")]
         val cookbookId : String,
@@ -169,7 +180,8 @@ data class CreateCookbook (
     }
 }
 
-@MsgType("pylons.MsgCreateRecipe")
+@MsgType("/pylons.MsgCreateRecipe")
+@MsgResType("pylons/MsgCreateRecipe")
 data class CreateRecipe (
     //optional RecipeID if someone - new server protobuf
     @property:[Json(name = "RecipeID")]
@@ -223,6 +235,7 @@ data class CreateRecipe (
 }
 
 @MsgType("/pylons.MsgCreateTrade")
+@MsgResType("pylons/CreateTrade")
 data class CreateTrade (
     @property:[Json(name = "CoinInputs")]
         val coinInputs : List<CoinInput>,
@@ -257,6 +270,7 @@ data class CreateTrade (
 }
 
 @MsgType("/pylons.MsgDisableRecipe")
+@MsgResType("pylons/DisableRecipe")
 data class DisableRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
@@ -276,7 +290,8 @@ data class DisableRecipe(
     }
 }
 
-@MsgType("/pylons.EnableRecipe")
+@MsgType("/pylons.MsgEnableRecipe")
+@MsgResType("pylons/EnableRecipe")
 data class EnableRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
@@ -297,6 +312,7 @@ data class EnableRecipe(
 }
 
 @MsgType("/pylons.MsgExecuteRecipe")
+@MsgResType("pylons/ExecuteRecipe")
 data class ExecuteRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
@@ -320,6 +336,7 @@ data class ExecuteRecipe(
 }
 
 @MsgType("/pylons.MsgEnableTrade")
+@MsgResType("pylons/EnableTrade")
 data class EnableTrade(
     @property:[Json(name = "TradeID")]
     val tradeId : String,
@@ -340,6 +357,7 @@ data class EnableTrade(
 }
 
 @MsgType("/pylons.MsgFiatItem")
+@MsgResType("pylons/FiatItem")
 data class FiatItem(
     @property:[Json(name = "CookbookID")]
     val cookbookId : String,
@@ -391,6 +409,7 @@ data class FiatItem(
 }
 
 @MsgType("/pylons.MsgFulfillTrade")
+@MsgResType("pylons/FulfillTrade")
 data class FulfillTrade (
         @property:[Json(name = "TradeID")]
         val tradeId : String,
@@ -414,6 +433,7 @@ data class FulfillTrade (
 }
 
 @MsgType("/pylons.MsgGetPylons")
+@MsgResType("pylons/GetPylons")
 data class GetPylons(
     @property:[Json(name = "Amount")]
     val amount : List<Coin>,
@@ -432,7 +452,9 @@ data class GetPylons(
         }
     }
 }
+
 @MsgType("/pylons.MsgDisableTrade")
+@MsgResType("pylons/DisableTrade")
 data class CancelTrade (
         @property:[Json(name = "TradeID")]
         val tradeId : String,
@@ -455,6 +477,7 @@ data class CancelTrade (
 
 
 @MsgType("/pylons.MsgSendCoins")
+@MsgResType("pylons/SendCoins")
 data class SendCoins(
         @property:[Json(name = "Amount")]
         val amount : List<Coin>,
@@ -477,7 +500,8 @@ data class SendCoins(
     }
 }
 
-@MsgType("pylons/UpdateCookbook")
+@MsgType("/pylons.MsgUpdateCookbook")
+@MsgResType("pylons/UpdateCookbook")
 data class UpdateCookbook(
         @property:[Json(name = "ID")]
         val id : String,
@@ -509,7 +533,8 @@ data class UpdateCookbook(
     }
 }
 
-@MsgType("pylons/UpdateItemString")
+@MsgType("/pylons.MsgUpdateItemString")
+@MsgResType("pylons/UpdateItemString")
 data class UpdateItemString (
         @property:[Json(name = "Field")]
         val field : String,
@@ -535,7 +560,8 @@ data class UpdateItemString (
     }
 }
 
-@MsgType("pylons/UpdateRecipe")
+@MsgType("/pylons.MsgUpdateRecipe")
+@MsgResType("pylons/UpdateRecipe")
 data class UpdateRecipe (
     @property:[Json(name = "BlockInterval")]
         val blockInterval : Long,
@@ -581,7 +607,8 @@ data class UpdateRecipe (
     }
 }
 
-@MsgType("pylons/SendItems")
+@MsgType("/pylons.MsgSendItems")
+@MsgResType("pylons/SendItems")
 data class SendItems(
         @property:[Json(name = "Receiver")]
         val receiver : String,
@@ -605,6 +632,7 @@ data class SendItems(
 }
 
 @MsgType("/pylons.MsgGoogleIAPGetPylons")
+@MsgResType("pylons/GoogleIAPGetPylons")
 data class GoogleIapGetPylons(
         @property:[Json(name = "ProductID")]
         val productId : String,

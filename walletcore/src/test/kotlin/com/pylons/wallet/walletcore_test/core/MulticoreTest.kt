@@ -114,6 +114,16 @@ class MulticoreTest {
         val c = Multicore.addCore(null)
         val prof = Core.current?.newProfile("aaa", null)
 
+        val profile = Core.current?.getProfile()
+
+        val trades = Core.current?.engine?.listTrades()
+
+        val cookbooks = Core.current?.engine?.listCookbooks()
+
+        val transaction = Core.current?.getTransaction("07EFAEEFC025455629271098565FF1F258D2D49B9B41BD787F2FAFFB6657DB8C")
+
+
+
         assert(Core.current == c)
         assert(c.userProfile!!.credentials.address == testCredentials.address)
     }

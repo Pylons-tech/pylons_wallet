@@ -133,7 +133,12 @@ object ProtoJsonUtil {
      */
     fun TxProtoResponseParser (response: String): String {
         val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
-        val type = doc.obj("tx")?.obj("value")?.string("type").orEmpty()
+        val msgs = doc.obj("tx")?.obj("value")?.array<JsonObject>("msg")
+        var type = ""
+        msgs?.forEach {
+            type = it.string("type").orEmpty()
+        }
+
         val data = doc.string("data").orEmpty()
 
         val dataString = hexToAscii(data)
@@ -252,6 +257,8 @@ object ProtoJsonUtil {
             txRaw.setAuthInfoBytes(ByteString.copyFrom(txAuthOutputStream.toByteArray()))
         }
     }
+
+
 
 
 }
