@@ -113,7 +113,7 @@ message MsgCreateCookbook {
 
 // MsgCreateCookbookResponse is a struct of create cookbook response
 message MsgCreateCookbookResponse  {
-  string  CookbookID = 1 [(gogoproto.jsontag) = "CookbookID"];
+  string  CookbookID = 1; // [(gogoproto.jsontag) = "CookbookID"];
   string  Message = 2;
   string  Status = 3;
 }

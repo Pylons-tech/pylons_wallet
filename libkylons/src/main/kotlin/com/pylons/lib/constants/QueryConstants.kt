@@ -3,6 +3,7 @@ package com.pylons.lib.constants
 class QueryConstants {
 
     companion object {
+        const val URL_items_by_sender = "/custom/pylons/items_by_sender/"
         const val URL_addr_from_pub_key = "/custom/pylons/addr_from_pub_key/"
         const val URL_check_google_iap_order = "/custom/pylons/check_google_iap_order/"
         const val URL_get_cookbook = "/custom/pylons/get_cookbook/"

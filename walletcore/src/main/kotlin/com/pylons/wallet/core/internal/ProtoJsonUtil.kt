@@ -1,18 +1,19 @@
 package com.pylons.wallet.core.internal
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import com.google.protobuf.*
 import com.google.protobuf.Any
-import com.google.protobuf.ByteString
-import com.google.protobuf.Message
-import com.google.protobuf.MessageOrBuilder
-import com.google.protobuf.TypeRegistry
 import com.google.protobuf.util.JsonFormat
 import com.pylons.lib.core.ICryptoHandler
 import com.pylons.lib.types.hexToAscii
 import cosmos.tx.v1beta1.TxOuterClass
+import org.spongycastle.util.encoders.Hex
 import pylons.*
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.io.InputStream
+import java.nio.charset.Charset
 import java.util.*
 import java.util.Base64.getEncoder
 
@@ -131,6 +132,7 @@ object ProtoJsonUtil {
      *  "fee":{"amount":[],"gas":"400000"},
      *  "signatures":[],"memo":"","timeout_height":"0"}},"timestamp":"2021-05-11T13:49:48Z"}
      */
+    // this never works
     fun TxProtoResponseParser (response: String): String {
         val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
         val msgs = doc.obj("tx")?.obj("value")?.array<JsonObject>("msg")
@@ -141,12 +143,14 @@ object ProtoJsonUtil {
 
         val data = doc.string("data").orEmpty()
 
+
         val dataString = hexToAscii(data)
         var builder: MessageOrBuilder? = null
+        /*
         when(type) {
             "pylons/CreateAccount"->{ builder = MsgCreateExecutionResponse.newBuilder().mergeFrom(dataString!!.toByteArray()).build() }
             "pylons/CheckExecution"->{ builder = MsgCheckExecutionResponse.newBuilder().mergeFrom(dataString!!.toByteArray()).build() }
-            "pylons/CreateCookbook"->{ builder = MsgCreateCookbookResponse.newBuilder().mergeFrom(dataString!!.toByteArray()).build() }
+            "pylons/CreateCookbook"->{ builder = MsgCreateCookbookResponse.newBuilder().mergeFrom(data.toByteArray()).build() }
             "pylons/CreateRecipe"->{ builder = MsgCreateRecipeResponse.newBuilder().mergeFrom(dataString!!.toByteArray()).build() }
             "pylons/CreateTrade"->{ builder = MsgCreateTradeResponse.newBuilder().mergeFrom(dataString!!.toByteArray()).build() }
             "pylons/DisableRecipe"->{ builder = MsgDisableRecipeResponse.newBuilder().mergeFrom(dataString!!.toByteArray()).build() }
@@ -164,6 +168,7 @@ object ProtoJsonUtil {
             "pylons/UpdateRecipe"->{ builder = MsgUpdateRecipeResponse.newBuilder().mergeFrom(dataString!!.toByteArray()).build() }
             ""->{}
         }
+         */
 
         if (builder != null) {
             return jsonProtoPrinter.print(builder)

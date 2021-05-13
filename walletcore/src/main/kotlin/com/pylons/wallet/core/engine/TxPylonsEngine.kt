@@ -212,7 +212,11 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         println("myProfile path")
         println(core.userProfile)
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${core.userProfile!!.credentials.address}")
-        val itemsJson = HttpWire.get("$nodeUrl/custom/pylons/items_by_sender/${core.userProfile!!.credentials.address}")
+        val itemsJson = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
+
+        val balanceJson = HttpWire.get("$nodeUrl${QueryConstants.URL_balance}${core.userProfile!!.credentials.address}")
+
+
         val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
@@ -220,7 +224,8 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             else -> {
                 val sequence = value.fuzzyLong("sequence")
                 val accountNumber = value.fuzzyLong("account_number")
-                val coins = Coin.listFromJson(value.array("coins"))
+                val amount = (Parser.default().parse(StringBuilder(balanceJson)) as JsonObject).string("balance")!!.toLong()
+                val coins = listOf(Coin("pylon", amount ))
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject)
                 val items = Item.listFromJson(valueItems.array("Items"))
                 val credentials = core.userProfile!!.credentials as CosmosCredentials
@@ -237,14 +242,19 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun getProfileState(addr: String): Profile? {
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/$addr")
         // this seems really wrong
-        val itemsJson = HttpWire.get("$nodeUrl/pylons/items_by_sender/$addr")
+        val itemsJson = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}$addr")
+        // retrieve balance
+        val balanceJson = HttpWire.get("$nodeUrl${QueryConstants.URL_balance}$addr")
+
+
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
             "" -> null
             else -> {
                 val sequence = value.fuzzyLong("sequence")
                 val accountNumber = value.fuzzyLong("account_number")
-                val coins = Coin.listFromJson(value.array("coins"))
+                val amount = (Parser.default().parse(StringBuilder(balanceJson)) as JsonObject).string("balance")!!.toLong()
+                val coins = listOf(Coin("pylon", amount ))
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject).obj("result")!!
                 val items = Item.listFromJson(valueItems.array("Items"))
                 return Profile(

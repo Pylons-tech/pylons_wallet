@@ -8,6 +8,7 @@ import com.pylons.wallet.core.engine.TxPylonsEngine
 import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.types.*
 import com.pylons.lib.types.credentials.CosmosCredentials
+import com.pylons.lib.types.tx.recipe.*
 import com.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.jce.provider.BouncyCastleProvider
@@ -112,6 +113,9 @@ class MulticoreTest {
         // todo: this should actually take a keypair as an argument
         Multicore.enable(config)
         val c = Multicore.addCore(null)
+
+
+
         val prof = Core.current?.newProfile("aaa", null)
 
         val profile = Core.current?.getProfile()
@@ -120,7 +124,87 @@ class MulticoreTest {
 
         val cookbooks = Core.current?.engine?.listCookbooks()
 
-        val transaction = Core.current?.getTransaction("07EFAEEFC025455629271098565FF1F258D2D49B9B41BD787F2FAFFB6657DB8C")
+        val recipes = Core.current?.engine?.listRecipes()
+
+        val transaction_recipe = Core.current?.engine!!.createRecipe(
+            name = "nft_test2",
+            cookbookId = "Easel_autocookbook_cosmos14ej234ktjt4gvhwhjwzwrq23avtvd5m2duddkd",
+            description = "nft description for nft test2",
+            blockInterval = 1,
+            coinInputs = listOf(
+                CoinInput("pylon", 100)
+            ),
+            itemInputs = listOf(),
+            entries = EntriesList(
+              coinOutputs = listOf(),
+              itemModifyOutputs = listOf(),
+              itemOutputs = listOf(
+                  ItemOutput(
+                      id = "nft_test2",
+                      doubles = listOf(
+                          DoubleParam(
+                              key="Residual%",
+                              program = "",
+                              rate = "1.0",
+                              weightRanges = listOf(
+                                  DoubleWeightRange(
+                                      upper="20",
+                                      lower="20",
+                                      weight = 1
+
+                                  )
+                              )
+                          )
+                      ),
+                      longs = listOf(
+                          LongParam(
+                              key="Quantity",
+                              program = "",
+                              rate = "1.0",
+                              weightRanges = listOf(
+                                  LongWeightRange(
+                                      upper = 10,
+                                      lower = 10,
+                                      weight = 1
+                                  )
+                              )
+                          )
+                      ),
+                      strings = listOf(
+                          StringParam(
+                              rate = "1.0",
+                              key = "Name",
+                              value="nft_2",
+                              program = ""
+                          ),
+                          StringParam(
+                              rate = "1.0",
+                              key = "NFT_URL",
+                              value="http://192.168.1.1",
+                              program = ""
+                          ),
+                          StringParam(
+                              rate = "1.0",
+                              key = "Description",
+                              value = "nft description description",
+                              program = ""
+                          )
+                      ),
+                      transferFee = 0
+                  )
+              )
+            ),
+            outputs = listOf(
+                WeightedOutput(
+                    entryIds = listOf(
+                        "nft_test2"
+                    ),
+                    weight = "1"
+                )
+            )
+        )
+
+        val transaction = Core.current?.getTransaction("E90C069556189847248D8B45890316D424414ACC72C331482C6F82A6DC20AD0F")
 
 
 
