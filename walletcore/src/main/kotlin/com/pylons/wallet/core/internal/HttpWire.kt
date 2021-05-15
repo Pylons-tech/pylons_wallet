@@ -15,6 +15,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import com.pylons.lib.klaxon
 import com.pylons.wallet.core.engine.TxPylonsEngine
+import javax.net.ssl.HttpsURLConnection
 
 /**
  * Object handling low-level network operations.
@@ -70,29 +71,60 @@ object HttpWire {
     fun post(url: String, input: String): String {
         println(input)
         Logger.implementation.log(LogEvent.HTTP_POST, """{"url":"$url", "input":$input}""", LogTag.info)
-        with(URL(url).openConnection() as HttpURLConnection) {
-            try {
-                doOutput = true
-                requestMethod = "POST"
-                val wr = OutputStreamWriter(outputStream)
-                wr.write(input)
-                wr.flush()
-                val response = getResponse(inputStream)
-                Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
-                return response
-            } catch (e: Exception) {
-                Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
-                if (errorStream != null) {
-                    val response = getResponse(errorStream)
+
+        if (url.startsWith("https://")) {
+            with(URL(url).openConnection() as HttpsURLConnection) {
+                try {
+                    doOutput = true
+                    requestMethod = "POST"
+                    val wr = OutputStreamWriter(outputStream)
+                    wr.write(input)
+                    wr.flush()
+                    val response = getResponse(inputStream)
                     Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
                     return response
-                } else {
-                    throw e
+                } catch (e: Exception) {
+                    Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
+                    if (errorStream != null) {
+                        val response = getResponse(errorStream)
+                        Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
+                        return response
+                    } else {
+                        throw e
+                    }
+                } finally {
+                    disconnect()
                 }
-            } finally {
-                disconnect()
             }
+
         }
+        else {
+            with(URL(url).openConnection() as HttpURLConnection) {
+                try {
+                    doOutput = true
+                    requestMethod = "POST"
+                    val wr = OutputStreamWriter(outputStream)
+                    wr.write(input)
+                    wr.flush()
+                    val response = getResponse(inputStream)
+                    Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
+                    return response
+                } catch (e: Exception) {
+                    Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
+                    if (errorStream != null) {
+                        val response = getResponse(errorStream)
+                        Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
+                        return response
+                    } else {
+                        throw e
+                    }
+                } finally {
+                    disconnect()
+                }
+            }
+
+        }
+
     }
 
     private fun getResponse(inputStream: InputStream): String {

@@ -204,7 +204,7 @@ class MulticoreTest {
             )
         )
 
-        val transaction = Core.current?.getTransaction("E90C069556189847248D8B45890316D424414ACC72C331482C6F82A6DC20AD0F")
+        //val transaction = Core.current?.getTransaction("E90C069556189847248D8B45890316D424414ACC72C331482C6F82A6DC20AD0F")
 
 
 
