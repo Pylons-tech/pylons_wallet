@@ -9,10 +9,13 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.types.*
 import com.pylons.lib.types.credentials.CosmosCredentials
 import com.pylons.lib.types.tx.recipe.*
+import com.pylons.wallet.core.internal.HttpWire
 import com.pylons.wallet.core.internal.InternalPrivKeyStore
+import com.pylons.wallet.core.internal.ProtoJsonUtil
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.*
+import pylons.Pylons
 import java.security.Security
 
 @ExperimentalUnsignedTypes
@@ -114,8 +117,6 @@ class MulticoreTest {
         Multicore.enable(config)
         val c = Multicore.addCore(null)
 
-
-
         val prof = Core.current?.newProfile("aaa", null)
 
         val profile = Core.current?.getProfile()
@@ -124,7 +125,16 @@ class MulticoreTest {
 
         val cookbooks = Core.current?.engine?.listCookbooks()
 
-        val recipes = Core.current?.engine?.listRecipes()
+        //http://10.0.2.2:1317/txs/B4A8B0DE37A77C68FFB48AB6D47ADCAA0623FAA7EC50ED11C03A9A4B26B94592
+        val transaction = Core.current?.getTransaction("B4A8B0DE37A77C68FFB48AB6D47ADCAA0623FAA7EC50ED11C03A9A4B26B94592")
+
+        val url = "http://127.0.0.1:1317/custom/pylons/list_recipe/cosmos139rpmrte2x6gyrnmlkr73pfeeqnfcpdqt5sf86"
+        val msg = HttpWire.get(url)
+        val recipes = Recipe.listFromJson(
+            msg
+        )
+
+        //val recipes = Core.current?.engine?.listRecipes()
 
         val transaction_recipe = Core.current?.engine!!.createRecipe(
             name = "nft_test2",

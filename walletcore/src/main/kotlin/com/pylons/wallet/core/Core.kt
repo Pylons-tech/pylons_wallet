@@ -50,6 +50,9 @@ class Core(val config : Config) : ICore {
     companion object {
         var current : Core? = null
             private set
+
+        const val chain_id = "pylonschain"
+        //const val chain_id = "pylons-testnet" //testnet chain
     }
 
     override val userData = UserData(this)
@@ -232,7 +235,7 @@ class Core(val config : Config) : ICore {
         val authInfo = builder.buildAuthInfo(Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()),sequence,gas)
         val bodyInfo = builder.buildTxbody(msg)
         builder.buildProtoTxBuilder(bodyInfo, authInfo)
-        val signDoc = builder.signDoc(accountNumber, "pylonschain")
+        val signDoc = builder.signDoc(accountNumber, chain_id)
 
         val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
         builder.addSignature(cryptoHandler, signDoc!!)

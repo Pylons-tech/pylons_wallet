@@ -181,7 +181,7 @@ data class CreateCookbook (
 }
 
 @MsgType("/pylons.MsgCreateRecipe")
-@MsgResType("pylons/MsgCreateRecipe")
+@MsgResType("pylons/CreateRecipe")
 data class CreateRecipe (
     //optional RecipeID if someone - new server protobuf
     @property:[Json(name = "RecipeID")]
@@ -214,20 +214,25 @@ data class CreateRecipe (
 
     companion object {
         @MsgParser
+
         fun parse (jsonObject: JsonObject) : CreateRecipe {
+            var blockInterval:Long = 0
+            if (jsonObject.containsKey("BlockInterval")){
+               blockInterval =  jsonObject.string("BlockInterval")!!.toLong()
+            }
             return CreateRecipe(
-                    recipeId=jsonObject.string("RecipeID")!!,
-                    name = jsonObject.string("Name")!!,
-                    description = jsonObject.string("Description")!!,
-                    cookbookId = jsonObject.string("CookbookID")!!,
-                    sender = jsonObject.string("Sender")!!,
-                    blockInterval = jsonObject.string("BlockInterval")!!.toLong(),
+                    recipeId=jsonObject.string("RecipeID").orEmpty(),
+                    name = jsonObject.string("Name").orEmpty(),
+                    description = jsonObject.string("Description").orEmpty(),
+                    cookbookId = jsonObject.string("CookbookID").orEmpty(),
+                    sender = jsonObject.string("Sender").orEmpty(),
+                    blockInterval = blockInterval,
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
                         EntriesList(listOf(), listOf(), listOf()),
                     outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs")),
-                    extraInfo = jsonObject.string("ExtraInfo")!!
+                    extraInfo = jsonObject.string("ExtraInfo").orEmpty()
 
             )
         }

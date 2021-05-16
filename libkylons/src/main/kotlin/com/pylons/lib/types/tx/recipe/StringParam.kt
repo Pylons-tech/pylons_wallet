@@ -19,7 +19,7 @@ data class StringParam (
                                 rate = jsonObject.string("Rate")!!,
                                 key = jsonObject.string("Key")!!,
                                 value = jsonObject.string("Value")!!,
-                                program = jsonObject.string("Program")!!
+                                program = jsonObject.string("Program").orEmpty()
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<StringParam> {

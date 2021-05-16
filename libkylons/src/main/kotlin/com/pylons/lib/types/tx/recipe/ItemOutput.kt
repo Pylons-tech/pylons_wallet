@@ -25,7 +25,7 @@ data class ItemOutput(
                                 longs = LongParam.listFromJson(jsonObject.array("Long")),
                                 strings = StringParam.listFromJson(jsonObject.array("Strings")),
                                 // TODO: hard coded empty list?
-                                transferFee = jsonObject.long("TransferFee")!!
+                                transferFee = jsonObject.long("TransferFee") ?: 0
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<ItemOutput> {

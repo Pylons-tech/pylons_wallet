@@ -38,6 +38,7 @@ object HttpWire {
         Logger.implementation.log(LogEvent.HTTP_GET, """{"url":"$url"}""", LogTag.info)
         var retryCount = 0
         while (true) {
+
             with(URL(url).openConnection() as HttpURLConnection) {
                 try {
                     requestMethod = "GET"
@@ -72,57 +73,28 @@ object HttpWire {
         println(input)
         Logger.implementation.log(LogEvent.HTTP_POST, """{"url":"$url", "input":$input}""", LogTag.info)
 
-        if (url.startsWith("https://")) {
-            with(URL(url).openConnection() as HttpsURLConnection) {
-                try {
-                    doOutput = true
-                    requestMethod = "POST"
-                    val wr = OutputStreamWriter(outputStream)
-                    wr.write(input)
-                    wr.flush()
-                    val response = getResponse(inputStream)
+        with(URL(url).openConnection() as HttpURLConnection) {
+            try {
+                doOutput = true
+                requestMethod = "POST"
+                val wr = OutputStreamWriter(outputStream)
+                wr.write(input)
+                wr.flush()
+                val response = getResponse(inputStream)
+                Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
+                return response
+            } catch (e: Exception) {
+                Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
+                if (errorStream != null) {
+                    val response = getResponse(errorStream)
                     Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
                     return response
-                } catch (e: Exception) {
-                    Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
-                    if (errorStream != null) {
-                        val response = getResponse(errorStream)
-                        Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
-                        return response
-                    } else {
-                        throw e
-                    }
-                } finally {
-                    disconnect()
+                } else {
+                    throw e
                 }
+            } finally {
+                disconnect()
             }
-
-        }
-        else {
-            with(URL(url).openConnection() as HttpURLConnection) {
-                try {
-                    doOutput = true
-                    requestMethod = "POST"
-                    val wr = OutputStreamWriter(outputStream)
-                    wr.write(input)
-                    wr.flush()
-                    val response = getResponse(inputStream)
-                    Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
-                    return response
-                } catch (e: Exception) {
-                    Logger().log(LogEvent.HTTP_POST_EXCEPTION, e.toString(), LogTag.error)
-                    if (errorStream != null) {
-                        val response = getResponse(errorStream)
-                        Logger().log(LogEvent.HTTP_POST, response, LogTag.info)
-                        return response
-                    } else {
-                        throw e
-                    }
-                } finally {
-                    disconnect()
-                }
-            }
-
         }
 
     }

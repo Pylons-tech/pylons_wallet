@@ -19,7 +19,7 @@ data class DoubleParam (
                                 rate = jsonObject.string("Rate")!!,
                                 key = jsonObject.string("Key")!!,
                                 weightRanges = DoubleWeightRange.listFromJson(jsonObject.array("WeightRanges")!!),
-                                program = jsonObject.string("Program")!!
+                                program = jsonObject.string("Program").orEmpty()
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<DoubleParam> {
