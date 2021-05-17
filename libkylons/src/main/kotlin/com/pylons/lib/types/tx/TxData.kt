@@ -13,10 +13,12 @@ data class TxData(
     companion object {
         fun fromJson(jsonObject: JsonObject): TxData {
             val mList = mutableListOf<TxDataOutput>()
+            /*
             jsonObject.array<JsonObject>("Output")?.forEach {
                 mList.add(TxDataOutput.fromJson(it)
                         ?: throw Exception("Failed to parse message:\n ${it.toJsonString()}"))
             }
+             */
 
             return TxData(
                     msg = jsonObject.string("Message") ?: "",

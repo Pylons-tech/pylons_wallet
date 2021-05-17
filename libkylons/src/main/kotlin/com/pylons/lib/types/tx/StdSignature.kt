@@ -16,6 +16,7 @@ data class StdSignature(
                         val mList = mutableListOf<StdSignature>()
                         jsonArray.forEach {
                                 mList.add(StdSignature(
+                                        //tierre confirm keys
                                         signature = it.string("signature")!!,
                                         pubKey = PubKey.fromJson(it.obj("pub_key")!!)
                                 ))

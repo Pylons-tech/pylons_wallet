@@ -267,7 +267,9 @@ abstract class Wallet {
      */
     fun listRecipes(callback: (List<Recipe>)->Unit) {
         sendMessage(Recipe::class, Message.GetRecipes()) {
+
             val response = it as Response
+            println("listRecipes ${response.recipesOut.count()}")
 
             callback(response.recipesOut)
         }

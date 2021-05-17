@@ -5,9 +5,7 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.pylons.ipc.Message
 import com.pylons.ipc.Response
-import com.pylons.lib.PubKeyUtil
-import com.pylons.lib.baseJsonTemplateForTxPost
-import com.pylons.lib.baseJsonTemplateForTxSignature
+import com.pylons.lib.*
 import com.pylons.lib.core.ICore
 import com.pylons.lib.core.IEngine
 import com.pylons.lib.core.ILowLevel
@@ -29,6 +27,7 @@ import com.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.pylons.lib.logging.LogEvent
 import com.pylons.lib.logging.LogTag
 import com.pylons.lib.logging.Logger
+import com.pylons.wallet.core.internal.ProtoJsonUtil
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex
@@ -51,6 +50,9 @@ class Core(val config : Config) : ICore {
     companion object {
         var current : Core? = null
             private set
+
+        const val chain_id = "pylonschain"
+        //const val chain_id = "pylons-testnet" //testnet chain
     }
 
     override val userData = UserData(this)
@@ -157,6 +159,68 @@ class Core(val config : Config) : ICore {
         return sane && started
     }
 
+
+    //to-do: Tierre cosmos v1beta1 Tx build Json from Tx proto
+    /**
+     * ref: C:\Users\jin\Downloads\cosmos-client-ts-main\cosmos-client-ts-main\src\rest\cosmos\bank\bank.spec.ts
+     * pls refer this tx composition/signing/broadcasting logic
+     *
+    const msgSend = new cosmos.bank.v1beta1.MsgSend({
+    from_address: fromAddress.toString(),
+    to_address: toAddress.toString(),
+    amount: [{ denom: 'token', amount: '10' }],
+    });
+
+    const txBody = new cosmos.tx.v1beta1.TxBody({
+    messages: [cosmosclient.codec.packAny(msgSend)],
+    });
+    const authInfo = new cosmos.tx.v1beta1.AuthInfo({
+    signer_infos: [
+    {
+    public_key: cosmosclient.codec.packAny(pubKey),
+    mode_info: {
+    single: {
+    mode: cosmos.tx.signing.v1beta1.SignMode.SIGN_MODE_DIRECT,
+    },
+    },
+    sequence: account.sequence,
+    },
+    ],
+    fee: {
+    gas_limit: cosmosclient.Long.fromString('200000'),
+    },
+    });
+
+    // sign
+    const txBuilder = new cosmosclient.TxBuilder(sdk, txBody, authInfo);
+    const signDoc = txBuilder.signDoc(account.account_number);
+    txBuilder.addSignature(privKey, signDoc);
+
+    // broadcast
+    try {
+    const res = await rest.cosmos.tx.broadcastTx(sdk, {
+    tx_bytes: txBuilder.txBytes(),
+    mode: rest.cosmos.tx.BroadcastTxMode.Block,
+    });
+    console.log(res);
+    } catch (e) {
+    console.error(e);
+    }
+     *
+     */
+    /**
+     * ORG Code:
+     *
+    val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
+    val signable = baseJsonTemplateForTxSignature(signComponent, sequence, accountNumber, gas)
+    Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
+    val signBytes = signable.toByteArray(Charsets.UTF_8)
+    val signatureBytes = cryptoHandler.signature(signBytes)
+    val signature = Base64.toBase64String(signatureBytes)
+
+    return baseJsonTemplateForTxPost(msg, Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()), signature, 400000)
+    */
+
     override fun buildJsonForTxPost(
         msg: String,
         signComponent: String,
@@ -165,13 +229,18 @@ class Core(val config : Config) : ICore {
         pubkey: PylonsSECP256K1.PublicKey,
         gas: Long
     ): String {
+
+        val builder = ProtoJsonUtil.TxProtoBuilder()
+
+        val authInfo = builder.buildAuthInfo(Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()),sequence,gas)
+        val bodyInfo = builder.buildTxbody(msg)
+        builder.buildProtoTxBuilder(bodyInfo, authInfo)
+        val signDoc = builder.signDoc(accountNumber, chain_id)
+
         val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
-        val signable = baseJsonTemplateForTxSignature(signComponent, sequence, accountNumber, gas)
-        Logger().log(LogEvent.SIGNABLE, signable, LogTag.info)
-        val signBytes = signable.toByteArray(Charsets.UTF_8)
-        val signatureBytes = cryptoHandler.signature(signBytes)
-        val signature = Base64.toBase64String(signatureBytes)
-        return baseJsonTemplateForTxPost(msg, Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()), signature, 400000)
+        builder.addSignature(cryptoHandler, signDoc!!)
+
+        return baseTemplateForTxs(builder.txBytes()!!, BroadcastMode.BROADCAST_MODE_BLOCK)
     }
 
     fun getProfile() = getProfile(null)

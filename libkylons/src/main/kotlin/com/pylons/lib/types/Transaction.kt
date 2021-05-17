@@ -99,8 +99,55 @@ data class Transaction(
 
             return list
         }
-
+        /*
         fun parseTransactionResponse(id: String, response: String): Transaction {
+            val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
+            val type = doc.obj("tx")?.obj("value")?.string("type").orEmpty()
+
+            when {
+                doc.contains("code") -> {
+                    return Transaction(
+                        stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                        _id = id,
+                        code = ResponseCode.of(doc.int("code")),
+                        raw_log = doc.string("raw_log") ?: "Unknown Error"
+                    )
+                }
+                doc.containsKey("data") -> {
+                    try {
+                        //tierre change to proto tx response data parsing
+                        val dataString = hexToAscii(doc.string("data")!!)
+                        val dataObject = (Parser.default().parse(java.lang.StringBuilder(dataString)) as JsonObject)
+                        if (dataObject.containsKey("Output") && dataObject.string("Output") != null) {
+                            val arrayString = String(Base64.getDecoder().decode(dataObject.string("Output")))
+                            val outputArray = Parser.default().parse(StringBuilder(arrayString)) as JsonArray<JsonObject>
+                            dataObject["Output"] = outputArray
+                        }
+
+                        return Transaction(
+                            txData = TxData.fromJson(dataObject),
+                            stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                            _id = id
+                        )
+                    } catch (e: Exception) {
+                        return Transaction(
+                            stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                            _id = id
+                        )
+                    }
+                }
+                else -> {
+                    return Transaction(
+                        stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
+                        _id = id
+                    )
+                }
+            }
+        }
+        */
+
+
+        fun parseTransactionResponse(id: String, response: String, data: String): Transaction {
             val doc = Parser.default().parse(java.lang.StringBuilder(response)) as JsonObject
             when {
                 doc.contains("code") -> {
@@ -113,16 +160,21 @@ data class Transaction(
                 }
                 doc.containsKey("data") -> {
                     try {
-                        val dataString = hexToAscii(doc.string("data")!!)
+                        //tierre change to proto tx response data parsing
+                        //val dataString = hexToAscii(doc.string("data")!!)
+                        val dataString = data
+
+                        /*
                         val dataObject = (Parser.default().parse(java.lang.StringBuilder(dataString)) as JsonObject)
                         if (dataObject.containsKey("Output") && dataObject.string("Output") != null) {
                             val arrayString = String(Base64.getDecoder().decode(dataObject.string("Output")))
                             val outputArray = Parser.default().parse(StringBuilder(arrayString)) as JsonArray<JsonObject>
                             dataObject["Output"] = outputArray
                         }
+                         */
 
                         return Transaction(
-                            txData = TxData.fromJson(dataObject),
+                            txData = TxData(msg = "", status = "", output = listOf()), //TxData.fromJson(dataObject),
                             stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                             _id = id
                         )

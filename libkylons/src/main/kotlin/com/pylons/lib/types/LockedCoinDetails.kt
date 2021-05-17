@@ -17,7 +17,7 @@ data class LockedCoinDetails(
     companion object {
         fun fromJson(jsonObject: JsonObject): LockedCoinDetails =
                 LockedCoinDetails(
-                        sender = jsonObject.string("Sender")!!,
+                        sender = jsonObject.string("sender")!!,
                         amount = Coin.listFromJson(jsonObject.array("Amount")),
                         lockCoinTrades = LockedCoinDescribe.listFromJson(jsonObject.array("LockCoinTrades")),
                         lockCoinExecs = LockedCoinDescribe.listFromJson(jsonObject.array("LockCoinExecs"))

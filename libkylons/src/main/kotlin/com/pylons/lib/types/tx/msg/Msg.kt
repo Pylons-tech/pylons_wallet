@@ -2,12 +2,11 @@ package com.pylons.lib.types.tx.msg
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Json
+import com.beust.klaxon.JsonArray
 import com.beust.klaxon.Parser
-import com.pylons.lib.EmptyArray
-import com.pylons.lib.JsonModelSerializer
-import com.pylons.lib.SerializationMode
+import com.pylons.lib.*
 import com.pylons.lib.core.ICore
-import com.pylons.lib.klaxon
+import com.pylons.lib.internal.fuzzyLong
 import com.pylons.lib.types.credentials.CosmosCredentials
 import com.pylons.lib.types.tx.Coin
 import com.pylons.lib.types.tx.item.Item
@@ -20,6 +19,10 @@ import kotlin.reflect.full.*
 private annotation class MsgParser
 private annotation class MsgType (
         val serializedAs : String
+)
+
+private annotation class MsgResType(
+    val serializedAs: String
 )
 
 @ExperimentalUnsignedTypes
@@ -46,8 +49,12 @@ sealed class Msg() {
 
         private fun findMsgType(type : String) : KClass<out Msg>? {
             Msg::class.sealedSubclasses.forEach {
-                val msgType = it.findAnnotation<MsgType>()
+                var msgType = it.findAnnotation<MsgType>()
                 if (msgType?.serializedAs == type) return it
+
+                var msgResType = it.findAnnotation<MsgResType>()
+                if (msgResType?.serializedAs == type) return it
+
             }
             return null
         }
@@ -64,15 +71,21 @@ sealed class Msg() {
 
     private fun toMsgJson () : String {
         val msgType = this::class.annotations.find { it is MsgType } as? MsgType
+        // tierre: protobuf change
+        var msg = JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)
+        if (msg != "null") {
+            msg = msg.substring(1, msg.length-1) //remove outer brackets: {}
+        }
         return """
             [
             {
-                "type": "${msgType?.serializedAs.orEmpty()}",
-                "value": ${JsonModelSerializer.serialize(SerializationMode.FOR_BROADCAST, this)}
+                "@type": "${msgType?.serializedAs.orEmpty()}",
+                ${msg}
             }
             ]"""
     }
 
+    //Tierre modify here for signed Tx
     fun toSignedTx () : String {
         val c = core!!.userProfile!!.credentials as CosmosCredentials
         val crypto = core!!.engine.cryptoHandler
@@ -81,8 +94,9 @@ sealed class Msg() {
 
     fun toSignStruct () : String = "[${JsonModelSerializer.serialize(SerializationMode.FOR_SIGNING, this)}]"
 }
-
- @MsgType("pylons/CheckExecution")
+//wonder this type is correct in new server protobuf
+ @MsgType("/pylons.MsgCheckExecution")
+ @MsgResType("pylons/CheckExecution")
  data class CheckExecution (
          @property:[Json(name = "ExecID")]
          val execId : String,
@@ -105,7 +119,8 @@ sealed class Msg() {
      }
  }
 
- @MsgType("pylons/CreateAccount")
+ @MsgType("/pylons.MsgCreateAccount")
+ @MsgResType("pylons/CreateAccount")
  data class CreateAccount(
          @property:[Json(name = "Requester")]
          val sender : String
@@ -122,7 +137,8 @@ sealed class Msg() {
      }
  }
 
-@MsgType("pylons/CreateCookbook")
+@MsgType("/pylons.MsgCreateCookbook")
+@MsgResType("pylons/CreateCookbook")
 data class CreateCookbook (
         @property:[Json(name = "CookbookID")]
         val cookbookId : String,
@@ -130,16 +146,16 @@ data class CreateCookbook (
         val name : String,
         @property:[Json(name = "Description")]
         val description : String,
-        @property:[Json(name = "Developer")]
-        val developer : String,
         @property:[Json(name = "Version")]
         val version : String,
+        @property:[Json(name = "Developer")]
+        val developer : String,
         @property:[Json(name = "SupportEmail")]
         val supportEmail : String,
-        @property:[Json(name = "Sender")]
-        val sender : String,
         @property:[Json(name = "Level")]
         val level : Long,
+        @property:[Json(name = "Sender")]
+        val sender : String,
         @property:[Json(name = "CostPerBlock")]
         val costPerBlock : Long
 ): Msg() {
@@ -164,26 +180,32 @@ data class CreateCookbook (
     }
 }
 
-@MsgType("pylons/CreateRecipe")
+@MsgType("/pylons.MsgCreateRecipe")
+@MsgResType("pylons/CreateRecipe")
 data class CreateRecipe (
+    //optional RecipeID if someone - new server protobuf
+    @property:[Json(name = "RecipeID")]
+    val recipeId: String,
+    @property:[Json(name = "Name")]
+    val name : String,
+    @property:[Json(name = "CookbookID")]
+    val cookbookId : String,
+    @property:[Json(name = "CoinInputs")]
+    val coinInputs : List<CoinInput>,
+    @property:[Json(name = "ItemInputs")]
+    val itemInputs : List<ItemInput>,
+    @property:[Json(name = "Outputs")]
+    val outputs : List<WeightedOutput>,
     @property:[Json(name = "BlockInterval")]
         val blockInterval : Long,
-    @property:[Json(name = "CoinInputs")]
-        val coinInputs : List<CoinInput>,
-    @property:[Json(name = "CookbookID")]
-        val cookbookId : String,
+    @property:[Json(name = "Sender")]
+    val sender : String,
     @property:[Json(name = "Description")]
         val description: String,
     @property:[Json(name = "Entries")]
         val entries : EntriesList,
-    @property:[Json(name = "Outputs")]
-        val outputs : List<WeightedOutput>,
-    @property:[Json(name = "ItemInputs")]
-        val itemInputs : List<ItemInput>,
-    @property:[Json(name = "Name")]
-        val name : String,
-    @property:[Json(name = "Sender")]
-        val sender : String
+    @property:[Json(name = "ExtraInfo")] //newly added field
+        val extraInfo: String
 
 
 ): Msg() {
@@ -192,36 +214,44 @@ data class CreateRecipe (
 
     companion object {
         @MsgParser
+
         fun parse (jsonObject: JsonObject) : CreateRecipe {
+            var blockInterval:Long = 0
+            if (jsonObject.containsKey("BlockInterval")){
+               blockInterval =  jsonObject.string("BlockInterval")!!.toLong()
+            }
             return CreateRecipe(
-                    name = jsonObject.string("Name")!!,
-                    description = jsonObject.string("Description")!!,
-                    cookbookId = jsonObject.string("CookbookID")!!,
-                    sender = jsonObject.string("Sender")!!,
-                    blockInterval = jsonObject.string("BlockInterval")!!.toLong(),
+                    recipeId=jsonObject.string("RecipeID").orEmpty(),
+                    name = jsonObject.string("Name").orEmpty(),
+                    description = jsonObject.string("Description").orEmpty(),
+                    cookbookId = jsonObject.string("CookbookID").orEmpty(),
+                    sender = jsonObject.string("Sender").orEmpty(),
+                    blockInterval = blockInterval,
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
                         EntriesList(listOf(), listOf(), listOf()),
-                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
+                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs")),
+                    extraInfo = jsonObject.string("ExtraInfo").orEmpty()
 
             )
         }
     }
 }
 
-@MsgType("pylons/CreateTrade")
+@MsgType("/pylons.MsgCreateTrade")
+@MsgResType("pylons/CreateTrade")
 data class CreateTrade (
     @property:[Json(name = "CoinInputs")]
         val coinInputs : List<CoinInput>,
-    @property:[Json(name = "CoinOutputs") EmptyArray]
-        val coinOutputs : List<Coin>,
-    @property:[Json(name = "ExtraInfo")]
-        val extraInfo : String,
     @property:[Json(name = "ItemInputs")]
         val itemInputs: List<TradeItemInput>,
+    @property:[Json(name = "CoinOutputs") EmptyArray]
+        val coinOutputs : List<Coin>,
     @property:[Json(name = "ItemOutputs")]
-        val itemOutputs: List<Item>,
+    val itemOutputs: List<Item>,
+    @property:[Json(name = "ExtraInfo")]
+        val extraInfo : String,
     @property:[Json(name = "Sender")]
         val sender : String
 ): Msg() {
@@ -244,7 +274,8 @@ data class CreateTrade (
     }
 }
 
-@MsgType("pylons/DisableRecipe")
+@MsgType("/pylons.MsgDisableRecipe")
+@MsgResType("pylons/DisableRecipe")
 data class DisableRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
@@ -264,7 +295,8 @@ data class DisableRecipe(
     }
 }
 
-@MsgType("pylons/EnableRecipe")
+@MsgType("/pylons.MsgEnableRecipe")
+@MsgResType("pylons/EnableRecipe")
 data class EnableRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
@@ -284,14 +316,15 @@ data class EnableRecipe(
     }
 }
 
-@MsgType("pylons/ExecuteRecipe")
+@MsgType("/pylons.MsgExecuteRecipe")
+@MsgResType("pylons/ExecuteRecipe")
 data class ExecuteRecipe(
         @property:[Json(name = "RecipeID")]
         val recipeId : String,
-        @property:[Json(name = "ItemIDs")]
-        val itemIds : List<String>,
         @property:[Json(name = "Sender")]
-        val sender : String
+        val sender : String,
+        @property:[Json(name = "ItemIDs")]
+        val itemIds : List<String>
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -307,14 +340,88 @@ data class ExecuteRecipe(
     }
 }
 
-@MsgType("pylons/FulfillTrade")
+@MsgType("/pylons.MsgEnableTrade")
+@MsgResType("pylons/EnableTrade")
+data class EnableTrade(
+    @property:[Json(name = "TradeID")]
+    val tradeId : String,
+    @property:[Json(name = "Sender")]
+    val sender : String
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : EnableTrade {
+            return EnableTrade(
+                tradeId = jsonObject.string("TradeID")!!,
+                sender = jsonObject.string("Sender")!!
+            )
+        }
+    }
+}
+
+@MsgType("/pylons.MsgFiatItem")
+@MsgResType("pylons/FiatItem")
+data class FiatItem(
+    @property:[Json(name = "CookbookID")]
+    val cookbookId : String,
+    @property:[Json(name = "Doubles") QuotedJsonNumeral]
+    val doubles: Map<String, Double>,
+    @property:[Json(name = "Longs") QuotedJsonNumeral]
+    val longs: Map<String, Long>,
+    @property:[Json(name = "Strings")]
+    val strings: Map<String, String>,
+    @property:[Json(name = "Sender")]
+    val sender : String,
+    @property:[Json(name = "TransferFee")]
+    val transferFee: Long
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : FiatItem {
+            val jsonDoubleArray = jsonObject.array<JsonObject>("Doubles")
+            val mmDoubles = mutableMapOf<String, Double>()
+            if (jsonDoubleArray != null) {
+                jsonDoubleArray.forEach { mmDoubles[it.string("Key")!!] = it.string("Value")!!.toDouble() }
+            }
+
+            val jsonLongArray = jsonObject.array<JsonObject>("Longs")
+            val mmLongs = mutableMapOf<String, Long>()
+            if (jsonLongArray != null) {
+                jsonLongArray.forEach { mmLongs[it.string("Key")!!] = it.string("Value")!!.toLong() }
+            }
+
+            val jsonStringArray = jsonObject.array<JsonObject>("Strings")
+            val mmStrings = mutableMapOf<String, String>()
+            if (jsonStringArray != null) {
+                jsonStringArray.forEach { mmStrings[it.string("Key")!!] = it.string("Value")!!.toString() }
+            }
+
+
+            return FiatItem(
+                cookbookId = jsonObject.string("CookbookID")!!,
+                doubles = mmDoubles,
+                longs = mmLongs,
+                strings = mmStrings,
+                sender = jsonObject.string("Sender")!!,
+                transferFee = jsonObject.long("TransferFee")!!
+            )
+        }
+    }
+}
+
+@MsgType("/pylons.MsgFulfillTrade")
+@MsgResType("pylons/FulfillTrade")
 data class FulfillTrade (
         @property:[Json(name = "TradeID")]
         val tradeId : String,
-        @property:[Json(name = "ItemIDs")]
-        val itemIds : List<String>,
         @property:[Json(name = "Sender")]
-        val sender : String
+        val sender : String,
+        @property:[Json(name = "ItemIDs")]
+        val itemIds : List<String>
 ): Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -330,7 +437,29 @@ data class FulfillTrade (
     }
 }
 
-@MsgType("pylons/DisableTrade")
+@MsgType("/pylons.MsgGetPylons")
+@MsgResType("pylons/GetPylons")
+data class GetPylons(
+    @property:[Json(name = "Amount")]
+    val amount : List<Coin>,
+    @property:[Json(name = "Requester")]
+    val sender : String
+) : Msg() {
+    override fun serializeForIpc(): String = klaxon.toJsonString(this)
+
+    companion object {
+        @MsgParser
+        fun parse (jsonObject: JsonObject) : GetPylons {
+            return GetPylons(
+                amount = Coin.listFromJson(jsonObject.array("Amount")!!),
+                sender = jsonObject.string("Requester")!!
+            )
+        }
+    }
+}
+
+@MsgType("/pylons.MsgDisableTrade")
+@MsgResType("pylons/DisableTrade")
 data class CancelTrade (
         @property:[Json(name = "TradeID")]
         val tradeId : String,
@@ -351,27 +480,9 @@ data class CancelTrade (
     }
 }
 
-@MsgType("pylons/GetPylons")
-data class GetPylons(
-        @property:[Json(name = "Amount")]
-        val amount : List<Coin>,
-        @property:[Json(name = "Requester")]
-        val sender : String
-) : Msg() {
-    override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
-    companion object {
-        @MsgParser
-        fun parse (jsonObject: JsonObject) : GetPylons {
-            return GetPylons(
-                    amount = Coin.listFromJson(jsonObject.array("Amount")!!),
-                    sender = jsonObject.string("Requester")!!
-            )
-        }
-    }
-}
-
-@MsgType("pylons/SendCoins")
+@MsgType("/pylons.MsgSendCoins")
+@MsgResType("pylons/SendCoins")
 data class SendCoins(
         @property:[Json(name = "Amount")]
         val amount : List<Coin>,
@@ -394,7 +505,8 @@ data class SendCoins(
     }
 }
 
-@MsgType("pylons/UpdateCookbook")
+@MsgType("/pylons.MsgUpdateCookbook")
+@MsgResType("pylons/UpdateCookbook")
 data class UpdateCookbook(
         @property:[Json(name = "ID")]
         val id : String,
@@ -426,7 +538,8 @@ data class UpdateCookbook(
     }
 }
 
-@MsgType("pylons/UpdateItemString")
+@MsgType("/pylons.MsgUpdateItemString")
+@MsgResType("pylons/UpdateItemString")
 data class UpdateItemString (
         @property:[Json(name = "Field")]
         val field : String,
@@ -452,7 +565,8 @@ data class UpdateItemString (
     }
 }
 
-@MsgType("pylons/UpdateRecipe")
+@MsgType("/pylons.MsgUpdateRecipe")
+@MsgResType("pylons/UpdateRecipe")
 data class UpdateRecipe (
     @property:[Json(name = "BlockInterval")]
         val blockInterval : Long,
@@ -498,7 +612,8 @@ data class UpdateRecipe (
     }
 }
 
-@MsgType("pylons/SendItems")
+@MsgType("/pylons.MsgSendItems")
+@MsgResType("pylons/SendItems")
 data class SendItems(
         @property:[Json(name = "Receiver")]
         val receiver : String,
@@ -521,7 +636,8 @@ data class SendItems(
     }
 }
 
-@MsgType("pylons/GoogleIAPGetPylons")
+@MsgType("/pylons.MsgGoogleIAPGetPylons")
+@MsgResType("pylons/GoogleIAPGetPylons")
 data class GoogleIapGetPylons(
         @property:[Json(name = "ProductID")]
         val productId : String,

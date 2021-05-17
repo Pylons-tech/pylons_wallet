@@ -33,10 +33,12 @@ tasks.withType<Test> {
 }
 
 dependencies {
+
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
+
 
     implementation("com.google.guava:guava:28.2-jre")
     implementation("commons-codec:commons-codec:1.14")
@@ -57,7 +59,9 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
+
 }
+
 
 val jar by tasks.getting(Jar::class) {
     manifest {
@@ -86,3 +90,5 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         sourceCompatibility = jVer
     }
 }
+
+

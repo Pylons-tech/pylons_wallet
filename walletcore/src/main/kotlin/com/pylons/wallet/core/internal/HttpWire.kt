@@ -1,6 +1,7 @@
 package com.pylons.wallet.core.internal
 
 import com.pylons.lib.PubKeyUtil
+import com.pylons.lib.constants.QueryConstants
 import com.pylons.lib.types.PylonsSECP256K1
 import com.pylons.lib.logging.LogEvent
 import com.pylons.lib.logging.Logger
@@ -14,6 +15,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import com.pylons.lib.klaxon
 import com.pylons.wallet.core.engine.TxPylonsEngine
+import javax.net.ssl.HttpsURLConnection
 
 /**
  * Object handling low-level network operations.
@@ -24,7 +26,7 @@ object HttpWire {
     var verbose = false
 
     fun getAddressFromNode (nodeUrl : String, keyPair: PylonsSECP256K1.KeyPair) : String {
-        val json = HttpWire.get("$nodeUrl/pylons/addr_from_pub_key/" +
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_addr_from_pub_key}" +
                 Hex.toHexString(PubKeyUtil.getCompressedPubkey(keyPair.publicKey()).toArray()))
         return klaxon.parse<TxPylonsEngine.AddressResponse>(json)!!.Bech32Addr!!
     }
@@ -36,6 +38,7 @@ object HttpWire {
         Logger.implementation.log(LogEvent.HTTP_GET, """{"url":"$url"}""", LogTag.info)
         var retryCount = 0
         while (true) {
+
             with(URL(url).openConnection() as HttpURLConnection) {
                 try {
                     requestMethod = "GET"
@@ -69,6 +72,7 @@ object HttpWire {
     fun post(url: String, input: String): String {
         println(input)
         Logger.implementation.log(LogEvent.HTTP_POST, """{"url":"$url", "input":$input}""", LogTag.info)
+
         with(URL(url).openConnection() as HttpURLConnection) {
             try {
                 doOutput = true
@@ -92,6 +96,7 @@ object HttpWire {
                 disconnect()
             }
         }
+
     }
 
     private fun getResponse(inputStream: InputStream): String {
