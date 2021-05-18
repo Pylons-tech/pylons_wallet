@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.pylons"
+group = "tech.pylons"
 version = "1.0-SNAPSHOT"
 
 //sourceCompatibility = 1.8

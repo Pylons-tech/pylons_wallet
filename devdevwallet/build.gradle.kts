@@ -10,7 +10,7 @@ plugins {
     application
 }
 
-group = "com.pylons"
+group = "tech.pylons"
 version = "0.1"
 
 val spongycastleVer = "1.58.0.0"
@@ -25,7 +25,7 @@ configure<JavaPluginConvention> {
 
 application {
     applicationName = "Pylons DevDevWallet"
-    mainClass.set("com.pylons.devdevwallet.Main")
+    mainClass.set("tech.pylons.devdevwallet.Main")
     mainClassName = mainClass.get() // this is deprecated but evidently something in shadowjar is still using it
 }
 

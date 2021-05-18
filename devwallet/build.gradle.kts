@@ -13,7 +13,7 @@ plugins {
     application
 }
 
-group = "com.pylons"
+group = "tech.pylons"
 version = "0.1"
 
 val compileKotlin: KotlinCompile by tasks
@@ -28,7 +28,7 @@ configure<JavaPluginConvention> {
 
 application {
     applicationName = "Pylons DevWallet"
-    mainClassName = "com.pylons.devwallet.DevWalletApp"
+    mainClassName = "tech.pylons.devwallet.DevWalletApp"
 }
 
 javafx {
