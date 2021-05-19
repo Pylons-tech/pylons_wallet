@@ -13,6 +13,6 @@ UILayer is the subsystem that allows walletcore to pause processing data in orde
 
 All wallet applications must include one class that extends UILayer, annotated w/ the UILayer.Implementation annotation. The UILayer class with this annotation will be automatically loaded and used by WalletCore at runtime.
 
-UILayer works by adding and releasing UIHooks. (See com.pylons.wallet.ipc.Message.UIHook.) Each message handled by the wallet creates a UIHook and runs your implementation's onAddUiHook method w/ its own UIHook as an argument. Most messages - those that do not require runtime user data input - will then immediately release their own UIHook, hitting your onReleaseUiHook method and your IpcLayer's onUiReleased method in that order. The message will then be resolved with the provided data, and any backend data transformation will take place.
+UILayer works by adding and releasing UIHooks. (See tech.pylons.wallet.ipc.Message.UIHook.) Each message handled by the wallet creates a UIHook and runs your implementation's onAddUiHook method w/ its own UIHook as an argument. Most messages - those that do not require runtime user data input - will then immediately release their own UIHook, hitting your onReleaseUiHook method and your IpcLayer's onUiReleased method in that order. The message will then be resolved with the provided data, and any backend data transformation will take place.
 
 In general, wallet applications should not accept user input while they have live (unreleased) UIHooks.

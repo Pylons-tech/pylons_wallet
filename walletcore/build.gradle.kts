@@ -11,7 +11,7 @@ plugins {
     id("com.google.protobuf")
 }
 
-group = "com.pylons"
+group = "tech.pylons"
 version = "0.1"
 val ketheriumVer = "0.83.4"
 val spongycastleVer = "1.58.0.0"

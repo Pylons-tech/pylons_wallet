@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.pylons"
+group = "tech.pylons"
 version = "0.1a"
 val ketheriumVer = "0.81.2"
 val spongycastleVer = "1.58.0.0"
