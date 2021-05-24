@@ -13,17 +13,15 @@ abstract class DroidIpcWire {
     protected abstract fun readString(): String?
 
     companion object {
-        val HANDSHAKE_MAGIC = "__PYLONS_WALLET_SERVER"
-        val HANDSHAKE_REPLY_MAGIC = "__PYLONS_WALLET_CLIENT"
+        private const val HANDSHAKE_MAGIC = "__PYLONS_WALLET_SERVER"
+        private const val HANDSHAKE_REPLY_MAGIC = "__PYLONS_WALLET_CLIENT"
 
         var implementation: DroidIpcWire? = null
 
-        //according to the libkylon, these values to be in IPCLayer
+        //according to the libkylons, these values to be in IPCLayer
         var clientId: Int = Random.nextInt()
         var walletId: Int = 0
         var messageId: Int = 0
-        var appName = ""
-        var appPkgName = ""
 
         data class HandshakeMsg(
             @property:[Json(name = "MAGIC")]
@@ -67,7 +65,7 @@ abstract class DroidIpcWire {
          *
          * return true if handshake succeed, or false when fails
          */
-        fun doHandshake(appName: String, appPkgName: String): Boolean {
+        private fun doHandshake(appName: String, appPkgName: String): Boolean {
             try {
                 val msg = HandshakeReplyMsg(
                     MAGIC_REPLY = HANDSHAKE_REPLY_MAGIC,
@@ -75,20 +73,20 @@ abstract class DroidIpcWire {
                     appName = appName,
                     appPkgName = appPkgName
                 )
-                val str_msg = klaxon.toJsonString(msg)
-                writeMessage("${HANDSHAKE_REPLY_MAGIC}${str_msg}")
-                println("IPC Reply HandShake Msg sent ${str_msg}")
+                val strMsg = klaxon.toJsonString(msg)
+                writeMessage("$HANDSHAKE_REPLY_MAGIC$strMsg")
+                println("IPC Reply HandShake Msg sent $strMsg")
 
-                val ret_msg = readMessage()
-                if (ret_msg != null) {
-                    val server_msg = klaxon.parse<HandshakeMsg>(ret_msg.removePrefix(HANDSHAKE_MAGIC))
-                    if (server_msg?.MAGIC == HANDSHAKE_MAGIC) {
-                        walletId = server_msg.walletId.toInt()
+                val retMsg = readMessage()
+                if (retMsg != null) {
+                    val serverMsg = klaxon.parse<HandshakeMsg>(retMsg.removePrefix(HANDSHAKE_MAGIC))
+                    if (serverMsg?.MAGIC == HANDSHAKE_MAGIC) {
+                        walletId = serverMsg.walletId.toInt()
                         return true
                     }
                 }
             } catch (e: Error) {
-                println("DoHandshake error: ${e}")
+                println("DoHandshake error: $e")
             }
 
             return false
@@ -96,16 +94,16 @@ abstract class DroidIpcWire {
 
         fun makeRequestMessage(message: Message): String {
             val jsonString = klaxon.toJsonString(message)
-            println("request msg: ${jsonString}")
-            var msgJson =
+            println("request msg: $jsonString")
+            val msgJson =
                 Base64.getEncoder().encodeToString(
                     jsonString.toByteArray(Charsets.US_ASCII)
                 )
-            return """{"type":"${message.javaClass.simpleName}", "msg":"$msgJson", "messageId":${messageId++}, "clientId":${clientId}, "walletId": ${walletId}}"""
+            return """{"type":"${message.javaClass.simpleName}", "msg":"$msgJson", "messageId":${messageId++}, "clientId":$clientId, "walletId": $walletId}"""
         }
 
         fun writeMessage(s: String) {
-            //wallet handshake not intiated
+            //wallet handshake not initiated
             implementation!!.writeString(s)
         }
 
@@ -123,11 +121,12 @@ abstract class DroidIpcWire {
                     return ret
                 }
 
-                //pls think on it. readMessage only takes 10 sec?
-                //if (elapsedMillis > 10 * 1000L) { // no response for 10 secs
-                //    println("Error: Wallet is busy or connection to wallet is unavailable. Try again later!")
-                //    return null
-                //}
+                // pls think on it. readMessage only takes 10 sec?
+                // --> If it didn't respond for over 1 min, we could regard it has a problem.
+                if (elapsedMillis > 60 * 1000L) { // no response for 60 secs
+                    println("Error: Talking to wallet is not available at the moment!")
+                    return null
+                }
             }
         }
     }
