@@ -345,6 +345,14 @@ abstract class Wallet {
         }
     }
 
+    /**
+     * getWebLinkForAndroid
+     *
+     * @return String?
+     */
+    fun getWebLinkForAndroid(recipeName:String, recipeId:String):String {
+        return "http://tech.pylons/wallet?action=purchase_nft&recipe_id=$recipeId&nft_amount=1"
+    }
 
     fun android() : AndroidWallet = AndroidWallet.instance
 
