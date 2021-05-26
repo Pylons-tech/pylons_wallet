@@ -3,6 +3,7 @@ import kotlin.collections.*
 plugins {
     java
     kotlin("jvm")
+    `maven-publish`
 }
 
 group = "tech.pylons"
@@ -85,5 +86,36 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         }
         jvmTarget = jVer
         sourceCompatibility = jVer
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            pom {
+                name.set("Pylons httpipc")
+                description.set("Generic proof-of-concept implementation of Pylons IPC primitives using local HTTP")
+                url.set("https://pylons.tech")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("Pylons-tech")
+                        name.set("Pylons LLC")
+                        email.set("info@pylons.tech")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/Pylons-tech/pylons_wallet.git")
+                    developerConnection.set("scm:git:ssh://github.com/Pylons-tech/pylons_wallet.git")
+                    url.set("http://github.com/Pylons-tech/pylons_wallet/")
+                }
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ plugins {
     java
     kotlin("jvm")
     id("com.google.protobuf")
+    `maven-publish`
 }
 
 group = "tech.pylons"
@@ -139,3 +140,33 @@ tasks.withType<Javadoc> {
     options.encoding = "UTF-8"
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            pom {
+                name.set("Pylons WalletCore")
+                description.set("Library providing basic functionality for Pylons wallets")
+                url.set("https://pylons.tech")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("Pylons-tech")
+                        name.set("Pylons LLC")
+                        email.set("info@pylons.tech")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/Pylons-tech/pylons_wallet.git")
+                    developerConnection.set("scm:git:ssh://github.com/Pylons-tech/pylons_wallet.git")
+                    url.set("http://github.com/Pylons-tech/pylons_wallet/")
+                }
+            }
+        }
+    }
+}
