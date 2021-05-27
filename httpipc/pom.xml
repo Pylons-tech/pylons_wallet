@@ -6,11 +6,11 @@
   <!-- that they should prefer consuming it instead. -->
   <!-- do_not_remove: published-with-gradle-metadata -->
   <modelVersion>4.0.0</modelVersion>
-  <groupId>tech.pylons.lib</groupId>
-  <artifactId>libkylons</artifactId>
-  <version>0.1</version>
-  <name>libkylons</name>
-  <description>Library providing common functionality for interacting with the Pylons ecosystem</description>
+  <groupId>tech.pylons</groupId>
+  <artifactId>httpipc</artifactId>
+  <version>0.1a</version>
+  <name>Pylons httpipc</name>
+  <description>Generic proof-of-concept implementation of Pylons IPC primitives using local HTTP</description>
   <url>https://pylons.tech</url>
   <licenses>
     <license>
@@ -31,6 +31,18 @@
     <url>http://github.com/Pylons-tech/pylons_wallet/</url>
   </scm>
   <dependencies>
+    <dependency>
+      <groupId>tech.pylons.lib</groupId>
+      <artifactId>libkylons</artifactId>
+      <version>0.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>tech.pylons</groupId>
+      <artifactId>walletcore</artifactId>
+      <version>0.1</version>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib-jdk8</artifactId>
@@ -75,12 +87,6 @@
     </dependency>
     <dependency>
       <groupId>com.madgag.spongycastle</groupId>
-      <artifactId>core</artifactId>
-      <version>1.58.0.0</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.madgag.spongycastle</groupId>
       <artifactId>prov</artifactId>
       <version>1.58.0.0</version>
       <scope>runtime</scope>
@@ -88,12 +94,6 @@
     <dependency>
       <groupId>com.madgag.spongycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.58.0.0</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.madgag.spongycastle</groupId>
-      <artifactId>bcpg-jdk15on</artifactId>
       <version>1.58.0.0</version>
       <scope>runtime</scope>
     </dependency>
@@ -112,37 +112,43 @@
     <dependency>
       <groupId>com.github.walleth.kethereum</groupId>
       <artifactId>bip32</artifactId>
-      <version>0.83.4</version>
+      <version>0.81.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.github.walleth.kethereum</groupId>
       <artifactId>bip39</artifactId>
-      <version>0.83.4</version>
+      <version>0.81.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.github.walleth.kethereum</groupId>
       <artifactId>bip39_wordlist_en</artifactId>
-      <version>0.83.4</version>
+      <version>0.81.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.github.walleth.kethereum</groupId>
       <artifactId>crypto_api</artifactId>
-      <version>0.83.4</version>
+      <version>0.81.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.github.walleth.kethereum</groupId>
-      <artifactId>crypto_impl_bouncycastle</artifactId>
-      <version>0.83.4</version>
+      <artifactId>crypto_impl_spongycastle</artifactId>
+      <version>0.81.2</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.github.walleth.kethereum</groupId>
       <artifactId>model</artifactId>
-      <version>0.83.4</version>
+      <version>0.81.2</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
+      <version>4.8.87</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
