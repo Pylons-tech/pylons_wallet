@@ -4,6 +4,7 @@ plugins {
     id("com.google.protobuf") version "0.8.15" apply false
     idea
     java
+    `maven-publish`
 }
 
 
