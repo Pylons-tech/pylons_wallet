@@ -7,9 +7,9 @@
   <!-- do_not_remove: published-with-gradle-metadata -->
   <modelVersion>4.0.0</modelVersion>
   <groupId>tech.pylons.lib</groupId>
-  <artifactId>libkylons</artifactId>
+  <artifactId>libpylons</artifactId>
   <version>0.1</version>
-  <name>libkylons</name>
+  <name>libpylons</name>
   <description>Library providing common functionality for interacting with the Pylons ecosystem</description>
   <url>https://pylons.tech</url>
   <licenses>

@@ -40,7 +40,7 @@ tasks.withType<Test> {
 
 dependencies {
     protobuf(project(":protos"))
-    implementation(project(":libkylons"))
+    implementation(project(":libpylons"))
     implementation(kotlin("stdlib-jdk8"))
 
     //protobuf lib

@@ -1,4 +1,4 @@
-package tech.pylons.wallet.libkylons.constants
+package tech.pylons.wallet.libpylons.constants
 
 class ReservedKeys {
     companion object {

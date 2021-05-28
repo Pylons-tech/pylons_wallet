@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":libkylons"))
+    implementation(project(":libpylons"))
     implementation(project(":walletcore"))
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

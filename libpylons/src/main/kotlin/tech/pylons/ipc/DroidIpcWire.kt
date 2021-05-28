@@ -18,7 +18,7 @@ abstract class DroidIpcWire {
 
         var implementation: DroidIpcWire? = null
 
-        //according to the libkylons, these values to be in IPCLayer
+        //according to the libpylons, these values to be in IPCLayer
         var clientId: Int = Random.nextInt()
         var walletId: Int = 0
         var messageId: Int = 0

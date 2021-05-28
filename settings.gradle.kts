@@ -9,9 +9,9 @@
 
 rootProject.name = "pylons_wallet"
 
-//include(":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libkylons")
+//include(":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libpylons")
 //protobuf gRPC support addition: Tierre
-include(":protos", ":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libkylons")
+include(":protos", ":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libpylons")
 
 
 pluginManagement {
