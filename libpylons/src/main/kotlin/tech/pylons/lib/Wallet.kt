@@ -132,11 +132,15 @@ abstract class Wallet {
     }
 
     /**
-     * buyItem (trade : Trade, callback: (Transaction?) -> Unit)
-     * FulfillTrade
+     * Creates and resolves a Transaction to fulfill trades where the only required input is a cost in Pylons
+     * without further user input. Calls callback with the transaction afterward. Transaction may fail,
+     * and callback should handle that case.
      *
-     * @param trade
-     * @return Transaction?
+     * Underlying transaction message type is FulfillTrade.
+     *
+     * @param trade The ID of the trade to be fulfilled.
+     * @param callback Callback to fire after completing handling of the transaction. Should accept a single parameter
+     *  of type Transaction? and return Unit or void.
      */
     fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
         sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {
@@ -151,52 +155,25 @@ abstract class Wallet {
     }
 
     /**
-     * CreateCookbooks
+     * Creates and resolves a Transaction to create a cookbook with an auto-generated name and default parameters,
+     * as follows:
      *
-     * Cookbook Id Naming Convention: ${main_cookbook_code}_${appName}_${identifier}_${identifier}
-     * Cookbook Id should contains Cookbook Creator App's Name
-
-     * @param ids
-     * @param names
-     * @param developers
-     * @param descriptions
-     * @param versions
-     * @param supportEmails
-     * @param levels
-     * @param costsPerBlock
-     * @return List<Cookbook>
-     */
-    fun createCookbooks(ids : List<String>,
-                       names : List<String>,
-                       developers : List<String>,
-                       descriptions : List<String>,
-                       versions : List<String>,
-                       supportEmails : List<String>,
-                       levels : List<Long>,
-                       costsPerBlock : List<Long>,
-                       callback: (List<Transaction>)->Unit) {
-        sendMessage(Transaction::class, Message.CreateCookbooks(
-            ids = ids,
-            names = names,
-            developers = developers,
-            descriptions = descriptions,
-            versions = versions,
-            supportEmails = supportEmails,
-            levels = levels,
-            costsPerBlock = costsPerBlock
-        )){
-            val response = it as Response
-            callback(response.txs)
-        }
-    }
-
-    /**
-     * CreateAutoCookbook
-     * Cookbook is unique per app/ per pylons account
-     * Cookbook Id Naming Convention: ${main_cookbook_code}_${appName}_${identifier}_${identifier}
-     * Cookbook Id should contains Cookbook Creator App's Name
+     * ```
+     *  Auto-cookbook identifier convention: ${appName}_autocookbook_${profile.address}
+     *  Cookbook ID, name, developer: auto-cookbook identifier
+     *  Cookbook description: "$appName autocookbook for use by managed applications"
+     *  Cookbook version: 1.0.0
+     *  Cookbook support email: support@pylons.tech
+     *  Cookbook level: 1
+     *  Cost per block: 1
+     *```
      *
-     * @return Transaction?
+     * Underlying transaction message type is CreateCookbook.
+     *
+     * @param profile Profile of current wallet user.
+     * @param appName Name of application autocookbook is to be generated for.
+     * @param callback Callback to fire after completing handling of the transaction. Should accept a single parameter
+     *  of type Transaction? and return Unit or void.
      */
     fun createAutoCookbook(profile: Profile, appName:String, callback: (Transaction?) -> Unit) {
         sendMessage(
@@ -206,7 +183,7 @@ abstract class Wallet {
                 listOf("${appName}_autocookbook_${profile.address}"),
                 listOf("${appName}_autocookbook_${profile.address}"),
                 listOf("${appName}_autocookbook_${profile.address}"),
-                listOf("${appName} autocookbook for use by managed appliations"),
+                listOf("$appName autocookbook for use by managed applications"),
                 listOf("1.0.0"),
                 listOf("support@pylons.tech"),
                 listOf(1),
@@ -222,6 +199,61 @@ abstract class Wallet {
             }
             callback(tx)
         } // i don't exactly know what the correct way to handle level/costs is atm
+    }
+
+    /**
+     * Creates and resolves a Transaction to create one or more cookbooks with manually-supplied parameters.
+     * This is a batch operation to facilitate writing automated or semi-automated recipe management tools.
+     * If only a single cookbook is being created, use lists of length 1 to supply parameters. All parameters must
+     * be of the same length, or an exception will be thrown.
+     *
+     * Underlying transaction message type is CreateCookbook. This function creates multiple transactions.
+     *
+     * @param ids List of IDs to be used for the cookbooks being created.
+     * @param names List of names to be used for the cookbooks being created.
+     * @param developers List of developer names to be used for the cookbooks being created. Under most circumstances,
+     *  all developer-name fields in a single operation should be identical.
+     * @param descriptions List of human-readable descriptions to be used for the cookbooks being created.
+     * @param versions List of versions to be used for the cookbooks being created.
+     * @param supportEmails List of support email addressed to be used for the cookbooks being created. Under most
+     *  circumstances, all support-email fields in a single operation should be identical.
+     * @param levels List of levels to be used for the cookbooks being created.( Level is a deprecated field
+     *  that no longer exists on the Pylons node, and will be removed from libpylons and all other projects in
+     *  the pylons-wallet monorepo in a future refactor.)
+     * @param costsPerBlock List of cost-per-block values to be used for the cookbooks being created.
+     * @param callback Callback to fire after completing handling of all transactions. Should accept a single parameter
+     *  of type List<Transaction> and return Unit or void.
+     */
+    fun createCookbooks(ids : List<String>,
+                       names : List<String>,
+                       developers : List<String>,
+                       descriptions : List<String>,
+                       versions : List<String>,
+                       supportEmails : List<String>,
+                       levels : List<Long>,
+                       costsPerBlock : List<Long>,
+                       callback: (List<Transaction>)->Unit) {
+
+        // Verify params before doing anything to make sure we don't go ahead, do a few transactions, and then crash
+
+        if (names.size != ids.size || developers.size != ids.size || descriptions.size != ids.size ||
+            versions.size != ids.size || supportEmails.size != ids.size || levels.size != ids.size ||
+            costsPerBlock.size != ids.size)
+                throw IllegalArgumentException("All parameters of batch operation createCookbooks must be same size")
+
+        sendMessage(Transaction::class, Message.CreateCookbooks(
+            ids = ids,
+            names = names,
+            developers = developers,
+            descriptions = descriptions,
+            versions = versions,
+            supportEmails = supportEmails,
+            levels = levels,
+            costsPerBlock = costsPerBlock
+        )){
+            val response = it as Response
+            callback(response.txs)
+        }
     }
 
     /**
