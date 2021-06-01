@@ -40,7 +40,7 @@ tasks.withType<Test> {
 
 dependencies {
     protobuf(project(":protos"))
-    implementation(project(":libkylons"))
+    implementation(project(":libpylons"))
     implementation(project(":walletcore"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(gradleApi())

@@ -30,7 +30,7 @@ application {
 }
 
 dependencies {
-    implementation(project(":libkylons"))
+    implementation(project(":libpylons"))
     implementation(project(":walletcore"))
     implementation(project(":httpipc"))
 

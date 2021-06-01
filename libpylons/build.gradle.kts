@@ -97,7 +97,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             pom {
-                name.set("libkylons")
+                name.set("libpylons")
                 description.set("Library providing common functionality for interacting with the Pylons ecosystem")
                 url.set("https://pylons.tech")
                 licenses {

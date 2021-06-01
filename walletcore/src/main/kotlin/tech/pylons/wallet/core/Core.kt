@@ -51,8 +51,8 @@ class Core(val config : Config) : ICore {
         var current : Core? = null
             private set
 
-        const val chain_id = "pylonschain"
-        //const val chain_id = "pylons-testnet" //testnet chain
+        //const val chain_id = "pylonschain"
+        const val chain_id = "pylons-testnet" //testnet chain
     }
 
     override val userData = UserData(this)

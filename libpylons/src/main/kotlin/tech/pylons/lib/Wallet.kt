@@ -23,8 +23,6 @@ abstract class Wallet {
         fun android() : AndroidWallet = AndroidWallet.instance
 
         fun devDevWallet() : DevDevWallet = DevDevWallet.instance
-
-        var isInitiated:Boolean = false
     }
     /**
      * Signature for the method what we call to pass messages into the
@@ -36,22 +34,6 @@ abstract class Wallet {
      * True if an IPC target exists; false otherwise.
      */
     abstract fun exists (callback : (Boolean) -> Unit)
-
-    /**
-     * initWallet(appName: String, appClassName:String, callback:(Boolean) -> Unit)
-     * call after ipc connection first establishes.
-     * initiates Handshake with wallet
-     *
-     * @param   appName: String - caller app's Display Name
-     * @param   appPkgName: String - app's Package Name
-     *
-     * @return  when initiation success return true, else return false
-     */
-    fun initWallet(appName: String, appPkgName:String, callback:(Boolean) -> Unit) {
-        val ret = DroidIpcWire.DoHandshake(appName, appPkgName)
-        isInitiated = ret
-        callback(ret)
-    }
 
     /**
      * fetchProfile (address : String?, callback: (Profile?) -> Unit)
@@ -352,7 +334,7 @@ abstract class Wallet {
      *
      * @return Transaction?
      */
-    fun BuyPylons(callback: (Transaction?)->Unit) {
+    fun buyPylons(callback: (Transaction?)->Unit) {
         sendMessage(Transaction::class, Message.BuyPylons()) {
             val response = it as Response
             var tx: Transaction? = null
@@ -363,6 +345,14 @@ abstract class Wallet {
         }
     }
 
+    /**
+     * getWebLinkForAndroid
+     *
+     * @return String?
+     */
+    fun getWebLinkForAndroid(recipeName:String, recipeId:String):String {
+        return "http://tech.pylons/wallet?action=purchase_nft&recipe_id=$recipeId&nft_amount=1"
+    }
 
     fun android() : AndroidWallet = AndroidWallet.instance
 
