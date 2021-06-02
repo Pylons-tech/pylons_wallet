@@ -166,6 +166,8 @@ interface IEngine {
     /** List recipes query */
     fun listRecipes () : List<Recipe>
 
+    fun listRecipesBySender() : List<Recipe>
+
     /** List cookbooks query */
     fun listCookbooks () : List<Cookbook>
 
@@ -178,4 +180,8 @@ interface IEngine {
     fun getLockedCoins () : LockedCoin
 
     fun getLockedCoinDetails () : LockedCoinDetails
+
+    fun getRecipe(recipeId: String) : Recipe?
+
+    fun listRecipesByCookbookId(cookbookId: String) : List<Recipe>
 }

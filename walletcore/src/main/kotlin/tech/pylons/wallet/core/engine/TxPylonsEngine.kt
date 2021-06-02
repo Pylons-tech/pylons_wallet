@@ -309,6 +309,11 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listRecipes(): List<Recipe> {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe}")
+        return Recipe.listFromJson(json)
+    }
+
+    override fun listRecipesBySender(): List<Recipe> {
         val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe}${core.userProfile!!.credentials.address}")
         return Recipe.listFromJson(json)
     }
@@ -415,4 +420,31 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
+
+    override fun getRecipe(recipeId: String): Recipe? {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_recipe}$recipeId")
+
+        val jsonObject = (Parser.default().parse(StringBuilder(json)) as JsonObject)
+        return Recipe(
+            nodeVersion = jsonObject.string("NodeVersion")!!,
+            cookbookId = jsonObject.string("CookbookID")!!,
+            name = jsonObject.string("Name")!!,
+            id = jsonObject.string("ID")!!,
+            description = jsonObject.string("Description")!!,
+            sender = jsonObject.string("Sender")!!,
+            blockInterval = jsonObject.fuzzyLong("BlockInterval"),
+            disabled = jsonObject.boolean("Disabled")!!,
+            coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
+            itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
+            entries = EntriesList.fromJson(jsonObject.obj("Entries"))!!,
+            outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))!!
+        )
+    }
+
+    override fun listRecipesByCookbookId(cookbookId: String): List<Recipe> {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe}$cookbookId")
+        return Recipe.listFromJson(json)
+    }
+
+
 }
