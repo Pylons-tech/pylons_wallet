@@ -202,7 +202,7 @@ abstract class Wallet {
     }
 
     /**
-     * Creates and resolves a Transaction to create one or more cookbooks with manually-supplied parameters.
+     * Creates and resolves a number of Transactions to create one or more cookbooks with manually-supplied parameters.
      * This is a batch operation to facilitate writing automated or semi-automated recipe management tools.
      * If only a single cookbook is being created, use lists of length 1 to supply parameters. All parameters must
      * be of the same length, or an exception will be thrown.
@@ -257,22 +257,24 @@ abstract class Wallet {
     }
 
     /**
-     * listCookbooks(callback: (List<Cookbook>)->Unit)
-     * retrieve cookbooks for current account
+     * Creates and resolves a Transaction to create a recipe with the given parameters.
      *
-     * @return List<Cookbook>
-     */
-    fun listCookbooks(callback: (List<Cookbook>)->Unit) {
-        sendMessage(Cookbook::class, Message.GetCookbooks()){
-            val response = it as Response
-            callback(response.cookbooksOut)
-        }
-    }
-
-    /**
-     * createRecipe
+     * Underlying transaction message type is CreateRecipe.
      *
-     * @return Transaction?
+     * TODO: CreateRecipes is actually a batch message. Either we're wrapping the batch operations here
+     * (so this should be createRecipes) or we aren't (so we should have createCookbook.) There's no use case
+     * for us supporting some but not all batch messages.
+     *
+     * @param name The name of the recipe to be created.
+     * @param cookbook The ID of the cookbook to create a recipe in.
+     * @param description The human-readable description to be used for the recipe.
+     * @param blockInterval The number of blocks to wait after executing the recipe before completing that execution.
+     * @param coinInputs Recipe's token inputs, as a list of CoinInput objects.
+     * @param itemInputs Recipe's item input definitions, as a list of ItemInput objects.
+     * @param outputTable An EntriesList. TODO: summarize this/outputs below better
+     * @param outputs A list of WeightedOutput objects.
+     * @param callback Callback to fire after completing handling of the transaction. Should accept a single parameter
+     *  of type Transaction? and return Unit or void.
      */
     fun createRecipe(name : String, cookbook : String, description : String,
                      blockInterval : Long, coinInputs : List<CoinInput>,
@@ -287,6 +289,19 @@ abstract class Wallet {
                 tx = response.txs.get(0)
             }
             callback(tx)
+        }
+    }
+
+    /**
+     * listCookbooks(callback: (List<Cookbook>)->Unit)
+     * retrieve cookbooks for current account
+     *
+     * @return List<Cookbook>
+     */
+    fun listCookbooks(callback: (List<Cookbook>)->Unit) {
+        sendMessage(Cookbook::class, Message.GetCookbooks()){
+            val response = it as Response
+            callback(response.cookbooksOut)
         }
     }
 
