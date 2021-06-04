@@ -243,6 +243,14 @@ class Core(val config : Config) : ICore {
         return baseTemplateForTxs(builder.txBytes()!!, BroadcastMode.BROADCAST_MODE_BLOCK)
     }
 
+    override fun getRecipe(recipeId: String): Recipe? {
+        return engine.getRecipe(recipeId)
+    }
+
+    override fun getRecipesByCookbook(cookbookId: String): List<Recipe> {
+        return engine.listRecipesByCookbookId(cookbookId)
+    }
+
     fun getProfile() = getProfile(null)
 
     override fun getProfile (addr : String?) : Profile? {
@@ -393,6 +401,8 @@ class Core(val config : Config) : ICore {
     override fun getPylons (q : Long) : Transaction = engine.getPylons(q).submit()
 
     override fun getRecipes () : List<Recipe> = engine.listRecipes()
+
+    override fun getRecipesBySender() : List<Recipe> = engine.listRecipesBySender()
 
     override fun getTransaction(txHash : String): Transaction = engine.getTransaction(txHash)
 
