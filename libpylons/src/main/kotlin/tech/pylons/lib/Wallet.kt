@@ -36,13 +36,6 @@ abstract class Wallet {
     abstract fun exists (callback : (Boolean) -> Unit)
 
     /**
-     * Generate a web link for the given recipe.
-     *
-     * returns web link string.
-     */
-    abstract fun generateWebLink (recipeName:String, recipeId:String):String
-
-    /**
      * fetchProfile (address : String?, callback: (Profile?) -> Unit)
      * retrieves wallet core profile for given address
      * if address is null, return current wallet core profile
@@ -352,6 +345,14 @@ abstract class Wallet {
         }
     }
 
+    /**
+     * getWebLinkForAndroid
+     *
+     * @return String?
+     */
+    fun getWebLinkForAndroid(recipeName:String, recipeId:String):String {
+        return "http://wallet.pylons.tech/?action=purchase_nft&recipe_id=$recipeId&nft_amount=1"
+    }
 
     fun android() : AndroidWallet = AndroidWallet.instance
 
@@ -377,10 +378,6 @@ abstract class Wallet {
             //what's this?
             callback(true)
         }
-
-        override fun generateWebLink(recipeName: String, recipeId: String): String {
-            return "http://tech.pylons/wallet?action=purchase_nft&recipe_id=$recipeId&nft_amount=1"
-        }
     }
 
     class DevDevWallet : Wallet() {
@@ -399,10 +396,6 @@ abstract class Wallet {
 
         override fun exists(callback: (Boolean) -> Unit) {
             callback(true) // todo: devdevwallet doesn't handle connection breaking yet so we can't tell if it's connected.
-        }
-
-        override fun generateWebLink(recipeName: String, recipeId: String): String {
-            return ""
         }
     }
 }
