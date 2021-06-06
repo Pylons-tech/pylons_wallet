@@ -107,10 +107,9 @@ interface ICore {
 
     fun buildJsonForTxPost(msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String
 
-    fun getRecipesBySender () : List<Recipe>
+    fun getRecipe(recipeId: String): Recipe?
 
-    //newly added api
-    fun getRecipe (recipeId : String): Recipe?
+    fun getRecipesByCookbook(cookbookId: String): List<Recipe>
 
-    fun getRecipesByCookbook (cookbookId : String): List<Recipe>
+    fun getRecipesBySender() : List<Recipe>
 }

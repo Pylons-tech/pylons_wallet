@@ -57,7 +57,7 @@
     </dependency>
     <dependency>
       <groupId>tech.pylons.lib</groupId>
-      <artifactId>libpylons</artifactId>
+      <artifactId>libkylons</artifactId>
       <version>0.1</version>
       <scope>runtime</scope>
     </dependency>

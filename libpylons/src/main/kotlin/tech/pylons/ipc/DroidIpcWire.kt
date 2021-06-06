@@ -79,7 +79,6 @@ abstract class DroidIpcWire {
 
                 val retMsg = readMessage()
                 if (retMsg != null) {
-                    println("handshake server msg $retMsg")
                     val serverMsg = klaxon.parse<HandshakeMsg>(retMsg.removePrefix(HANDSHAKE_MAGIC))
                     if (serverMsg?.MAGIC == HANDSHAKE_MAGIC) {
                         walletId = serverMsg.walletId.toInt()
