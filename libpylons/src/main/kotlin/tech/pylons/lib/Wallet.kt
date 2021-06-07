@@ -379,7 +379,7 @@ abstract class Wallet {
         }
 
         override fun generateWebLink(recipeName: String, recipeId: String): String {
-            return "http://tech.pylons/wallet?action=purchase_nft&recipe_id=$recipeId&nft_amount=1"
+            return "http://wallet.pylons.tech/?action=purchase_nft&recipe_id=$recipeId&nft_amount=1"
         }
     }
 
@@ -402,7 +402,7 @@ abstract class Wallet {
         }
 
         override fun generateWebLink(recipeName: String, recipeId: String): String {
-            return "http://wallet.pylons.tech/?action=purchase_nft&recipe_id=$recipeId&nft_amount=1"
+            return ""
         }
     }
 }
