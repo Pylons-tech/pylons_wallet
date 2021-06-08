@@ -77,24 +77,6 @@ abstract class Wallet {
     }
 
     /**
-     * registerProfile (callback: (Profile?) -> Unit)
-     * register new Core account.
-     * return Profile of current registered Core if success, else return null
-     *
-     * @return Profile?
-     */
-    fun registerProfile (callback: (Profile?) -> Unit) {
-        sendMessage(Profile::class, Message.RegisterProfile()) {
-            val response = it as Response
-            var profile:Profile? = null
-            if(response.profilesOut.isNotEmpty()) {
-                profile = response.profilesOut.get(0)
-            }
-            callback(profile)
-        }
-    }
-
-    /**
      * placeForSale (item : Item, price : Long, callback: (Transaction?) -> Unit)
      * Create Trade
      * Sell Item Only
@@ -293,45 +275,13 @@ abstract class Wallet {
     }
 
     /**
-     * listCookbooks(callback: (List<Cookbook>)->Unit)
-     * retrieve cookbooks for current account
+     * disableRecipe
      *
-     * @return List<Cookbook>
+     * @param recipeId recipe id to be enabled
+     * @return Transaction?
      */
-    fun listCookbooks(callback: (List<Cookbook>)->Unit) {
-        sendMessage(Cookbook::class, Message.GetCookbooks()){
-            val response = it as Response
-            callback(response.cookbooksOut)
-        }
-    }
-
-    /**
-     * listRecipes
-     * retrieve all recipe list
-     *
-     *  @return List<Recipe>
-     */
-    fun listRecipes(callback: (List<Recipe>)->Unit) {
-        sendMessage(Recipe::class, Message.GetRecipes()) {
-
-            val response = it as Response
-            println("listRecipes ${response.recipesOut.count()}")
-
-            callback(response.recipesOut)
-        }
-    }
-
-    /**
-     * executeRecipe
-     *
-     * @param recipe - recipe Name
-     * @param cookbook - cookbook Id
-     * @param itemInputs - list of item inputs names for recipe execution
-     * @return return transaction of the recipe execution when success, else return null.
-     *
-     */
-    fun executeRecipe(recipe: String, cookbook: String, itemInputs: List<String>, callback: (Transaction?)->Unit) {
-        sendMessage(Transaction::class, Message.ExecuteRecipe(recipe, cookbook, itemInputs)){
+    fun disableRecipe(recipeId:String, callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.DisableRecipes(listOf(recipeId))){
             val response = it as Response
             var tx: Transaction? = null
             if(response.txs.isNotEmpty()) {
@@ -359,19 +309,78 @@ abstract class Wallet {
     }
 
     /**
-     * disableRecipe
+     * Creates and resolves a Transaction to resolve a recipe. Item inputs are supplied by the calling
+     * application, so recipe execution should usually complete without further user input.
+     * TODO: do we actually want this behavior?
+     * ALSO TODO: do we still need to specify the cookbook post cookbook/id merger?
      *
-     * @param recipeId recipe id to be enabled
-     * @return Transaction?
+     * Underlying message type is ExecuteRecipe.
+     *
+     * @param recipe - The ID of the recipe to be executed.
+     * @param cookbook - The ID of the cookbook the recipe isi in.
+     * @param itemInputs - List of IDs for items satisfying the recipe's item input constraints.
+     * @param callback Callback to fire after completing handling of the transaction. Should accept a single parameter
+     *  of type Transaction? and return Unit or void.
      */
-    fun disableRecipe(recipeId:String, callback: (Transaction?)->Unit) {
-        sendMessage(Transaction::class, Message.DisableRecipes(listOf(recipeId))){
+    fun executeRecipe(recipe: String, cookbook: String, itemInputs: List<String>, callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.ExecuteRecipe(recipe, cookbook, itemInputs)){
             val response = it as Response
             var tx: Transaction? = null
             if(response.txs.isNotEmpty()) {
                 tx = response.txs.get(0)
             }
             callback(tx)
+        }
+    }
+
+    /**
+     * Creates and resolves a Transaction to register a new profile.
+     *
+     * In most wallet implementations, the wallet will require UI control in order to get user input
+     * before it can complete resolution of this call. Client applications should expect this behavior.
+     *
+     * Underlying message type is CreateAccount.
+     *
+     * @param callback Callback to fire after completing handling of the transaction. Should accept a single parameter
+     *  of type Transaction? and return Unit or void.
+     */
+    fun registerProfile (callback: (Profile?) -> Unit) {
+        sendMessage(Profile::class, Message.RegisterProfile()) {
+            val response = it as Response
+            var profile:Profile? = null
+            if(response.profilesOut.isNotEmpty()) {
+                profile = response.profilesOut[0]
+            }
+            callback(profile)
+        }
+    }
+
+    /**
+     * listCookbooks(callback: (List<Cookbook>)->Unit)
+     * retrieve cookbooks for current account
+     *
+     * @return List<Cookbook>
+     */
+    fun listCookbooks(callback: (List<Cookbook>)->Unit) {
+        sendMessage(Cookbook::class, Message.GetCookbooks()){
+            val response = it as Response
+            callback(response.cookbooksOut)
+        }
+    }
+
+    /**
+     * listRecipes
+     * retrieve all recipe list
+     *
+     *  @return List<Recipe>
+     */
+    fun listRecipes(callback: (List<Recipe>)->Unit) {
+        sendMessage(Recipe::class, Message.GetRecipes()) {
+
+            val response = it as Response
+            println("listRecipes ${response.recipesOut.count()}")
+
+            callback(response.recipesOut)
         }
     }
 
