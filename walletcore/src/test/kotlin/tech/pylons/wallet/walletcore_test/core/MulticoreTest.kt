@@ -1,5 +1,6 @@
 package tech.pylons.wallet.walletcore_test.core
 
+import com.google.gson.JsonObject
 import tech.pylons.lib.PubKeyUtil
 import tech.pylons.lib.core.IMulticore
 import tech.pylons.wallet.core.Core
@@ -13,6 +14,9 @@ import tech.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.*
+import tech.pylons.lib.klaxon
+import tech.pylons.lib.types.tx.item.Item
+import java.io.StringReader
 import java.security.Security
 
 @ExperimentalUnsignedTypes
@@ -26,7 +30,7 @@ class MulticoreTest {
 
     private val config = Config(
             Backend.LIVE_DEV,
-            listOf("http://127.0.0.1:1317")
+            listOf("https://api.testnet.pylons.tech/"/*, "http://127.0.0.1:1317"*/)
     )
 
     private val testKeys =
@@ -113,6 +117,38 @@ class MulticoreTest {
         // todo: this should actually take a keypair as an argument
         Multicore.enable(config)
         val c = Multicore.addCore(null)
+        val coinInput = CoinInput("pylon", 50)
+        val str = klaxon.toJsonString(coinInput)
+        val jsonObj = klaxon.parseJsonObject(StringReader(str))
+        val coin = CoinInput.fromJson(jsonObj!!)
+
+        Core.current?.createTrade(
+            listOf(
+                klaxon.toJsonString(CoinInput("pylon", 50))
+            ),
+            listOf(),
+            listOf(),
+            listOf(
+                klaxon.toJsonString(
+                    Item(
+                        nodeVersion="0.0.1",
+                        id="cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl2f92088b-1115-4b4e-8f20-5d1ee558af2a",
+                        cookbookId= "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a",
+                        sender=  "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
+                        ownerRecipeID= "",
+                        ownerTradeID= "",
+                        tradable= true,
+                        lastUpdate= 125,
+                        doubles= mapOf(),
+                        longs= mapOf(),
+                        strings= mapOf(),
+                        transferFee = 0
+                    )
+                )
+            ),
+            ""
+        )
+
 
         val prof = Core.current?.newProfile("aaa", null)
 
@@ -121,6 +157,8 @@ class MulticoreTest {
         val trades = Core.current?.engine?.listTrades()
 
         val cookbooks = Core.current?.engine?.listCookbooks()
+
+
 
         //http://10.0.2.2:1317/txs/B4A8B0DE37A77C68FFB48AB6D47ADCAA0623FAA7EC50ED11C03A9A4B26B94592
         val transaction = Core.current?.getTransaction("B4A8B0DE37A77C68FFB48AB6D47ADCAA0623FAA7EC50ED11C03A9A4B26B94592")
