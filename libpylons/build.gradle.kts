@@ -4,6 +4,7 @@ plugins {
     java
     kotlin("jvm")
     `maven-publish`
+    signing
 }
 
 group = "tech.pylons.lib"
@@ -121,6 +122,10 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }
 
 
