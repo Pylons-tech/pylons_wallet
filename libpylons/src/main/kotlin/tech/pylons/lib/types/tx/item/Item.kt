@@ -5,6 +5,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import tech.pylons.lib.*
 import tech.pylons.lib.internal.fuzzyLong
+import java.math.BigDecimal
 
 data class Item(
         @property:[Json(name = "NodeVersion")]
@@ -24,9 +25,9 @@ data class Item(
         @property:[Json(name = "LastUpdate")]
         val lastUpdate: Long,
         @property:[Json(name = "Doubles") QuotedJsonNumeral]
-        val doubles: Map<String, Double>,
+        val doubles: Map<String, String>,
         @property:[Json(name = "Longs") QuotedJsonNumeral]
-        val longs: Map<String, Long>,
+        val longs: Map<String, String>,
         @property:[Json(name = "Strings")]
         val strings: Map<String, String>,
         @property:[Json(name = "TransferFee")]
@@ -54,31 +55,47 @@ data class Item(
         }
 
         fun fromJson(it : JsonObject) = Item(
-                nodeVersion = it.string("NodeVersion")!!,
-                id = it.string("ID")!!,
-                cookbookId = it.string("CookbookID")!!,
-                sender = it.string("Sender")!!,
-                ownerRecipeID = it.string("OwnerRecipeID")!!,
-                ownerTradeID = it.string("OwnerTradeID")!!,
-                tradable = it.boolean("Tradable")!!,
-                lastUpdate = it.fuzzyLong("LastUpdate"),
+                nodeVersion = it.string("NodeVersion") ?: "",
+                id = it.string("ID") ?: "",
+                cookbookId = it.string("CookbookID") ?: "",
+                sender = it.string("Sender") ?: "",
+                ownerRecipeID = it.string("OwnerRecipeID") ?: "",
+                ownerTradeID = it.string("OwnerTradeID") ?: "",
+                tradable = it.boolean("Tradable") ?: false,
+                lastUpdate = it.string("LastUpdate")?.toLong() ?: 0,
                 doubles = doubleMapFromJson(it.array("Doubles")),
                 longs = longDictFromJson(it.array("Longs")),
                 strings = stringDictFromJson(it.array("Strings")),
-                transferFee = it.fuzzyLong("TransferFee"))
+                transferFee = it.string("TransferFee")?.toLong() ?: 0
+        )
 
-        private fun doubleMapFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, Double> {
+        fun fromJsonOpt(it : JsonObject) = Item(
+            nodeVersion = it.string("NodeVersion")!!,
+            id = it.string("ID")!!,
+            cookbookId = it.string("CookbookID")!!,
+            sender = it.string("Sender")!!,
+            ownerRecipeID = it.string("OwnerRecipeID")!!,
+            ownerTradeID = it.string("OwnerTradeID")!!,
+            tradable = it.boolean("Tradable")!!,
+            lastUpdate = it.fuzzyLong("LastUpdate"),
+            doubles = doubleKeyValueFromJson(it.obj("Doubles")),
+            longs = longKeyValueFromJson(it.obj("Longs")),
+            strings = stringKeyValueFromJson(it.obj("Strings")),
+            transferFee = it.fuzzyLong("TransferFee"))
+
+
+        private fun doubleMapFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, String> {
             if (jsonArray == null) return mapOf()
-            val mm = mutableMapOf<String, Double>()
-            jsonArray.forEach { mm[it.string("Key")!!] = it.string("Value")!!.toDouble() }
+            val mm = mutableMapOf<String, String>()
+            jsonArray.forEach { mm[it.string("Key")!!] = it.string("Value")!! }
             return mm
         }
 
-        private fun longDictFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, Long> {
+        private fun longDictFromJson(jsonArray: JsonArray<JsonObject>?): Map<String, String> {
             if (jsonArray == null) return mapOf()
-            val mm = mutableMapOf<String, Long>()
+            val mm = mutableMapOf<String, String>()
             jsonArray.forEach {
-                mm[it.string("Key")!!] = it.fuzzyLong("Value")
+                mm[it.string("Key")!!] = it.string("Value")!!
             }
             return mm
         }
@@ -87,6 +104,35 @@ data class Item(
             if (jsonArray == null) return mapOf()
             val mm = mutableMapOf<String, String>()
             jsonArray.forEach { mm[it.string("Key")!!] = it.string("Value")!! }
+            return mm
+        }
+
+        private fun doubleKeyValueFromJson(jsonArray: JsonObject?): Map<String, String> {
+            if (jsonArray == null) return mapOf()
+            val mm = mutableMapOf<String, String>()
+
+            jsonArray.map.forEach { t, u ->
+
+                mm[t] = u.toString()
+            }
+            return mm
+        }
+
+        private fun longKeyValueFromJson(jsonArray:JsonObject?): Map<String, String> {
+            if (jsonArray == null) return mapOf()
+            val mm = mutableMapOf<String, String>()
+            jsonArray.map.forEach { t, u ->
+                mm[t] = u.toString()
+            }
+            return mm
+        }
+
+        private fun stringKeyValueFromJson(jsonArray: JsonObject?): Map<String, String> {
+            if (jsonArray == null) return mapOf()
+            val mm = mutableMapOf<String, String>()
+            jsonArray.map.forEach { t, u ->
+                mm[t] = u.toString()
+            }
             return mm
         }
     }

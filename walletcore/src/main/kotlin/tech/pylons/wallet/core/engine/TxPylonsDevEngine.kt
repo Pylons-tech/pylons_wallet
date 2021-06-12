@@ -2,6 +2,7 @@ package tech.pylons.wallet.core.engine
 
 import tech.pylons.wallet.core.Core
 import tech.pylons.lib.types.*
+import tech.pylons.lib.types.tx.Trade
 import tech.pylons.lib.types.tx.msg.*
 import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.wallet.core.internal.HttpWire

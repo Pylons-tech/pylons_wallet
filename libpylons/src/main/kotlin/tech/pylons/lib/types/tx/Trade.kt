@@ -33,6 +33,27 @@ data class Trade(
         val completed : Boolean
 ) {
     companion object {
+        fun fromJson(json: String): Trade? {
+            val jsonObj = Parser.default().parse(StringBuilder(json)) as JsonObject
+            if (jsonObj != null){
+                return Trade(
+                    nodeVersion = jsonObj.string("NodeVersion")!!,
+                    id = jsonObj.string("ID")!!,
+                    coinInputs = CoinInput.listFromJson(jsonObj.array("CoinInputs")),
+                    itemInputs = TradeItemInput.listFromJson(jsonObj.array("ItemInputs")),
+                    coinOutputs = Coin.listFromJson(jsonObj.array("CoinOutputs")),
+                    itemOutputs = Item.listFromJson(jsonObj.array("ItemOutputs")),
+                    extraInfo = jsonObj.string("ExtraInfo").orEmpty(),
+                    sender = jsonObj.string("Sender")!!,
+                    fulfiller = jsonObj.string("FulFiller").orEmpty(),
+                    disabled = jsonObj.boolean("Disabled")!!,
+                    completed = jsonObj.boolean("Completed")!!
+                )
+
+            }
+            return null
+        }
+
         fun listFromJson (json : String) : List<Trade> {
             val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!.array<JsonObject>("trades").orEmpty()
             val list = mutableListOf<Trade>()

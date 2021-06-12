@@ -1,6 +1,6 @@
 package tech.pylons.wallet.walletcore_test.core
 
-import com.google.gson.JsonObject
+import com.beust.klaxon.JsonObject
 import tech.pylons.lib.PubKeyUtil
 import tech.pylons.lib.core.IMulticore
 import tech.pylons.wallet.core.Core
@@ -16,6 +16,7 @@ import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.*
 import tech.pylons.lib.klaxon
 import tech.pylons.lib.types.tx.item.Item
+import tech.pylons.lib.types.tx.trade.TradeItemInput
 import java.io.StringReader
 import java.security.Security
 
@@ -255,6 +256,16 @@ class MulticoreTest {
 
         assert(Core.current == c)
         assert(c.userProfile!!.credentials.address == testCredentials.address)
+    }
+
+
+    @Test
+    @Order(7)
+    fun testKlaxonValidation() {
+        Multicore.enable(config)
+        val c = Multicore.addCore(null)
+
+        val transaction = Core.current?.getTransaction("E1D9AD271502D7A7C9FCF0FE30313D40F35E883303BEEBCA4C26CDD05E1D6070")
     }
 
 }

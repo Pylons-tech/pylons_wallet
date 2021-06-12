@@ -389,7 +389,7 @@ class Core(val config : Config) : ICore {
         val mCoinOutputs = mutableListOf<Coin>()
         coinOutputs.forEach { mCoinOutputs.add(Coin.fromJson(klaxon.parseJsonObject(StringReader(it)))) }
         val mItemOutputs = mutableListOf<Item>()
-        itemOutputs.forEach { mItemOutputs.add(Item.fromJson(klaxon.parseJsonObject(StringReader(it)))) }
+        itemOutputs.forEach { mItemOutputs.add(Item.fromJsonOpt(klaxon.parseJsonObject(StringReader(it)))) }
         return engine.createTrade(mCoinInputs, mItemInputs, mCoinOutputs, mItemOutputs, extraInfo).submit()
     }
 
@@ -442,4 +442,9 @@ class Core(val config : Config) : ICore {
         tearDown()
         onWipeUserData?.invoke()
     }
+
+    override fun getTrade(tradeId: String): Trade? {
+        return engine.getTrade(tradeId)
+    }
+
 }

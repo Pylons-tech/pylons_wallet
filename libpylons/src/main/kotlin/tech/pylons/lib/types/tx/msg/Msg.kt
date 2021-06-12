@@ -261,7 +261,7 @@ data class CreateTrade (
         fun parse (jsonObject: JsonObject) : CreateTrade {
             return CreateTrade(
                     sender = jsonObject.string("Sender")!!,
-                    extraInfo = jsonObject.string("ExtraInfo")!!,
+                    extraInfo = jsonObject.string("ExtraInfo") ?: "",
                     coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
                     coinOutputs = Coin.listFromJson(jsonObject.array("CoinOutputs")),
                     itemInputs = TradeItemInput.listFromJson(jsonObject.array("ItemInputs")),
