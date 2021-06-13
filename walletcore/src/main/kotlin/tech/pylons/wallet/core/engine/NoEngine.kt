@@ -144,4 +144,8 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
 
     override fun getCompletedExecutions(): List<Execution> =
         throw NoEngineException()
+
+    override fun getTrade(tradeId: String): Trade? {
+        throw NoEngineException()
+    }
 }

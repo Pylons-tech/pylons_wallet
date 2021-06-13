@@ -184,4 +184,7 @@ interface IEngine {
     fun getRecipe(recipeId: String) : Recipe?
 
     fun listRecipesByCookbookId(cookbookId: String) : List<Recipe>
+
+    fun getTrade(tradeId: String) : Trade?
+
 }

@@ -112,4 +112,6 @@ interface ICore {
     fun getRecipesByCookbook(cookbookId: String): List<Recipe>
 
     fun getRecipesBySender() : List<Recipe>
+
+    fun getTrade(tradeId: String) : Trade?
 }

@@ -446,5 +446,10 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         return Recipe.listFromJson(json)
     }
 
+    override fun getTrade(tradeId: String): Trade? {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_trade}$tradeId")
+        return Trade.fromJson(json)
+    }
+
 
 }
