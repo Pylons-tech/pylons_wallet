@@ -282,6 +282,23 @@ abstract class Wallet {
     }
 
     /**
+     * listRecipesBySender
+     * retrieve all recipe list
+     *
+     *  @return List<Recipe>
+     */
+    fun listRecipesBySender(callback: (List<Recipe>)->Unit) {
+        sendMessage(Recipe::class, Message.GetRecipesBySender()) {
+
+            val response = it as Response
+            println("listRecipes ${response.recipesOut.count()}")
+
+            callback(response.recipesOut)
+        }
+    }
+
+
+    /**
      * executeRecipe
      *
      * @param recipe - recipe Name
@@ -305,7 +322,7 @@ abstract class Wallet {
      * enableRecipe
      *
      * @param recipeId recipe id to be enabled
-     * @return Transaction?
+     * @return Transaction?f
      */
     fun enableRecipe(recipeId:String, callback: (Transaction?)->Unit) {
         sendMessage(Transaction::class, Message.EnableRecipes(listOf(recipeId))){
