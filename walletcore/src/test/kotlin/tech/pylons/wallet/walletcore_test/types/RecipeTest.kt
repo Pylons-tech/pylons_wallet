@@ -122,7 +122,8 @@ class RecipeTest {
                 description = "test recipe from test suite",
                 blockInterval = 0,
                 sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
-                disabled = false
+                disabled = false,
+                extraInfo = ""
         ))
         assertEquals(expected, Recipe.listFromJson(sampleJson))
     }

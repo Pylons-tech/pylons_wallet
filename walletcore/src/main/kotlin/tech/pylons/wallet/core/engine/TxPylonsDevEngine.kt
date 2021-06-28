@@ -77,7 +77,7 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
 
     override fun updateRecipe(id : String, name : String, cookbookId : String, description: String,
                               blockInterval : Long, coinInputs : List<CoinInput>, itemInputs : List<ItemInput>,
-                              entries : EntriesList, outputs: List<WeightedOutput>) =
+                              entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String) =
             handleTx {
                 UpdateRecipe(
                         id = id,
@@ -89,7 +89,8 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
                         entries = entries,
                         outputs = outputs,
                         blockInterval = blockInterval,
-                        sender = it.address
+                        sender = it.address,
+                        extraInfo = extraInfo
                 ).toSignedTx()
             }
 

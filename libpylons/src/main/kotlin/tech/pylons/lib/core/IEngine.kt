@@ -156,12 +156,12 @@ interface IEngine {
 
     /** Update-recipe message */
     fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>) : Transaction
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String) : Transaction
 
     /** Batch update-recipe message */
     fun updateRecipes (ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                        blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
-                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>) : List<Transaction>
+                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>, extraInfos: List<String>) : List<Transaction>
 
     /** List recipes query */
     fun listRecipes () : List<Recipe>

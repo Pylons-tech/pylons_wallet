@@ -418,7 +418,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>): Transaction =
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun getRecipe(recipeId: String): Recipe? {
@@ -437,7 +437,8 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
             itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
             entries = EntriesList.fromJson(jsonObject.obj("Entries"))!!,
-            outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))!!
+            outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))!!,
+            extraInfo = jsonObject.string("ExtraInfo")!!
         )
     }
 

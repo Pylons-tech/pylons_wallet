@@ -318,7 +318,8 @@ sealed class Message {
             var coinInputs : List<String>? = null,
             var itemInputs: List<String>? = null,
             var outputTables : List<String>? = null,
-            var outputs : List<String>? = null
+            var outputs : List<String>? = null,
+            var extraInfos: List<String>? = null
     ) : Message() {
         companion object {
             fun deserialize(json : String) = klaxon.parse<UpdateRecipes>(json)
@@ -327,7 +328,7 @@ sealed class Message {
         override fun resolve() : Response =
             Response.emit(this, true, txs = core!!.batchUpdateRecipe(ids!!, names!!, cookbooks!!,
                 descriptions!!, blockIntervals!!, coinInputs!!, itemInputs!!, outputTables!!,
-                outputs!!),
+                outputs!!, extraInfos!!),
             recipesIn = ids!!, cookbooksIn = cookbooks!!)
     }
 

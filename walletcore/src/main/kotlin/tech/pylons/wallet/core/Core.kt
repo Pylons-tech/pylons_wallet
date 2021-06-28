@@ -349,7 +349,7 @@ class Core(val config : Config) : ICore {
 
     override fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                 blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                outputTables : List<String>, outputs : List<String>) : List<Transaction> {
+                                outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction> {
         val mItemInputs = mutableListOf<List<ItemInput>>()
         itemInputs.forEach { mItemInputs.add(klaxon.parseArray<ItemInput>(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()
@@ -367,7 +367,8 @@ class Core(val config : Config) : ICore {
             coinInputs = mCoinInputs,
             itemInputs = mItemInputs,
             entries = mOutputTables,
-            outputs = mOutputs
+            outputs = mOutputs,
+            extraInfos = extraInfos
         ).toMutableList()
         return txs.submitAll()
     }

@@ -585,7 +585,9 @@ data class UpdateRecipe (
     @property:[Json(name = "Name")]
         val name : String,
     @property:[Json(name = "Sender")]
-        val sender : String
+        val sender : String,
+    @property:[Json(name = "ExtraInfo")]
+        val extraInfo: String
 ): Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
@@ -604,7 +606,8 @@ data class UpdateRecipe (
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
                             EntriesList(listOf(), listOf(), listOf()),
-                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
+                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs")),
+                    extraInfo = jsonObject.string("ExtraInfo")!!
             )
         }
     }

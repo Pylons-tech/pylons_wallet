@@ -186,7 +186,7 @@ class Response (
                             val msg = it as CreateRecipe
                             mRecipesOut.add(Recipe("", "", msg.sender, false, msg.name,
                             msg.cookbookId, msg.description, msg.blockInterval, msg.coinInputs, msg.itemInputs,
-                            msg.entries, msg.outputs))
+                            msg.entries, msg.outputs, msg.extraInfo))
                         }
                         CreateTrade::javaClass -> {
                             val msg = it as CreateTrade
@@ -196,12 +196,12 @@ class Response (
                         DisableRecipe::javaClass -> {
                             val r = mRecipesIn.first()
                             mRecipesOut.add(Recipe("", r.id, r.sender, true, r.name, r.cookbookId, r.description,
-                            r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs))
+                            r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs, r.extraInfo))
                         }
                         EnableRecipe::javaClass -> {
                             val r = mRecipesIn.first()
                             mRecipesOut.add(Recipe("", r.id, r.sender, false, r.name, r.cookbookId, r.description,
-                                r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs))
+                                r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs, r.extraInfo))
                         }
                         //ExecuteRecipe::javaClass -> {
                         // not enough data in the msg to reconstruct the outputs w/o an extra query, b/c recipes
@@ -249,7 +249,7 @@ class Response (
                         UpdateRecipe::javaClass -> {
                             val msg = it as UpdateRecipe
                             mRecipesOut.add(Recipe("", msg.id, msg.sender, false, msg.name, msg.cookbookId,
-                            msg.description, msg.blockInterval, msg.coinInputs, msg.itemInputs, msg.entries, msg.outputs))
+                            msg.description, msg.blockInterval, msg.coinInputs, msg.itemInputs, msg.entries, msg.outputs, msg.extraInfo))
                         }
                         //SendItems::javaClass -> {
                             // like canceltrade - this has inputs but no real output

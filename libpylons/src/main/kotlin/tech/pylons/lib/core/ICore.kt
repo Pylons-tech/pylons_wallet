@@ -64,7 +64,7 @@ interface ICore {
 
     fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                            blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                           outputTables : List<String>, outputs : List<String>) : List<Transaction>
+                           outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction>
 
     fun cancelTrade(tradeId : String) : Transaction
 

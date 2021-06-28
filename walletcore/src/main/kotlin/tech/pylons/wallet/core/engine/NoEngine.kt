@@ -121,7 +121,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
             throw NoEngineException()
 
     override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>): Transaction =
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String): Transaction =
             throw NoEngineException()
 
     override fun listTrades(): List<Trade> =
