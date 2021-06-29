@@ -1,3 +1,5 @@
+group = "tech.pylons"
+version = "0.1.0-SNAPSHOT.0"
 
 plugins {
     kotlin("jvm") version("1.4.30")
@@ -5,6 +7,18 @@ plugins {
     idea
     java
     `maven-publish`
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            username.set("S8SKCvQx") // defaults to project.properties["myNexusUsername"]
+            password.set("IpV199ViKHp2RBmT32dMkMKqplXKC9vnsDnW/6HEIb0Q") // defaults to project.properties["myNexusPassword"]
+        }
+    }
 }
 
 

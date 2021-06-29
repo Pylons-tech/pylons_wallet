@@ -178,4 +178,13 @@ interface IEngine {
     fun getLockedCoins () : LockedCoin
 
     fun getLockedCoinDetails () : LockedCoinDetails
+
+    fun listRecipesBySender() : List<Recipe>
+
+    fun getRecipe(recipeId: String) : Recipe?
+
+    fun listRecipesByCookbookId(cookbookId: String) : List<Recipe>
+
+    fun getTrade(tradeId: String) : Trade?
+
 }

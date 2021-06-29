@@ -99,6 +99,9 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun listRecipes(): List<Recipe> =
             throw NoEngineException()
 
+    override fun listRecipesBySender() : List<Recipe> =
+            throw NoEngineException()
+
     override fun listCookbooks(): List<Cookbook> =
             throw NoEngineException()
 
@@ -133,6 +136,16 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun getLockedCoinDetails(): LockedCoinDetails =
             throw NoEngineException()
 
+    override fun getRecipe(recipeId: String): Recipe? =
+        throw NoEngineException()
+
+    override fun listRecipesByCookbookId(cookbookId: String): List<Recipe> =
+        throw NoEngineException()
+
     override fun getCompletedExecutions(): List<Execution> =
         throw NoEngineException()
+
+    override fun getTrade(tradeId: String): Trade? {
+        throw NoEngineException()
+    }
 }

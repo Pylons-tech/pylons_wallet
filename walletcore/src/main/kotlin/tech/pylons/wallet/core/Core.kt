@@ -243,6 +243,14 @@ class Core(val config : Config) : ICore {
         return baseTemplateForTxs(builder.txBytes()!!, BroadcastMode.BROADCAST_MODE_BLOCK)
     }
 
+    override fun getRecipe(recipeId: String): Recipe? {
+        return engine.getRecipe(recipeId)
+    }
+
+    override fun getRecipesByCookbook(cookbookId: String): List<Recipe> {
+        return engine.listRecipesByCookbookId(cookbookId)
+    }
+
     fun getProfile() = getProfile(null)
 
     override fun getProfile (addr : String?) : Profile? {
@@ -373,13 +381,15 @@ class Core(val config : Config) : ICore {
                           coinOutputs : List<String>, itemOutputs : List<String>,
                           extraInfo : String) : Transaction {
         val mItemInputs = mutableListOf<TradeItemInput>()
-        itemInputs.forEach { mItemInputs.add(TradeItemInput.fromJson(klaxon.parse(it)!!)) }
+        itemInputs.forEach {
+            mItemInputs.add(TradeItemInput.fromJson(klaxon.parseJsonObject(StringReader(it)))) }
         val mCoinInputs = mutableListOf<CoinInput>()
-        coinInputs.forEach { mCoinInputs.add(CoinInput.fromJson(klaxon.parse(it)!!)) }
+        coinInputs.forEach { mCoinInputs.add(CoinInput.fromJson(klaxon.parseJsonObject(StringReader(it))))
+        }
         val mCoinOutputs = mutableListOf<Coin>()
-        coinOutputs.forEach { mCoinOutputs.add(Coin.fromJson(klaxon.parse(it)!!)) }
+        coinOutputs.forEach { mCoinOutputs.add(Coin.fromJson(klaxon.parseJsonObject(StringReader(it)))) }
         val mItemOutputs = mutableListOf<Item>()
-        itemOutputs.forEach { mItemOutputs.add(Item.fromJson(klaxon.parse(it)!!)) }
+        itemOutputs.forEach { mItemOutputs.add(Item.fromJsonOpt(klaxon.parseJsonObject(StringReader(it)))) }
         return engine.createTrade(mCoinInputs, mItemInputs, mCoinOutputs, mItemOutputs, extraInfo).submit()
     }
 
@@ -393,6 +403,8 @@ class Core(val config : Config) : ICore {
     override fun getPylons (q : Long) : Transaction = engine.getPylons(q).submit()
 
     override fun getRecipes () : List<Recipe> = engine.listRecipes()
+
+    override fun getRecipesBySender() : List<Recipe> = engine.listRecipesBySender()
 
     override fun getTransaction(txHash : String): Transaction = engine.getTransaction(txHash)
 
@@ -430,4 +442,9 @@ class Core(val config : Config) : ICore {
         tearDown()
         onWipeUserData?.invoke()
     }
+
+    override fun getTrade(tradeId: String): Trade? {
+        return engine.getTrade(tradeId)
+    }
+
 }

@@ -211,6 +211,15 @@ sealed class Message {
             recipesOut = core!!.getRecipes())
     }
 
+    class GetRecipesBySender(): Message() {
+        companion object {
+            fun deserialize(json: String) = klaxon.parse<GetRecipesBySender>(json)
+        }
+
+        override fun resolve() = Response.emit(this, true,
+            recipesOut = core!!.getRecipesBySender())
+    }
+
     class GoogleIapGetPylons(
             var productId : String? = null,
             var purchaseToken : String? = null,

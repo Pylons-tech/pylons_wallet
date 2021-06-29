@@ -10,3 +10,5 @@ build
 
 # Ignore local.properties
 local.properties
+# Ignore GPG keyring files lol (see the Maven deploy instructions for why this is a thing)
+*/secring.kbx
