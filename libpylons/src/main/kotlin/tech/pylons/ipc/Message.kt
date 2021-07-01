@@ -69,14 +69,15 @@ sealed class Message {
             var coinInputs : List<String>? = null,
             var itemInputs: List<String>? = null,
             var outputTables : List<String>? = null,
-            var outputs : List<String>? = null
+            var outputs : List<String>? = null,
+            var extraInfos : List<String>? = null
     ) : Message() {
         companion object {
             fun deserialize(json : String) = klaxon.parse<CreateRecipes>(json)
         }
 
         override fun resolve() = Response.emit(this, true, txs = core!!.batchCreateRecipe(names!!, cookbooks!!,
-            descriptions!!, blockIntervals!!, coinInputs!!, itemInputs!!, outputTables!!, outputs!!),
+            descriptions!!, blockIntervals!!, coinInputs!!, itemInputs!!, outputTables!!, outputs!!, extraInfos!!),
             cookbooksIn = cookbooks!!)
     }
 

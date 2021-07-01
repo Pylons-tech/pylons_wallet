@@ -59,7 +59,7 @@ abstract class Engine(val core : Core) : IEngine {
     }
 
     /** Execute-recipe message */
-    abstract override fun applyRecipe(id : String, itemIds : List<String>) : Transaction
+    abstract override fun applyRecipe(id : String, itemIds : List<String>, paymentId: String) : Transaction
 
     /** Check-execution message */
     abstract override fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
@@ -72,13 +72,13 @@ abstract class Engine(val core : Core) : IEngine {
     /** Create-recipe message */
     abstract override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                                        coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                                       outputs : List<WeightedOutput>) : Transaction
+                                       outputs : List<WeightedOutput>, extraInfo: String) : Transaction
 
     /** Batch create-recipe message */
     override fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
                       itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
-                      outputs: List<List<WeightedOutput>>) : List<Transaction> {
+                      outputs: List<List<WeightedOutput>>, extraInfos: List<String>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0  until count) {
@@ -91,7 +91,8 @@ abstract class Engine(val core : Core) : IEngine {
                             coinInputs = coinInputs[i],
                             itemInputs = itemInputs[i],
                             entries = entries[i],
-                            outputs = outputs[i]
+                            outputs = outputs[i],
+                            extraInfo = extraInfos[i]
                     )
             )
         }

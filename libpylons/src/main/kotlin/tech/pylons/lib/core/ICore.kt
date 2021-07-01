@@ -46,14 +46,14 @@ interface ICore {
 
     fun getProfile (addr : String?) : Profile?
 
-    fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>) : Transaction
+    fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>, paymentId: String = "") : Transaction
 
     fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
                              supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction>
 
     fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                     blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                    outputTables : List<String>, outputs : List<String>) : List<Transaction>
+                                    outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction>
 
     fun batchDisableRecipe (recipes : List<String>) : List<Transaction>
 

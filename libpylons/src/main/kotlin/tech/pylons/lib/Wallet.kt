@@ -252,10 +252,10 @@ abstract class Wallet {
     fun createRecipe(name : String, cookbook : String, description : String,
                      blockInterval : Long, coinInputs : List<CoinInput>,
                      itemInputs: List<ItemInput>, outputTable : EntriesList,
-                     outputs : List<WeightedOutput>, callback: (Transaction?) -> Unit) {
+                     outputs : List<WeightedOutput>, extraInfo: List<String>, callback: (Transaction?) -> Unit) {
         sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
             listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
-            listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)))) {
+            listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)), listOf(klaxon.toJsonString(extraInfo)))) {
             val response = it as Response
             var tx:Transaction? = null
             if (response.txs.isNotEmpty()) {

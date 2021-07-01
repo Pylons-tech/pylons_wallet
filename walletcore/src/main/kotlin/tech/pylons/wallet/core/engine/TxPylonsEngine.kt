@@ -127,12 +127,13 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
 
     // Engine methods
 
-    override fun applyRecipe(id: String, itemIds : List<String>): Transaction =
+    override fun applyRecipe(id: String, itemIds : List<String>, paymentId: String): Transaction =
             handleTx {
                 ExecuteRecipe(
                         recipeId = id,
                         itemIds = itemIds,
-                        sender = it.address
+                        sender = it.address,
+                        paymentId = paymentId
                 ).toSignedTx()
             }
 
@@ -401,7 +402,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
 
     override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                              outputs : List<WeightedOutput>) : Transaction =
+                              outputs : List<WeightedOutput>, extraInfo: String) : Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun disableRecipe(id: String): Transaction =

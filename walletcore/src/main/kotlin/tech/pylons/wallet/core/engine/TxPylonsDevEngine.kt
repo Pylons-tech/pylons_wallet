@@ -29,7 +29,7 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
 
     override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                              outputs : List<WeightedOutput>) =
+                              outputs : List<WeightedOutput>, extraInfo: String) =
             handleTx {
                 CreateRecipe(
                         cookbookId = cookbookId,
@@ -41,8 +41,8 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
                         outputs = outputs,
                         blockInterval = blockInterval,
                         sender = it.address,
-                        extraInfo = "",
-                        recipeId = ""
+                        extraInfo = extraInfo,
+                        recipeId = "",
                 ).toSignedTx()
             }
 

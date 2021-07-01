@@ -48,7 +48,7 @@ interface IEngine {
     fun disableRecipes(recipes : List<String>) : List<Transaction>
 
     /** Execute-recipe message */
-    fun applyRecipe(id : String, itemIds : List<String>) : Transaction
+    fun applyRecipe(id : String, itemIds : List<String>, paymentId:String="") : Transaction
 
     /** Check-execution message */
     fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
@@ -61,13 +61,13 @@ interface IEngine {
     /** Create-recipe message */
     fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                      coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                     outputs : List<WeightedOutput>) : Transaction
+                     outputs : List<WeightedOutput>, extraInfo: String) : Transaction
 
     /** Batch create-recipe message */
     fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
                       itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
-                      outputs: List<List<WeightedOutput>>) : List<Transaction>
+                      outputs: List<List<WeightedOutput>>, extraInfos: List<String>) : List<Transaction>
 
     /** Create-cookbook message */
     fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
