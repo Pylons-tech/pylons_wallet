@@ -1,9 +1,9 @@
 package tech.pylons.lib.types
 
+import tech.pylons.lib.constants.ReservedKeys
 import tech.pylons.lib.core.ICore
 import tech.pylons.lib.types.credentials.ICredentials
 import tech.pylons.lib.types.tx.Coin
-import tech.pylons.wallet.libpylons.constants.*
 import tech.pylons.lib.types.tx.item.Item
 
 /**
