@@ -29,6 +29,7 @@ ext["protobufVersion"] = "3.15.8"
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
         jcenter()
         google()

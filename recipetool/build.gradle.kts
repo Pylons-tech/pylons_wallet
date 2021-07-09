@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     id("com.google.protobuf")
     `maven-publish`
+    `java-gradle-plugin`
 }
 
 group = "tech.pylons"
@@ -28,6 +29,15 @@ configure<JavaPluginConvention> {
     targetCompatibility = jVer
 }
 
+gradlePlugin {
+    plugins {
+        create("recipeToolPlugin") {
+            id = "tech.pylons.build.recipetool"
+            implementationClass = "tech.pylons.build.RecipeManagementPlugin"
+        }
+    }
+}
+
 configurations {
     all {
         //exclude("com.github.walleth.kethereum", "crypto_api")
@@ -44,6 +54,8 @@ dependencies {
     implementation(project(":walletcore"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(gradleApi())
+
+    implementation(kotlin("gradle-plugin"))
 
     //protobuf lib
     implementation(kotlin("reflect"))

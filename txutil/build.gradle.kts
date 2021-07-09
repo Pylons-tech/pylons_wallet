@@ -1,18 +1,13 @@
 plugins {
     java
     kotlin("jvm")
+    id("tech.pylons.build.recipetool") version "0.1"
 }
 
 group = "tech.pylons"
 version = "1.0-SNAPSHOT"
 
 //sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-    jcenter()
-    google()
-}
 
 dependencies {
     implementation(project(":libpylons"))
