@@ -1,0 +1,12 @@
+{
+  "NodeVersion" : "0",
+  "ID" : "foo",
+  "Name" : "bar",
+  "Description" : "blablablahhhhh",
+  "Version" : "0",
+  "Developer" : "Billy Bob Burton's Cookbook Hut",
+  "Level" : 0,
+  "Sender" : "fakeaddress",
+  "SupportEmail" : "fred@fred.fred",
+  "CostPerBlock" : 0
+}
