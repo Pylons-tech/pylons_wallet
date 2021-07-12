@@ -1,6 +1,7 @@
 package tech.pylons.lib.core
 import tech.pylons.lib.types.*
 import tech.pylons.lib.types.tx.Trade
+import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.recipe.Recipe
 
 @ExperimentalUnsignedTypes
@@ -114,4 +115,12 @@ interface ICore {
     fun getRecipesBySender() : List<Recipe>
 
     fun getTrade(tradeId: String) : Trade?
+
+    fun getItem(itemId: String): Item?
+
+    fun listItems() : List<Item>
+
+    fun listItemsBySender(sender: String?) : List<Item>
+
+    fun listItemsByCookbookId(cookbookId: String?): List<Item>
 }

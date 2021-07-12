@@ -449,4 +449,20 @@ class Core(val config : Config) : ICore {
         return engine.getTrade(tradeId)
     }
 
+    override fun getItem(itemId: String): Item? {
+        return engine.getItem(itemId)
+    }
+
+    override fun listItems(): List<Item> {
+        return engine.listItems()
+    }
+
+    override fun listItemsBySender(sender: String?): List<Item> {
+        return engine.listItemsBySender(sender)
+    }
+
+    override fun listItemsByCookbookId(cookbookId: String?): List<Item> {
+        return engine.listItemsByCookbookId(cookbookId)
+    }
+
 }

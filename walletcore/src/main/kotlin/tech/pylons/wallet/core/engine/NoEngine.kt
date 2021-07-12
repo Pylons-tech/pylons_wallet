@@ -145,6 +145,18 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun getCompletedExecutions(): List<Execution> =
         throw NoEngineException()
 
+    override fun getItem(itemId: String): Item? =
+        throw NoEngineException()
+
+    override fun listItems(): List<Item> =
+        throw NoEngineException()
+
+    override fun listItemsByCookbookId(cookbookId: String?): List<Item> =
+        throw NoEngineException()
+
+    override fun listItemsBySender(sender: String?): List<Item> =
+        throw NoEngineException()
+
     override fun getTrade(tradeId: String): Trade? {
         throw NoEngineException()
     }

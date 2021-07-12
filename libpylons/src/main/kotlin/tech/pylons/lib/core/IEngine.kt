@@ -187,4 +187,12 @@ interface IEngine {
 
     fun getTrade(tradeId: String) : Trade?
 
+    fun getItem(itemId: String): Item?
+
+    fun listItems() : List<Item>
+
+    fun listItemsBySender(sender: String?) : List<Item>
+
+    fun listItemsByCookbookId(cookbookId: String?): List<Item>
+
 }

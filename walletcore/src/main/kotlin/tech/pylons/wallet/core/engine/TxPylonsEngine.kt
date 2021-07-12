@@ -279,6 +279,37 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         return Execution.getListFromJson(json)
     }
 
+    override fun getItem(itemId: String): Item? {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_item}${itemId}")
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
+        val obj = itemObj.obj("item")
+        if(obj != null){
+            return Item.fromJson(obj)
+        }
+        return null
+    }
+
+    override fun listItems(): List<Item> {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}")
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
+        val items = Item.listFromJson(itemObj.array("Items"))
+        return items
+    }
+
+    override fun listItemsByCookbookId(cookbookId: String?): List<Item> {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${cookbookId}")
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
+        val items = Item.listFromJson(itemObj.array("Items"))
+        return items
+    }
+
+    override fun listItemsBySender(sender: String?): List<Item> {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${sender}")
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
+        val items = Item.listFromJson(itemObj.array("Items"))
+        return items
+    }
+
     override fun getPylons(q: Long): Transaction =
             handleTx {
                 GetPylons(
