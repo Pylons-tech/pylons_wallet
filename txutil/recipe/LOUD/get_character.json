@@ -1,0 +1,39 @@
+{
+    "NodeVersion": "0",
+    "Disabled": false,
+    "ID": "LOUD-get-character-recipe-v0.1.0-1589853709",
+    "CoinInputs":[],
+    "ItemInputs": [],
+    "Entries":{
+        "CoinOutputs":[],
+        "ItemModifyOutputs":[],
+        "ItemOutputs":[{
+            "ID": "tiger_character_lv1",
+            "Doubles":[{ "Rate":"1.0", "Key":"XP", "WeightRanges":[], "Program": "1" }],
+            "Longs":[
+                { "Rate":"1.0", "Key":"level", "WeightRanges":[], "Program": "1" },
+                { "Rate":"1.0", "Key":"GiantKill", "WeightRanges":[], "Program": "0" },
+                { "Rate":"1.0", "Key":"Special", "WeightRanges":[], "Program": "0" },
+                { "Rate":"1.0", "Key":"SpecialDragonKill", "WeightRanges":[], "Program": "0" },
+                { "Rate":"1.0", "Key":"UndeadDragonKill", "WeightRanges":[], "Program": "0" }
+            ],
+            "Strings":[
+                { "Key":"Name", "Value": "Tiger", "Rate":"1.0", "Program": "1" },
+                { "Key":"Type", "Value": "Character", "Rate":"1.0", "Program": "0" }
+            ],
+            "TransferFee": 0
+        }]
+    },
+    "Outputs": [
+        {
+            "EntryIDs": ["tiger_character_lv1"],
+            "Weight": "1"
+        }
+    ],
+    "ExtraInfo":"",
+    "Sender":"account1",
+    "Name": "LOUD's Get Character recipe",
+    "CookbookID": "LOUD-v0.1.0-1589853709",
+    "Description": "this recipe is used to create character.",
+    "BlockInterval":0
+}

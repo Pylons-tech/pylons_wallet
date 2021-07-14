@@ -1,6 +1,5 @@
 package tech.pylons.build
 
-import com.beust.klaxon.Klaxon
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.spongycastle.jce.provider.BouncyCastleProvider
@@ -10,20 +9,16 @@ import tech.pylons.ipc.IPCLayer
 import tech.pylons.ipc.UILayer
 import tech.pylons.lib.core.IMulticore
 import tech.pylons.lib.klaxon
-import tech.pylons.lib.logging.Logger
 import tech.pylons.lib.types.Backend
 import tech.pylons.lib.types.Config
 import tech.pylons.lib.types.Cookbook
 import tech.pylons.lib.types.PylonsSECP256K1
 import tech.pylons.lib.types.tx.recipe.Recipe
-import tech.pylons.wallet.core.Core
 import tech.pylons.wallet.core.Multicore
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileReader
 import java.io.IOException
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.security.Security
 
 class RecipeManagementPlugin : Plugin<Project> {
