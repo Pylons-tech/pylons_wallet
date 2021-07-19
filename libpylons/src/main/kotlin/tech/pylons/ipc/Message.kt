@@ -137,7 +137,8 @@ sealed class Message {
 
     class FulfillTrade(
             var tradeId : String? = null,
-            var itemIds : List<String>? = null
+            var itemIds : List<String>? = null,
+            var paymentId: String? = null
     ) : Message() {
         companion object {
             fun deserialize(json : String) = klaxon.parse<FulfillTrade>(json)

@@ -85,7 +85,7 @@ interface IEngine {
      */
     fun dumpCredentials (credentials: ICredentials)
 
-    fun fulfillTrade (tradeId : String, itemIds : List<String>) : Transaction
+    fun fulfillTrade (tradeId : String, itemIds : List<String>, paymentId: String = "") : Transaction
 
     fun cancelTrade (tradeId : String) : Transaction
     /**

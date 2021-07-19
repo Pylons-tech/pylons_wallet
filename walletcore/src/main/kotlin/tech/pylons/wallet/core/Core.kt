@@ -395,8 +395,8 @@ class Core(val config : Config) : ICore {
         return engine.createTrade(mCoinInputs, mItemInputs, mCoinOutputs, mItemOutputs, extraInfo).submit()
     }
 
-    override fun fulfillTrade(tradeId : String, itemIds : List<String>) : Transaction =
-        engine.fulfillTrade(tradeId, itemIds).submit()
+    override fun fulfillTrade(tradeId : String, itemIds : List<String>, paymentId: String) : Transaction =
+        engine.fulfillTrade(tradeId, itemIds, paymentId).submit()
 
     override fun getCookbooks () : List<Cookbook> = engine.listCookbooks()
 

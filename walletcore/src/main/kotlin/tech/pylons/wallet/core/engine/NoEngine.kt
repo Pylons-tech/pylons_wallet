@@ -55,7 +55,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun enableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun fulfillTrade(tradeId: String, itemIds : List<String>): Transaction =
+    override fun fulfillTrade(tradeId: String, itemIds : List<String>, paymentId: String): Transaction =
             throw NoEngineException()
 
     override fun cancelTrade(tradeId: String): Transaction =

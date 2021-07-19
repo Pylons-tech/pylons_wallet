@@ -133,7 +133,7 @@ abstract class Engine(val core : Core) : IEngine {
      */
     abstract override fun dumpCredentials (credentials: ICredentials)
 
-    abstract override fun fulfillTrade (tradeId : String, itemIds : List<String>) : Transaction
+    abstract override fun fulfillTrade (tradeId : String, itemIds : List<String>, paymentId: String) : Transaction
 
     abstract override fun cancelTrade (tradeId : String) : Transaction
     /**

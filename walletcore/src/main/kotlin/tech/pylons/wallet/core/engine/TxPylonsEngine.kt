@@ -164,12 +164,13 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         println("Dumped credentials")
     }
 
-    override fun fulfillTrade(tradeId : String, itemIds : List<String>)   =
+    override fun fulfillTrade(tradeId : String, itemIds : List<String>, paymentId: String)   =
             handleTx{
                 FulfillTrade(
                         tradeId = tradeId,
                         itemIds = itemIds,
-                        sender = it.address
+                        sender = it.address,
+                        paymentId = paymentId
                 ).toSignedTx()
             }
 

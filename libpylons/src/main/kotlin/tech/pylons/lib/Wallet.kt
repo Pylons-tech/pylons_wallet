@@ -143,10 +143,11 @@ abstract class Wallet {
      * FulfillTrade
      *
      * @param trade
+     * @param paymentId - if usd stripe payment, paymentIntentId
      * @return Transaction?
      */
-    fun buyItem (trade : Trade, callback: (Transaction?) -> Unit) {
-        sendMessage(Transaction::class, Message.FulfillTrade(trade.id)) {
+    fun buyItem (trade : Trade, paymentId: String?=null, callback: (Transaction?) -> Unit) {
+        sendMessage(Transaction::class, Message.FulfillTrade(tradeId = trade.id, itemIds = null, paymentId = paymentId)) {
             val response = it as Response
             var tx:Transaction? = null
             if (response.txs.isNotEmpty()) {
