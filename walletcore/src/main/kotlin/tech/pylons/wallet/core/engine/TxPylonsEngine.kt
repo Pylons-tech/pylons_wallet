@@ -282,7 +282,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun getItem(itemId: String): Item? {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_item}${itemId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item}${itemId}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val obj = itemObj.obj("item")
         if(obj != null){
@@ -292,21 +292,21 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listItems(): List<Item> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
     }
 
     override fun listItemsByCookbookId(cookbookId: String?): List<Item> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${cookbookId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${cookbookId}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
     }
 
     override fun listItemsBySender(sender: String?): List<Item> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${sender}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${sender}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
