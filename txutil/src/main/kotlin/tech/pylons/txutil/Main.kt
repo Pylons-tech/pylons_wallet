@@ -18,7 +18,7 @@ object Main {
         try {
             var op = args[0]
             val privkeyHex = args[1]
-            Multicore.enable(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317")))
+            Multicore.enable(Config(Backend.TESTNET, "pylons-testnet", true, listOf("http://127.0.0.1:1317")))
             println(when (op) {
                 "SIGN_BYTES" -> try {
                     val accountNumber = args[2].toLong()

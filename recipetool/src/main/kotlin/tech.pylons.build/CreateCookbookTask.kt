@@ -1,11 +1,7 @@
 package tech.pylons.build
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Task
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import tech.pylons.lib.klaxon
 import tech.pylons.wallet.core.Core
 
 abstract class CreateCookbookTask : DefaultTask() {
@@ -19,7 +15,7 @@ abstract class CreateCookbookTask : DefaultTask() {
             descriptions = listOf(cookbook.description),
             versions = listOf(cookbook.version),
             supportEmails = listOf(cookbook.supportEmail),
-            levels = listOf(cookbook.level),
+            levels = listOf(),
             costsPerBlock = listOf(cookbook.costPerBlock)
         )
     }

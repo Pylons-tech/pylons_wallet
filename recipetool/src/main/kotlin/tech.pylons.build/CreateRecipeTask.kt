@@ -1,9 +1,6 @@
 package tech.pylons.build
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Task
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import tech.pylons.lib.klaxon
 import tech.pylons.wallet.core.Core
