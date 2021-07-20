@@ -30,7 +30,9 @@ data class Recipe(
     @property:[Json(name = "Entries")]
         val entries : EntriesList,
     @property:[Json(name = "Outputs")]
-        val outputs : List<WeightedOutput>
+        val outputs : List<WeightedOutput>,
+    @property:[Json(name = "ExtraInfo")]
+        val extraInfo: String
 ) {
     companion object {
         fun listFromJson(json : String) : List<Recipe> {
@@ -51,7 +53,8 @@ data class Recipe(
                                 coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
                                 itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
                                 entries = EntriesList.fromJson(it.obj("Entries"))!!,
-                                outputs = WeightedOutput.listFromJson(it.array("Outputs"))!!
+                                outputs = WeightedOutput.listFromJson(it.array("Outputs"))!!,
+                                extraInfo = it.string("ExtraInfo")!!
                         )
                 )
             }

@@ -322,7 +322,9 @@ data class ExecuteRecipe(
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "ItemIDs")]
-        val itemIds : List<String>
+        val itemIds : List<String>,
+        @property:[Json(name = "PaymentId")]
+        val paymentId: String = ""
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -332,7 +334,8 @@ data class ExecuteRecipe(
             return ExecuteRecipe(
                     recipeId = jsonObject.string("RecipeID")!!,
                     sender = jsonObject.string("Sender")!!,
-                    itemIds = jsonObject.array("ItemIDs")?: listOf()
+                    itemIds = jsonObject.array("ItemIDs")?: listOf(),
+                    paymentId = jsonObject.string("PaymentId")?: ""
             )
         }
     }
@@ -585,7 +588,9 @@ data class UpdateRecipe (
     @property:[Json(name = "Name")]
         val name : String,
     @property:[Json(name = "Sender")]
-        val sender : String
+        val sender : String,
+    @property:[Json(name = "ExtraInfo")]
+        val extraInfo: String
 ): Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
@@ -604,7 +609,8 @@ data class UpdateRecipe (
                     itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
                     entries = EntriesList.fromJson(jsonObject.obj("Entries"))?:
                             EntriesList(listOf(), listOf(), listOf()),
-                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))
+                    outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs")),
+                    extraInfo = jsonObject.string("ExtraInfo")!!
             )
         }
     }

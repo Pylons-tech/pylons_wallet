@@ -59,7 +59,7 @@ abstract class Engine(val core : Core) : IEngine {
     }
 
     /** Execute-recipe message */
-    abstract override fun applyRecipe(id : String, itemIds : List<String>) : Transaction
+    abstract override fun applyRecipe(id : String, itemIds : List<String>, paymentId: String) : Transaction
 
     /** Check-execution message */
     abstract override fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
@@ -72,13 +72,13 @@ abstract class Engine(val core : Core) : IEngine {
     /** Create-recipe message */
     abstract override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                                        coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                                       outputs : List<WeightedOutput>) : Transaction
+                                       outputs : List<WeightedOutput>, extraInfo: String) : Transaction
 
     /** Batch create-recipe message */
     override fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
                       itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
-                      outputs: List<List<WeightedOutput>>) : List<Transaction> {
+                      outputs: List<List<WeightedOutput>>, extraInfos: List<String>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0  until count) {
@@ -91,7 +91,8 @@ abstract class Engine(val core : Core) : IEngine {
                             coinInputs = coinInputs[i],
                             itemInputs = itemInputs[i],
                             entries = entries[i],
-                            outputs = outputs[i]
+                            outputs = outputs[i],
+                            extraInfo = extraInfos[i]
                     )
             )
         }
@@ -217,12 +218,12 @@ abstract class Engine(val core : Core) : IEngine {
 
     /** Update-recipe message */
     abstract override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                                       coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>) : Transaction
+                                       coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String) : Transaction
 
     /** Batch update-recipe message */
     override fun updateRecipes (ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
                        blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
-                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>) : List<Transaction> {
+                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>,extraInfos: List<String>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0  until count) {
@@ -236,7 +237,8 @@ abstract class Engine(val core : Core) : IEngine {
                             coinInputs = coinInputs[i],
                             itemInputs = itemInputs[i],
                             entries = entries[i],
-                            outputs = outputs[i]
+                            outputs = outputs[i],
+                            extraInfo = extraInfos[i]
                     )
             )
         }
@@ -260,4 +262,13 @@ abstract class Engine(val core : Core) : IEngine {
     abstract override fun getLockedCoinDetails () : LockedCoinDetails
 
     abstract override fun getCompletedExecutions(): List<Execution>
+
+    abstract override fun getItem(itemId: String): Item?
+
+    abstract override fun listItems(): List<Item>
+
+    abstract override fun listItemsByCookbookId(cookbookId: String?): List<Item>
+
+    abstract override fun listItemsBySender(sender: String?): List<Item>
+
 }

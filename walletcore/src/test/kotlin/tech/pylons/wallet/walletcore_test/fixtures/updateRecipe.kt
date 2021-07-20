@@ -44,5 +44,6 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
         outputs = listOf(WeightedOutput(listOf("itemEarth"), "1")),
         itemInputs = listOf(),
         name = name,
-        id = rId
+        id = rId,
+        extraInfo = ""
 )

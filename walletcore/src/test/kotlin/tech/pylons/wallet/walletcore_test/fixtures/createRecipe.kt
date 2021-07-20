@@ -42,5 +42,6 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
         ),
         outputs = listOf(WeightedOutput(listOf("itemMars"), "1")),
         itemInputs = listOf(),
-        name = name
+        name = name,
+        extraInfo = ""
 )

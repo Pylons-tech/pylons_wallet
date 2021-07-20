@@ -28,7 +28,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
-    override fun applyRecipe(id : String, itemIds : List<String>) : Transaction =
+    override fun applyRecipe(id : String, itemIds : List<String>, paymentId: String) : Transaction =
             throw NoEngineException()
 
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
@@ -39,7 +39,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
 
     override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                              outputs : List<WeightedOutput>) : Transaction =
+                              outputs : List<WeightedOutput>, extraInfo: String) : Transaction =
             throw NoEngineException()
 
     override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
@@ -121,7 +121,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
             throw NoEngineException()
 
     override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>): Transaction =
+                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String): Transaction =
             throw NoEngineException()
 
     override fun listTrades(): List<Trade> =
@@ -143,6 +143,18 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
         throw NoEngineException()
 
     override fun getCompletedExecutions(): List<Execution> =
+        throw NoEngineException()
+
+    override fun getItem(itemId: String): Item? =
+        throw NoEngineException()
+
+    override fun listItems(): List<Item> =
+        throw NoEngineException()
+
+    override fun listItemsByCookbookId(cookbookId: String?): List<Item> =
+        throw NoEngineException()
+
+    override fun listItemsBySender(sender: String?): List<Item> =
         throw NoEngineException()
 
     override fun getTrade(tradeId: String): Trade? {
