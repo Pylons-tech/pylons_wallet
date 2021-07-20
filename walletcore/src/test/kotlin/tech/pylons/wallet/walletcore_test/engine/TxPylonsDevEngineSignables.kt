@@ -15,7 +15,7 @@ import java.io.StringReader
 import tech.pylons.lib.klaxon
 
 class TxPylonsDevEngineSignables {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         core.start("")
@@ -36,7 +36,7 @@ class TxPylonsDevEngineSignables {
         engine.getMyProfileState()
         println("getting txbuilder output...")
         var fixture = engine.queryTxBuilder(msgType)
-        fixture = klaxon.parseJsonObject(StringReader(fixture)).obj("result")!!.toJsonString()
+        fixture = klaxon.parseJsonObject(StringReader(fixture)).obj("body")!!.toJsonString()
         println("generating sign struct")
         val signable = baseJsonTemplateForTxSignature(signableFun(engine), 0, 0, 200000)
         println("generated: ${signableFun(engine)}")
@@ -55,7 +55,7 @@ class TxPylonsDevEngineSignables {
     @Test
     fun createAccountSignable () {
         val model = tech.pylons.wallet.walletcore_test.fixtures.createAccountSignable
-        basicSignableTestFlow("create_account") { model.toSignStruct() }
+        basicSignableTestFlow("create_accounht") { model.toSignStruct() }
     }
 
     @Test

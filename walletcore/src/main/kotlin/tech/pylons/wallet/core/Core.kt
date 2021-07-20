@@ -52,7 +52,7 @@ class Core(val config : Config) : ICore {
             private set
 
         //const val chain_id = "pylonschain"
-        const val chain_id = "pylons-testnet" //testnet chain
+        //const val chain_id = "pylons-testnet" //testnet chain
     }
 
     override val userData = UserData(this)
@@ -131,9 +131,13 @@ class Core(val config : Config) : ICore {
 
     override fun start (userJson : String) {
         engine = when (config.backend) {
-            Backend.LIVE -> TxPylonsEngine(this)
-            Backend.LIVE_DEV -> TxPylonsDevEngine(this)
             Backend.NONE -> NoEngine(this)
+            else -> {
+                when (config.devMode) {
+                    false -> TxPylonsEngine(this)
+                    true -> TxPylonsDevEngine(this)
+                }
+            }
         }
         runBlocking {
             try {
@@ -233,12 +237,18 @@ class Core(val config : Config) : ICore {
         val builder = ProtoJsonUtil.TxProtoBuilder()
 
         val authInfo = builder.buildAuthInfo(Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()),sequence,gas)
+
+
         val bodyInfo = builder.buildTxbody(msg)
         builder.buildProtoTxBuilder(bodyInfo, authInfo)
-        val signDoc = builder.signDoc(accountNumber, chain_id)
+        val signDoc = builder.signDoc(accountNumber, config.chainId)
 
         val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
         builder.addSignature(cryptoHandler, signDoc!!)
+
+        println("?")
+        println(signDoc)
+        println("?")
 
         return baseTemplateForTxs(builder.txBytes()!!, BroadcastMode.BROADCAST_MODE_BLOCK)
     }

@@ -1,12 +1,12 @@
 ###Usage example
 
-creating a cookbook on a local node: 
+creating a cookbook on the testnet: 
 
-`gradlew txutil:createCookbook -Pfilepath=cb.json -Paddr=127.0.0.1:1317`
+`gradlew txutil:createCookbook -Pfilepath=cb.json`
 
-creating a recipe on a local node
+creating a recipe on the testnet:
 
-`gradlew txutil:createRecipe -Pfilepath=recipe.json -Paddr=127.0.0.1:1317`
+`gradlew txutil:createRecipe -Pfilepath=recipe.json`
 
 cookbooks are stored as JSON files in `(project)/cookbook`; recipes are stored in `(project)/recipe`
 

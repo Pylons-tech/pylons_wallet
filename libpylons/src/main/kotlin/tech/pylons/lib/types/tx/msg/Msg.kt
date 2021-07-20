@@ -150,8 +150,6 @@ data class CreateCookbook (
         val developer : String,
         @property:[Json(name = "SupportEmail")]
         val supportEmail : String,
-        @property:[Json(name = "Level")]
-        val level : Long,
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "CostPerBlock")]
@@ -171,8 +169,7 @@ data class CreateCookbook (
                     version = jsonObject.string("Version")!!,
                     supportEmail = jsonObject.string("SupportEmail")!!,
                     sender = jsonObject.string("Sender")!!,
-                    level = jsonObject.string("Level")!!.toLong(),
-                    costPerBlock = jsonObject.string("CostPerBlock")!!.toLong()
+                costPerBlock = jsonObject.string("CostPerBlock")!!.toLong()
             )
         }
     }

@@ -15,7 +15,7 @@ abstract class CreateCookbookTask : DefaultTask() {
             descriptions = listOf(cookbook.description),
             versions = listOf(cookbook.version),
             supportEmails = listOf(cookbook.supportEmail),
-            levels = listOf(cookbook.level),
+            levels = listOf(),
             costsPerBlock = listOf(cookbook.costPerBlock)
         )
     }

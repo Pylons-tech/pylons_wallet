@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class IpcTest {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         HttpWire.verbose = true
@@ -33,6 +33,7 @@ internal class IpcTest {
 
     @Test
     fun handleBatchCreateRecipe () {
+        engineSetup()
         val weightedOutputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(tech.pylons.lib.klaxon.toJsonString(WeightedOutput(listOf(), "")))))
         val coinInputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(CoinInput("foo", 0))))
         val itemInputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(ItemInput("bar", ConditionList(listOf(), listOf(), listOf()), listOf(), listOf(), listOf(), FeeInputParam(0, 0)))))

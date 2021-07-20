@@ -19,7 +19,7 @@ import java.security.Security
 
 @ExperimentalUnsignedTypes
 class TxPylonsDevEngineOffline {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     private val compressedPubkey = "0391677BCE47D37E1DD4AB90F07B5C3209FC2761970ED839FCD7B5D351275AFC0B"
 
@@ -83,27 +83,8 @@ class TxPylonsDevEngineOffline {
     fun generateJson () {
         val fixture = """
         {
-        "body":{
-            "messages":[{
-                "@type":"/pylons.MsgGetPylons",
-                "Amount":[{"denom":"pylon","amount":"500"}],
-                "Requester":"cosmos1d8j4mpzltspqdguz0r56nncajuuaj72e7kq5yw"
-            }],
-            "memo":"",
-            "timeout_height":"0",
-            "extension_options":[],
-            "non_critical_extension_options":[]
-        },
-        "auth_info":{
-            "signer_infos":[],
-            "fee":{
-                "amount":[],
-                "gas_limit":"0",
-                "payer":"",
-                "granter":""
-            }
-        },
-        "signatures":[]
+        "tx_bytes":"ClcKVQoUL3B5bG9ucy5Nc2dHZXRQeWxvbnMSPQoMCgVweWxvbhIDNTAwEi1jb3Ntb3MxMHM0bWcyNXR1NnRlcm1yazhlZ2x0ZnltZTRxN3NnM2hlcjIzOXUSVgpOCkYKHy9jb3Ntb3MuY3J5cHRvLnNlY3AyNTZrMS5QdWJLZXkSIwohApUOHN/LEz1gJBCf1In3NO60UCQY5TjChIHyK84nbySMEgQKAggBEgQQgLUYGkDPrSipdcX5PGCkZZ2epLi1YNDL/fR5uWgUldPnoNGxWUOm4Do9gyfWwfHhgg8yDVZjsnxp7ypUmLlC9N5p5mO0",
+        "mode":"BROADCAST_MODE_BLOCK"
         }
         """.trimIndent().replace(" ", "")
         engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)

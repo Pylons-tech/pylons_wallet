@@ -60,7 +60,7 @@ class RecipeManagementPlugin : Plugin<Project> {
             IPCLayer.implementation = FakeIPC()
             UILayer.implementation = FakeUI()
             Security.addProvider(BouncyCastleProvider())
-            Multicore.enable(Config(Backend.LIVE_DEV, listOf(t.property("addr") as String)))
+            Multicore.enable(Config(Backend.TESTNET, "pylons-testnet", true, listOf()))
             // TODO: There should be a proper system in place for handling keydata,
             // but the build-out would take too much time atm, so we're gonna do something shitty.
             if (!File(target!!.projectDir.absolutePath,"dev-keys").exists()) {

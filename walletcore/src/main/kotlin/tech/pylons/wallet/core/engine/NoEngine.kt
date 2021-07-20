@@ -21,10 +21,8 @@ import tech.pylons.lib.types.tx.trade.TradeItemInput
  */
 internal class NoEngine(core : Core) : Engine(core), IEngine {
     override val prefix: String = "__NOENGINE__"
-    override val backendType: Backend = Backend.NONE
     override var cryptoHandler: ICryptoHandler = CryptoNull(core)
     override val usesMnemonic: Boolean = false
-    override val isDevEngine: Boolean = false
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
