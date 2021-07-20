@@ -20,7 +20,7 @@ import org.junit.jupiter.api.*
 // log this info somewhere useful. TODO: rewrite this as a test that actually
 // uses known-good fixtures to sanity check our output to ensure this never happens again.
 class ExportVarious {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     companion object {
         var exportedKey : String? = null

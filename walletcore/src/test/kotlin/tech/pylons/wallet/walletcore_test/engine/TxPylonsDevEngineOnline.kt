@@ -23,7 +23,7 @@ import java.util.*
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class TxPylonsDevEngineOnline {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     companion object {
         var exportedKey : String? = null
@@ -139,17 +139,12 @@ class TxPylonsDevEngineOnline {
     @Order(0)
     @Test
     fun createAccount () {
-        val engine = engineSetup(exportedKey)
-        core.updateStatusBlock()
-        engine.registerNewProfile("fuckio", null)
-
-        /*
+        //val engine = engineSetup(exportedKey)
         basicTxTestFlow (
                 { it.registerNewProfile("fuckio", null) },
                 { it, _ -> exportedKey =
                         Hex.toHexString(it.cryptoCosmos.keyPair!!.secretKey().bytesArray())}
         )
-        */
     }
 
     @Order(1)

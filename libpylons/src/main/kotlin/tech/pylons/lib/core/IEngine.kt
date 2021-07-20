@@ -23,14 +23,8 @@ interface IEngine {
      */
     val prefix : String
 
-    /** Specifies the TX-handling backend associated with an Engine instance. */
-    val backendType : Backend
-
     /** Identifies whether or not we're using BIP44 mnemonics when doing keygen. */
     val usesMnemonic : Boolean
-
-    /** Should this engine have access to developer-use methods? */
-    val isDevEngine : Boolean
 
     /** The current CryptoHandler instance associated with this engine */
     var cryptoHandler : ICryptoHandler

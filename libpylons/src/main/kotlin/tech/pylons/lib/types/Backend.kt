@@ -10,14 +10,17 @@ enum class Backend {
     NONE,
 
     /**
-     * Standard live-blockchain codepaths. This is what should typically be used in
-     * wallets built for end users.
+     * Connects to manually-specified nodes. Usually used with a local node setup.
      */
-    LIVE,
+    MANUAL,
 
     /**
-     * Live-blockchain codepath w/ access to developer tools. This should be used in wallets
-     * build for client game/application developers.
+     * Connects to Pylons testnet.
      */
-    LIVE_DEV
+    TESTNET,
+
+    /**
+     * Connects to Pylons mainnet.
+     */
+    MAINNET
 }

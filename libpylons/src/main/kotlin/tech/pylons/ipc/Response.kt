@@ -180,7 +180,7 @@ class Response (
                         CreateCookbook::javaClass -> {
                             val msg = it as CreateCookbook
                             mCookbooksOut.add(Cookbook("", msg.cookbookId, msg.name, msg.description,
-                            msg.version, msg.developer, msg.level, msg.sender, msg.supportEmail, msg.costPerBlock))
+                            msg.version, msg.developer, msg.sender, msg.supportEmail, msg.costPerBlock))
                         }
                         CreateRecipe::javaClass -> {
                             val msg = it as CreateRecipe
@@ -223,7 +223,7 @@ class Response (
                             // we can't get cookbook name/level from updatecookbook, but it'll be in mCookbooksIn
                             mCookbooksOut.add(
                                 Cookbook("", msg.id, mCookbooksIn.first().name, msg.description, msg.version,
-                            msg.developer, mCookbooksIn.first().level, msg.sender, msg.supportEmail,
+                            msg.developer, msg.sender, msg.supportEmail,
                                     mCookbooksIn.first().costPerBlock)
                             )
                         }

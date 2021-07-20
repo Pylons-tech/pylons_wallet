@@ -6,4 +6,4 @@ package tech.pylons.lib.types
  * set per wallet implementation and distinguish them from org.bitcoinj.core.core arguments meant
  * to be derived from user data.
  */
-data class Config(val backend: Backend, val nodes : List<String>)
+data class Config(val backend: Backend, val chainId : String, val devMode : Boolean, val nodes : List<String>)

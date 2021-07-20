@@ -26,14 +26,8 @@ abstract class Engine(val core : Core) : IEngine {
      */
     abstract override val prefix : String
 
-    /** Specifies the TX-handling backend associated with an Engine instance. */
-    abstract override val backendType : Backend
-
     /** Identifies whether or not we're using BIP44 mnemonics when doing keygen. */
     abstract override val usesMnemonic : Boolean
-
-    /** Should this engine have access to developer-use methods? */
-    abstract override val isDevEngine : Boolean
 
     /** The current CryptoHandler instance associated with this engine */
     abstract override var cryptoHandler : ICryptoHandler

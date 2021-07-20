@@ -37,8 +37,7 @@ class CookbookTest {
                         description = "this is a description for updatescookbook test",
                         version = "1.0.0",
                         developer = "tst",
-                        level = 0,
-                        supportEmail = "example@example.com",
+                    supportEmail = "example@example.com",
                         costPerBlock = 50,
                         sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
                 )

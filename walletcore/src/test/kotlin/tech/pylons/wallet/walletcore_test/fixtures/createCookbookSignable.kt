@@ -10,6 +10,5 @@ val createCookbookSignable = CreateCookbook(
         version = "1.0.0",
         supportEmail = "example@example.com",
         sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
-        level = 0,
-        costPerBlock = 50
+    costPerBlock = 50
 )
