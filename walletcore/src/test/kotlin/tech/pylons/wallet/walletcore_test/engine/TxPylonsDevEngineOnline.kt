@@ -27,14 +27,8 @@ class TxPylonsDevEngineOnline {
 
     companion object {
         var exportedKey : String? = null
-    }
-
-    private fun getCookbookIfOneExists (engine: TxPylonsDevEngine) : String {
-        val cb = engine.listCookbooks()
-        return when (cb.isNotEmpty()) {
-            true -> cb[0].id
-            false -> fail("No cookbooks exist on chain belonging to current address. This test cannot continue.")
-        }
+        var exportedRecipeName : String? = null
+        var exportedCookbook : String? = null
     }
 
     private fun getExecutionIfOneExists (engine: TxPylonsDevEngine) : String {
@@ -44,14 +38,6 @@ class TxPylonsDevEngineOnline {
         return when (e.isNotEmpty()) {
             true -> e[e.lastIndex].id
             false -> fail("No executions exist on chain belonging to current address. This test cannot continue.")
-        }
-    }
-
-    private fun getRecipeIfOneExists (engine: TxPylonsDevEngine) : String {
-        val r = engine.listRecipes()
-        return when (r.isNotEmpty()) {
-            true -> r[r.lastIndex].id
-            false -> fail("No recipes exist on chain belonging to current address. This test cannot continue.")
         }
     }
 
@@ -83,7 +69,6 @@ class TxPylonsDevEngineOnline {
         }
         else engine.cryptoHandler.generateNewKeys()
         core.userProfile = MyProfile.getDefault(core)
-        println(key)
         if (key != null) assertEquals(key, Hex.toHexString(engine.cryptoHandler.keyPair?.secretKey()?.bytesArray()))
         return engine
     }
@@ -93,44 +78,98 @@ class TxPylonsDevEngineOnline {
         var recipe : Recipe? = null
         for (it : Recipe in recipes) { if (it.name == recipeName  && it.cookbookId == cookbook) { recipe = it; break } }
         assertNotNull(recipe, "could not find recipe $recipeName in cookbook $cookbook")
-        println(recipe?.name)
     }
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) = basicTxTestFlow(txFun, null)
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction, followUp : ((TxPylonsDevEngine, String) -> Unit)?) {
-        println(exportedKey)
         val engine = engineSetup(exportedKey)
+        println("Running TX integration test.\n" +
+                "Chain ID: ${core.config.chainId}\n" +
+                "Private key: $exportedKey\n" +
+                "Public key: ${PubKeyUtil.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}\n" +
+                "Address: ${core.userProfile?.address}\n" +
+                "NEXT: Updating status block...\n" +
+                "============================\n" +
+                "\n")
         core.updateStatusBlock()
-        println("pubkey: ${PubKeyUtil.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
-        println("getting profile state...")
+        println("Updated status block successfully.\n" +
+                "Block time: ${core.statusBlock.blockTime}\n" +
+                "Height: ${core.statusBlock.height}\n" +
+                "WalletCore version: ${core.statusBlock.walletCoreVersion}\n" +
+                "NEXT: Getting profile state before initial TX build...\n" +
+                "============================\n" +
+                "\n")
         engine.getMyProfileState()
-        //val oldSequence = (Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence
-        println("building tx...")
+        println("Got profile state successfully.\n" +
+                "Address: ${core.userProfile?.address}\n" +
+                "Pylons: ${core.userProfile?.coin("pylon")}\n" +
+                "Number of items: ${core.userProfile?.items?.size}\n" +
+                "NEXT: Building transaction...\n" +
+                "============================\n" +
+                "\n")
         val tx = txFun(engine)
-        println("submitting tx...")
+        println("Built transaction successfully.\n" +
+                "State: ${tx.state}\n" +
+                "Message: ${tx.txData.msg}\n" +
+                "Code: ${tx.code}\n" +
+                "Status: ${tx.txData.status}\n" +
+                "Raw log: ${tx.raw_log}\n"+
+                "Message size: ${tx.stdTx?.msg?.size}b\n" +
+                "NEXT: Submitting transaction...\n" +
+                "============================\n" +
+                "\n")
         tx.submit()
-        println("waiting for tx to resolve")
+        println("Submitted transaction successfully.\n" +
+                "State: ${tx.state}\n" +
+                "Message: ${tx.txData.msg}\n" +
+                "Code: ${tx.code}\n" +
+                "Status: ${tx.txData.status}\n" +
+                "Raw log: ${tx.raw_log}\n"+
+                "Message size: ${tx.stdTx?.msg?.size}b\n" +
+                "NEXT: Waiting for transaction to resolve...\n" +
+                "============================\n" +
+                "\n")
         while (true) {
             if (tx.state == Transaction.State.TX_NOT_YET_SENT) Thread.sleep(5000)
             else break
         }
-        println("Waiting 5 seconds to allow chain to catch up")
+        println("\n\nWaiting 5 seconds to allow chain to catch up...\n\n")
         Thread.sleep(5000)
+        println("\n\nTransaction should be committed on local chain now.\n\n")
         engine.getMyProfileState()
-        //This check is no longer used bc we have a cleaner way to make sure transactions are accepted,
-        //but you may want to uncomment it if Extremely Weird things are happening when interacting w/ the chain
-        //and you're trying to debug.
-        //assertTrue((Core.userProfile!!.credentials as TxPylonsEngine.Credentials).sequence > oldSequence)
-
-        println("txhash: ${tx.id}")
+        println("Got profile state successfully after TX commit.\n" +
+                "Address: ${core.userProfile?.address}\n" +
+                "Pylons: ${core.userProfile?.coin("pylon")}\n" +
+                "Number of items: ${core.userProfile?.items?.size}\n" +
+                "NEXT: Building transaction...\n" +
+                "============================\n" +
+                "\n")
+        println("Final local transaction data check.\n" +
+                "Hash: ${tx.id}\n" +
+                "State: ${tx.state}\n" +
+                "Message: ${tx.txData.msg}\n" +
+                "Code: ${tx.code}\n" +
+                "Status: ${tx.txData.status}\n" +
+                "Raw log: ${tx.raw_log}\n"+
+                "Message size: ${tx.stdTx?.msg?.size}b\n" +
+                "NEXT: Retrieving accepted transaction from chain...\n" +
+                "============================\n" +
+                "\n")
         assertEquals(Transaction.State.TX_ACCEPTED, tx.state)
-        println("ok!")
+
         val a = engine.getTransaction(tx.id!!)
-        println(a.stdTx!!.msg.size)
-
-        assertEquals(Transaction.ResponseCode.OK, a.code, "Not OK Response Code")
-
+        println("Retrieved transaction data check.\n" +
+                "Hash: ${a.id}\n" +
+                "State: ${a.state}\n" +
+                "Message: ${a.txData.msg}\n" +
+                "Code: ${a.code}\n" +
+                "Status: ${a.txData.status}\n" +
+                "Raw log: ${a.raw_log}\n"+
+                "Message size: ${a.stdTx?.msg?.size}b\n" +
+                "============================\n" +
+                "\n")
+        assertEquals(Transaction.ResponseCode.OK, a.code, "Response code of ${a.code}, not ResponseCode.OK")
         followUp?.invoke(engine, tx.id!!)
     }
 
@@ -139,7 +178,6 @@ class TxPylonsDevEngineOnline {
     @Order(0)
     @Test
     fun createAccount () {
-        //val engine = engineSetup(exportedKey)
         basicTxTestFlow (
                 { it.registerNewProfile("fuckio", null) },
                 { it, _ -> exportedKey =
@@ -163,7 +201,10 @@ class TxPylonsDevEngineOnline {
     @Order(3)
     @Test
     fun createsCookbook () {
-        basicTxTestFlow { it.createCookbook("${kotlin.random.Random.nextInt()}","blyyah ${Random().nextInt()}", "tst",
+        val id = "${kotlin.random.Random.nextInt()}"
+        exportedCookbook = id
+        val name = "blyyah ${Random().nextInt()}"
+        basicTxTestFlow { it.createCookbook(id, name, "tst",
                 "this is a description for a test flow cookbook i guess",
                 "1.0.0", "fake@example.com", 0, 50) }
     }
@@ -179,7 +220,8 @@ class TxPylonsDevEngineOnline {
     @Order(5)
     @Test
     fun updatesCookbook () {
-        basicTxTestFlow { it.updateCookbook(getCookbookIfOneExists(it), "tst",
+        val cb = exportedCookbook ?: throw Exception("exportedCookbook should not be null")
+        basicTxTestFlow { it.updateCookbook(cb, "tst",
                 "this is a description for updatescookbook test", "1.0.0", "example@example.com") }
     }
 
@@ -187,10 +229,12 @@ class TxPylonsDevEngineOnline {
     @Test
     fun createsRecipe () {
         val name = "RTEST_${Instant.now().epochSecond}"
+        val cb = exportedCookbook ?: throw Exception("exportedCookbook should not be null")
+        exportedRecipeName = name
         basicTxTestFlow(
                 { emitCreateRecipe(it, name,
-                        getCookbookIfOneExists(it), core.userProfile!!.credentials.address)},
-                { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
+                        cb, core.userProfile!!.credentials.address)},
+                { it, _ -> checkIfRecipeExists(it, name, cb) }
         )
     }
 
@@ -211,30 +255,34 @@ class TxPylonsDevEngineOnline {
     @Order(9)
     @Test
     fun updatesRecipe () {
-        val name = "RTEST_${Instant.now().epochSecond}"
+        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        val cb = exportedCookbook ?: throw Exception("exportedCookbook should not be null")
         basicTxTestFlow(
-                { emitUpdateRecipe(it, name, getCookbookIfOneExists(it),
-                        getRecipeIfOneExists(it), core.userProfile!!.credentials.address)},
-                { it, _ -> checkIfRecipeExists(it, name, getCookbookIfOneExists(it)) }
+                { emitUpdateRecipe(it, name, cb,
+                        cb, core.userProfile!!.credentials.address)},
+                { it, _ -> checkIfRecipeExists(it, name, cb) }
         )
     }
 
     @Order(10)
     @Test
     fun disablesRecipe () {
-        basicTxTestFlow { it.disableRecipe(getRecipeIfOneExists(it)) }
+        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        basicTxTestFlow { it.disableRecipe(name) }
     }
 
     @Order(11)
     @Test
     fun enablesRecipe () {
-        basicTxTestFlow { it.enableRecipe(getRecipeIfOneExists(it)) }
+        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        basicTxTestFlow { it.enableRecipe(name) }
     }
 
     @Order(12)
     @Test
     fun executesRecipe () {
-        basicTxTestFlow { it.applyRecipe(getRecipeIfOneExists(it), listOf()) }
+        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        basicTxTestFlow { it.applyRecipe(name, listOf()) }
     }
 
     @Order(13)
@@ -248,7 +296,7 @@ class TxPylonsDevEngineOnline {
     fun createsTrade () {
         basicTxTestFlow(
                 { emitCreateTrade(it, getItemIfOneExists(it), core.userProfile!!.credentials.address)},
-                { it, _ -> println("do trade chk later") }
+                { _, _ -> println("do trade chk later") }
         )
     }
 
