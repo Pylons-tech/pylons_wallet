@@ -419,7 +419,9 @@ data class FulfillTrade (
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "ItemIDs")]
-        val itemIds : List<String>
+        val itemIds : List<String>,
+        @property:[Json(name = "PaymentId")]
+        val paymentId: String
 ): Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -427,9 +429,10 @@ data class FulfillTrade (
         @MsgParser
         fun parse (jsonObject: JsonObject) : FulfillTrade {
             return FulfillTrade(
-                    sender = jsonObject.string("Sender")!!,
-                    tradeId = jsonObject.string("TradeID")!!,
-                    itemIds = jsonObject.array("ItemIDs") ?: listOf()
+                sender = jsonObject.string("Sender")!!,
+                tradeId = jsonObject.string("TradeID")!!,
+                itemIds = jsonObject.array("ItemIDs") ?: listOf(),
+                paymentId = jsonObject.string("PaymentId").orEmpty()
             )
         }
     }

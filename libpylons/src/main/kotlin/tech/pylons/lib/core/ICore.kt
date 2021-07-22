@@ -75,7 +75,7 @@ interface ICore {
                      coinOutputs : List<String>, itemOutputs : List<String>,
                      extraInfo : String) : Transaction
 
-    fun fulfillTrade(tradeId : String, itemIds : List<String>) : Transaction
+    fun fulfillTrade(tradeId : String, itemIds : List<String>, paymentId: String = "") : Transaction
 
     fun getCookbooks () : List<Cookbook>
 
