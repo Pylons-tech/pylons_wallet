@@ -27,7 +27,7 @@ class TxPylonsDevEngineOnline {
 
     companion object {
         var exportedKey : String? = null
-        var exportedRecipeName : String? = null
+        var exportedRecipeId : String? = null
         var exportedCookbook : String? = null
     }
 
@@ -71,13 +71,6 @@ class TxPylonsDevEngineOnline {
         core.userProfile = MyProfile.getDefault(core)
         if (key != null) assertEquals(key, Hex.toHexString(engine.cryptoHandler.keyPair?.secretKey()?.bytesArray()))
         return engine
-    }
-
-    private fun checkIfRecipeExists (engine: TxPylonsDevEngine, recipeName: String, cookbook : String) {
-        val recipes = engine.listRecipes()
-        var recipe : Recipe? = null
-        for (it : Recipe in recipes) { if (it.name == recipeName  && it.cookbookId == cookbook) { recipe = it; break } }
-        assertNotNull(recipe, "could not find recipe $recipeName in cookbook $cookbook")
     }
 
     private fun basicTxTestFlow (txFun : (TxPylonsDevEngine) -> Transaction) = basicTxTestFlow(txFun, null)
@@ -230,11 +223,15 @@ class TxPylonsDevEngineOnline {
     fun createsRecipe () {
         val name = "RTEST_${Instant.now().epochSecond}"
         val cb = exportedCookbook ?: throw Exception("exportedCookbook should not be null")
-        exportedRecipeName = name
+        //exportedRecipeId = name
+        println("Using $exportedCookbook:$exportedRecipeId")
         basicTxTestFlow(
                 { emitCreateRecipe(it, name,
                         cb, core.userProfile!!.credentials.address)},
-                { it, _ -> checkIfRecipeExists(it, name, cb) }
+                { it, _ -> run {
+                    exportedRecipeId = core.getRecipeIdFromCookbookAndName(cb, name)
+                    assertNotNull(exportedRecipeId, "Failed to retrieve recipe after creating it")
+                } }
         )
     }
 
@@ -255,33 +252,41 @@ class TxPylonsDevEngineOnline {
     @Order(9)
     @Test
     fun updatesRecipe () {
-        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        val id = exportedRecipeId ?: throw Exception("exportedRecipe should not be null")
         val cb = exportedCookbook ?: throw Exception("exportedCookbook should not be null")
+        println("Using $exportedCookbook:$exportedRecipeId")
+
+        engineSetup(exportedKey)
+        assertEquals(core.userProfile!!.address, core.getRecipe(exportedRecipeId!!)!!.sender)
+
         basicTxTestFlow(
-                { emitUpdateRecipe(it, name, cb,
-                        cb, core.userProfile!!.credentials.address)},
-                { it, _ -> checkIfRecipeExists(it, name, cb) }
+                { emitUpdateRecipe(it, "updated!", cb,
+                        id, core.userProfile!!.credentials.address)},
+                { it, _ ->  }
         )
     }
 
     @Order(10)
     @Test
     fun disablesRecipe () {
-        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        val name = exportedRecipeId ?: throw Exception("exportedRecipe should not be null")
+        println("Using $exportedCookbook:$exportedRecipeId")
         basicTxTestFlow { it.disableRecipe(name) }
     }
 
     @Order(11)
     @Test
     fun enablesRecipe () {
-        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        val name = exportedRecipeId ?: throw Exception("exportedRecipe should not be null")
+        println("Using $exportedCookbook:$exportedRecipeId")
         basicTxTestFlow { it.enableRecipe(name) }
     }
 
     @Order(12)
     @Test
     fun executesRecipe () {
-        val name = exportedRecipeName ?: throw Exception("exportedRecipe should not be null")
+        val name = exportedRecipeId ?: throw Exception("exportedRecipe should not be null")
+        println("Using $exportedCookbook:$exportedRecipeId")
         basicTxTestFlow { it.applyRecipe(name, listOf()) }
     }
 

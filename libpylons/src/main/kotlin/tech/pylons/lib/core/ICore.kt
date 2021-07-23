@@ -114,4 +114,9 @@ interface ICore {
     fun getRecipesBySender() : List<Recipe>
 
     fun getTrade(tradeId: String) : Trade?
+
+    /**
+     * Returns the on-chain ID of the recipe with the cookbook and name provided
+     */
+    fun getRecipeIdFromCookbookAndName(cookbook: String, name: String) : String?
 }

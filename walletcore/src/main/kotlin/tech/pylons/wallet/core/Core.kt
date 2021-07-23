@@ -20,8 +20,6 @@ import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 import kotlinx.coroutines.*
 
-import tech.pylons.wallet.core.constants.*
-import tech.pylons.wallet.core.internal.*
 import tech.pylons.wallet.core.engine.*
 import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import tech.pylons.lib.logging.LogEvent
@@ -31,6 +29,7 @@ import tech.pylons.wallet.core.internal.ProtoJsonUtil
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex
+import tech.pylons.lib.types.tx.msg.CreateRecipe
 import java.io.StringReader
 
 /**
@@ -457,4 +456,15 @@ class Core(val config : Config) : ICore {
         return engine.getTrade(tradeId)
     }
 
+    /**
+     * Returns the on-chain ID of the recipe with the cookbook and name provided
+     */
+    override fun getRecipeIdFromCookbookAndName(cookbook: String, name: String): String? {
+        println(cookbook)
+        getRecipesByCookbook(cookbook).forEach {
+            println(it.name)
+            if (it.name == name) return it.id
+        }
+        return null
+    }
 }
