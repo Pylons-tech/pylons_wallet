@@ -123,4 +123,8 @@ interface ICore {
     fun listItemsBySender(sender: String?) : List<Item>
 
     fun listItemsByCookbookId(cookbookId: String?): List<Item>
+
+    fun getCookbook(cookbookId: String): Cookbook?
+
+    fun getExecution(executionId: String): Execution?
 }

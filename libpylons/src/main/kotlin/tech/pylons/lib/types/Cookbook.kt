@@ -52,5 +52,27 @@ data class Cookbook (
             }
             return list
         }
+
+        fun parseFromJson(json: String?) : Cookbook? {
+            if (json != null) {
+                try {
+                    val obj = Parser.default().parse(StringBuilder(json)) as JsonObject
+                    return Cookbook(
+                        nodeVersion = obj.string("NodeVersion")!!,
+                        id = obj.string("ID")!!,
+                        name = obj.string("Name")!!,
+                        description = obj.string("Description")!!,
+                        version = obj.string("Version")!!,
+                        developer = obj.string("Developer")!!,
+                        level = obj.fuzzyLong("Level"),
+                        sender = obj.string("Sender")!!,
+                        supportEmail = obj.string("SupportEmail")!!,
+                        costPerBlock = obj.fuzzyLong("CostPerBlock")!!
+                    )
+                }catch(e: Error){
+                }
+            }
+            return null
+        }
     }
 }

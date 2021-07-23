@@ -280,6 +280,12 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         return Execution.getListFromJson(json)
     }
 
+    override fun getExecution(executionId: String): Execution? {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_execution}${executionId}")
+        return Execution.parseFromJson(json)
+    }
+
+
     override fun getItem(itemId: String): Item? {
         val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_item}${itemId}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
@@ -298,7 +304,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listItemsByCookbookId(cookbookId: String?): List<Item> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${cookbookId}")
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_cookbook}${cookbookId}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
@@ -360,6 +366,12 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_cookbook}${core.userProfile!!.credentials.address}")
         return Cookbook.getListFromJson(json)
     }
+
+    override fun getCookbook(cookbookId: String): Cookbook? {
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_cookbook}${cookbookId}")
+        return Cookbook.parseFromJson(json)
+    }
+
 
     override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction {
         if (kp == null) cryptoHandler.generateNewKeys()
@@ -476,7 +488,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listRecipesByCookbookId(cookbookId: String): List<Recipe> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe}$cookbookId")
+        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe_by_cookbook}$cookbookId")
         return Recipe.listFromJson(json)
     }
 

@@ -465,4 +465,12 @@ class Core(val config : Config) : ICore {
         return engine.listItemsByCookbookId(cookbookId)
     }
 
+    override fun getCookbook(cookbookId: String): Cookbook? {
+        return engine.getCookbook(cookbookId)
+    }
+
+    override fun getExecution(executionId: String): Execution? {
+        return engine.getExecution(executionId)
+    }
+
 }

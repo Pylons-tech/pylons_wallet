@@ -51,5 +51,24 @@ data class Execution (
                         }
                         return list
                 }
+
+                fun parseFromJson(json : String) : Execution? {
+                        try{
+                                val obj = Parser.default().parse(StringBuilder(json)) as JsonObject
+                                return Execution(
+                                        nodeVersion = obj.string("NodeVersion")!!,
+                                        id = obj.string("ID")!!,
+                                        recipeId = obj.string("RecipeID")!!,
+                                        cookbookId = obj.string("CookbookID")!!,
+                                        completed = obj.boolean("Completed")!!,
+                                        sender = obj.string("Sender")!!,
+                                        blockHeight = obj.fuzzyLong("BlockHeight"),
+                                        coinInputs = Coin.listFromJson(obj.array("CoinInputs")),
+                                        itemInputs = obj.array("ItemInputs")?: listOf()
+                                )
+                        }catch(e: Error){
+                        }
+                        return null
+                }
         }
 }
