@@ -23,20 +23,39 @@ import java.security.Security
 
 class RecipeManagementPlugin : Plugin<Project> {
     companion object {
+        var currentRemote : Remote = Remote(
+            "pylonschain",
+            "127.0.0.1:1317",
+            "127.0.0.1:1317")
+
+        val loadedCookbooks : MutableMap<String, MetaCookbook> = mutableMapOf()
+
         var target : Project? = null
 
-        fun getCookbookFromPath (fileName : String) : Cookbook {
+        fun enumerateCookbookRecords () : List<String> {
+            val ls = mutableListOf<String>()
+            val path = Path.of(target!!.projectDir.absolutePath, "cookbook")
+            File(path.toUri()).walk().forEach {
+                ls.add(it.name)
+                println("Found ${it.name}")
+            }
+            return ls
+        }
+
+        fun loadCookbook (fileName : String) : MetaCookbook {
             val path = Path.of(target!!.projectDir.absolutePath, "cookbook", fileName)
             val f = File(path.toUri())
             val stream = FileInputStream(f)
             val cb = try {
-                klaxon.parse<Cookbook>(stream)
+                klaxon.parse<MetaCookbook>(stream)
             } catch (e : IOException) {
-                println("${f.name} is not a valid cookbook!")
+                println("${f.name} is not a RecipeTool cookbook record!")
                 null
             }
             stream.close()
-            return cb!!
+            loadedCookbooks[fileName] = cb!!
+            println("Loaded cookbook record $fileName")
+            return cb
         }
 
         fun getRecipeFromPath (fileName : String) : Recipe {
@@ -71,6 +90,12 @@ class RecipeManagementPlugin : Plugin<Project> {
         }
         target!!.tasks.create("createRecipe", CreateRecipeTask::class.java)
         target!!.tasks.create("createCookbook", CreateCookbookTask::class.java)
+        target!!.tasks.create("loadCookbook", LoadCookbookTask::class.java)
+        target!!.tasks.create("getCookbook", GetCookbookTask::class.java).dependsOn(
+            target!!.task("loadCookbook"))
+        target!!.tasks.create("smartUpdateCookbook", SmartUpdateCookbookTask::class.java).dependsOn(
+            target!!.task("getCookbook")
+        )
 
 /*        target!!.task("enumerateRecipes") {
             val path = Path.of(target!!.projectDir.absolutePath, "recipe")

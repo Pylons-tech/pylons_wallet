@@ -13,6 +13,7 @@ import org.opentest4j.AssertionFailedError
 import org.apache.commons.lang3.StringUtils.*
 import java.io.StringReader
 import tech.pylons.lib.klaxon
+import tech.pylons.wallet.core.LowLevel
 
 class TxPylonsDevEngineSignables {
     val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
