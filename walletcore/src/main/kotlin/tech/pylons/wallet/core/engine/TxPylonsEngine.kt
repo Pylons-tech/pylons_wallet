@@ -213,6 +213,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun getMyProfileState(): MyProfile? {
         println("myProfile path")
         println(core.userProfile)
+
         val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
 
@@ -223,6 +224,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
             "" -> null
+            null -> null //if profile not exists return null
             else -> {
                 val sequence = value.fuzzyLong("sequence")
                 val accountNumber = value.fuzzyLong("account_number")
