@@ -36,26 +36,42 @@ class RecipeManagementPlugin : Plugin<Project> {
             val ls = mutableListOf<String>()
             val path = Path.of(target!!.projectDir.absolutePath, "cookbook")
             File(path.toUri()).walk().forEach {
-                ls.add(it.name)
-                println("Found ${it.name}")
+                if (it.isFile && it.extension == "json") {
+                    ls.add(it.nameWithoutExtension)
+                    println("Found ${it.nameWithoutExtension}")
+                }
             }
             return ls
         }
 
         fun loadCookbook (fileName : String) : MetaCookbook {
-            val path = Path.of(target!!.projectDir.absolutePath, "cookbook", fileName)
+            val path = Path.of(target!!.projectDir.absolutePath, "cookbook", "$fileName.json")
             val f = File(path.toUri())
             val stream = FileInputStream(f)
             val cb = try {
                 klaxon.parse<MetaCookbook>(stream)
             } catch (e : IOException) {
-                println("${f.name} is not a RecipeTool cookbook record!")
+                println("${f.nameWithoutExtension} is not a RecipeTool cookbook record!")
                 null
             }
             stream.close()
+            if (cb!!.id != fileName) throw Exception(
+                "$fileName.json stores a cookbook record for ID ${cb.id}." +
+                        "Filename should always be same as cookbook ID.")
             loadedCookbooks[fileName] = cb!!
             println("Loaded cookbook record $fileName")
             return cb
+        }
+
+        fun saveCookbook (cookbook: MetaCookbook) {
+            val path = Path.of(target!!.projectDir.absolutePath, "cookbook", cookbook.id, ".json")
+            val json = klaxon.toJsonString(cookbook)
+            val file = File(path.toUri())
+            if (file.exists())
+                if (!file.canWrite()) file.setWritable(true)
+            else file.createNewFile()
+            file.writeText(json)
+            println("Saved cookbook ${cookbook.id}")
         }
 
         fun getRecipeFromPath (fileName : String) : Recipe {
@@ -74,8 +90,9 @@ class RecipeManagementPlugin : Plugin<Project> {
     }
 
     override fun apply(t: Project) {
+        target = t
         if (IMulticore.config == null) {
-            target = t
+
             IPCLayer.implementation = FakeIPC()
             UILayer.implementation = FakeUI()
             Security.addProvider(BouncyCastleProvider())
@@ -88,49 +105,34 @@ class RecipeManagementPlugin : Plugin<Project> {
             }
             Multicore.addCore(PylonsSECP256K1.KeyPair.load(Path.of(target!!.projectDir.absolutePath,"dev-keys")))
         }
-        target!!.tasks.create("createRecipe", CreateRecipeTask::class.java)
-        target!!.tasks.create("createCookbook", CreateCookbookTask::class.java)
-        target!!.tasks.create("loadCookbook", LoadCookbookTask::class.java)
-        target!!.tasks.create("getCookbook", GetCookbookTask::class.java).dependsOn(
-            target!!.task("loadCookbook"))
-        target!!.tasks.create("smartUpdateCookbook", SmartUpdateCookbookTask::class.java).dependsOn(
-            target!!.task("getCookbook")
-        )
-
-/*        target!!.task("enumerateRecipes") {
-            val path = Path.of(target!!.projectDir.absolutePath, "recipe")
-            println("Enumerating recipes in $path")
-            getRecipes(path.toString()).forEach {
-                println("Found ${it.cookbookID} / ${it.name}")
-            }
+        target!!.tasks.register("createAccount", CreateAccountTask::class.java) {
+            it.group = "recipetool"
         }
-        target!!.task("updateManagedRecipes") {
-            val path = Path.of(target!!.projectDir.absolutePath, "recipe")
-            println("Enumerating recipes in $path")
-            getRecipes(path.toString()).forEach {
-                println("Found ${it.cookbookID} / ${it.name}")
-                println(Core.current?.getRecipe(it.id)?.name)
-                //Core.current!!.batchCreateRecipe(listOf(it.name))
-            }
-        }*/
+        target!!.tasks.register("createRecipe", CreateRecipeTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("createAccount")
+        }
+        target!!.tasks.register("createCookbook", CreateCookbookTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("createAccount")
+        }
+        target!!.tasks.register("loadCookbook", LoadCookbookTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("createAccount")
+        }
+        target!!.tasks.register("saveCookbook", SaveCookbookTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("loadCookbook")
+        }
+        target!!.tasks.register("getCookbook", GetCookbookTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("loadCookbook")
+            it.finalizedBy("saveCookbook")
+        }
+        target!!.tasks.register("smartUpdateCookbook", SmartUpdateCookbookTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("loadCookbook")
+            it.finalizedBy("saveCookbook")
+        }
     }
-
-/*    private fun getRecipes (path : String) : List<Pylons.Recipe> {
-        val list = mutableListOf<Pylons.Recipe>()
-        File(path).walk().forEach {
-            println(it.absolutePath)
-            if (it.extension == "json") {
-                val stream = FileInputStream(it)
-                val recipe = try {
-                    Pylons.Recipe.parseFrom(stream)
-                } catch (e : IOException) {
-                    println("${it.name} is not a valid recipe!")
-                    null
-                }
-                stream.close()
-                if (recipe != null) list.add(recipe)
-            }
-        }
-        return list
-    }*/
 }

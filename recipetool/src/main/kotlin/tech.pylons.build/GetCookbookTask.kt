@@ -18,6 +18,16 @@ abstract class GetCookbookTask : DefaultTask() {
         }
         else {
             val remote = Core.current!!.getCookbooks()
+            remote.forEach {
+                if (RecipeManagementPlugin.loadedCookbooks[it.id] != null)
+                    RecipeManagementPlugin.loadedCookbooks[it.id]!!.addRemoteState(it)
+                else {
+                    RecipeManagementPlugin.loadedCookbooks[it.id] = MetaCookbook(it.id, it.version,
+                        mutableMapOf(it.version to it),
+                        mutableMapOf(RecipeManagementPlugin.currentRemote.hash() to it)
+                    )
+                }
+            }
             RecipeManagementPlugin.loadedCookbooks.values.forEach { meta ->
                 remote.forEach {
                     if (it.id == meta.id)

@@ -24,7 +24,8 @@ data class MetaCookbook (
      * the cookbook as soon as they're available. If any of them are ahead of our
      * local copy, we should update it based on them.
      */
-    var remotes : MutableMap<String, Cookbook> = mutableMapOf()
+    var remotes : MutableMap<String, Cookbook> = mutableMapOf(),
+    var targetVersions : MutableMap<String, String> = mutableMapOf()
 ) {
     fun addRemoteState(cb : Cookbook) {
         remotes[RecipeManagementPlugin.currentRemote.hash()] = cb
