@@ -1,7 +1,6 @@
 package tech.pylons.lib.core
 import tech.pylons.lib.types.*
 import tech.pylons.lib.types.tx.Trade
-import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.recipe.Recipe
 
 @ExperimentalUnsignedTypes
@@ -47,14 +46,14 @@ interface ICore {
 
     fun getProfile (addr : String?) : Profile?
 
-    fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>, paymentId: String = "") : Transaction
+    fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>) : Transaction
 
     fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                             supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction>
+                             supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction>
 
     fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                     blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                    outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction>
+                                    outputTables : List<String>, outputs : List<String>) : List<Transaction>
 
     fun batchDisableRecipe (recipes : List<String>) : List<Transaction>
 
@@ -65,7 +64,7 @@ interface ICore {
 
     fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                            blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                           outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction>
+                           outputTables : List<String>, outputs : List<String>) : List<Transaction>
 
     fun cancelTrade(tradeId : String) : Transaction
 
@@ -75,7 +74,7 @@ interface ICore {
                      coinOutputs : List<String>, itemOutputs : List<String>,
                      extraInfo : String) : Transaction
 
-    fun fulfillTrade(tradeId : String, itemIds : List<String>, paymentId: String = "") : Transaction
+    fun fulfillTrade(tradeId : String, itemIds : List<String>) : Transaction
 
     fun getCookbooks () : List<Cookbook>
 
@@ -116,11 +115,8 @@ interface ICore {
 
     fun getTrade(tradeId: String) : Trade?
 
-    fun getItem(itemId: String): Item?
-
-    fun listItems() : List<Item>
-
-    fun listItemsBySender(sender: String?) : List<Item>
-
-    fun listItemsByCookbookId(cookbookId: String?): List<Item>
+    /**
+     * Returns the on-chain ID of the recipe with the cookbook and name provided
+     */
+    fun getRecipeIdFromCookbookAndName(cookbook: String, name: String) : String?
 }

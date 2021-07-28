@@ -14,10 +14,11 @@ include(":protos", ":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevw
 
 pluginManagement {
     repositories {
+        mavenLocal()
         jcenter()
         gradlePluginPortal()
         mavenCentral()
-        mavenLocal()
+
         maven(url = "https://jitpack.io")
         google()
     }

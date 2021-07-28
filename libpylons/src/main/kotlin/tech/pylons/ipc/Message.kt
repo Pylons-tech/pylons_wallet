@@ -49,7 +49,6 @@ sealed class Message {
             var descriptions : List<String>? = null,
             var versions : List<String>? = null,
             var supportEmails : List<String>? = null,
-            var levels : List<Long>? = null,
             var costsPerBlock : List<Long>? = null
     ) : Message() {
         companion object {
@@ -58,7 +57,7 @@ sealed class Message {
 
         override fun resolve() = Response.emit(this, true,
             txs = core!!.batchCreateCookbook(ids!!, names!!, developers!!,
-            descriptions!!, versions!!, supportEmails!!, levels!!, costsPerBlock!!))
+            descriptions!!, versions!!, supportEmails!!, costsPerBlock!!))
     }
 
     class CreateRecipes(

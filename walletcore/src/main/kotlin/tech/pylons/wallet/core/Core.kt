@@ -20,8 +20,6 @@ import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 import kotlinx.coroutines.*
 
-import tech.pylons.wallet.core.constants.*
-import tech.pylons.wallet.core.internal.*
 import tech.pylons.wallet.core.engine.*
 import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import tech.pylons.lib.logging.LogEvent
@@ -31,6 +29,7 @@ import tech.pylons.wallet.core.internal.ProtoJsonUtil
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex
+import tech.pylons.lib.types.tx.msg.CreateRecipe
 import java.io.StringReader
 
 /**
@@ -273,7 +272,7 @@ class Core(val config : Config) : ICore {
         }
     }
 
-    override fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>, paymentId: String) : Transaction {
+    override fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>) : Transaction {
         // HACK: list recipes, then search to find ours
         val arr = engine.listRecipes()
         var r : String? = null
@@ -283,11 +282,11 @@ class Core(val config : Config) : ICore {
             }
         }
         if (r == null) throw java.lang.Exception("Recipe $cookbook/$recipe does not exist")
-        return engine.applyRecipe(r!!, itemInputs, paymentId).submit()
+        return engine.applyRecipe(r!!, itemInputs).submit()
     }
 
     override fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                                  supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction> {
+                                  supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction> {
         val txs = engine.createCookbooks(
             ids = ids,
             names = names,
@@ -295,7 +294,6 @@ class Core(val config : Config) : ICore {
             descriptions = descriptions,
             versions = versions,
             supportEmails = supportEmails,
-            levels = levels,
             costsPerBlock = costsPerBlock
         ).toMutableList()
         return txs.submitAll()
@@ -303,7 +301,7 @@ class Core(val config : Config) : ICore {
 
     override fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                 blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction> {
+                                outputTables : List<String>, outputs : List<String>) : List<Transaction> {
         // klaxon.parse<JsonArray<JsonObject>>
         val mItemInputs = mutableListOf<List<ItemInput>>()
         itemInputs.forEach { mItemInputs.add(klaxon.parseArray(it)?: JsonArray()) }
@@ -313,10 +311,10 @@ class Core(val config : Config) : ICore {
         outputTables.forEach { mOutputTables.add(klaxon.parse(it)?: EntriesList(listOf(), listOf(), listOf())) }
         val mOutputs = mutableListOf<List<WeightedOutput>>()
         outputs.forEach {
+            println(it)
             val arr = klaxon.parseArray<WeightedOutput>(it) ?: JsonArray()
             mOutputs.add(arr.toList())
         }
-        val mExtraInfos = mutableListOf<String>()
         val txs =  engine.createRecipes(
             names = names,
             cookbookIds = cookbooks,
@@ -325,8 +323,7 @@ class Core(val config : Config) : ICore {
             coinInputs = mCoinInputs,
             itemInputs = mItemInputs,
             entries = mOutputTables,
-            outputs = mOutputs,
-            extraInfos = extraInfos
+            outputs = mOutputs
         ).toMutableList()
         return txs.submitAll()
     }
@@ -360,7 +357,7 @@ class Core(val config : Config) : ICore {
 
     override fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                 blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction> {
+                                outputTables : List<String>, outputs : List<String>) : List<Transaction> {
         val mItemInputs = mutableListOf<List<ItemInput>>()
         itemInputs.forEach { mItemInputs.add(klaxon.parseArray<ItemInput>(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()
@@ -378,8 +375,7 @@ class Core(val config : Config) : ICore {
             coinInputs = mCoinInputs,
             itemInputs = mItemInputs,
             entries = mOutputTables,
-            outputs = mOutputs,
-            extraInfos = extraInfos
+            outputs = mOutputs
         ).toMutableList()
         return txs.submitAll()
     }
@@ -405,8 +401,8 @@ class Core(val config : Config) : ICore {
         return engine.createTrade(mCoinInputs, mItemInputs, mCoinOutputs, mItemOutputs, extraInfo).submit()
     }
 
-    override fun fulfillTrade(tradeId : String, itemIds : List<String>, paymentId: String) : Transaction =
-        engine.fulfillTrade(tradeId, itemIds, paymentId).submit()
+    override fun fulfillTrade(tradeId : String, itemIds : List<String>) : Transaction =
+        engine.fulfillTrade(tradeId, itemIds).submit()
 
     override fun getCookbooks () : List<Cookbook> = engine.listCookbooks()
 
@@ -459,20 +455,15 @@ class Core(val config : Config) : ICore {
         return engine.getTrade(tradeId)
     }
 
-    override fun getItem(itemId: String): Item? {
-        return engine.getItem(itemId)
+    /**
+     * Returns the on-chain ID of the recipe with the cookbook and name provided
+     */
+    override fun getRecipeIdFromCookbookAndName(cookbook: String, name: String): String? {
+        println(cookbook)
+        getRecipesByCookbook(cookbook).forEach {
+            println(it.name)
+            if (it.name == name) return it.id
+        }
+        return null
     }
-
-    override fun listItems(): List<Item> {
-        return engine.listItems()
-    }
-
-    override fun listItemsBySender(sender: String?): List<Item> {
-        return engine.listItemsBySender(sender)
-    }
-
-    override fun listItemsByCookbookId(cookbookId: String?): List<Item> {
-        return engine.listItemsByCookbookId(cookbookId)
-    }
-
 }

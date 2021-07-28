@@ -65,11 +65,11 @@ interface IEngine {
 
     /** Create-cookbook message */
     fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
-                                 supportEmail : String, level : Long, costPerBlock : Long) : Transaction
+                                 supportEmail : String, costPerBlock : Long) : Transaction
 
     /** Batch create-cookbook message */
     fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
-                        versions : List<String>, supportEmails: List<String>, levels : List<Long>,
+                        versions : List<String>, supportEmails: List<String>,
                         costsPerBlock : List<Long>) : List<Transaction>
 
     /**

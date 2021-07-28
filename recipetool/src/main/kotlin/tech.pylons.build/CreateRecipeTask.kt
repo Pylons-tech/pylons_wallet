@@ -7,13 +7,12 @@ import tech.pylons.wallet.core.Core
 
 abstract class CreateRecipeTask : DefaultTask() {
     @TaskAction
-    fun createRecipe() {
-        val recipe = RecipeManagementPlugin.getRecipeFromPath(
-            project.property("filepath") as String
-        )
+    fun createRecipe () {
+        val recipe = RecipeManagementPlugin.getRecipeFromPath(project.property("filepath") as String)
+        Core.current!!.getProfile()
         Core.current!!.batchCreateRecipe(
             names = listOf(recipe.name),
-            cookbooks = listOf(/*recipe.cookbookId*/"LOUD_autocookbook_cosmos1962r2tw3hs7pvq7n2e49hrgshw3kssx56e9cwh"),
+            cookbooks = listOf(recipe.cookbookId),
             descriptions = listOf(recipe.description),
             blockIntervals = listOf(recipe.blockInterval),
             coinInputs = listOf(klaxon.toJsonString(recipe.coinInputs)),

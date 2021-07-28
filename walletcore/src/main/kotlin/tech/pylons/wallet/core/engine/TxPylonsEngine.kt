@@ -4,6 +4,7 @@ import tech.pylons.wallet.core.Core
 import tech.pylons.lib.logging.Logger
 import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.beust.klaxon.*
+import com.google.gson.Gson
 import tech.pylons.lib.*
 import tech.pylons.lib.constants.QueryConstants
 import tech.pylons.lib.core.ICryptoHandler
@@ -32,6 +33,7 @@ import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 import tech.pylons.wallet.core.LowLevel
 import tech.pylons.wallet.core.internal.ProtoJsonUtil
+import java.io.StringReader
 
 @ExperimentalUnsignedTypes
 open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
@@ -112,13 +114,13 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         })
     }
 
-    //tierre modify for new node server
-    //cosmos/v1/base/beta1 Tx proto
     private fun postTxJson (json : String) : String {
-        //Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
-        //val response = HttpWire.post("""$nodeUrl/txs""", json)
         Logger().log(LogEvent.TX_POST, """{"url":"${LowLevel.getUrlForTxs()}/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
         val response = HttpWire.post("""${LowLevel.getUrlForTxs()}/cosmos/tx/v1beta1/txs""", json)
+        val jo = klaxon.parseJsonObject(StringReader(response))
+        if (jo.obj("tx_response")?.int("code") == 4) {
+            Logger().log(LogEvent.MISC, """{"tx_rejected":"${jo.obj("tx_response")?.string("raw_log")}"}""", LogTag.error)
+        }
         Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response
     }
@@ -445,7 +447,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
+    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, costPerBlock : Long): Transaction {
         throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
 
@@ -478,7 +480,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listRecipesByCookbookId(cookbookId: String): List<Recipe> {
-        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe}$cookbookId")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe_by_cookbook}$cookbookId")
         return Recipe.listFromJson(json)
     }
 

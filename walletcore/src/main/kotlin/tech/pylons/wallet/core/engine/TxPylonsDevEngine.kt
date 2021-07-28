@@ -9,7 +9,7 @@ import tech.pylons.wallet.core.internal.HttpWire
 class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
 
     override fun createCookbook(id : String, name: String, developer: String, description: String, version: String,
-                                supportEmail: String, level: Long, costPerBlock : Long) =
+                                supportEmail: String, costPerBlock : Long) =
             handleTx {
                 CreateCookbook(
                         cookbookId = id,

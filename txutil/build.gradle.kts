@@ -1,7 +1,7 @@
 plugins {
     java
     kotlin("jvm")
-    //id("tech.pylons.build.recipetool") version "0.1"
+    id("tech.pylons.build.recipetool") version "0.1"
 }
 
 group = "tech.pylons"
