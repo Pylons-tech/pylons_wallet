@@ -8,13 +8,21 @@ abstract class LoadCookbookTask : DefaultTask() {
     fun loadCookbook () {
         if (project.hasProperty("filepath")) {
             val fp = project.property("filepath") as String
-            RecipeManagementPlugin.loadCookbook(fp)
+            try {
+                RecipeManagementPlugin.loadCookbook(fp)
+            } catch (e : NullPointerException) {
+                // swallow for now
+            }
         }
         else {
             val cbs = RecipeManagementPlugin.enumerateCookbookRecords()
             println ("Retrieved ${cbs.size} cookbook records")
             cbs.forEach {
-                RecipeManagementPlugin.loadCookbook(it)
+                try {
+                    RecipeManagementPlugin.loadCookbook(it)
+                } catch (e : NullPointerException) {
+                    // swallow for now
+                }
             }
         }
     }

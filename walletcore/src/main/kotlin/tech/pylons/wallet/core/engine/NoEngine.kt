@@ -32,7 +32,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
             throw NoEngineException()
 
-    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
+    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, costPerBlock : Long): Transaction =
             throw NoEngineException()
 
     override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,

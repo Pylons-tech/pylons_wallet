@@ -286,7 +286,7 @@ class Core(val config : Config) : ICore {
     }
 
     override fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                                  supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction> {
+                                  supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction> {
         val txs = engine.createCookbooks(
             ids = ids,
             names = names,
@@ -294,7 +294,6 @@ class Core(val config : Config) : ICore {
             descriptions = descriptions,
             versions = versions,
             supportEmails = supportEmails,
-            levels = levels,
             costsPerBlock = costsPerBlock
         ).toMutableList()
         return txs.submitAll()

@@ -169,7 +169,6 @@ abstract class Wallet {
      * @param descriptions
      * @param versions
      * @param supportEmails
-     * @param levels
      * @param costsPerBlock
      * @return List<Cookbook>
      */
@@ -179,7 +178,6 @@ abstract class Wallet {
                        descriptions : List<String>,
                        versions : List<String>,
                        supportEmails : List<String>,
-                       levels : List<Long>,
                        costsPerBlock : List<Long>,
                        callback: (List<Transaction>)->Unit) {
         sendMessage(Transaction::class, Message.CreateCookbooks(
@@ -189,7 +187,6 @@ abstract class Wallet {
             descriptions = descriptions,
             versions = versions,
             supportEmails = supportEmails,
-            levels = levels,
             costsPerBlock = costsPerBlock
         )){
             val response = it as Response
@@ -216,8 +213,6 @@ abstract class Wallet {
                 listOf("${appName} autocookbook for use by managed appliations"),
                 listOf("1.0.0"),
                 listOf("support@pylons.tech"),
-                listOf(1),
-                //where this bug comes from? if no CostsForBlocks then, it return error transaction
                 listOf(1)
             )
         ) {

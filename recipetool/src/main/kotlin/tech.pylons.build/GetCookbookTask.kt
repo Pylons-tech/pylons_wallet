@@ -24,7 +24,7 @@ abstract class GetCookbookTask : DefaultTask() {
                 else {
                     RecipeManagementPlugin.loadedCookbooks[it.id] = MetaCookbook(it.id, it.version,
                         mutableMapOf(it.version to it),
-                        mutableMapOf(RecipeManagementPlugin.currentRemote.hash() to it)
+                        mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to it)
                     )
                 }
             }

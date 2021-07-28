@@ -28,7 +28,7 @@ data class MetaCookbook (
     var targetVersions : MutableMap<String, String> = mutableMapOf()
 ) {
     fun addRemoteState(cb : Cookbook) {
-        remotes[RecipeManagementPlugin.currentRemote.hash()] = cb
+        remotes[RecipeManagementPlugin.currentRemote.identifier()] = cb
         if (versions.containsKey(cb.version)) println(
                     "WARNING: overwriting local cookbook version with remote copy. " +
                     "RecipeTool does not presently provide any means of distinguishing more or" +

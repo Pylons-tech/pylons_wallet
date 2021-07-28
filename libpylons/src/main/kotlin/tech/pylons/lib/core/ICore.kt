@@ -49,7 +49,7 @@ interface ICore {
     fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>) : Transaction
 
     fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                             supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction>
+                             supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction>
 
     fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                     blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,

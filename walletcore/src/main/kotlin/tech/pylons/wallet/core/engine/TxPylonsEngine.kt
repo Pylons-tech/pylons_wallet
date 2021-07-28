@@ -414,7 +414,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
+    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, costPerBlock : Long): Transaction {
         throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
 

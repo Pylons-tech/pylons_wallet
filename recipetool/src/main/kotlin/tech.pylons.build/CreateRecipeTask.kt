@@ -9,6 +9,7 @@ abstract class CreateRecipeTask : DefaultTask() {
     @TaskAction
     fun createRecipe () {
         val recipe = RecipeManagementPlugin.getRecipeFromPath(project.property("filepath") as String)
+        Core.current!!.getProfile()
         Core.current!!.batchCreateRecipe(
             names = listOf(recipe.name),
             cookbooks = listOf(recipe.cookbookId),
