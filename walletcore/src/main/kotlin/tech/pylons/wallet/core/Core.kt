@@ -52,7 +52,7 @@ class Core(val config : Config) : ICore {
             private set
 
         //const val chain_id = "pylonschain"
-        const val chain_id = "pylons-testnet" //testnet chain
+        //const val chain_id = "pylons-testnet" //testnet chain
     }
 
     override val userData = UserData(this)
@@ -131,9 +131,13 @@ class Core(val config : Config) : ICore {
 
     override fun start (userJson : String) {
         engine = when (config.backend) {
-            Backend.LIVE -> TxPylonsEngine(this)
-            Backend.LIVE_DEV -> TxPylonsDevEngine(this)
             Backend.NONE -> NoEngine(this)
+            else -> {
+                when (config.devMode) {
+                    false -> TxPylonsEngine(this)
+                    true -> TxPylonsDevEngine(this)
+                }
+            }
         }
         runBlocking {
             try {
@@ -235,10 +239,14 @@ class Core(val config : Config) : ICore {
         val authInfo = builder.buildAuthInfo(Base64.toBase64String(PubKeyUtil.getCompressedPubkey(pubkey).toArray()),sequence,gas)
         val bodyInfo = builder.buildTxbody(msg)
         builder.buildProtoTxBuilder(bodyInfo, authInfo)
-        val signDoc = builder.signDoc(accountNumber, chain_id)
+        val signDoc = builder.signDoc(accountNumber, config.chainId)
 
         val cryptoHandler = (engine as TxPylonsEngine).cryptoHandler
         builder.addSignature(cryptoHandler, signDoc!!)
+
+        println("?")
+        println(signDoc)
+        println("?")
 
         return baseTemplateForTxs(builder.txBytes()!!, BroadcastMode.BROADCAST_MODE_BLOCK)
     }
@@ -277,7 +285,7 @@ class Core(val config : Config) : ICore {
     }
 
     override fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                                  supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction> {
+                                  supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction> {
         val txs = engine.createCookbooks(
             ids = ids,
             names = names,
@@ -285,7 +293,6 @@ class Core(val config : Config) : ICore {
             descriptions = descriptions,
             versions = versions,
             supportEmails = supportEmails,
-            levels = levels,
             costsPerBlock = costsPerBlock
         ).toMutableList()
         return txs.submitAll()
@@ -473,4 +480,15 @@ class Core(val config : Config) : ICore {
         return engine.getExecution(executionId)
     }
 
+    /**
+     * Returns the on-chain ID of the recipe with the cookbook and name provided
+     */
+    override fun getRecipeIdFromCookbookAndName(cookbook: String, name: String): String? {
+        println(cookbook)
+        getRecipesByCookbook(cookbook).forEach {
+            println(it.name)
+            if (it.name == name) return it.id
+        }
+        return null
+    }
 }
