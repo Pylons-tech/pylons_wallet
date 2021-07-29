@@ -9,7 +9,7 @@ abstract class GetCookbookTask : DefaultTask() {
     fun getCookbook () {
         if (project.hasProperty("filepath")) {
             val fp = project.property("filepath") as String
-            val cookbook = RecipeManagementPlugin.loadedCookbooks[fp]
+            val cookbook = RecipeManagementPlugin.loadedCookbooks[fp.split('/').first()]
             Core.current!!.getCookbooks().forEach {
                 if (it.id == cookbook!!.id) {
                     cookbook.addRemoteState(it)
@@ -24,7 +24,8 @@ abstract class GetCookbookTask : DefaultTask() {
                 else {
                     RecipeManagementPlugin.loadedCookbooks[it.id] = MetaCookbook(it.id, it.version,
                         mutableMapOf(it.version to it),
-                        mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to it)
+                        mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to it),
+                        mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to it.version)
                     )
                 }
             }
