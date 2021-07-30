@@ -219,9 +219,6 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
 
         val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
-        println(prfJson)
-        println(value)
-        println(value.string("address"))
         return when (value.string("address")) {
             null -> null
             "" -> null

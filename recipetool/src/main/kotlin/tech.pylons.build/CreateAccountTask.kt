@@ -15,7 +15,7 @@ abstract class CreateAccountTask : DefaultTask() {
         println("CreateAccountTask should see if you need to make an account for these keys" +
                 "and do it if so, but it doesn't yet, so I hope they're registered!")
         if (Core.current!!.getProfile() == null) {
-            Core.current!!.newProfile("", )
+            Core.current!!.newProfile("", RecipeManagementPlugin.shittyKeys())
         }
         Core.current!!.getProfile()
         Core.current!!.getPylons(500000) // HACK: you need pylons, recipetool doesn't have a way to do that manually yet
