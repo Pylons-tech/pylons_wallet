@@ -199,7 +199,7 @@ class TxPylonsDevEngineOnline {
         val name = "blyyah ${Random().nextInt()}"
         basicTxTestFlow { it.createCookbook(id, name, "tst",
                 "this is a description for a test flow cookbook i guess",
-                "1.0.0", "fake@example.com", 0, 50) }
+                "1.0.0", "fake@example.com", 50) }
     }
 
     @Order(4)

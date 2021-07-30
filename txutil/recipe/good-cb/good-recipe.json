@@ -21,14 +21,14 @@
       "Entries" : {
         "CoinOutputs" : [{
           "ID": "scrip-out",
-          "Coin": "scrip",
+          "Coin": "loudcoin",
           "Count": "333"
         }],
         "ItemOutputs" : [],
         "ItemModifyOutputs" : []
       },
       "Outputs" : [{
-        "EntryIDs" : ["0"],
+        "EntryIDs" : ["scrip-out"],
         "Weight" : "1"
       }]
     }
