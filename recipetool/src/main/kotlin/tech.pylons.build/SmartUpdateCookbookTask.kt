@@ -37,8 +37,7 @@ abstract class SmartUpdateCookbookTask : DefaultTask()  {
                         versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version)
                     )
                 }
-                else if (SemVer.from(meta.remotes[identifier]?.version ?: "0.0.0") !=
-                    SemVer.from(meta.targetVersions[identifier]!!)) Core.current!!.batchCreateCookbook(
+                else Core.current!!.batchCreateCookbook(
                     ids = listOf(meta.versions[meta.targetVersions[identifier]]!!.id),
                     names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
                     developers = listOf(meta.versions[meta.targetVersions[identifier]]!!.developer),
