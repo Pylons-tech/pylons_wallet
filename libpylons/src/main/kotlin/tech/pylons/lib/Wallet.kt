@@ -249,9 +249,30 @@ abstract class Wallet {
                      blockInterval : Long, coinInputs : List<CoinInput>,
                      itemInputs: List<ItemInput>, outputTable : EntriesList,
                      outputs : List<WeightedOutput>, extraInfo: List<String>, callback: (Transaction?) -> Unit) {
+
+        var biItemInputs = mutableListOf<ItemInput>()
+        var biItemModifyOutputs = mutableListOf<ItemModifyOutput>()
+        var biItemOutputs = mutableListOf<ItemOutput>()
+
+        itemInputs.forEach {
+            biItemInputs.add( BigIntUtil.toItemInput(it) )
+        }
+        outputTable.itemModifyOutputs?.forEach {
+            biItemModifyOutputs.add(BigIntUtil.toItemModifyOutput(it))
+        }
+        outputTable.itemOutputs.forEach {
+            biItemOutputs.add(BigIntUtil.toItemOutput(it))
+        }
+
+        var bi_outputTable = EntriesList(
+            coinOutputs = outputTable.coinOutputs,
+            itemModifyOutputs = biItemModifyOutputs.toList(),
+            itemOutputs = biItemOutputs.toList()
+        )
+
         sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
-            listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(itemInputs)),
-            listOf(klaxon.toJsonString(outputTable)), listOf(klaxon.toJsonString(outputs)), listOf(klaxon.toJsonString(extraInfo)))) {
+            listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(biItemInputs)),
+            listOf(klaxon.toJsonString(bi_outputTable)), listOf(klaxon.toJsonString(outputs)), listOf(klaxon.toJsonString(extraInfo)))) {
             val response = it as Response
             var tx:Transaction? = null
             if (response.txs.isNotEmpty()) {
