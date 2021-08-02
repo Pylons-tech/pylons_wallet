@@ -65,7 +65,6 @@ object Main {
                 descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
                 versions = mutableListOf("1.0.0"),
                 supportEmails = mutableListOf("a@example.com"),
-                levels = mutableListOf(0),
                 costsPerBlock = mutableListOf(5))
     }
 

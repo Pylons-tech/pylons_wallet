@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     id("com.google.protobuf")
     `maven-publish`
+     signing
     `java-gradle-plugin`
 }
 
@@ -36,6 +37,11 @@ gradlePlugin {
             implementationClass = "tech.pylons.build.RecipeManagementPlugin"
         }
     }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 configurations {

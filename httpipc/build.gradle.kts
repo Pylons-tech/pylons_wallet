@@ -4,6 +4,7 @@ plugins {
     java
     kotlin("jvm")
     `maven-publish`
+    signing
 }
 
 group = "tech.pylons"
@@ -87,6 +88,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         jvmTarget = jVer
         sourceCompatibility = jVer
     }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {

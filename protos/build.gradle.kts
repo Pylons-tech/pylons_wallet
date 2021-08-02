@@ -8,10 +8,13 @@ version = "0.1.0"
 plugins {
     `java-library`
     `maven-publish`
+    signing
 }
 
 java {
     sourceSets.getByName("main").resources.srcDir("src/main/proto")
+    withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {

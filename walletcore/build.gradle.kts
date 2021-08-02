@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     id("com.google.protobuf")
     `maven-publish`
+    signing
 }
 
 group = "tech.pylons"
@@ -36,6 +37,11 @@ configurations {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
