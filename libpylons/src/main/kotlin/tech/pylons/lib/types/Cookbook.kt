@@ -61,7 +61,6 @@ data class Cookbook (
                         description = obj.string("Description")!!,
                         version = obj.string("Version")!!,
                         developer = obj.string("Developer")!!,
-                        level = obj.fuzzyLong("Level"),
                         sender = obj.string("Sender")!!,
                         supportEmail = obj.string("SupportEmail")!!,
                         costPerBlock = obj.fuzzyLong("CostPerBlock")!!
