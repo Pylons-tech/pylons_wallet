@@ -1,8 +1,14 @@
 package tech.pylons.build
 
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
+import com.beust.klaxon.Parser.Companion.default
+import org.apache.tuweni.bytes.Bytes32
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.spongycastle.jce.provider.BouncyCastleProvider
+import org.spongycastle.util.encoders.Hex
 import tech.pylons.ipc.FakeIPC
 import tech.pylons.ipc.FakeUI
 import tech.pylons.ipc.IPCLayer
@@ -48,6 +54,15 @@ class RecipeManagementPlugin : Plugin<Project> {
             currentRemote = devConfig.remoteConfig()
         }
 
+        fun shittyKeys () : PylonsSECP256K1.KeyPair? {
+            val path = Path.of(target!!.projectDir.absolutePath, "dev-keys")
+            val file = File(path.toUri())
+            val text = file.readText()
+            return if (file.exists()) PylonsSECP256K1.KeyPair.fromSecretKey(
+                PylonsSECP256K1.SecretKey.fromBytes(Bytes32.wrap(Hex.decode(text))))
+            else null
+        }
+
 
         fun enumerateCookbookRecords () : List<String> {
             val ls = mutableListOf<String>()
@@ -65,13 +80,14 @@ class RecipeManagementPlugin : Plugin<Project> {
         fun enumerateRecipeRecords () : List<String> {
             val ls = mutableListOf<String>()
             val path = Path.of(target!!.projectDir.absolutePath, "recipe")
-            Files.walk(path, 1).forEach {
+            Files.walk(path, 2).skip(1).forEach {
                 val file = it.toFile()
                 if (file.isFile && file.extension == "json") {
                     ls.add("${it.parent.name}/${file.nameWithoutExtension}")
                     println("Found ${ls.last()}")
                 }
             }
+            println(ls.size)
             return ls
         }
 
@@ -117,13 +133,26 @@ class RecipeManagementPlugin : Plugin<Project> {
 
         fun saveCookbook (cookbook: MetaCookbook) {
             val path = Path.of(target!!.projectDir.absolutePath, "cookbook", "${cookbook.id}.json")
-            val json = klaxon.toJsonString(cookbook)
+            val sb = StringBuilder(klaxon.toJsonString(cookbook))
+            val json = (default(  ).parse(sb) as JsonObject).toJsonString(true)
             val file = File(path.toUri())
             if (file.exists())
                 if (!file.canWrite()) file.setWritable(true)
             else file.createNewFile()
             file.writeText(json)
             println("Saved cookbook ${cookbook.id}.json")
+        }
+
+        fun saveRecipe (recipe : MetaRecipe) {
+            val path = Path.of(target!!.projectDir.absolutePath, "cookbook", recipe.cookbook, "${recipe.name}.json")
+            val sb = StringBuilder(klaxon.toJsonString(recipe))
+            val json = (default(  ).parse(sb) as JsonObject).toJsonString(true)
+            val file = File(path.toUri())
+            if (file.exists())
+                if (!file.canWrite()) file.setWritable(true)
+                else file.createNewFile()
+            file.writeText(json)
+            println("Saved recipe ${recipe.cookbook}/${recipe.name}}.json")
         }
 
         fun getRecipeFromPath (fileName : String) : Recipe {
@@ -184,11 +213,25 @@ class RecipeManagementPlugin : Plugin<Project> {
         target!!.tasks.register("smartUpdateCookbook", SmartUpdateCookbookTask::class.java) {
             it.group = "recipetool"
             it.dependsOn("loadCookbook")
-            it.finalizedBy("saveCookbook")
+            it.finalizedBy("getCookbook")
         }
         target!!.tasks.register("loadRecipe", LoadRecipeTask::class.java) {
             it.group = "recipetool"
             it.dependsOn("createAccount")
+        }
+        target!!.tasks.register("saveRecipe", SaveRecipeTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("loadRecipe")
+        }
+        target!!.tasks.register("getRecipe", GetRecipeTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("loadRecipe", "getCookbook")
+            it.finalizedBy("saveRecipe")
+        }
+        target!!.tasks.register("smartUpdateRecipe", SmartUpdateRecipeTask::class.java) {
+            it.group = "recipetool"
+            it.dependsOn("loadRecipe")
+            it.finalizedBy("getRecipe")
         }
     }
 }

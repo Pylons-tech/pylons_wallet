@@ -116,8 +116,8 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     //tierre modify for new node server
     //cosmos/v1/base/beta1 Tx proto
     private fun postTxJson (json : String) : String {
-        Logger().log(LogEvent.TX_POST, """{"url":"${LowLevel.getUrlForTxs()}/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
-        val response = HttpWire.post("""${LowLevel.getUrlForTxs()}/cosmos/tx/v1beta1/txs""", json)
+        Logger().log(LogEvent.TX_POST, """{"url":"${LowLevel.getUrlForQueries()}/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
+        val response = HttpWire.post("""${LowLevel.getUrlForQueries()}/cosmos/tx/v1beta1/txs""", json)
         val jo = klaxon.parseJsonObject(StringReader(response))
         if (jo.obj("tx_response")?.int("code") == 4) {
             Logger().log(LogEvent.MISC, """{"tx_rejected":"${jo.obj("tx_response")?.string("raw_log")}"}""", LogTag.error)

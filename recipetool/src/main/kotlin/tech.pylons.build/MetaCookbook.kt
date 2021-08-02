@@ -12,21 +12,32 @@ data class MetaCookbook (
      * remotes and versions.
      */
     val id : String,
+    /**
+     * The latest version of the cookbook that exists in any form across this record and all
+     * known remotes.
+     */
     var latestVersion : String,
     /**
      * Map of SemVer strings to the cookbook as of that version.
      */
     var versions : MutableMap<String, Cookbook> = mutableMapOf(),
-
     /**
-     * Map of remote hashes to the last known state of the cookbook on that remote.
-     * If any of these are outdated, they should be updated w/ the latest state of
-     * the cookbook as soon as they're available. If any of them are ahead of our
-     * local copy, we should update it based on them.
+     * Map of all remotes the cookbook exists on to the current state of the cookbook on that
+     * remote.
      */
     var remotes : MutableMap<String, Cookbook> = mutableMapOf(),
+    /**
+     * Map of all remotes to the version of the cookbook that should be deployed to that
+     * remote. Note that if the target version is behind the actual version, we will just
+     * let it be; we can't un-deploy a cookbook, and we shouldn't be able to deploy something
+     * of an earlier version over something of a later version, so there's nothing for us
+     * to do in that case.
+     */
     var targetVersions : MutableMap<String, String> = mutableMapOf()
 ) {
+    /**
+     * Internal use: Add state to a MetaCookbook from a cookbook obtained from a remote.
+     */
     fun addRemoteState(cb : Cookbook) {
         remotes[RecipeManagementPlugin.currentRemote.identifier()] = cb
         if (versions.containsKey(cb.version)) println(
