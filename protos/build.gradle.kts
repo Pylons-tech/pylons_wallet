@@ -1,3 +1,6 @@
+group = "tech.pylons"
+version = "0.1.0"
+
 // todo: maybe use variants / configurations to do both stub & stub-lite here
 
 // Note: We use the java-library plugin to get the protos into the artifact for this subproject

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "tech.pylons"
-version = "0.1a"
+version = "0.1.0"
 val ketheriumVer = "0.81.2"
 val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"

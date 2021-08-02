@@ -18,7 +18,8 @@ abstract class CreateRecipeTask : DefaultTask() {
             coinInputs = listOf(klaxon.toJsonString(recipe.coinInputs)),
             itemInputs = listOf(klaxon.toJsonString(recipe.itemInputs)),
             outputTables = listOf(klaxon.toJsonString(recipe.entries)),
-            outputs = listOf(klaxon.toJsonString(recipe.outputs))
+            outputs = listOf(klaxon.toJsonString(recipe.outputs)),
+            extraInfos = listOf()
         )
     }
 }
