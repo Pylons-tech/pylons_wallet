@@ -176,3 +176,7 @@ publishing {
         }
     }
 }
+
+signing {
+    sign(publishing.publications["mavenJava"])
+}
