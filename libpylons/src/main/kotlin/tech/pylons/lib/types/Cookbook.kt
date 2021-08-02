@@ -19,8 +19,6 @@ data class Cookbook (
         val version : String,
         @property:[Json(name = "Developer")]
         val developer : String,
-        @property:[Json(name = "Level")]
-        val level : Long,
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "SupportEmail")]
@@ -43,8 +41,7 @@ data class Cookbook (
                                 description = obj.string("Description")!!,
                                 version = obj.string("Version")!!,
                                 developer = obj.string("Developer")!!,
-                                level = obj.fuzzyLong("Level"),
-                                sender = obj.string("Sender")!!,
+                            sender = obj.string("Sender")!!,
                                 supportEmail = obj.string("SupportEmail")!!,
                                 costPerBlock = obj.fuzzyLong("CostPerBlock")!!
                         )
@@ -64,7 +61,6 @@ data class Cookbook (
                         description = obj.string("Description")!!,
                         version = obj.string("Version")!!,
                         developer = obj.string("Developer")!!,
-                        level = obj.fuzzyLong("Level"),
                         sender = obj.string("Sender")!!,
                         supportEmail = obj.string("SupportEmail")!!,
                         costPerBlock = obj.fuzzyLong("CostPerBlock")!!

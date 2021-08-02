@@ -4,6 +4,7 @@ import tech.pylons.wallet.core.Core
 import tech.pylons.lib.logging.Logger
 import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.beust.klaxon.*
+import com.google.gson.Gson
 import tech.pylons.lib.*
 import tech.pylons.lib.constants.QueryConstants
 import tech.pylons.lib.core.ICryptoHandler
@@ -30,7 +31,9 @@ import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.msg.*
 import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.TradeItemInput
+import tech.pylons.wallet.core.LowLevel
 import tech.pylons.wallet.core.internal.ProtoJsonUtil
+import java.io.StringReader
 
 @ExperimentalUnsignedTypes
 open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
@@ -44,12 +47,9 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override val prefix : String = "__TXPYLONSALPHA__"
-    override val backendType: Backend = Backend.LIVE
     override val usesMnemonic: Boolean = true
-    override val isDevEngine: Boolean = false
     override var cryptoHandler: ICryptoHandler = CryptoCosmos(core)
     val cryptoCosmos get() = cryptoHandler as CryptoCosmos
-    internal val nodeUrl = getUrl()
 
     companion object {
         private val local = """http://127.0.0.1:1317"""
@@ -60,7 +60,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     fun getAddressFromNode (key : PylonsSECP256K1.PublicKey) : String {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_addr_from_pub_key}" +
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_addr_from_pub_key}" +
                 Hex.toHexString(PubKeyUtil.getCompressedPubkey(key).toArray()))
         return klaxon.parse<AddressResponse>(json)!!.Bech32Addr!!
     }
@@ -114,13 +114,13 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         })
     }
 
-    //tierre modify for new node server
-    //cosmos/v1/base/beta1 Tx proto
     private fun postTxJson (json : String) : String {
-        //Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/txs","tx":$json}""", LogTag.info)
-        //val response = HttpWire.post("""$nodeUrl/txs""", json)
-        Logger().log(LogEvent.TX_POST, """{"url":"$nodeUrl/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
-        val response = HttpWire.post("""$nodeUrl/cosmos/tx/v1beta1/txs""", json)
+        Logger().log(LogEvent.TX_POST, """{"url":"${LowLevel.getUrlForQueries()}/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
+        val response = HttpWire.post("""${LowLevel.getUrlForQueries()}/cosmos/tx/v1beta1/txs""", json)
+        val jo = klaxon.parseJsonObject(StringReader(response))
+        if (jo.obj("tx_response")?.int("code") == 4) {
+            Logger().log(LogEvent.MISC, """{"tx_rejected":"${jo.obj("tx_response")?.string("raw_log")}"}""", LogTag.error)
+        }
         Logger().log(LogEvent.TX_RESPONSE, response, LogTag.info)
         return response
     }
@@ -213,16 +213,15 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun getMyProfileState(): MyProfile? {
         println("myProfile path")
         println(core.userProfile)
-
-        val prfJson = HttpWire.get("$nodeUrl/auth/accounts/${core.userProfile!!.credentials.address}")
-        val itemsJson = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
-
-        val balanceJson = HttpWire.get("$nodeUrl${QueryConstants.URL_balance}${core.userProfile!!.credentials.address}")
+        val prfJson = HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/${core.userProfile!!.credentials.address}")
+        val itemsJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
+        val balanceJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}${core.userProfile!!.credentials.address}")
 
 
         val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
+            null -> null
             "" -> null
             null -> null //if profile not exists return null
             else -> {
@@ -244,11 +243,11 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun getProfileState(addr: String): Profile? {
-        val prfJson = HttpWire.get("$nodeUrl/auth/accounts/$addr")
+        val prfJson = HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/$addr")
         // this seems really wrong
-        val itemsJson = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}$addr")
+        val itemsJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}$addr")
         // retrieve balance
-        val balanceJson = HttpWire.get("$nodeUrl${QueryConstants.URL_balance}$addr")
+        val balanceJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}$addr")
 
 
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
@@ -272,24 +271,24 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun getPendingExecutions(): List<Execution> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
         return Execution.getListFromJson(json)
     }
 
     override fun getCompletedExecutions(): List<Execution> {
         // one of these should not work
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
         return Execution.getListFromJson(json)
     }
 
     override fun getExecution(executionId: String): Execution? {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_execution}${executionId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}l${QueryConstants.URL_get_execution}${executionId}")
         return Execution.parseFromJson(json)
     }
 
 
     override fun getItem(itemId: String): Item? {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_item}${itemId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item}${itemId}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val obj = itemObj.obj("item")
         if(obj != null){
@@ -299,21 +298,21 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listItems(): List<Item> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
     }
 
     override fun listItemsByCookbookId(cookbookId: String?): List<Item> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_cookbook}${cookbookId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_cookbook}${cookbookId}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
     }
 
     override fun listItemsBySender(sender: String?): List<Item> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_items_by_sender}${sender}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${sender}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
@@ -328,7 +327,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             }
 
     override fun getStatusBlock(): StatusBlock {
-        val response = HttpWire.get("$nodeUrl/blocks/latest")
+        val response = HttpWire.get("${LowLevel.getUrlForTxs()}/blocks/latest")
         val jsonObject = (Parser.default().parse(StringBuilder(response)) as JsonObject)
         val height = jsonObject.obj("block")!!.obj("header")!!.fuzzyLong("height")!!
         // TODO: calculate block time (this will be Gross)
@@ -337,7 +336,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
 
     override fun getTransaction(id: String): Transaction {
         return try {
-            val response = HttpWire.get("$nodeUrl/txs/$id")
+            val response = HttpWire.get("${LowLevel.getUrlForTxs()}/txs/$id")
             //Transaction.parseTransactionResponse(id, response)
             val dataString = ProtoJsonUtil.TxProtoResponseParser(response)
             Transaction.parseTransactionResponse(id, response, dataString!!)
@@ -350,27 +349,27 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listRecipes(): List<Recipe> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe}")
         return Recipe.listFromJson(json)
     }
 
     override fun listRecipesBySender(): List<Recipe> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe}${core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe}${core.userProfile!!.credentials.address}")
         return Recipe.listFromJson(json)
     }
 
     override fun listTrades(): List<Trade> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_trade}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_trade}")
         return Trade.listFromJson(json)
     }
 
     override fun listCookbooks(): List<Cookbook> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_cookbook}${core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_cookbook}${core.userProfile!!.credentials.address}")
         return Cookbook.getListFromJson(json)
     }
 
     override fun getCookbook(cookbookId: String): Cookbook? {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_cookbook}${cookbookId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_cookbook}${cookbookId}")
         return Cookbook.parseFromJson(json)
     }
 
@@ -402,7 +401,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             }
 
     override fun checkGoogleIapOrder(purchaseToken: String): Boolean {
-        val response = HttpWire.get("$nodeUrl${QueryConstants.URL_check_google_iap_order}$purchaseToken")
+        val response = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_check_google_iap_order}$purchaseToken")
         return (Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!.boolean("exist")!!
     }
 
@@ -435,12 +434,12 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             }
 
     override fun getLockedCoins(): LockedCoin {
-        val response = HttpWire.get("$nodeUrl${QueryConstants.URL_get_locked_coins}${core.userProfile!!.credentials.address}")
+        val response = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_locked_coins}${core.userProfile!!.credentials.address}")
         return LockedCoin.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject))
     }
 
     override fun getLockedCoinDetails(): LockedCoinDetails {
-        val response = HttpWire.get("$nodeUrl${QueryConstants.URL_get_locked_coin_details}${core.userProfile!!.credentials.address}")
+        val response = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_locked_coin_details}${core.userProfile!!.credentials.address}")
         return LockedCoinDetails.fromJson((Parser.default().parse(StringBuilder(response)) as JsonObject))
     }
 
@@ -457,7 +456,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction {
+    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, costPerBlock : Long): Transaction {
         throw Exception("Creating cookbooks is not allowed on non-dev tx engine")
     }
 
@@ -469,7 +468,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun getRecipe(recipeId: String): Recipe? {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_recipe}$recipeId")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_recipe}$recipeId")
 
         val jsonObject = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         return Recipe(
@@ -490,12 +489,12 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun listRecipesByCookbookId(cookbookId: String): List<Recipe> {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_list_recipe_by_cookbook}$cookbookId")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe_by_cookbook}$cookbookId")
         return Recipe.listFromJson(json)
     }
 
     override fun getTrade(tradeId: String): Trade? {
-        val json = HttpWire.get("$nodeUrl${QueryConstants.URL_get_trade}$tradeId")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_trade}$tradeId")
         return Trade.fromJson(json)
     }
 

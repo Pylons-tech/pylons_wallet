@@ -10,6 +10,7 @@ import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.TradeItemInput
+import java.io.StringReader
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
@@ -33,7 +34,7 @@ sealed class Msg() {
             Companion.core = core
         }
 
-        fun fromJson (json : String) : Msg? = fromJson(Parser.default().parse(json) as JsonObject)
+        fun fromJson (json : String) : Msg? = fromJson(Parser.default().parse(StringReader(json)) as JsonObject)
 
         fun fromJson (jsonObject: JsonObject) : Msg? {
             val identifier = jsonObject["type"] as String
@@ -78,7 +79,7 @@ sealed class Msg() {
             [
             {
                 "@type": "${msgType?.serializedAs.orEmpty()}",
-                ${msg}
+                $msg
             }
             ]"""
     }
@@ -150,8 +151,6 @@ data class CreateCookbook (
         val developer : String,
         @property:[Json(name = "SupportEmail")]
         val supportEmail : String,
-        @property:[Json(name = "Level")]
-        val level : Long,
         @property:[Json(name = "Sender")]
         val sender : String,
         @property:[Json(name = "CostPerBlock")]
@@ -171,8 +170,7 @@ data class CreateCookbook (
                     version = jsonObject.string("Version")!!,
                     supportEmail = jsonObject.string("SupportEmail")!!,
                     sender = jsonObject.string("Sender")!!,
-                    level = jsonObject.string("Level")!!.toLong(),
-                    costPerBlock = jsonObject.string("CostPerBlock")!!.toLong()
+                costPerBlock = jsonObject.string("CostPerBlock")!!.toLong()
             )
         }
     }

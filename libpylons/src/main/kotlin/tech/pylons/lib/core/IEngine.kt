@@ -23,14 +23,8 @@ interface IEngine {
      */
     val prefix : String
 
-    /** Specifies the TX-handling backend associated with an Engine instance. */
-    val backendType : Backend
-
     /** Identifies whether or not we're using BIP44 mnemonics when doing keygen. */
     val usesMnemonic : Boolean
-
-    /** Should this engine have access to developer-use methods? */
-    val isDevEngine : Boolean
 
     /** The current CryptoHandler instance associated with this engine */
     var cryptoHandler : ICryptoHandler
@@ -71,11 +65,11 @@ interface IEngine {
 
     /** Create-cookbook message */
     fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
-                                 supportEmail : String, level : Long, costPerBlock : Long) : Transaction
+                                 supportEmail : String, costPerBlock : Long) : Transaction
 
     /** Batch create-cookbook message */
     fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
-                        versions : List<String>, supportEmails: List<String>, levels : List<Long>,
+                        versions : List<String>, supportEmails: List<String>,
                         costsPerBlock : List<Long>) : List<Transaction>
 
     /**

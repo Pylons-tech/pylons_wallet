@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import java.security.Security
 
 class KeysButNoStateFlow {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     @ExperimentalUnsignedTypes
     @Test

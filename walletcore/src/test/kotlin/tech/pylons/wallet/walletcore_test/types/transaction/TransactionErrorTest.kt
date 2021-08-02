@@ -14,7 +14,7 @@ import org.junit.jupiter.api.fail
 import java.lang.Exception
 
 class TransactionErrorTest {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1:1317"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     private val key = InternalPrivKeyStore.BANK_TEST_KEY
 

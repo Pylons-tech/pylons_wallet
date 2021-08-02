@@ -9,7 +9,7 @@ import tech.pylons.wallet.core.internal.HttpWire
 import org.junit.jupiter.api.Test
 
 class FirstDemoflowTest {
-    val core = Core(Config(Backend.LIVE_DEV, listOf("http://127.0.0.1"))).use()
+    val core = Core(Config(Backend.MANUAL, "pylonschain",true, listOf("http://127.0.0.1:1317"))).use()
 
     private fun engineSetup (key : String? = null) : TxPylonsDevEngine {
         HttpWire.verbose = true

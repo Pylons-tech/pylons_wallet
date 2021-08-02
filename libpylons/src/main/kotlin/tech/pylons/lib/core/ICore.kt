@@ -50,7 +50,7 @@ interface ICore {
     fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>, paymentId: String = "") : Transaction
 
     fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                             supportEmails : List<String>, levels : List<Long>, costsPerBlock : List<Long>) : List<Transaction>
+                             supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction>
 
     fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
                                     blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
@@ -127,4 +127,8 @@ interface ICore {
     fun getCookbook(cookbookId: String): Cookbook?
 
     fun getExecution(executionId: String): Execution?
+    /**
+     * Returns the on-chain ID of the recipe with the cookbook and name provided
+     */
+    fun getRecipeIdFromCookbookAndName(cookbook: String, name: String) : String?
 }

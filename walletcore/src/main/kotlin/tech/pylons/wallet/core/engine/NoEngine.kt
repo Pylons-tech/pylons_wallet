@@ -21,10 +21,8 @@ import tech.pylons.lib.types.tx.trade.TradeItemInput
  */
 internal class NoEngine(core : Core) : Engine(core), IEngine {
     override val prefix: String = "__NOENGINE__"
-    override val backendType: Backend = Backend.NONE
     override var cryptoHandler: ICryptoHandler = CryptoNull(core)
     override val usesMnemonic: Boolean = false
-    override val isDevEngine: Boolean = false
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
@@ -34,7 +32,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
             throw NoEngineException()
 
-    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, level: Long, costPerBlock : Long): Transaction =
+    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, costPerBlock : Long): Transaction =
             throw NoEngineException()
 
     override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,

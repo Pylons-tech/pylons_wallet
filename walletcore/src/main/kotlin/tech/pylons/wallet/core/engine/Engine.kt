@@ -26,14 +26,8 @@ abstract class Engine(val core : Core) : IEngine {
      */
     abstract override val prefix : String
 
-    /** Specifies the TX-handling backend associated with an Engine instance. */
-    abstract override val backendType : Backend
-
     /** Identifies whether or not we're using BIP44 mnemonics when doing keygen. */
     abstract override val usesMnemonic : Boolean
-
-    /** Should this engine have access to developer-use methods? */
-    abstract override val isDevEngine : Boolean
 
     /** The current CryptoHandler instance associated with this engine */
     abstract override var cryptoHandler : ICryptoHandler
@@ -101,11 +95,11 @@ abstract class Engine(val core : Core) : IEngine {
 
     /** Create-cookbook message */
     abstract override fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
-                                          supportEmail : String, level : Long, costPerBlock : Long) : Transaction
+                                          supportEmail : String, costPerBlock : Long) : Transaction
 
     /** Batch create-cookbook message */
     override fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
-                        versions : List<String>, supportEmails: List<String>, levels : List<Long>,
+                        versions : List<String>, supportEmails: List<String>,
                         costsPerBlock : List<Long>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
@@ -118,7 +112,6 @@ abstract class Engine(val core : Core) : IEngine {
                             description = descriptions[i],
                             version = versions[i],
                             supportEmail = supportEmails[i],
-                            level = levels[i],
                             costPerBlock = costsPerBlock[i]
                     )
             )

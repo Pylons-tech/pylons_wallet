@@ -1,18 +1,15 @@
 package tech.pylons.wallet.core.engine
 
 import tech.pylons.wallet.core.Core
-import tech.pylons.lib.types.*
-import tech.pylons.lib.types.tx.Trade
 import tech.pylons.lib.types.tx.msg.*
 import tech.pylons.lib.types.tx.recipe.*
+import tech.pylons.wallet.core.LowLevel
 import tech.pylons.wallet.core.internal.HttpWire
 
 class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
-    override val isDevEngine: Boolean = true
-    override val backendType: Backend = Backend.LIVE_DEV
 
     override fun createCookbook(id : String, name: String, developer: String, description: String, version: String,
-                                supportEmail: String, level: Long, costPerBlock : Long) =
+                                supportEmail: String, costPerBlock : Long) =
             handleTx {
                 CreateCookbook(
                         cookbookId = id,
@@ -21,8 +18,7 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
                         description = description,
                         version = version,
                         supportEmail = supportEmail,
-                        level = level,
-                        costPerBlock = costPerBlock,
+                    costPerBlock = costPerBlock,
                         sender = it.address
                 ).toSignedTx()
             }
@@ -94,5 +90,5 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
                 ).toSignedTx()
             }
 
-    fun queryTxBuilder(msgType : String) : String = HttpWire.get("$nodeUrl/pylons/$msgType/tx_build/")
+    fun queryTxBuilder(msgType : String) : String = HttpWire.get("${LowLevel.getUrlForQueries()}/pylons/$msgType/tx_build/0")
 }

@@ -30,7 +30,9 @@ class MulticoreTest {
     }
 
     private val config = Config(
-            Backend.LIVE_DEV,
+            Backend.MANUAL,
+            "pylonschain",
+            true,
             listOf("http://127.0.0.1:1317")
     )
 
@@ -116,10 +118,10 @@ class MulticoreTest {
     @Order(6)
     fun testCreateAccount() {
         // todo: this should actually take a keypair as an argument
-        Multicore.enable(config)
+//        Multicore.enable(config)
         val c = Multicore.addCore(null)
 
-        val prof = Core.current?.newProfile("aaa", null)
+        val prof = Core.current?.newProfile("aaa", testKeys)
 
         val profile = Core.current?.getProfile()
 
@@ -222,6 +224,8 @@ class MulticoreTest {
 
 
         assert(Core.current == c)
+        println(c.userProfile!!.credentials.address)
+        println(testCredentials.address)
         assert(c.userProfile!!.credentials.address == testCredentials.address)
     }
 
@@ -229,7 +233,7 @@ class MulticoreTest {
     @Test
     @Order(7)
     fun testKlaxonValidation() {
-        Multicore.enable(config)
+//        Multicore.enable(config)
         val c = Multicore.addCore(null)
 
         val transaction = Core.current?.getTransaction("E1D9AD271502D7A7C9FCF0FE30313D40F35E883303BEEBCA4C26CDD05E1D6070")

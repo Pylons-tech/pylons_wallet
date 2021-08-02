@@ -9,15 +9,17 @@
 
 rootProject.name = "pylons_wallet"
 
-//include(":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libpylons")
-//protobuf gRPC support addition: Tierre
-include(":protos", ":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libpylons")
-
+include(":protos", ":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libpylons",
+    ":recipetool")
 
 pluginManagement {
     repositories {
+        mavenLocal()
         jcenter()
         gradlePluginPortal()
         mavenCentral()
+
+        maven(url = "https://jitpack.io")
+        google()
     }
 }
