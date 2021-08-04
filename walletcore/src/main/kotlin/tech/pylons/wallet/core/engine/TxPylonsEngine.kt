@@ -282,7 +282,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun getExecution(executionId: String): Execution? {
-        val json = HttpWire.get("${LowLevel.getUrlForQueries()}l${QueryConstants.URL_get_execution}${executionId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_execution}${executionId}")
         return Execution.parseFromJson(json)
     }
 
