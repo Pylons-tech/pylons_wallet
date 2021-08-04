@@ -1,8 +1,8 @@
-#Pylons SDK RecipeTool
+# Pylons SDK RecipeTool
 
 Simple automated recipe creation and management tools, provided as a Gradle plugin.
 
-##Usage
+## Usage
 
 Add `id("tech.pylons.build.recipetool") version "0.1"` to your project's plugins block.
 If you're already set up w/ the Pylons SDK, you don't need to do anything else; you'll import the plugin and be able to
