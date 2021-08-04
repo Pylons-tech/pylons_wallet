@@ -26,7 +26,7 @@ object Main {
                 0 -> "127.0.0.1"
                 else -> args[0]
             }
-            Multicore.enable(Config(Backend.TESTNET, "pylons-testnet", true, listOf("http://$preferredIP:1317")))
+            //Multicore.enable(Config(Backend.LIVE_DEV, listOf("http://$preferredIP:1317")))
             Logger.implementation = JvmLogger()
             if (args.isEmpty()) {
                 Logger.implementation.log(

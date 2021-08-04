@@ -4,6 +4,7 @@ import tech.pylons.wallet.core.Core
 import tech.pylons.lib.logging.Logger
 import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.beust.klaxon.*
+import com.google.gson.Gson
 import tech.pylons.lib.*
 import tech.pylons.lib.constants.QueryConstants
 import tech.pylons.lib.core.ICryptoHandler
@@ -113,8 +114,6 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
         })
     }
 
-    //tierre modify for new node server
-    //cosmos/v1/base/beta1 Tx proto
     private fun postTxJson (json : String) : String {
         Logger().log(LogEvent.TX_POST, """{"url":"${LowLevel.getUrlForQueries()}/cosmos/tx/v1beta1/txs","tx":$json}""", LogTag.info)
         val response = HttpWire.post("""${LowLevel.getUrlForQueries()}/cosmos/tx/v1beta1/txs""", json)
@@ -214,14 +213,15 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun getMyProfileState(): MyProfile? {
         println("myProfile path")
         println(core.userProfile)
-
         val prfJson = HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/${core.userProfile!!.credentials.address}")
         val itemsJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
         val balanceJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}${core.userProfile!!.credentials.address}")
 
+
         val lockedCoinDetails = getLockedCoinDetails()
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
         return when (value.string("address")) {
+            null -> null
             "" -> null
             null -> null //if profile not exists return null
             else -> {
@@ -243,15 +243,14 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun getProfileState(addr: String): Profile? {
-        val prfJson = HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/${core.userProfile!!.credentials.address}")
-        val itemsJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
-        val balanceJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}${core.userProfile!!.credentials.address}")
+        val prfJson = HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/$addr")
+        // this seems really wrong
+        val itemsJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}$addr")
+        // retrieve balance
+        val balanceJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}$addr")
+
+
         val value = (Parser.default().parse(StringBuilder(prfJson)) as JsonObject).obj("result")?.obj("value")!!
-
-        println(prfJson)
-        println(value)
-        println(value.string("address"))
-
         return when (value.string("address")) {
             "" -> null
             else -> {
@@ -283,7 +282,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     override fun getExecution(executionId: String): Execution? {
-        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_execution}${executionId}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}l${QueryConstants.URL_get_execution}${executionId}")
         return Execution.parseFromJson(json)
     }
 

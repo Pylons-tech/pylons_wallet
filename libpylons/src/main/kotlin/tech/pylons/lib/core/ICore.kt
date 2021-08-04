@@ -127,7 +127,6 @@ interface ICore {
     fun getCookbook(cookbookId: String): Cookbook?
 
     fun getExecution(executionId: String): Execution?
-
     /**
      * Returns the on-chain ID of the recipe with the cookbook and name provided
      */

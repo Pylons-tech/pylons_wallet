@@ -10,10 +10,11 @@ plugins {
     kotlin("jvm")
     id("com.google.protobuf")
     `maven-publish`
+    signing
 }
 
 group = "tech.pylons"
-version = "0.1"
+version = "0.1.0"
 val ketheriumVer = "0.83.4"
 val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
@@ -36,6 +37,11 @@ configurations {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -169,4 +175,8 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }

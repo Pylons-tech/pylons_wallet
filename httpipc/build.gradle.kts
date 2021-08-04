@@ -4,10 +4,11 @@ plugins {
     java
     kotlin("jvm")
     `maven-publish`
+    signing
 }
 
 group = "tech.pylons"
-version = "0.1a"
+version = "0.1.0"
 val ketheriumVer = "0.81.2"
 val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
@@ -89,6 +90,11 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
@@ -118,4 +124,8 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }

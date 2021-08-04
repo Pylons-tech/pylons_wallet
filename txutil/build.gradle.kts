@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "tech.pylons"
-version = "1.0-SNAPSHOT"
+version = "0.1.0"
 
 //sourceCompatibility = 1.8
 

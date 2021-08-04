@@ -1,3 +1,6 @@
+group = "tech.pylons"
+version = "0.1.0"
+
 // todo: maybe use variants / configurations to do both stub & stub-lite here
 
 // Note: We use the java-library plugin to get the protos into the artifact for this subproject
@@ -5,10 +8,13 @@
 plugins {
     `java-library`
     `maven-publish`
+    signing
 }
 
 java {
     sourceSets.getByName("main").resources.srcDir("src/main/proto")
+    withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {
@@ -40,4 +46,8 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }

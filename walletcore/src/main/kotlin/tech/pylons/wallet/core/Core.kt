@@ -50,9 +50,6 @@ class Core(val config : Config) : ICore {
     companion object {
         var current : Core? = null
             private set
-
-        //const val chain_id = "pylonschain"
-        //const val chain_id = "pylons-testnet" //testnet chain
     }
 
     override val userData = UserData(this)
@@ -484,7 +481,6 @@ class Core(val config : Config) : ICore {
      * Returns the on-chain ID of the recipe with the cookbook and name provided
      */
     override fun getRecipeIdFromCookbookAndName(cookbook: String, name: String): String? {
-        println(cookbook)
         getRecipesByCookbook(cookbook).forEach {
             println(it.name)
             if (it.name == name) return it.id

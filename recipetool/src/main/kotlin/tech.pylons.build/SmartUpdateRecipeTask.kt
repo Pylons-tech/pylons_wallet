@@ -24,7 +24,8 @@ abstract class SmartUpdateRecipeTask : DefaultTask()  {
                     coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
                     itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
                     outputTables = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
-                    outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs))
+                    outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
+                    extraInfos = listOf()
                 )
             }
             if (meta.disabled[identifier]!!) {
@@ -48,7 +49,8 @@ abstract class SmartUpdateRecipeTask : DefaultTask()  {
                             coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
                             itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
                             outputTables = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
-                            outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs))
+                            outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
+                            extraInfos = listOf()
                         )
                     }
                     if (meta.disabled[identifier]!!) {
@@ -65,7 +67,8 @@ abstract class SmartUpdateRecipeTask : DefaultTask()  {
                         coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
                         itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
                         outputTables = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
-                        outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs))
+                        outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
+                        extraInfos = listOf()
                     )
                 }
             }
