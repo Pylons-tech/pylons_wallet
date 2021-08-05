@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "tech.pylons"
-version = "0.1.0"
+version = "0.1.1"
 val ketheriumVer = "0.83.4"
 val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
@@ -31,9 +31,11 @@ configure<JavaPluginConvention> {
 }
 
 gradlePlugin {
+    isAutomatedPublishing = false
+
     plugins {
         create("recipeToolPlugin") {
-            id = "tech.pylons.build.recipetool"
+            id = "tech.pylons.recipetool"
             implementationClass = "tech.pylons.build.RecipeManagementPlugin"
         }
     }
@@ -187,6 +189,12 @@ publishing {
                     url.set("http://github.com/Pylons-tech/pylons_wallet/")
                 }
             }
+        }
+    }
+
+    repositories {
+        maven {
+            url = uri("../../consuming/maven-repo")
         }
     }
 }
