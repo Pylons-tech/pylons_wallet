@@ -99,6 +99,7 @@ class RecipeManagementPlugin : Plugin<Project> {
                 klaxon.parse<MetaCookbook>(stream)
             } catch (e : Exception) {
                 println("${f.nameWithoutExtension} is not a RecipeTool cookbook record!")
+                println("Exception $e")
                 null
             }
             stream.close()
@@ -120,6 +121,7 @@ class RecipeManagementPlugin : Plugin<Project> {
                 klaxon.parse<MetaRecipe>(stream)
             } catch (e : Exception) {
                 println("${f.nameWithoutExtension} is not a RecipeTool recipe record!")
+                println("Exception $e")
                 null
             }
             stream.close()
@@ -163,6 +165,7 @@ class RecipeManagementPlugin : Plugin<Project> {
                 klaxon.parse<Recipe>(stream)
             } catch (e : IOException) {
                 println("${f.name} is not a valid recipe!")
+                println("Exception $e")
                 null
             }
             stream.close()

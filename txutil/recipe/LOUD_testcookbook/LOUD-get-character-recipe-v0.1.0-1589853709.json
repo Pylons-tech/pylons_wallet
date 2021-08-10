@@ -1,10 +1,21 @@
 {
-    "NodeVersion": "0",
-    "Disabled": false,
-    "ID": "LOUD-get-character-recipe-v0.1.0-1589853709",
-    "CoinInputs":[],
-    "ItemInputs": [],
-    "Entries":{
+  "name" : "LOUD's Get Character recipe",
+  "cookbook" : "LOUD_testcookbook",
+  "latestVersion" : "0.1.0",
+  "ids" : {"testnet" :  ""},
+  "versions" : {
+    "0.1.0" : {
+      "NodeVersion" : "",
+      "ID" : "LOUD-get-character-recipe-v0.1.0-1589853709",
+      "Sender" : "cosmos14xfr7qafz7s6rgkmuclht2wgugz8kf5c5zpsk7",
+      "Disabled" : false,
+      "Name" : "LOUD Get Character recipe",
+      "CookbookID" : "LOUD_testcookbook",
+      "Description" : "this recipe is used to create character.",
+      "BlockInterval" : 0,
+      "CoinInputs" : [],
+      "ItemInputs" : [],
+      "Entries":{
         "CoinOutputs":[],
         "ItemModifyOutputs":[],
         "ItemOutputs":[{
@@ -24,16 +35,19 @@
             "TransferFee": 0
         }]
     },
-    "Outputs": [
+      "Outputs": [
         {
             "EntryIDs": ["tiger_character_lv1"],
             "Weight": "1"
         }
-    ],
-    "ExtraInfo":"",
-    "Sender":"account1",
-    "Name": "LOUD's Get Character recipe",
-    "CookbookID": "LOUD-v0.1.0-1589853709",
-    "Description": "this recipe is used to create character.",
-    "BlockInterval":0
+    ]
+    }
+  },
+  "remotes" : {
+
+  },
+  "targetVersions" : {
+    "local" : "0.1.0",
+    "testnet": "0.1.0"
+  }
 }
