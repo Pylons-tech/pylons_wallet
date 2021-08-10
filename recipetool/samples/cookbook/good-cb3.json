@@ -1,12 +1,12 @@
 {
-  "id": "good-cb2",
+  "id": "good-cb3",
   "latestVersion": "0.1.0",
   "remotes": {
     "testnet": {
       "CostPerBlock": 50,
       "Description": "this is a cookbook managed by recipetool",
       "Developer": "Billy Bob Burton's Cookbook Hut",
-      "ID": "good-cb2",
+      "ID": "good-cb3",
       "Name": "good_recipetool_managed_cb",
       "NodeVersion": "0.0.1",
       "Sender": "cosmos127ptut5wrymnhxdnhfx5cgpj4x8yandu5plk8n",
@@ -23,7 +23,7 @@
       "CostPerBlock": 50,
       "Description": "this is a cookbook managed by recipetool",
       "Developer": "Billy Bob Burton's Cookbook Hut",
-      "ID": "good-cb2",
+      "ID": "good-cb3",
       "Name": "good_recipetool_managed_cb",
       "NodeVersion": "0.0.1",
       "Sender": "cosmos127ptut5wrymnhxdnhfx5cgpj4x8yandu5plk8n",

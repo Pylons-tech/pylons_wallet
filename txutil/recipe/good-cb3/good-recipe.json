@@ -1,6 +1,6 @@
 {
   "name" : "good-recipe",
-  "cookbook" : "good-cb2",
+  "cookbook" : "good-cb3",
   "latestVersion" : "0.1.0",
   "ids" : {"local" :  ""},
   "versions" : {
@@ -10,9 +10,10 @@
       "Sender" : "",
       "Disabled" : false,
       "Name" : "good-recipe",
-      "CookbookID" : "good-cb2",
+      "CookbookID" : "good-cb3",
       "Description" : "0.1.0|description of a recipe aaaaa",
       "BlockInterval" : 0,
+      "ExtraInfo" : "",
       "CoinInputs" : [{
         "Coin" : "pylon",
         "Count" : 3
@@ -20,7 +21,7 @@
       "ItemInputs" : [],
       "Entries" : {
         "CoinOutputs" : [{
-          "ID": "scrip-out",
+          "ID": "scripOut",
           "Coin": "loudcoin",
           "Count": "333"
         }],
@@ -28,7 +29,7 @@
         "ItemModifyOutputs" : []
       },
       "Outputs" : [{
-        "EntryIDs" : ["scrip-out"],
+        "EntryIDs" : ["scripOut"],
         "Weight" : "1"
       }]
     }
