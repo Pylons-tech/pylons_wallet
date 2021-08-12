@@ -437,7 +437,7 @@ class Core(val config : Config) : ICore {
     }
 
     override fun listTrades(): List<Trade> {
-        TODO("Not yet implemented")
+        return engine.listTrades()
     }
 
     override fun wipeUserData () {
