@@ -4,6 +4,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import tech.pylons.lib.ErrorMsgUtil.toErrorMsg
 import tech.pylons.lib.types.tx.StdTx
 import tech.pylons.lib.types.tx.TxData
 
@@ -89,7 +90,7 @@ data class Transaction(
                     Transaction(
                         stdTx = stdTx,
                         txData = TxData.fromJson(doc.obj("txData")!!),
-                        raw_log = doc.string("raw_log")!!,
+                        raw_log = toErrorMsg(doc.string("raw_log"))!!,
                         code = ResponseCode.valueOf(doc.string("code")!!),
                         _id = doc.string("id")
                     )
@@ -154,7 +155,7 @@ data class Transaction(
                         stdTx = StdTx.fromJson((doc.obj("tx")!!).obj("value")!!),
                         _id = id,
                         code = ResponseCode.of(doc.int("code")),
-                        raw_log = doc.string("raw_log") ?: "Unknown Error"
+                        raw_log = toErrorMsg(doc.string("raw_log")) ?: "Unknown Error"
                     )
                 }
                 doc.containsKey("data") -> {

@@ -90,14 +90,14 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             val code = txObj.int("code")
             if (code != null && Transaction.ResponseCode.of(code) != Transaction.ResponseCode.OK) {
                 it.code = Transaction.ResponseCode.of(code)
-                it.raw_log = txObj.string("raw_log") ?: "Unknown Error"
+                it.raw_log = ErrorMsgUtil.toErrorMsg(txObj.string("raw_log")) ?: "Unknown Error"
                 throw Exception("Node returned error code $code for message - ${txObj.string("raw_log")}")
             }
 
             val error = txObj.string("error")
             if (error != null) {
                 it.code = Transaction.ResponseCode.UNKNOWN_ERROR
-                it.raw_log = error
+                it.raw_log = ErrorMsgUtil.toErrorMsg(error)!!
                 throw Exception("Node returned error code $code for message - $error")
             }
 

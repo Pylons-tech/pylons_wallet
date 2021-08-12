@@ -322,7 +322,9 @@ data class ExecuteRecipe(
         @property:[Json(name = "ItemIDs")]
         val itemIds : List<String>,
         @property:[Json(name = "PaymentId")]
-        val paymentId: String = ""
+        val paymentId: String = "",
+        @property:[Json(name = "PaymentMethod")]
+        val paymentMethod: String = ""
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -333,7 +335,8 @@ data class ExecuteRecipe(
                     recipeId = jsonObject.string("RecipeID")!!,
                     sender = jsonObject.string("Sender")!!,
                     itemIds = jsonObject.array("ItemIDs")?: listOf(),
-                    paymentId = jsonObject.string("PaymentId")?: ""
+                    paymentId = jsonObject.string("PaymentId")?: "",
+                    paymentMethod = jsonObject.string("PaymentMethod")?: ""
             )
         }
     }
