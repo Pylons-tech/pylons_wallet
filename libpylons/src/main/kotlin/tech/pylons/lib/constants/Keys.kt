@@ -1,4 +1,4 @@
-package tech.pylons.wallet.libpylons.constants
+package tech.pylons.lib.constants
 
 class Keys {
     companion object {
