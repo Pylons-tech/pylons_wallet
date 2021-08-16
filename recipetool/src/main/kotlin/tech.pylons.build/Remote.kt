@@ -1,7 +1,5 @@
 package tech.pylons.build
 
-import org.spongycastle.jcajce.provider.digest.SHA256
-import org.spongycastle.util.encoders.Hex
 import tech.pylons.lib.types.Backend
 
 data class Remote (val backend : Backend, val chainId : String, val txsUrl : String, val queryUrl : String) {

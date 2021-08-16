@@ -98,7 +98,7 @@ class RecipeManagementPlugin : Plugin<Project> {
             val cb = try {
                 klaxon.parse<MetaCookbook>(stream)
             } catch (e : Exception) {
-                println("${f.nameWithoutExtension} is not a RecipeTool cookbook record!")
+                println("${f.nameWithoutExtension} is not a RecipeTool cookbook record!\nCaused by: $e")
                 null
             }
             stream.close()
@@ -119,7 +119,7 @@ class RecipeManagementPlugin : Plugin<Project> {
             val r = try {
                 klaxon.parse<MetaRecipe>(stream)
             } catch (e : Exception) {
-                println("${f.nameWithoutExtension} is not a RecipeTool recipe record!")
+                println("${f.nameWithoutExtension} is not a RecipeTool recipe record!\nCaused by: $e")
                 null
             }
             stream.close()
@@ -162,7 +162,7 @@ class RecipeManagementPlugin : Plugin<Project> {
             val recipe = try {
                 klaxon.parse<Recipe>(stream)
             } catch (e : IOException) {
-                println("${f.name} is not a valid recipe!")
+                println("${f.name} is not a valid recipe!\nCaused by: $e")
                 null
             }
             stream.close()

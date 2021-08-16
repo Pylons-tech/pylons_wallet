@@ -19,24 +19,24 @@ abstract class GetRecipeTask : DefaultTask() {
         else {
             RecipeManagementPlugin.loadedCookbooks.values.forEach {
                 val remote = Core.current!!.getRecipesByCookbook(it.id)
-                remote.forEach {
-                    if (RecipeManagementPlugin.loadedRecipes["${it.cookbookId}/${it.name}"] != null)
-                        RecipeManagementPlugin.loadedRecipes["${it.cookbookId}/${it.name}"]!!.addRemoteState(it)
+                remote.forEach { rcp ->
+                    if (RecipeManagementPlugin.loadedRecipes["${rcp.cookbookId}/${rcp.name}"] != null)
+                        RecipeManagementPlugin.loadedRecipes["${rcp.cookbookId}/${rcp.name}"]!!.addRemoteState(rcp)
                     else {
-                        RecipeManagementPlugin.loadedRecipes["${it.cookbookId}/${it.name}"] = MetaRecipe(it.name, it.cookbookId,
-                            MetaRecipe.version(it),
-                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to it.id),
-                            mutableMapOf(MetaRecipe.version(it) to it),
-                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to it),
-                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to MetaRecipe.version(it)),
-                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to it.disabled)
+                        RecipeManagementPlugin.loadedRecipes["${rcp.cookbookId}/${rcp.name}"] = MetaRecipe(rcp.name, rcp.cookbookId,
+                            MetaRecipe.version(rcp),
+                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp.id),
+                            mutableMapOf(MetaRecipe.version(rcp) to rcp),
+                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp),
+                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to MetaRecipe.version(rcp)),
+                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp.disabled)
                         )
                     }
                 }
                 RecipeManagementPlugin.loadedRecipes.values.forEach { meta ->
-                    remote.forEach {
-                        if (it.cookbookId == meta.cookbook && it.name == meta.name)
-                            meta.addRemoteState(it)
+                    remote.forEach { rcp ->
+                        if (rcp.cookbookId == meta.cookbook && rcp.name == meta.name)
+                            meta.addRemoteState(rcp)
                     }
                 }
             }

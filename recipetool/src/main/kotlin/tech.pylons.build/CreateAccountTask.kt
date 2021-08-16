@@ -13,7 +13,7 @@ abstract class CreateAccountTask : DefaultTask() {
     @TaskAction
     fun createAccountIfNeeded() {
         println("CreateAccountTask should see if you need to make an account for these keys" +
-                "and do it if so, but it doesn't yet, so I hope they're registered!")
+                " and do it if so, but it doesn't yet, so I hope they're registered!")
         if (Core.current!!.getProfile() == null) {
             Core.current!!.newProfile("", RecipeManagementPlugin.shittyKeys())
         }
