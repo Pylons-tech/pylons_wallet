@@ -263,8 +263,8 @@ class Core(val config : Config) : ICore {
         return when (addr) {
             // note: both null and "" are valid here. it depends on the serialization behavior
             // on the other side of the ipc link. so we have to check against both.
-            null -> engine.getMyProfileState() as Profile?
-            "" -> engine.getMyProfileState() as Profile?
+            null -> engine.getMyProfileState()
+            "" -> engine.getMyProfileState()
             else -> engine.getProfileState(addr)
         }
     }

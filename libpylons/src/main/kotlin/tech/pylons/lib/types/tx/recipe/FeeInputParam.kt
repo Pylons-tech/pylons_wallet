@@ -14,7 +14,7 @@ data class FeeInputParam(
         fun fromJson(jsonObject: JsonObject?): FeeInputParam =
                 FeeInputParam(
                         minValue = jsonObject?.fuzzyLong("MinValue")!!,
-                        maxValue = jsonObject?.fuzzyLong("MaxValue")!!
+                        maxValue = jsonObject.fuzzyLong("MaxValue")
                 )
     }
 }

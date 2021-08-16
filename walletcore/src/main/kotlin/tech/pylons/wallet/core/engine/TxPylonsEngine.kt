@@ -66,9 +66,9 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     }
 
     private fun getUrl () : String  {
-        return when ((core.config?.nodes.isNullOrEmpty())) {
+        return when ((core.config.nodes.isNullOrEmpty())) {
             true -> local
-            false -> core.config?.nodes!!.first()
+            false -> core.config.nodes.first()
         }
     }
 
@@ -329,7 +329,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("${LowLevel.getUrlForTxs()}/blocks/latest")
         val jsonObject = (Parser.default().parse(StringBuilder(response)) as JsonObject)
-        val height = jsonObject.obj("block")!!.obj("header")!!.fuzzyLong("height")!!
+        val height = jsonObject.obj("block")!!.obj("header")!!.fuzzyLong("height")
         // TODO: calculate block time (this will be Gross)
         return StatusBlock(height = height, blockTime = 0.0, walletCoreVersion = VERSION_STRING)
     }
@@ -339,7 +339,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             val response = HttpWire.get("${LowLevel.getUrlForTxs()}/txs/$id")
             //Transaction.parseTransactionResponse(id, response)
             val dataString = ProtoJsonUtil.TxProtoResponseParser(response)
-            Transaction.parseTransactionResponse(id, response, dataString!!)
+            Transaction.parseTransactionResponse(id, response, dataString)
 
         } catch (e : FileNotFoundException) {
             Transaction(
@@ -483,7 +483,7 @@ open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
             coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
             itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
             entries = EntriesList.fromJson(jsonObject.obj("Entries"))!!,
-            outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))!!,
+            outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs")),
             extraInfo = jsonObject.string("ExtraInfo")!!
         )
     }

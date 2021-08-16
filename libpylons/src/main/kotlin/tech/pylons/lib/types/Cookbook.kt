@@ -43,7 +43,7 @@ data class Cookbook (
                                 developer = obj.string("Developer")!!,
                             sender = obj.string("Sender")!!,
                                 supportEmail = obj.string("SupportEmail")!!,
-                                costPerBlock = obj.fuzzyLong("CostPerBlock")!!
+                                costPerBlock = obj.fuzzyLong("CostPerBlock")
                         )
                 )
             }
@@ -63,7 +63,7 @@ data class Cookbook (
                         developer = obj.string("Developer")!!,
                         sender = obj.string("Sender")!!,
                         supportEmail = obj.string("SupportEmail")!!,
-                        costPerBlock = obj.fuzzyLong("CostPerBlock")!!
+                        costPerBlock = obj.fuzzyLong("CostPerBlock")
                     )
                 }catch(e: Error){
                 }

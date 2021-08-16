@@ -60,7 +60,7 @@ dependencies {
         val cfg = configurations.create("javafx_" + platform.classifier)
         JavaFXModule.getJavaFXModules(javaFXOptions.modules).forEach { m ->
             project.dependencies.add(cfg.name,
-                    String.format("org.openjfx:%s:%s:%s", m.artifactName, javaFXOptions.version, platform.classifier));
+                    String.format("org.openjfx:%s:%s:%s", m.artifactName, javaFXOptions.version, platform.classifier))
         }
     }
 }

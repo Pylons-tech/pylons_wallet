@@ -212,7 +212,7 @@ sealed class Message {
             recipesOut = core!!.getRecipes())
     }
 
-    class GetRecipesBySender(): Message() {
+    class GetRecipesBySender : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<GetRecipesBySender>(json)
         }

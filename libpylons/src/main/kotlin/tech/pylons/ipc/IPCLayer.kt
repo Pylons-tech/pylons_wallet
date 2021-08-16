@@ -8,8 +8,8 @@ abstract class IPCLayer(val permitUnboundOperations : Boolean) {
     var walletId : Int = Random.nextInt()
     var messageId : Int = 0
 
-    class NoClientException : Exception() { }
-    class ConnectionBrokenException : Exception() { }
+    class NoClientException : Exception()
+    class ConnectionBrokenException : Exception()
 
     enum class ConnectionState {
         NoClient,

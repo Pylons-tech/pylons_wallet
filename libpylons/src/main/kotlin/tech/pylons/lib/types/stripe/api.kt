@@ -11,8 +11,7 @@ data class StripeInventory(
     @property:[Json(name = "Type")]
     val Type: String,
     @property:[Json(name = "Quantity")]
-    val Quantity: String){
-}
+    val Quantity: String)
 
 data class StripeCreateProductSKURequest(
     @property:[Json(name = "Name")]
@@ -33,9 +32,7 @@ data class StripeCreateProductSKURequest(
     val ClientId: String,
     @property:[Json(name = "Sender")]
     val Sender: String,
-){
-
-}
+)
 
 data class StripeCreateProductSKUResponse(
     @property:[Json(name = "err")]
@@ -68,7 +65,7 @@ data class StripCreatePaymentIntentRequest(
     val amount: String,
     @property:[Json(name = "Sender")]
     val Sender: String
-){}
+)
 
 data class StripeCreatePaymentIntentResponse(
     @property:[Json(name = "stripe_payment_intent_id")]
@@ -136,7 +133,7 @@ data class StripeOauthTokenRequest(
     val GrantType: String,
     @property: [Json(name = "Code")]
     val code: String,
-){}
+)
 
 data class StripeOauthTokenResponse(
     @property: [Json(name = "access_token")]

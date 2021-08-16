@@ -25,7 +25,7 @@ private annotation class MsgResType(
 )
 
 @ExperimentalUnsignedTypes
-sealed class Msg() {
+sealed class Msg {
     abstract fun serializeForIpc() : String
 
     companion object {

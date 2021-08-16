@@ -105,7 +105,7 @@ class RecipeManagementPlugin : Plugin<Project> {
             if (cb!!.id != fileName) throw Exception(
                 "$fileName.json stores a cookbook record for ID ${cb.id}." +
                         "Filename should always be same as cookbook ID.")
-            loadedCookbooks[fileName] = cb!!
+            loadedCookbooks[fileName] = cb
             println("Loaded cookbook record $fileName")
             return cb
         }
@@ -123,10 +123,10 @@ class RecipeManagementPlugin : Plugin<Project> {
                 null
             }
             stream.close()
-            if (r!!.name != splut[1] || r!!.cookbook != splut[0]) throw Exception(
+            if (r!!.name != splut[1] || r.cookbook != splut[0]) throw Exception(
                 "$fileName.json stores a recipe record for ${r.cookbook}/${r.name}." +
                         "Filename should always be same as recipe coords.")
-            loadedRecipes[fileName] = r!!
+            loadedRecipes[fileName] = r
             println("Loaded recipe record $fileName")
             return r
         }

@@ -36,7 +36,7 @@ data class Recipe(
 ) {
     companion object {
         fun listFromJson(json : String) : List<Recipe> {
-            val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)!!
+            val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject)
                     .array<JsonObject>("recipes").orEmpty()
             val list = mutableListOf<Recipe>()
             jsonArray.forEach {
@@ -53,7 +53,7 @@ data class Recipe(
                                 coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
                                 itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
                                 entries = EntriesList.fromJson(it.obj("Entries"))!!,
-                                outputs = WeightedOutput.listFromJson(it.array("Outputs"))!!,
+                                outputs = WeightedOutput.listFromJson(it.array("Outputs")),
                                 extraInfo = it.string("ExtraInfo")!!
                         )
                 )

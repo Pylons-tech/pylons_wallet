@@ -174,14 +174,14 @@ object ProtoJsonUtil {
 
     class TxProtoBuilder {
 
-        public var txRaw = TxOuterClass.TxRaw.newBuilder()
+        var txRaw = TxOuterClass.TxRaw.newBuilder()
 
 
         fun addSignature(cryptoHandler: ICryptoHandler, signDoc: TxOuterClass.SignDoc ) {
 
             val signDocOutputStream = ByteArrayOutputStream()
             signDoc.writeTo(signDocOutputStream)
-            val sig = cryptoHandler?.signature(signDocOutputStream.toByteArray())
+            val sig = cryptoHandler.signature(signDocOutputStream.toByteArray())
 
             this.txRaw.addSignatures(ByteString.copyFrom(sig))
         }
@@ -252,8 +252,8 @@ object ProtoJsonUtil {
             val txAuthOutputStream = ByteArrayOutputStream()
             txAuthBuilder.build().writeTo(txAuthOutputStream)
 
-            txRaw.setBodyBytes(ByteString.copyFrom(txBodyOutputStream.toByteArray()))
-            txRaw.setAuthInfoBytes(ByteString.copyFrom(txAuthOutputStream.toByteArray()))
+            txRaw.bodyBytes = ByteString.copyFrom(txBodyOutputStream.toByteArray())
+            txRaw.authInfoBytes = ByteString.copyFrom(txAuthOutputStream.toByteArray())
         }
     }
 
