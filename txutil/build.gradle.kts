@@ -1,7 +1,18 @@
+/*
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath("tech.pylons:recipetool:0.1.4")
+    }
+}
+*/
+
 plugins {
     java
     kotlin("jvm")
-    id("tech.pylons.recipetool") version "0.1.2"
+//    id("tech.pylons.recipetool") version "0.1.4"
 }
 
 group = "tech.pylons"

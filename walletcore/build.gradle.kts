@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "tech.pylons"
-version = "0.1.0"
+version = "0.1.1"
 val ketheriumVer = "0.83.4"
 val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
@@ -52,7 +52,6 @@ dependencies {
     //protobuf lib
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
-    implementation("com.google.guava:guava:28.2-jre")
     implementation("commons-codec:commons-codec:1.14")
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("org.apache.tuweni:tuweni-bytes:0.10.0")

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: com.pylons.txutil.Main
+Main-Class: tech.pylons.txutil.Main
 Class-Path: jbip39-0.1.jar klaxon-5.2.jar jsr305-3.0.0.jar jsr305-3.0.2.
  jar yaranga-0.5.5.jar bip39_2.12-1.0.jar guava-27.1-jre.jar javax.injec
  t-1.jar annotations-13.0.jar bcpg-jdk15on-162.jar slf4j-api-1.7.21.jar 

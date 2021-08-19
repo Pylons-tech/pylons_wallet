@@ -1,21 +1,15 @@
 import kotlin.collections.*
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.plugins
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
 
 plugins {
     java
     kotlin("jvm")
-    id("com.google.protobuf")
     `maven-publish`
      signing
     `java-gradle-plugin`
 }
 
 group = "tech.pylons"
-version = "0.1.3"
+version = "0.1.4"
 val ketheriumVer = "0.83.4"
 val spongycastleVer = "1.58.0.0"
 val junitVer = "5.6.0"
@@ -58,7 +52,6 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    protobuf(project(":protos"))
     implementation(project(":libpylons"))
     implementation(project(":walletcore"))
     implementation(kotlin("stdlib-jdk8"))
@@ -69,7 +62,6 @@ dependencies {
     //protobuf lib
     implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
-    implementation("com.google.guava:guava:28.2-jre")
     implementation("commons-codec:commons-codec:1.14")
     implementation("org.apache.commons:commons-lang3:3.9")
     implementation("org.apache.tuweni:tuweni-bytes:0.10.0")
@@ -93,35 +85,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVer")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVer")
 
-    //protobuf lib
-    api("io.grpc:grpc-protobuf:${rootProject.ext["grpcVersion"]}")
-    api("com.google.protobuf:protobuf-java:${rootProject.ext["protobufVersion"]}")
-    api("com.google.protobuf:protobuf-java-util:${rootProject.ext["protobufVersion"]}")
-    api("io.grpc:grpc-kotlin-stub:${rootProject.ext["grpcKotlinVersion"]}")
-
-}
-
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:${rootProject.ext["protobufVersion"]}"
-    }
-    plugins {
-        id("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java:${rootProject.ext["grpcVersion"]}"
-        }
-        id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:${rootProject.ext["grpcKotlinVersion"]}:jdk7@jar"
-        }
-    }
-    generateProtoTasks {
-        all().forEach {
-            it.plugins {
-                id("grpc")
-                id("grpckt")
-            }
-        }
-    }
 }
 
 val jar by tasks.getting(Jar::class) {
@@ -153,7 +116,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 //include protobuf generated classes
-sourceSets["main"].java.srcDir("build/generated/source/proto/main/java")
+//sourceSets["main"].java.srcDir("build/generated/source/proto/main/java")
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
