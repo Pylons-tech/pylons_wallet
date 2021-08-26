@@ -1,0 +1,2 @@
+rootProject.name = "droidwallet"
+include ':app'
