@@ -9,8 +9,6 @@ import android.util.Log
 import tech.pylons.ipc.IIpcInterface
 
 /**
- * @DoNotModify
- *
  * <IpcServiceConnection>
  * interface for monitoring Wallet's IPCService
  *
@@ -51,7 +49,7 @@ class IpcServiceConnection(ctx: Context) : ServiceConnection {
     override fun onServiceConnected(p0: ComponentName?, service: IBinder?) {
         isServiceBinded = true
         iIpcService = IIpcInterface.Stub.asInterface(service)
-        DroidIpcWireImpl.initWallet(context) // handshake will be initiated immediately after ipc channel is established ...
+        WalletHandler.DroidIpcWireImpl.initWallet() // handshake will be initiated immediately after ipc channel is established ...
     }
 
     override fun onServiceDisconnected(p0: ComponentName?) {
