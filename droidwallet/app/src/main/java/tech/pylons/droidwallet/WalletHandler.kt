@@ -4,16 +4,23 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.*
 import tech.pylons.ipc.DroidIpcWire
 import tech.pylons.lib.Wallet
+import tech.pylons.lib.types.Cookbook
+import tech.pylons.lib.types.Profile
+import tech.pylons.lib.types.Transaction
+import tech.pylons.lib.types.tx.recipe.*
 import java.lang.ref.WeakReference
+import java.math.BigDecimal
 
 class WalletHandler {
 
     interface WalletCallback {
         fun onWalletConnected()
+        fun onWalletConnectFailed()
     }
 
     companion object {
@@ -28,6 +35,21 @@ class WalletHandler {
         private var walletConnection: WeakReference<IpcServiceConnection>? = null
 
         private var walletCallback: WalletCallback? = null
+
+        /**
+         * A mutable live data of the wallet user's profile.
+         */
+        private var userProfile = MutableLiveData<Profile?>()
+
+        /**
+         * A mutable live data of the Cookbook for this client app.
+         */
+        private var userCookbook = MutableLiveData<Cookbook?>()
+
+        /**
+         * A mutable list of all created NFTs.
+         */
+        private var userNfts = mutableListOf<Recipe>()
 
 
         private fun getWalletConnection(): IpcServiceConnection {
@@ -73,6 +95,725 @@ class WalletHandler {
             }
         }
 
+        fun getLiveUserProfile(): LiveData<Profile?> = userProfile
+
+        fun setUserProfile(profile: Profile?) {
+            userProfile.postValue(profile)
+        }
+
+        fun getUserProfile(): Profile? {
+            return userProfile.value
+        }
+
+        fun getLiveUserCookbook(): LiveData<Cookbook?> = userCookbook
+
+        fun getUserCookbook(): Cookbook? {
+            return userCookbook.value
+        }
+
+        fun setUserCookbook(cookbook: Cookbook?) {
+            userCookbook.postValue(cookbook)
+        }
+
+        fun getUserNfts(): MutableList<Recipe> {
+            return userNfts
+        }
+
+        /**
+         *  Wallet API fetchProfile
+         *  @param context
+         *  @param address if null, default address
+         *  @callback Boolean true if profile exists, else false
+         */
+        fun fetchProfile(context: Context?, address: String?, callback: (Boolean) -> Unit) {
+            wallet?.fetchProfile(address) { profile ->
+                val ret: Boolean = when (profile) {
+                    null -> {
+                        false
+                    }
+                    else -> {
+                        val address = profile.address
+                        val items = profile.items
+                        val coins = profile.coins
+                        //liveUserData.postValue(profile)
+                        setUserProfile(profile)
+                        true
+                    }
+                }
+
+                callback.invoke(ret)
+            }
+        }
+
+        fun createAutoCookbook(
+            context: Context?,
+            profile: Profile?,
+            callback: ((Boolean) -> Unit)? = null
+        ) {
+            CoroutineScope(Dispatchers.IO).launch {
+                var ret: Boolean
+                var message: String
+
+                wallet?.createAutoCookbook(
+                    profile!!,
+                    appName
+                ) { transaction ->
+                    when (transaction) {
+                        null -> {
+                            message = "Create portfolio failed"
+                            ret = false
+                        }
+                        else -> {
+                            if (transaction.code == Transaction.ResponseCode.OK) {
+                                message = "Create Portfolio Success"
+                                ret = true
+                            } else {
+                                //transaction failed
+                                message = "Create Portfolio failed. Error: ${transaction.raw_log}"
+                                ret = false
+                            }
+                        }
+                    }
+                    //reject or exception handling
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        withContext(Dispatchers.Main) {
+                            if (context != null) {
+                                Toast.makeText(
+                                    context,
+                                    message,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            callback?.invoke(ret)
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun onCreateAutoCookbook(context: Context?): (Transaction?) -> Unit {
+            return { transaction ->
+                when (transaction) {
+                    null -> {
+                        //reject or exception handling
+                        if (context != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        context,
+                                        "Create Portfolio failed",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
+                    else -> {
+                        if (transaction.code == Transaction.ResponseCode.OK) {
+                            //transaction ok
+                            //retrieve NFT list
+                            CoroutineScope(Dispatchers.IO).launch {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        context,
+                                        "Create Portfolio Success",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                            listCookbooks(context)
+                        } else {
+                            //transaction failed
+                            if (context != null) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "Create Portfolio failed. Error: ${transaction.raw_log}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Wallet API listCookbooks
+         * Cookbook naming rule: {appName}_autocookbook_{profileaddress}
+         */
+        fun listCookbooks(context: Context?, callback: ((Cookbook?) -> Unit)? = null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                wallet?.listCookbooks {
+
+                    val cookbooks = it
+                    var cookbook: Cookbook? = null
+
+                    if (cookbooks.isNotEmpty()) {
+                        cookbook = cookbooks.find { cb ->
+                            cb.sender == getUserProfile()?.address && cb.id.startsWith(
+                                appName,
+                                true
+                            )
+                        }
+                    } else {
+                        cookbook = null
+                    }
+                    setUserCookbook(cookbook)
+
+                    callback?.invoke(cookbook)
+                }
+            }
+        }
+
+        /*
+        private fun onListCookbooks(context:Context?): (List<Cookbook>)->Unit {
+            return {
+                //get all cookbooks
+                val cookbooks = it
+
+                if (cookbooks.isNotEmpty()) {
+                    Companion.userCookbooks.clear()
+                    cookbooks.forEach {
+                        if (it.sender == Companion.userProfile?.address)
+                            Companion.userCookbooks.add(it)
+                    }
+                }
+
+                //get Easel Cookbook
+                //second cookbook creation always fails wtf.
+                //val Easel_cookbook_name = "${appName}_autocookbook_${userProfile?.address}"
+                //Companion.userCookbook = Companion.userCookbooks.find{
+                //    it.name == Easel_cookbook_name
+                //}
+                if (Companion.userCookbooks.isNotEmpty()) {
+                    Companion.userCookbook = Companion.userCookbooks.get(0)
+                }
+
+                if (Companion.userCookbook != null) {
+                    //retrieve NFT list
+                    listNfts(context)
+                } else {
+                    //this means not cookbook created for this user
+                    //create cookbook
+                    createAutoCookbook(context, Companion.userProfile)
+                }
+            }
+        }
+         */
+
+        /**
+         * Wallet API listRecipes
+         */
+        fun listNfts(context: Context?, callback: ((List<Recipe>) -> Unit)? = null) {
+            // recipes
+            runBlocking {
+                launch {
+                    wallet?.listRecipesBySender { nfts ->
+                        if (nfts.isNotEmpty()) {
+                            userNfts.clear()
+                            nfts.forEach { rcp ->
+                                if (rcp.sender == getUserProfile()?.address)
+                                    userNfts.add(rcp)
+                            }
+                        }
+
+                        callback?.invoke(userNfts.toList())
+                    }
+                }
+            }
+        }
+
+        /**
+         * CreateNft
+         * @param context
+         * @param name
+         * @param price
+         * @param royalty
+         * @param quantity
+         * @param url
+         * @param description
+         * @param royalty
+         * @param quantity
+         * @param url
+         * @param description
+         */
+        fun createNft(
+            context: Context,
+            name: String,
+            price: String,
+            currency: String,
+            royalty: String,
+            quantity: Long,
+            url: String,
+            description: String,
+            callback: (Boolean) -> Unit
+        ) {
+            //if cookbook not created, create cookbook
+            if (getUserCookbook() == null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            "Portfolio not initiated",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    createAutoCookbook(context, getUserProfile())
+                }
+                callback(false)
+                return
+            }
+
+            val NFT_id = name.replace(" ", "_") //NFT Item ID
+            //val NFT_recipe_description = "this recipe is to issue NFT: $name on NFT Cookbook: ${userCookbook?.name!!}"
+
+            runBlocking {
+                launch {
+                    //this creation is wrong
+                    wallet?.createRecipe(
+                        name = name,
+                        itemInputs = listOf(),          // this field is not necessary in NFT creation
+                        cookbook = getUserCookbook()?.id!!,  //NFT creator's Cookbook ID
+                        description = description,      //NFT_recipe_description,      //NFT Recipe Description
+                        blockInterval = 0,
+                        coinInputs = listOf(
+                            CoinInput(
+                                coin = currency, //"pylon, usd",
+                                count = if (currency == "USD") {
+                                    (price.toDouble() * 100).toLong() //support cent
+                                } else {
+                                    price.toDouble().toLong() //remove .value
+                                }
+                            )
+                        ), // NFT price definition
+
+                        outputTable = EntriesList(
+                            coinOutputs = listOf(),         //in NFT creation, coinOutput is inavailable
+                            itemModifyOutputs = listOf(),   //in NFT creation, itemModifyOutputs is unecessary
+                            itemOutputs = listOf(           //NFT definition
+                                //NFT description
+                                ItemOutput(
+                                    id = NFT_id,            //NFT Item ID made with NFT Name
+                                    doubles = listOf(
+                                        //Residual% definition
+                                        //Pls confirm if this is the right place for Residual defintion
+                                        DoubleParam(
+                                            key = "Residual%", //this should be reserved keyword for NFT
+                                            program = "",
+                                            rate = "1.0",
+                                            weightRanges = listOf(
+                                                DoubleWeightRange(
+                                                    upper = royalty, //"${royalty}000000000000000000",  //20%
+                                                    lower = royalty,
+                                                    weight = 1
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    longs = listOf(
+                                        //NFT Quantity
+                                        //Pls confirm if this is the right place for NFT Quantity defintion
+                                        LongParam(
+                                            key = "Quantity",
+                                            program = "",
+                                            rate = "1.0",
+                                            weightRanges = listOf(
+                                                LongWeightRange(
+                                                    upper = quantity.toString(), //quantity 10 copies
+                                                    lower = quantity.toString(),
+                                                    weight = 1
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    strings = listOf(
+                                        //pls confirm this field
+                                        StringParam(
+                                            rate = "1.0",
+                                            key = "Name",
+                                            value = name,
+                                            program = ""
+                                        ),
+                                        StringParam(
+                                            rate = "1.0",
+                                            key = "NFT_URL",
+                                            value = url,
+                                            program = ""
+                                        ),
+                                        StringParam(
+                                            rate = "1.0",
+                                            key = "Description",
+                                            value = description,
+                                            program = ""
+                                        ),
+                                        StringParam(
+                                            rate = "1.0",
+                                            key = "Currency",
+                                            value = currency,
+                                            program = ""
+                                        ),
+                                        StringParam(
+                                            rate = "1.0",
+                                            key = "Price",
+                                            value = if (currency == "USD") {
+                                                (price.toDouble() * 100).toLong()
+                                                    .toString() //support cent
+                                            } else {
+                                                price.toDouble().toLong().toString() //remove .value
+                                            },
+                                            program = ""
+                                        )
+                                    ),
+                                    transferFee = 0 //transfer Fee should be defined in NFT creation, currently set to 0
+                                ) // NFT entry
+                            )
+                        ),
+                        outputs = listOf(
+                            WeightedOutput(
+                                entryIds = listOf(
+                                    NFT_id
+                                ),
+                                weight = "1"
+                            )
+                        ),
+                        extraInfo = listOf()
+                    ) {
+                        val transaction = it
+                        var ret = false
+                        Log.i("onNftRetrieved()", "Response from Wallet: $it")
+                        CoroutineScope(Dispatchers.IO).launch {
+                            when (it) {
+                                null -> {
+                                    //if this is correct logic?
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "Creating Nft Cancelled!",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
+                                else -> {
+                                    //retrieve NFT list
+                                    listNfts(context)
+                                    withContext(Dispatchers.Main) {
+
+                                        //this part should be considered
+                                        val id = transaction?.id
+                                        val code = transaction?.code
+                                        val rawLog = transaction?.raw_log
+
+                                        if (code != Transaction.ResponseCode.OK) {
+                                            Toast.makeText(
+                                                context,
+                                                "Creating NFT failed: $rawLog",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            return@withContext
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Successfully Created Nft!",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            ret = true
+                                            return@withContext
+                                        }
+                                    }
+                                }
+                            }
+
+                            callback(ret)
+                        }
+                    }
+                }
+            }
+        }
+
+        /*private fun onNftRetrieved(context: Context?): (Transaction?) -> Unit {
+            return {
+                val transaction = it
+                Log.i("onNftRetrieved()", "Response from Wallet: $it")
+                when (it) {
+                    null -> {
+                        //if this is correct logic?
+                        CoroutineScope(Dispatchers.IO).launch {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    "Creating Nft Cancelled!",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    }
+                    else -> {
+                        //retrieve NFT list
+                        listNfts(context)
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            withContext(Dispatchers.Main) {
+
+                                //this part should be considered
+                                val id = transaction?.id
+                                val code = transaction?.code
+                                val rawLog = transaction?.raw_log
+
+                                if (code != Transaction.ResponseCode.OK) {
+                                    Toast.makeText(
+                                        context,
+                                        "Creating NFT failed: $rawLog",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    return@withContext
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Successfully Created Nft!",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    return@withContext
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
+
+        fun buyPylons(context: Context?, callback: (Transaction?) -> Unit) {
+            CoroutineScope(Dispatchers.IO).launch {
+                //loading screen launch
+                wallet?.buyPylons(callback)
+            }
+        }
+
+        fun executeRecipe(
+            context: Context?,
+            recipe: String,
+            cookbook: String,
+            itemInputs: List<String>,
+            callback: (Transaction?) -> Unit
+        ) {
+            CoroutineScope(Dispatchers.IO).launch {
+                wallet?.executeRecipe(
+                    recipe,
+                    cookbook,
+                    itemInputs,
+                    callback = callback
+                )
+            }
+        }
+
+        fun getWebLink(recipeName: String, recipeId: String): String? {
+            return wallet?.generateWebLink(recipeName, recipeId)
+        }
+
+        /**
+         * testCreateNft flow
+         * 1. fetch Wallet Profile
+         * 2. list Creator Cookbooks, if cookbook is null, createAutoCookbook
+         * 3. list Recipes for Creator Cookbook
+         * 4. Create test NFT Recipe
+         * 5. Execute test NFT Recipe
+         */
+        fun testCreateNft(context: Context?) {
+
+            CoroutineScope(Dispatchers.IO).launch {
+                var profile: Profile? = null
+                var cookbooks = ArrayList<Cookbook>()
+                var cookbook: Cookbook? = null
+                var recipes = ArrayList<Recipe>()
+
+                // fetch profile
+                runBlocking {
+                    launch {
+                        getWallet().fetchProfile(null) {
+                            profile = it
+                        }
+                    }
+                }
+
+                if (profile == null) {
+                    return@launch
+                }
+
+                runBlocking {
+                    launch {
+                        getWallet().listCookbooks {
+                            it.forEach {
+                                //my cookbook
+                                if (it.sender == profile?.address)
+                                    cookbooks.add(it)
+                            }
+                        }
+                    }
+                }
+
+                if (cookbooks.isEmpty()) {
+                    //account has not cookbook
+                    //create cookbook
+                    runBlocking {
+                        launch {
+                            wallet?.createAutoCookbook(
+                                profile!!,
+                                appName
+                            ) {
+                                if (it != null) {
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (cookbooks.isEmpty()) {
+                    //something wrong with cookbook creation
+                    return@launch
+                }
+
+                cookbook = cookbooks.find {
+                    it.sender == profile?.address
+                }
+                if (cookbook == null) {
+                    //not yet created cookbook
+                    return@launch
+                }
+
+
+                runBlocking {
+                    launch {
+                        getWallet().listRecipes {
+                            it.forEach {
+                                recipes.add(it)
+                            }
+                        }
+                    }
+                }
+
+                val nftRecipe = recipes.find {
+                    it.name == "test NFT recipe"
+                }
+
+                if (nftRecipe == null) {
+                    //nft creation
+                    getWallet().createRecipe(
+                        name = "test NFT recipe",
+                        itemInputs = listOf(), // this field is not necessary in NFT creation
+                        cookbook = cookbook.id,
+                        description = "test recipe description for nft image",
+                        blockInterval = 0,
+                        coinInputs = listOf(
+                            CoinInput(
+                                coin = "pylon",
+                                count = 100
+                            )
+                        ), // NFT price
+                        outputTable = EntriesList(
+                            coinOutputs = listOf(),
+                            itemModifyOutputs = listOf(),
+                            itemOutputs = listOf(
+                                //NFT description
+                                ItemOutput(
+                                    id = "test_NFT_v1",
+                                    doubles = listOf(
+
+                                        DoubleParam(
+                                            key = "Residual%", //this should be reserved keyword for NFT
+                                            program = "",
+                                            rate = "1.0",
+                                            weightRanges = listOf(
+                                                DoubleWeightRange(
+                                                    upper = "20", //20%
+                                                    lower = "20",
+                                                    weight = 1
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    longs = listOf(
+                                        LongParam(
+                                            key = "Quantity",
+                                            program = "",
+                                            rate = "1.0",
+                                            weightRanges = listOf(
+                                                LongWeightRange(
+                                                    upper = BigDecimal.valueOf(10).setScale(18)
+                                                        .toString(), //quantity 10 copies
+                                                    lower = BigDecimal.valueOf(10).setScale(18)
+                                                        .toString(),
+                                                    weight = 1
+                                                )
+                                            )
+                                        )
+                                    ),
+                                    strings = listOf(
+                                        //pls confirm this field
+                                        StringParam(
+                                            rate = "1.0",
+                                            key = "Name",
+                                            value = "NFT",
+                                            program = ""
+                                        ),
+                                        StringParam(
+                                            rate = "1.0",
+                                            key = "NFT_URL",
+                                            value = "http://127.0.0.1/test_nft.html",
+                                            program = ""
+                                        )
+                                    ),
+                                    transferFee = 0
+                                ) // NFT entry
+                            )
+                        ),
+                        outputs = listOf(
+                            WeightedOutput(
+                                entryIds = listOf(
+                                    "test_NFT_v1"
+                                ),
+                                weight = "1"
+                            )
+                        ),
+                        extraInfo = listOf()
+                    ) {
+                        val transaction = it
+
+                    }
+
+                    return@launch
+                }
+
+                //create NFT
+                runBlocking {
+                    launch {
+                        getWallet().executeRecipe(
+                            nftRecipe.name,
+                            nftRecipe.cookbookId,
+                            listOf()
+                        ) {
+                            if (it?.code == Transaction.ResponseCode.OK) {
+
+                            }
+                        }
+                    }
+                }
+
+                //check
+                runBlocking {
+                    launch {
+                        getWallet().fetchProfile(null) {
+                            profile = it
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -100,6 +841,8 @@ class WalletHandler {
                             if (it) { // only if handshake is succeeded
                                 println("Wallet Initiated")
                                 walletCallback?.onWalletConnected()
+                            } else {
+                                walletCallback?.onWalletConnectFailed()
                             }
                         }
                     }
