@@ -1,0 +1,11 @@
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            stagingProfileId = '253e437e6adbef'
+            nexusUrl = uri("https://s01.oss.sonatype.org/service/local/")
+            snapshotRepositoryUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            username = 'S8SKCvQx' // defaults to project.properties["myNexusUsername"]
+            password = 'IpV199ViKHp2RBmT32dMkMKqplXKC9vnsDnW/6HEIb0Q' // defaults to project.properties["myNexusPassword"]
+        }
+    }
+}
