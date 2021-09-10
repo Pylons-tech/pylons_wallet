@@ -10,7 +10,7 @@
 rootProject.name = "pylons_wallet"
 
 include(":protos", ":txutil", ":walletcore", ":devwallet", ":httpipc", ":devdevwallet", ":libpylons",
-    ":recipetool", ":droidwallet")
+    ":recipetool")
 
 pluginManagement {
     repositories {
