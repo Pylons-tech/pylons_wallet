@@ -351,6 +351,8 @@ class WalletHandler {
             quantity: Long,
             url: String,
             description: String,
+            imageWidth: Long,
+            imageHeight: Long,
             callback: (Boolean) -> Unit
         ) {
             //if cookbook not created, create cookbook
@@ -430,6 +432,30 @@ class WalletHandler {
                                                     weight = 1
                                                 )
                                             )
+                                        ),
+                                        LongParam(
+                                            rate = "1.0",
+                                            key = "Width",
+                                            weightRanges = listOf(
+                                                LongWeightRange(
+                                                    upper = imageWidth.toString(),
+                                                    lower =imageWidth.toString(),
+                                                    weight = 1
+                                                )
+                                            ),
+                                            program = ""
+                                        ),
+                                        LongParam(
+                                            rate = "1.0",
+                                            key = "Height",
+                                            weightRanges = listOf(
+                                                LongWeightRange(
+                                                    upper = imageHeight.toString(),
+                                                    lower =imageHeight.toString(),
+                                                    weight = 1
+                                                )
+                                            ),
+                                            program = ""
                                         )
                                     ),
                                     strings = listOf(
