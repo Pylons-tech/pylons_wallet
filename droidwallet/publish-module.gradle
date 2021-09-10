@@ -35,7 +35,7 @@ afterEvaluate {
                 if (project.plugins.findPlugin("com.android.library")) {
                     from components.release
                 } else {
-                    from components.java
+                    artifact("$buildDir/libs/${project.getName()}-${version}.jar")
                 }
 
                 artifact androidSourcesJar
