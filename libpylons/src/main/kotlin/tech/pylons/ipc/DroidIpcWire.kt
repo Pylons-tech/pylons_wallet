@@ -3,7 +3,7 @@ package tech.pylons.ipc
 import com.beust.klaxon.Json
 import kotlin.random.Random
 import tech.pylons.lib.klaxon
-import java.util.*
+import org.spongycastle.util.encoders.Base64
 
 abstract class DroidIpcWire {
 
@@ -96,9 +96,7 @@ abstract class DroidIpcWire {
             val jsonString = klaxon.toJsonString(message)
             println("request msg: $jsonString")
             val msgJson =
-                Base64.getEncoder().encodeToString(
-                    jsonString.toByteArray(Charsets.US_ASCII)
-                )
+                Base64.toBase64String(jsonString.toByteArray(Charsets.US_ASCII))
             return """{"type":"${message.javaClass.simpleName}", "msg":"$msgJson", "messageId":${messageId++}, "clientId":$clientId, "walletId": $walletId}"""
         }
 

@@ -1,10 +1,10 @@
 package tech.pylons.lib
 
 import com.beust.klaxon.Klaxon
-import java.util.*
+
 val klaxon = Klaxon()
 
-annotation class QuotedJsonNumeral(val serializationMode : SerializationMode = SerializationMode.ALL)
+annotation class QuotedJsonNumeral(val serializationMode: SerializationMode = SerializationMode.ALL)
 
 annotation class NeverQuoteWrap
 
@@ -16,23 +16,24 @@ enum class SerializationMode {
     ALL
 }
 
-enum class 	BroadcastMode {
+enum class BroadcastMode {
     BROADCAST_MODE_UNSPECIFIED,
+
     // BROADCAST_MODE_BLOCK defines a tx broadcasting mode where the client waits for
     // the tx to be committed in a block.
     BROADCAST_MODE_BLOCK,
+
     // BROADCAST_MODE_SYNC defines a tx broadcasting mode where the client waits for
     // a CheckTx execution response only.
     BROADCAST_MODE_SYNC,
+
     // BROADCAST_MODE_ASYNC defines a tx broadcasting mode where the client returns
     // immediately.
     BROADCAST_MODE_ASYNC
 
 }
 
-
-private val base64 = Base64.getEncoder()
-fun Double.s() : String {
+fun Double.s(): String {
 
     val s = this.toString()
     return when (s.substring(s.length - 2, s.length)) {
@@ -42,7 +43,7 @@ fun Double.s() : String {
 }
 
 //tierre: modified tx structure
-fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, gas: Long) : String =
+fun baseJsonTemplateForTxPost(msg: String, pubkey: String, signature: String, gas: Long): String =
     /*
     """{
         "tx": {
@@ -96,7 +97,7 @@ fun baseJsonTemplateForTxPost (msg: String, pubkey: String, signature: String, g
 
 // tierre: should totally modify this part
 // /cosmos/tx/v1beta1/txs data type
-fun baseTemplateForTxs(tx_bytes: String, mode: BroadcastMode):String{
+fun baseTemplateForTxs(tx_bytes: String, mode: BroadcastMode): String {
 
     return """
         {
@@ -107,5 +108,5 @@ fun baseTemplateForTxs(tx_bytes: String, mode: BroadcastMode):String{
 }
 
 //tierre: should totally modify this part
-fun baseJsonTemplateForTxSignature (msg: String, sequence: Long, accountNumber: Long, gas: Long) =
+fun baseJsonTemplateForTxSignature(msg: String, sequence: Long, accountNumber: Long, gas: Long) =
     """{"account_number":"$accountNumber","chain_id":"pylonschain","fee":{"amount":[],"gas":"$gas"},"memo":"","messages":$msg,"sequence":"$sequence"}"""

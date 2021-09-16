@@ -1,4 +1,5 @@
 package tech.pylons.wallet.core.internal
+
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.google.protobuf.*
@@ -9,7 +10,7 @@ import cosmos.tx.v1beta1.TxOuterClass
 import pylons.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.util.*
+import org.spongycastle.util.encoders.Base64
 
 
 object ProtoJsonUtil {
@@ -200,7 +201,7 @@ object ProtoJsonUtil {
         fun txBytes(): String? {
             val txRawOutputStream = ByteArrayOutputStream()
             txRaw.build().writeTo(txRawOutputStream)
-            return Base64.getEncoder().encodeToString(txRawOutputStream.toByteArray())
+            return Base64.toBase64String(txRawOutputStream.toByteArray())
         }
 
         fun buildTxbody(messages:String): String {
