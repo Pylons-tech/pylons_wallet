@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id 'kotlin-android'
+    id 'com.kezong.fat-aar'
 }
 
 ext {
@@ -47,7 +48,14 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 
+    embed 'com.beust:klaxon:5.5'
+
+    def spongycastleVer = "1.58.0.0"
+    embed "com.madgag.spongycastle:core:$spongycastleVer"
+    embed "com.madgag.spongycastle:prov:$spongycastleVer"
+    embed "com.madgag.spongycastle:bcpkix-jdk15on:$spongycastleVer"
+    embed "com.madgag.spongycastle:bcpg-jdk15on:$spongycastleVer"
+
     // Import Pylons SDK (libpylons)
-//    implementation 'tech.pylons:libpylons:0.1.1'
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
 }
