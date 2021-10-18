@@ -12,12 +12,15 @@ abstract class UpdateCookbookTask : DefaultTask() {
         val cookbook = meta.versions[meta.targetVersions[RecipeManagementPlugin.currentRemote.identifier()]]!!
         Core.current!!.getProfile()
         Core.current!!.batchUpdateCookbook(
+            creators = listOf(cookbook.Creator),
             ids = listOf(cookbook.id),
             names = listOf(cookbook.name),
             developers = listOf(cookbook.developer),
             descriptions = listOf(cookbook.description),
             versions = listOf(cookbook.version),
-            supportEmails = listOf(cookbook.supportEmail)
+            supportEmails = listOf(cookbook.supportEmail),
+            costPerBlocks = listOf(cookbook.costPerBlock),
+            enableds = listOf(cookbook.Enabled)
         )
     }
 }

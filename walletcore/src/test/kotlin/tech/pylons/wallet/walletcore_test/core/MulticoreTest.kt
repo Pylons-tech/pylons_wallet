@@ -14,11 +14,14 @@ import tech.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.*
+import tech.pylons.ipc.Message
 import tech.pylons.lib.klaxon
+import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 import java.io.StringReader
 import java.security.Security
+import java.util.*
 
 @ExperimentalUnsignedTypes
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -31,9 +34,11 @@ class MulticoreTest {
 
     private val config = Config(
             Backend.MANUAL,
-            "pylonschain",
+            //"pylons-devtestnet",
+        "pylons",
             true,
-            listOf("http://127.0.0.1:1317")
+        listOf("http://192.168.1.121:1317"),
+        //listOf("https://api.devtestnet.pylons.tech")
     )
 
     private val testKeys =
@@ -118,16 +123,124 @@ class MulticoreTest {
     @Order(6)
     fun testCreateAccount() {
         // todo: this should actually take a keypair as an argument
-//        Multicore.enable(config)
+        Multicore.enable(config)
         val c = Multicore.addCore(null)
-
-        val prof = Core.current?.newProfile("aaa", testKeys)
+        val prof = Core.current?.newProfile("sol3", testKeys)
 
         val profile = Core.current?.getProfile()
 
-        val trades = Core.current?.engine?.listTrades()
 
+        //Core.current?.getPylons(4000, profile!!.address)
+        var ssdsds  = Core.current?.batchCreateCookbook(
+            creators = mutableListOf(profile!!.address),
+            ids = mutableListOf("Easel_autocookbook_" + profile!!.address),
+            names = mutableListOf("tst_cookbook_name"),
+            developers = mutableListOf("addghjkllsdfdggdgjkkk"),
+            descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
+            versions = mutableListOf("v1.0.0"),
+            supportEmails = mutableListOf("a@example.com"),
+            costsPerBlock = mutableListOf(Coin("upylon", 1)),
+            enableds = mutableListOf(true)
+        )
         val cookbooks = Core.current?.engine?.listCookbooks()
+        val trades = Core.current?.engine?.listTrades(profile!!.address)
+
+
+
+        val transaction_recipe = Core.current?.batchCreateRecipe(
+            creators = listOf(profile!!.address),
+            cookbooks = listOf("Easel_autocookbook_" + profile!!.address),
+            ids = listOf("Easel_autorecipe_" + profile!!.address),
+            names = listOf("xxxxxxxxxxxxxx"),
+            descriptions = listOf("yyyyyyyyydsfdsdfsd fsdfsdyyyyyy"),
+            versions = listOf("v1.0.0"),
+            coinInputs = listOf(listOf(
+                CoinInput(listOf(Coin("upylon", 100)))
+            )),
+            itemInputs = listOf(listOf(
+            )),
+            outputTables = listOf(EntriesList(
+                coinOutputs = listOf(),
+                itemModifyOutputs = listOf(),
+                itemOutputs = listOf(
+                    ItemOutput(
+                        id = "nft_test2",
+                        doubles = listOf(
+                            DoubleParam(
+                                key="Residual",
+                                program = "1",
+                                rate = "1",
+                                weightRanges = listOf(
+                                    DoubleWeightRange(
+                                        upper="20",
+                                        lower="20",
+                                        weight = 1
+                                    )
+                                )
+                            )
+                        ),
+                        longs = listOf(
+                            LongParam(
+                                key="Quantity",
+                                program = "1",
+                                rate = "1",
+                                weightRanges = listOf(
+                                    IntWeightRange(
+                                        upper = 10,
+                                        lower = 10,
+                                        weight = 1
+                                    )
+                                )
+                            )
+                        ),
+                        strings = listOf(
+                            StringParam(
+                                rate = "1",
+                                key = "Name",
+                                value="nft_2",
+                                program = "1"
+                            ),
+                            StringParam(
+                                rate = "1",
+                                key = "NFT_URL",
+                                value="http://192.168.1.1",
+                                program = "1"
+                            ),
+                            StringParam(
+                                rate = "1",
+                                key = "Description",
+                                value = "nft description description",
+                                program = "1"
+                            )
+                        ),
+                        mutableStrings = listOf(
+                            StringKeyValue(
+                                Key = "Name",
+                                Value="nft_2"
+                            ),
+                        ),
+                        transferFee = listOf(Coin("upylon", 1)),
+                        tradePercentage = "1",
+                        quantity = 10,
+                        amountMinted = 2,
+                        tradeable = true
+                    )
+                )
+            )),
+            outputs = listOf(listOf(
+                WeightedOutput(
+                    entryIds = listOf(
+                        "nft_test2"
+                    ),
+                    weight = 1
+                )
+            )),
+            extraInfos = listOf(""),
+            enableds = listOf(true),
+            blockIntervals = listOf(1)
+        )
+
+        return
 
         //http://10.0.2.2:1317/txs/B4A8B0DE37A77C68FFB48AB6D47ADCAA0623FAA7EC50ED11C03A9A4B26B94592
         val transaction = Core.current?.getTransaction("B4A8B0DE37A77C68FFB48AB6D47ADCAA0623FAA7EC50ED11C03A9A4B26B94592")
@@ -140,84 +253,7 @@ class MulticoreTest {
 
         //val recipes = Core.current?.engine?.listRecipes()
 
-        val transaction_recipe = Core.current?.engine!!.createRecipe(
-            name = "nft_test2",
-            cookbookId = "Easel_autocookbook_cosmos14ej234ktjt4gvhwhjwzwrq23avtvd5m2duddkd",
-            description = "nft description for nft test2",
-            blockInterval = 1,
-            coinInputs = listOf(
-                CoinInput("pylon", 100)
-            ),
-            itemInputs = listOf(),
-            entries = EntriesList(
-              coinOutputs = listOf(),
-              itemModifyOutputs = listOf(),
-              itemOutputs = listOf(
-                  ItemOutput(
-                      id = "nft_test2",
-                      doubles = listOf(
-                          DoubleParam(
-                              key="Residual%",
-                              program = "",
-                              rate = "1.0",
-                              weightRanges = listOf(
-                                  DoubleWeightRange(
-                                      upper="20",
-                                      lower="20",
-                                      weight = 1
 
-                                  )
-                              )
-                          )
-                      ),
-                      longs = listOf(
-                          LongParam(
-                              key="Quantity",
-                              program = "",
-                              rate = "1.0",
-                              weightRanges = listOf(
-                                  LongWeightRange(
-                                      upper = "10",
-                                      lower = "10",
-                                      weight = 1
-                                  )
-                              )
-                          )
-                      ),
-                      strings = listOf(
-                          StringParam(
-                              rate = "1.0",
-                              key = "Name",
-                              value="nft_2",
-                              program = ""
-                          ),
-                          StringParam(
-                              rate = "1.0",
-                              key = "NFT_URL",
-                              value="http://192.168.1.1",
-                              program = ""
-                          ),
-                          StringParam(
-                              rate = "1.0",
-                              key = "Description",
-                              value = "nft description description",
-                              program = ""
-                          )
-                      ),
-                      transferFee = 0
-                  )
-              )
-            ),
-            outputs = listOf(
-                WeightedOutput(
-                    entryIds = listOf(
-                        "nft_test2"
-                    ),
-                    weight = "1"
-                )
-            ),
-            extraInfo = ""
-        )
 
         //val transaction = Core.current?.getTransaction("E90C069556189847248D8B45890316D424414ACC72C331482C6F82A6DC20AD0F")
 

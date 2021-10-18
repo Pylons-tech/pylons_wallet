@@ -12,6 +12,7 @@ import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.Trade
 import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.recipe.*
+import tech.pylons.lib.types.tx.trade.ItemRef
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 
 /**
@@ -26,22 +27,24 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
-    override fun applyRecipe(id : String, itemIds : List<String>, paymentId: String) : Transaction =
+    override fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction =
             throw NoEngineException()
 
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
             throw NoEngineException()
 
-    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String, supportEmail: String, costPerBlock : Long): Transaction =
+    override fun createCookbook(creator: String, id : String, name : String, description : String, developer : String, version : String,
+                                supportEmail : String, costPerBlock : Coin, enabled: Boolean): Transaction =
             throw NoEngineException()
 
-    override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
+    override fun createRecipe(creator : String, cookbookId : String, id : String, name : String, description: String, version: String,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                              outputs : List<WeightedOutput>, extraInfo: String) : Transaction =
+                              outputs : List<WeightedOutput>, blockInterval : Long, enabled : Boolean, extraInfo: String) : Transaction =
             throw NoEngineException()
 
-    override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                             coinOutputs: List<Coin>, itemOutputs: List<Item>, ExtraInfo: String)   =
+    override fun createTrade(creator: String, coinInputs: List<CoinInput>, itemInputs : List<ItemInput>,
+                             coinOutputs : List<Coin>, itemOutputs : List<ItemRef>,
+                             extraInfo : String)   =
             throw NoEngineException()
 
     override fun disableRecipe(id: String): Transaction  =
@@ -53,7 +56,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun enableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun fulfillTrade(tradeId: String, itemIds : List<String>, paymentId: String): Transaction =
+    override fun fulfillTrade(creator: String, ID : String, CoinInputsIndex: Long, itemIds : List<ItemRef>): Transaction =
             throw NoEngineException()
 
     override fun cancelTrade(tradeId: String): Transaction =
@@ -79,9 +82,6 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun getPendingExecutions(): List<Execution> =
             throw NoEngineException()
 
-    override fun getPylons(q: Long): Transaction =
-            throw NoEngineException()
-
     override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptDataBase64: String, signature: String): Transaction =
             throw NoEngineException()
 
@@ -103,35 +103,30 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun listCookbooks(): List<Cookbook> =
             throw NoEngineException()
 
+    override fun getPylons(amount : Long, creator: String) : Boolean =
+            throw NoEngineException()
+
     override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction =
             throw NoEngineException()
 
-    override fun sendCoins(coins : List<Coin>, receiver: String) =
-            throw NoEngineException()
-
-    override fun createChainAccount(): Transaction =
+    override fun createChainAccount(name : String): Transaction =
             throw NoEngineException()
 
     override fun setItemFieldString(itemId : String, field : String, value : String): Transaction =
             throw NoEngineException()
 
-    override fun updateCookbook(id: String, developer: String, description: String, version: String, supportEmail: String): Transaction =
+    override fun updateCookbook(creator: String, id: String, name: String, description: String, developer: String, version: String, supportEmail: String, costPerBlock: Coin, enabled: Boolean): Transaction =
             throw NoEngineException()
 
-    override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String): Transaction =
+    override fun updateRecipe(Creator: String, CookbookID : String, ID : String, Name : String, Description: String,
+                              Version: String, CoinInputs : List<CoinInput>, ItemInputs : List<ItemInput>,
+                              Entries : EntriesList, Outputs: List<WeightedOutput>, BlockInterval : Long, Enabled: Boolean, ExtraInfo: String): Transaction =
             throw NoEngineException()
 
-    override fun listTrades(): List<Trade> =
+    override fun listTrades(creator: String): List<Trade> =
             throw NoEngineException()
 
     override fun sendItems(receiver: String, itemIds: List<String>): Transaction =
-            throw NoEngineException()
-
-    override fun getLockedCoins(): LockedCoin =
-        throw NoEngineException()
-
-    override fun getLockedCoinDetails(): LockedCoinDetails =
             throw NoEngineException()
 
     override fun getRecipe(recipeId: String): Recipe? =

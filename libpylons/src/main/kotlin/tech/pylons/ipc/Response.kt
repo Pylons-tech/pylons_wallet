@@ -10,6 +10,7 @@ import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.msg.*
 import tech.pylons.lib.types.tx.recipe.Recipe
 import tech.pylons.lib.klaxon
+import tech.pylons.lib.types.tx.trade.ItemRef
 import java.lang.StringBuilder
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -123,11 +124,11 @@ class Response (
             }
             val mTradesIn = mutableListOf<Trade>()
             if (tradesIn.isNotEmpty()) {
-                val trades = core!!.listTrades()
+                val trades = core!!.listTrades(prf!!.address)
                 tradesIn.forEach {
                     val id = it
                     trades.forEach {
-                        if (it.id == id) mTradesIn.add(it)
+                        if (it.ID == id) mTradesIn.add(it)
                     }
                 }
             }
@@ -179,29 +180,29 @@ class Response (
                         //}
                         CreateCookbook::javaClass -> {
                             val msg = it as CreateCookbook
-                            mCookbooksOut.add(Cookbook("", msg.cookbookId, msg.name, msg.description,
-                            msg.version, msg.developer, msg.sender, msg.supportEmail, msg.costPerBlock))
+                            mCookbooksOut.add(Cookbook(msg.creator, msg.ID, "v0.1.3", msg.name, msg.description,
+                            msg.developer, msg.version, msg.supportEmail, msg.costPerBlock, msg.enabled))
                         }
                         CreateRecipe::javaClass -> {
                             val msg = it as CreateRecipe
-                            mRecipesOut.add(Recipe("", "", msg.sender, false, msg.name,
-                            msg.cookbookId, msg.description, msg.blockInterval, msg.coinInputs, msg.itemInputs,
-                            msg.entries, msg.outputs, msg.extraInfo))
+                            mRecipesOut.add(Recipe(msg.cookbookID, msg.ID, "v0.1.3", msg.name,
+                            msg.description, msg.version,  msg.coinInputs, msg.itemInputs,
+                            msg.entries, msg.outputs, msg.blockInterval, msg.enabled, msg.extraInfo))
                         }
                         CreateTrade::javaClass -> {
                             val msg = it as CreateTrade
-                            mTradesOut.add(Trade("", "", msg.coinInputs, msg.itemInputs, msg.coinOutputs, msg.itemOutputs,
-                            msg.extraInfo, msg.sender, "", disabled = false, completed = false))
+//                            mTradesOut.add(Trade("", "Id", msg.CoinInputs, msg.ItemInputs, msg.CoinOutputs, msg.ItemOutputs,
+//                                msg.ExtraInfo, "",null)) //???
                         }
                         DisableRecipe::javaClass -> {
-                            val r = mRecipesIn.first()
-                            mRecipesOut.add(Recipe("", r.id, r.sender, true, r.name, r.cookbookId, r.description,
-                            r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs, r.extraInfo))
+//                            val r = mRecipesIn.first()
+//                            mRecipesOut.add(Recipe("", r.id, r.sender, true, r.name, r.cookbookId, r.description,
+//                            r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs, r.extraInfo))
                         }
                         EnableRecipe::javaClass -> {
-                            val r = mRecipesIn.first()
-                            mRecipesOut.add(Recipe("", r.id, r.sender, false, r.name, r.cookbookId, r.description,
-                                r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs, r.extraInfo))
+//                            val r = mRecipesIn.first()
+//                            mRecipesOut.add(Recipe("", r.id, r.sender, false, r.name, r.cookbookId, r.description,
+//                                r.blockInterval, r.coinInputs, r.itemInputs, r.entries, r.outputs, r.extraInfo))
                         }
                         //ExecuteRecipe::javaClass -> {
                         // not enough data in the msg to reconstruct the outputs w/o an extra query, b/c recipes
@@ -209,22 +210,16 @@ class Response (
                         //}
                         FulfillTrade::javaClass -> {
                             val trade = mTradesIn.first()
-                            mCoinsOut.addAll(trade.coinOutputs)
-                            mItemsOut.addAll(trade.itemOutputs)
-                        }
-                        GetPylons::javaClass -> {
-                            mCoinsOut.addAll((it as GetPylons).amount)
-                        }
-                        SendCoins::javaClass -> {
-                            mCoinsOut.addAll((it as SendCoins).amount)
+                            mCoinsOut.addAll(trade.CoinOutputs)
+                            //mItemsOut.addAll(trade.ItemOutputs) ???
                         }
                         UpdateCookbook::javaClass -> {
                             val msg = it as UpdateCookbook
                             // we can't get cookbook name/level from updatecookbook, but it'll be in mCookbooksIn
                             mCookbooksOut.add(
-                                Cookbook("", msg.id, mCookbooksIn.first().name, msg.description, msg.version,
-                            msg.developer, msg.sender, msg.supportEmail,
-                                    mCookbooksIn.first().costPerBlock)
+                                Cookbook("", mCookbooksIn.first().id, "v0.1.3", mCookbooksIn.first().name, mCookbooksIn.first().description,
+                                    mCookbooksIn.first().developer, mCookbooksIn.first().version, mCookbooksIn.first().supportEmail,
+                                    mCookbooksIn.first().costPerBlock, mCookbooksIn.first().Enabled)
                             )
                         }
                         UpdateItemString::javaClass -> {
@@ -248,8 +243,8 @@ class Response (
                         }
                         UpdateRecipe::javaClass -> {
                             val msg = it as UpdateRecipe
-                            mRecipesOut.add(Recipe("", msg.id, msg.sender, false, msg.name, msg.cookbookId,
-                            msg.description, msg.blockInterval, msg.coinInputs, msg.itemInputs, msg.entries, msg.outputs, msg.extraInfo))
+                            mRecipesOut.add(Recipe(msg.CookbookID, msg.ID, "v0.1.3", msg.Name, msg.Description, msg.Version,
+                            msg.CoinInputs, msg.ItemInputs, msg.Entries, msg.Outputs, msg.BlockInterval, msg.Enabled, msg.ExtraInfo))
                         }
                         //SendItems::javaClass -> {
                             // like canceltrade - this has inputs but no real output

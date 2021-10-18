@@ -61,8 +61,7 @@ class TxPylonsDevEngineSignables {
 
     @Test
     fun getsPylonsSignable () {
-        val model = tech.pylons.wallet.walletcore_test.fixtures.getPylonsSignable
-        basicSignableTestFlow("get_pylons") { model.toSignStruct() }
+
     }
 
     @Test
@@ -109,8 +108,7 @@ class TxPylonsDevEngineSignables {
 
     @Test
     fun sendCoinsSignable () {
-        val model = tech.pylons.wallet.walletcore_test.fixtures.sendCoinsSignable
-        basicSignableTestFlow("send_coins") { model.toSignStruct() }
+
     }
 
     @Test

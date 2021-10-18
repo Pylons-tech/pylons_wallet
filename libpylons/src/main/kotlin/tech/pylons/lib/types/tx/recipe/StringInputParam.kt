@@ -5,16 +5,16 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class StringInputParam(
-        @property:[Json(name = "Key")]
+        @property:[Json(name = "key")]
         val key : String,
-        @property:[Json(name = "Value")]
+        @property:[Json(name = "value")]
         val value : String
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : StringInputParam =
                         StringInputParam (
-                                key = jsonObject.string("Key")!!,
-                                value = jsonObject.string("Value")!!
+                                key = jsonObject.string("key")!!,
+                                value = jsonObject.string("value")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<StringInputParam> {

@@ -1,21 +1,24 @@
 package tech.pylons.wallet.walletcore_test.fixtures
 
+import jdk.jfr.Enabled
+import junit.runner.Version
+import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.msg.UpdateRecipe
 import tech.pylons.lib.types.tx.recipe.*
 
 val updateRecipeSignable = UpdateRecipe(
-        id = "id001",
-        blockInterval = 0,
-        coinInputs = listOf(
-                CoinInput("wood", 5)
+        ID = "id001",
+        BlockInterval = 0,
+        CoinInputs = listOf(
+                CoinInput(listOf(Coin("wood", 5)))
         ),
-        cookbookId = "name",
-        description = "this has to meet character limits lol",
-        entries = EntriesList(
+        CookbookID = "name",
+        Description = "this has to meet character limits lol",
+        Entries = EntriesList(
                 coinOutputs = listOf(
-                        CoinOutput("chair","chair", "1")
+                        CoinOutput("chair",Coin("chair", 1), "1")
                 ),
-                itemModifyOutputs = null,
+                itemModifyOutputs = listOf(),
                 itemOutputs = listOf(
                         ItemOutput(
                                 id = "Raichu",
@@ -29,26 +32,36 @@ val updateRecipeSignable = UpdateRecipe(
                                 longs = listOf(
                                         LongParam("", "HP",
                                                 listOf(
-                                                        LongWeightRange("500", "100", 6),
-                                                        LongWeightRange("800", "501", 2)
+                                                        IntWeightRange(100, 500, 6),
+                                                        IntWeightRange(501, 800, 2)
                                                 )
                                                 , "")
                                 ),
                                 strings = listOf(
                                         StringParam("1.0", "Name", "Raichu", "")
                                 ),
-                                transferFee = 1232
+                                mutableStrings = listOf(
+                                        StringKeyValue(
+                                                Key = "Name",
+                                                Value="nft_2"
+                                        ),
+                                ),
+                                transferFee = listOf(Coin("upylon", 1)),
+                                tradePercentage = "10%",
+                                quantity = 10,
+                                amountMinted = 2,
+                                tradeable = true
                         )
                 )
         ),
-        outputs = listOf(
+        Outputs = listOf(
                 WeightedOutput(
-                        entryIds = listOf("chair"), weight = "1"
+                        entryIds = listOf("chair"), weight = 1
                 ),
                 WeightedOutput(entryIds = listOf("Raichu"),
-                        weight = "1")
+                        weight = 1)
         ),
-        itemInputs = listOf(
+        ItemInputs = listOf(
                 ItemInput(
                         id = "Raichu",
                         conditions = ConditionList(listOf(), listOf(), listOf()),
@@ -56,11 +69,12 @@ val updateRecipeSignable = UpdateRecipe(
                         longs = listOf(),
                         strings = listOf(
                                 StringInputParam("Name", "Raichu")
-                        ),
-                        transferFee = FeeInputParam(0,10000)
+                        )
                 )
         ),
-        name = "recipeName",
-        sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
-        extraInfo = ""
+        Name = "recipeName",
+        Creator = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
+        Version = "v1.1.0",
+        Enabled = true,
+        ExtraInfo = ""
 )

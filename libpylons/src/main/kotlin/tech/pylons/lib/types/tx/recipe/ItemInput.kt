@@ -5,30 +5,27 @@ import com.beust.klaxon.*
 data class ItemInput(
     @property:[Json(name = "ID")]
     val id: String,
-    @property:[Json(name = "Conditions")]
-    val conditions: ConditionList,
-    @property:[Json(name = "Doubles")]
+    @property:[Json(name = "doubles")]
     val doubles: List<DoubleInputParam>,
-    @property:[Json(name = "Longs")]
+    @property:[Json(name = "longs")]
     val longs: List<LongInputParam>,
-    @property:[Json(name = "Strings")]
+    @property:[Json(name = "strings")]
     val strings: List<StringInputParam>,
-    @property:[Json(name = "TransferFee")]
-    val transferFee: FeeInputParam
+    @property:[Json(name = "conditions")]
+    val conditions: ConditionList
 ) {
     companion object {
         fun fromJson(jsonObject: JsonObject): ItemInput =
             ItemInput(
                 id = jsonObject.string("ID")!!,
-                conditions = ConditionList.fromJson(jsonObject.obj("Conditions")) ?: ConditionList(
+                conditions = ConditionList.fromJson(jsonObject.obj("conditions")) ?: ConditionList(
                     listOf(),
                     listOf(),
                     listOf()
                 ),
-                doubles = DoubleInputParam.listFromJson(jsonObject.array("Doubles")),
-                longs = LongInputParam.listFromJson(jsonObject.array("Longs")),
-                strings = StringInputParam.listFromJson(jsonObject.array("Strings")),
-                transferFee = FeeInputParam.fromJson(jsonObject.obj("TransferFee"))
+                doubles = DoubleInputParam.listFromJson(jsonObject.array("doubles")),
+                longs = LongInputParam.listFromJson(jsonObject.array("longs")),
+                strings = StringInputParam.listFromJson(jsonObject.array("strings"))
             )
 
         fun listFromJson(jsonArray: JsonArray<JsonObject>?): List<ItemInput> {

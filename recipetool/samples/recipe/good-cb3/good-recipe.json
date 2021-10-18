@@ -15,7 +15,7 @@
       "BlockInterval" : 0,
       "ExtraInfo" : "",
       "CoinInputs" : [{
-        "Coin" : "pylon",
+        "Coin" : "upylon",
         "Count" : 3
       }],
       "ItemInputs" : [],

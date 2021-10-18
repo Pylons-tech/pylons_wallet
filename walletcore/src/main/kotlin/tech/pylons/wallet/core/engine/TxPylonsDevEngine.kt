@@ -1,44 +1,61 @@
 package tech.pylons.wallet.core.engine
 
+import tech.pylons.lib.types.Transaction
 import tech.pylons.wallet.core.Core
 import tech.pylons.lib.types.tx.msg.*
 import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.wallet.core.LowLevel
 import tech.pylons.wallet.core.internal.HttpWire
+import tech.pylons.lib.types.tx.Coin
 
 class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
 
-    override fun createCookbook(id : String, name: String, developer: String, description: String, version: String,
-                                supportEmail: String, costPerBlock : Long) =
+    override fun createCookbook(creator: String, ID : String, name: String, description: String, developer: String, version: String,
+                                supportEmail: String, costPerBlock : Coin, enabled: Boolean) =
             handleTx {
                 CreateCookbook(
-                        cookbookId = id,
-                        name = name,
-                        developer = developer,
-                        description = description,
-                        version = version,
-                        supportEmail = supportEmail,
+                    creator = creator,
+                    ID = ID,
+                    name = name,
+                    description = description,
+                    developer = developer,
+                    version = version,
+                    supportEmail = supportEmail,
                     costPerBlock = costPerBlock,
-                        sender = it.address
+                    enabled = enabled
                 ).toSignedTx()
             }
 
-    override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                              outputs : List<WeightedOutput>, extraInfo: String) =
+    override fun createRecipe(
+        creator: String,
+        cookbookID: String,
+        ID: String,
+        name: String,
+        description: String,
+        version: String,
+        coinInputs: List<CoinInput>,
+        itemInputs: List<ItemInput>,
+        entries: EntriesList,
+        outputs: List<WeightedOutput>,
+        blockInterval: Long,
+        enabled: Boolean,
+        extraInfo: String
+    ): Transaction =
             handleTx {
                 CreateRecipe(
-                        cookbookId = cookbookId,
-                        name = name,
-                        description = description,
-                        coinInputs = coinInputs,
-                        itemInputs = itemInputs,
-                        entries = entries,
-                        outputs = outputs,
-                        blockInterval = blockInterval,
-                        sender = it.address,
-                        extraInfo = extraInfo,
-                        recipeId = "",
+                    creator = creator,
+                    cookbookID = cookbookID,
+                    ID = ID,
+                    name = name,
+                    description = description,
+                    version = version,
+                    coinInputs = coinInputs,
+                    itemInputs = itemInputs,
+                    entries = entries,
+                    outputs = outputs,
+                    blockInterval = blockInterval,
+                    enabled = enabled,
+                    extraInfo = extraInfo,
                 ).toSignedTx()
             }
 
@@ -58,35 +75,49 @@ class TxPylonsDevEngine(core : Core) : TxPylonsEngine (core) {
                 ).toSignedTx()
             }
 
-    override fun updateCookbook(id : String, developer: String, description: String, version: String,
-                                supportEmail: String) =
+    override fun updateCookbook(
+        Creator: String,
+        ID: String,
+        Name: String,
+        Description: String,
+        Developer: String,
+        Version: String,
+        SupportEmail : String,
+        CostPerBlock: Coin,
+        Enabled: Boolean
+    ): Transaction =
             handleTx {
                 UpdateCookbook(
-                        id = id,
-                        developer = developer,
-                        description = description,
-                        version = version,
-                        supportEmail = supportEmail,
-                        sender = it.address
+                    Creator = Creator,
+                    ID = ID,
+                    Name = Name,
+                    Description = Description,
+                    Developer = Developer,
+                    Version = Version,
+                    SupportEmail = SupportEmail,
+                    CostPerBlock = CostPerBlock,
+                    Enabled = Enabled
                 ).toSignedTx()
             }
 
-    override fun updateRecipe(id : String, name : String, cookbookId : String, description: String,
-                              blockInterval : Long, coinInputs : List<CoinInput>, itemInputs : List<ItemInput>,
-                              entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String) =
+    override fun updateRecipe(Creator: String, CookbookID : String, ID : String, Name : String, Description: String,
+                              Version: String, CoinInputs : List<CoinInput>, ItemInputs : List<ItemInput>,
+                              Entries : EntriesList, Outputs: List<WeightedOutput>, BlockInterval : Long, Enabled: Boolean, ExtraInfo: String) =
             handleTx {
                 UpdateRecipe(
-                        id = id,
-                        cookbookId = cookbookId,
-                        name = name,
-                        description = description,
-                        itemInputs = itemInputs,
-                        coinInputs = coinInputs,
-                        entries = entries,
-                        outputs = outputs,
-                        blockInterval = blockInterval,
-                        sender = it.address,
-                        extraInfo = extraInfo
+                    Creator = Creator,
+                    CookbookID = CookbookID,
+                    ID = ID,
+                    Name = Name,
+                    Description = Description,
+                    Version = Version,
+                    CoinInputs = CoinInputs,
+                    ItemInputs = ItemInputs,
+                    Entries = Entries,
+                    Outputs = Outputs,
+                    BlockInterval = BlockInterval,
+                    Enabled = Enabled,
+                    ExtraInfo = ExtraInfo
                 ).toSignedTx()
             }
 

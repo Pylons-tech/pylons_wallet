@@ -66,6 +66,6 @@ object PubKeyUtil {
     }
 
     fun getAddressString (addr : ByteArray) : String {
-        return Bech32Cosmos.convertAndEncode("cosmos", AminoCompat.accAddress(addr))
+        return Bech32Cosmos.convertAndEncode("pylo", AminoCompat.accAddress(addr))
     }
 }

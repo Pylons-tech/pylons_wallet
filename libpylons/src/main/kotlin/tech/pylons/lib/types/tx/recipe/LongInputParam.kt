@@ -6,19 +6,19 @@ import com.beust.klaxon.JsonObject
 import tech.pylons.lib.internal.fuzzyLong
 
 data class LongInputParam(
-        @property:[Json(name = "Key")]
+        @property:[Json(name = "key")]
         val key: String,
-        @property:[Json(name = "MinValue")]
+        @property:[Json(name = "minValue")]
         val minValue: Long,
-        @property:[Json(name = "MaxValue")]
+        @property:[Json(name = "maxValue")]
         val maxValue: Long
 ) {
     companion object {
         fun fromJson(jsonObject: JsonObject): LongInputParam =
                 LongInputParam(
-                        key = jsonObject.string("Key")!!,
-                        minValue = jsonObject.fuzzyLong("MinValue"),
-                        maxValue = jsonObject.fuzzyLong("MaxValue")
+                        key = jsonObject.string("key")!!,
+                        minValue = jsonObject.fuzzyLong("minValue"),
+                        maxValue = jsonObject.fuzzyLong("maxValue")
                 )
 
         fun listFromJson(jsonArray: JsonArray<JsonObject>?): List<LongInputParam> {

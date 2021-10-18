@@ -8,7 +8,6 @@ import tech.pylons.wallet.core.engine.TxPylonsEngine
 import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import tech.pylons.lib.types.*
 import tech.pylons.lib.types.tx.Coin
-import tech.pylons.lib.types.tx.msg.GetPylons
 import tech.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.apache.commons.codec.binary.Base64
 import org.apache.tuweni.bytes.Bytes
@@ -88,7 +87,5 @@ class TxPylonsDevEngineOffline {
         }
         """.trimIndent().replace(" ", "")
         engineSetup(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)
-        val json = GetPylons(listOf(Coin("pylon", 500)), core.userProfile!!.address).toSignedTx()
-        assertEquals(fixture, json.trimIndent().replace(" ", ""))
     }
 }

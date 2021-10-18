@@ -15,12 +15,15 @@ abstract class SmartUpdateCookbookTask : DefaultTask()  {
             if (SemVer.from(meta.remotes[identifier]!!.version) <
                 SemVer.from(meta.targetVersions[identifier]!!))
                 Core.current!!.batchUpdateCookbook(
+                    creators = listOf(meta.versions[meta.targetVersions[identifier]]!!.Creator),
                     ids = listOf(meta.versions[meta.targetVersions[identifier]]!!.id),
                     names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
-                    developers = listOf(meta.versions[meta.targetVersions[identifier]]!!.developer),
                     descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
+                    developers = listOf(meta.versions[meta.targetVersions[identifier]]!!.developer),
+                    versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version),
                     supportEmails = listOf(meta.versions[meta.targetVersions[identifier]]!!.supportEmail),
-                    versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version)
+                    costPerBlocks = listOf(meta.versions[meta.targetVersions[identifier]]!!.costPerBlock),
+                    enableds = listOf(meta.versions[meta.targetVersions[identifier]]!!.Enabled)
                 )
         }
         else {
@@ -29,22 +32,28 @@ abstract class SmartUpdateCookbookTask : DefaultTask()  {
                 if (meta.remotes.containsKey(identifier) && SemVer.from(meta.remotes[identifier]!!.version) <
                     SemVer.from(meta.targetVersions[identifier]!!)) {
                     Core.current!!.batchUpdateCookbook(
+                        creators = listOf(meta.versions[meta.targetVersions[identifier]]!!.Creator),
                         ids = listOf(meta.versions[meta.targetVersions[identifier]]!!.id),
                         names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
-                        developers = listOf(meta.versions[meta.targetVersions[identifier]]!!.developer),
                         descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
+                        developers = listOf(meta.versions[meta.targetVersions[identifier]]!!.developer),
+                        versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version),
                         supportEmails = listOf(meta.versions[meta.targetVersions[identifier]]!!.supportEmail),
-                        versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version)
+                        costPerBlocks = listOf(meta.versions[meta.targetVersions[identifier]]!!.costPerBlock),
+                        enableds = listOf(meta.versions[meta.targetVersions[identifier]]!!.Enabled)
                     )
                 }
                 else Core.current!!.batchCreateCookbook(
+                    creators = listOf(meta.versions[meta.targetVersions[identifier]]!!.Creator),
                     ids = listOf(meta.versions[meta.targetVersions[identifier]]!!.id),
                     names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
-                    developers = listOf(meta.versions[meta.targetVersions[identifier]]!!.developer),
                     descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
-                    supportEmails = listOf(meta.versions[meta.targetVersions[identifier]]!!.supportEmail),
+                    developers = listOf(meta.versions[meta.targetVersions[identifier]]!!.developer),
                     versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version),
-                    costsPerBlock = listOf(meta.versions[meta.targetVersions[identifier]]!!.costPerBlock))
+                    supportEmails = listOf(meta.versions[meta.targetVersions[identifier]]!!.supportEmail),
+                    costsPerBlock = listOf(meta.versions[meta.targetVersions[identifier]]!!.costPerBlock),
+                    enableds = listOf(meta.versions[meta.targetVersions[identifier]]!!.Enabled)
+                )
             }
         }
     }

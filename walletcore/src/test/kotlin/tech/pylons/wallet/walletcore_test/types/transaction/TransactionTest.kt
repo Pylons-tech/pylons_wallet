@@ -201,7 +201,7 @@ class TransactionTest {
                     "ID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt3378b78d281-a05e-45a8-b9bc-9069a8e5d73b",
                     "CoinInputs": [
                       {
-                        "Coin": "pylon",
+                        "Coin": "upylon",
                         "Count": "10"
                       }
                     ],
@@ -310,7 +310,7 @@ class TransactionTest {
                     "ID": "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt3378b78d281-a05e-45a8-b9bc-9069a8e5d73b",
                     "CoinInputs": [
                       {
-                        "Coin": "pylon",
+                        "Coin": "upylon",
                         "Count": "10"
                       }
                     ],
@@ -403,7 +403,7 @@ class TransactionTest {
         val expectedTransaction = Transaction(
                 txData = expected,
                 _id = "BFF5DE310A37F0B3A0E550A40074478824CC00D8760EAF28B378DAF91E6BCA03",
-                stdTx = StdTx(msg = listOf(ExecuteRecipe("LOUD-get-character-recipe-v0.1.0-1589853708", "cosmos1cmdcfat6n8vhlysnlzyqsnlty2wrkx05uyp7ez", listOf())),
+                stdTx = StdTx(msg = listOf(ExecuteRecipe("LOUD-get-character-recipe-v0.1.0-1589853708", "cosmos1cmdcfat6n8vhlysnlzyqsnlty2wrkx05uyp7ez", "LOUD-get-character-recipe-v0.1.0-1589853708", 0, listOf())),
                         fee = StdFee(listOf(), 400000L),
                         signatures = listOf(StdSignature(signature = "WzdzUlobvGaTkr6Y7SdaqWelmY12ERsWeNwKhzpAtnwBgz+aIhV0hMJsV61MdqpwlAz1epY5QZvL306By87dLQ==", pubKey = PubKey(type = "tendermint/PubKeySecp256k1", value = "AiRKdkdNgsMV6k21jFD1Wswyow0raUpx/gC+jE5v1STP"))), memo = ""),
                 code = Transaction.ResponseCode.of(18),

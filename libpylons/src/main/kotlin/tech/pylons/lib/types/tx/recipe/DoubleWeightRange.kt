@@ -6,19 +6,19 @@ import com.beust.klaxon.JsonObject
 import tech.pylons.lib.NeverQuoteWrap
 
 data class DoubleWeightRange(
-        @property:[Json(name = "Upper")]
-        val upper : String,
-        @property:[Json(name = "Lower")]
+        @property:[Json(name = "lower")]
         val lower : String,
-        @property:[NeverQuoteWrap Json(name = "Weight")]
+        @property:[Json(name = "upper")]
+        val upper : String,
+        @property:[NeverQuoteWrap Json(name = "weight")]
         val weight : Int
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : DoubleWeightRange =
                         DoubleWeightRange (
-                                upper = jsonObject.string("Upper")!!,
-                                lower = jsonObject.string("Lower")!!,
-                                weight = jsonObject.int("Weight")!!
+                                lower = jsonObject.string("lower")!!,
+                                upper = jsonObject.string("upper")!!,
+                                weight = jsonObject.int("weight")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<DoubleWeightRange> {

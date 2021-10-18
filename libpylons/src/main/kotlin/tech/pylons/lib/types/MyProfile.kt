@@ -11,7 +11,6 @@ import tech.pylons.lib.types.tx.item.Item
  */
 @ExperimentalUnsignedTypes
 class MyProfile (val core : ICore, var credentials: ICredentials,
-                 var lockedCoinDetails: LockedCoinDetails = LockedCoinDetails.default,
                  strings : Map<String, String>,
                  items : List<Item>,
                  coins : List<Coin>) :

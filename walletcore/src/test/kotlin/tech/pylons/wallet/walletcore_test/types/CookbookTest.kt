@@ -3,6 +3,7 @@ package tech.pylons.wallet.walletcore_test.types
 import tech.pylons.lib.types.Cookbook
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import tech.pylons.lib.types.tx.Coin
 
 class CookbookTest {
     private val sampleJson = """
@@ -31,15 +32,16 @@ class CookbookTest {
     fun parseJson() {
         val expected = listOf(
                 Cookbook(
-                        nodeVersion = "0.0.1",
                         id = "-124015487",
+                        nodeVersion = "v0.1.3",
                         name = "blyyah -1706385095",
                         description = "this is a description for updatescookbook test",
                         version = "1.0.0",
                         developer = "tst",
                     supportEmail = "example@example.com",
-                        costPerBlock = 50,
-                        sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337"
+                        costPerBlock = Coin("upylon", 50),
+                        Creator = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
+                    Enabled = true
                 )
         )
 

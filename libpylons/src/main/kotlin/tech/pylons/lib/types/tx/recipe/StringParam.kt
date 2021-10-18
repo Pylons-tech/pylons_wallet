@@ -5,21 +5,21 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class StringParam (
-        @property:[Json(name = "Rate")]
-        val rate : String,
-        @property:[Json(name = "Key")]
+        @property:[Json(name = "key")]
         val key : String,
-        @property:[Json(name = "Value")]
+        @property:[Json(name = "rate")]
+        val rate : String,
+        @property:[Json(name = "value")]
         val value : String,
-        @property:[Json(name = "Program")]
+        @property:[Json(name = "program")]
         val program : String) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : StringParam =
                         StringParam (
-                                rate = jsonObject.string("Rate")!!,
-                                key = jsonObject.string("Key")!!,
-                                value = jsonObject.string("Value")!!,
-                                program = jsonObject.string("Program").orEmpty()
+                                key = jsonObject.string("key")!!,
+                                rate = jsonObject.string("rate")!!,
+                                value = jsonObject.string("value")!!,
+                                program = jsonObject.string("program").orEmpty()
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<StringParam> {

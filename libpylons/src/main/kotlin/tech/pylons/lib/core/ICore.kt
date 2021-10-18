@@ -1,8 +1,10 @@
 package tech.pylons.lib.core
 import tech.pylons.lib.types.*
+import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.Trade
 import tech.pylons.lib.types.tx.item.Item
-import tech.pylons.lib.types.tx.recipe.Recipe
+import tech.pylons.lib.types.tx.recipe.*
+import tech.pylons.lib.types.tx.trade.ItemRef
 
 @ExperimentalUnsignedTypes
 interface ICore {
@@ -47,41 +49,42 @@ interface ICore {
 
     fun getProfile (addr : String?) : Profile?
 
-    fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>, paymentId: String = "") : Transaction
+    fun applyRecipe (creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction
 
-    fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                             supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction>
+    fun batchCreateCookbook (creators: List<String>, ids : List<String>, names : List<String>, descriptions : List<String>, developers : List<String>, versions : List<String>,
+                             supportEmails : List<String>, costsPerBlocks : List<Coin>, enableds : List<Boolean>) : List<Transaction>
 
-    fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
-                                    blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                    outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction>
+    fun batchCreateRecipe (creators: List<String>, cookbooks : List<String>, ids : List<String>, names : List<String>, descriptions : List<String>, versions : List<String>,
+                           coinInputs: List<List<CoinInput>>, itemInputs : List<List<ItemInput>>, outputTables : List<EntriesList>, outputs : List<List<WeightedOutput>>,
+                           blockIntervals : List<Long>, enableds : List<Boolean>, extraInfos: List<String>) : List<Transaction>
 
     fun batchDisableRecipe (recipes : List<String>) : List<Transaction>
 
     fun batchEnableRecipe (recipes : List<String>) : List<Transaction>
 
-    fun batchUpdateCookbook (names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                             supportEmails : List<String>, ids : List<String>) : List<Transaction>
+    fun batchUpdateCookbook (creators : List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, developers: List<String>,
+                             versions : List<String>, supportEmails: List<String>, costPerBlocks: List<Coin>, enableds: List<Boolean>) : List<Transaction>
 
-    fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
-                           blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                           outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction>
+    fun batchUpdateRecipe (creators: List<String>, cookbookIds: List<String>, ids: List<String>, names : List<String>, descriptions: List<String>,
+                           versions: List<String>, coinInputs : List<String>, itemInputs : List<String>,
+                           entries : List<String>, outputs: List<String>, blockIntervals : List<Long>,
+                           enableds: List<Boolean>, extraInfos: List<String>) : List<Transaction>
 
     fun cancelTrade(tradeId : String) : Transaction
 
     fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
-    fun createTrade (coinInputs: List<String>, itemInputs : List<String>,
-                     coinOutputs : List<String>, itemOutputs : List<String>,
+    fun createTrade (creator: String, coinInputs: List<CoinInput>, itemInputs : List<ItemInput>,
+                     coinOutputs : List<Coin>, itemOutputs : List<ItemRef>,
                      extraInfo : String) : Transaction
 
-    fun fulfillTrade(tradeId : String, itemIds : List<String>, paymentId: String = "") : Transaction
+    fun fulfillTrade(creator: String, ID : String, CoinInputsIndex: Long, Items : List<ItemRef>) : Transaction
 
     fun getCookbooks () : List<Cookbook>
 
-    fun getPendingExecutions () : List<Execution>
+    fun getPylons(amount : Long, creator: String) : Boolean
 
-    fun getPylons (q : Long) : Transaction
+    fun getPendingExecutions () : List<Execution>
 
     fun getRecipes () : List<Recipe>
 
@@ -92,9 +95,7 @@ interface ICore {
 
     fun newProfile (name : String, kp : PylonsSECP256K1.KeyPair? = null) : Transaction
 
-    fun sendCoins (coins : String, receiver : String) : Transaction
-
-    fun setItemString (itemId : String, field : String, value : String) : Transaction
+    fun setItemString (itemId : ItemRef, field : String, value : String) : Transaction
 
     fun walletServiceTest(string: String): String
 
@@ -104,7 +105,7 @@ interface ICore {
 
     fun listCompletedExecutions () : List<Execution>
 
-    fun listTrades () : List<Trade>
+    fun listTrades (creator: String) : List<Trade>
 
     fun buildJsonForTxPost(msg: String, signComponent: String, accountNumber: Long, sequence: Long, pubkey: PylonsSECP256K1.PublicKey, gas: Long) : String
 

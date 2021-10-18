@@ -1,15 +1,17 @@
 package tech.pylons.wallet.walletcore_test.fixtures
 
+import tech.pylons.lib.types.tx.Coin
 import tech.pylons.wallet.core.engine.TxPylonsDevEngine
 import tech.pylons.lib.types.tx.recipe.*
 
 fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, sender : String) = engine.createRecipe(
+        creator = "pylo1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
+        ID = "",
         blockInterval = 0,
         coinInputs = listOf(CoinInput(
-                coin = "pylon",
-                count = 1
+                listOf(Coin("upylon",1))
         )),
-        cookbookId = cbId,
+        cookbookID = cbId,
         description = "test recipe from test suite",
         entries = EntriesList(
                 coinOutputs = listOf(),
@@ -36,12 +38,24 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                                                 program = ""
                                         )
                                 ),
-                                transferFee = 0
+                                mutableStrings = listOf(
+                                        StringKeyValue(
+                                                Key = "Name",
+                                                Value="nft_2"
+                                        ),
+                                ),
+                                transferFee = listOf(Coin("upylon", 1)),
+                                tradePercentage = "10%",
+                                quantity = 10,
+                                amountMinted = 2,
+                                tradeable = true
                         )
                 )
         ),
-        outputs = listOf(WeightedOutput(listOf("itemMars"), "1")),
+        outputs = listOf(WeightedOutput(listOf("itemMars"), 1)),
         itemInputs = listOf(),
         name = name,
-        extraInfo = ""
+        version = "v1.1.0",
+        extraInfo = "",
+        enabled = true
 )

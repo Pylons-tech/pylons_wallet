@@ -17,61 +17,66 @@ abstract class SmartUpdateRecipeTask : DefaultTask()  {
             if (SemVer.from(MetaRecipe.version(meta.remotes[identifier]!!)) <
                 SemVer.from(meta.targetVersions[identifier]!!)) {
                 Core.current!!.batchUpdateRecipe(
+                    creators = listOf(meta.versions[meta.targetVersions[identifier]]!!.id),
+                    cookbookIds = listOf(meta.versions[meta.targetVersions[identifier]]!!.cookbookId),
                     ids = listOf(meta.ids[identifier]!!),
-                    cookbooks = listOf(meta.versions[meta.targetVersions[identifier]]!!.cookbookId),
                     names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
                     descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
-                    blockIntervals = listOf(meta.versions[meta.targetVersions[identifier]]!!.blockInterval),
+                    versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version),
                     coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
                     itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
-                    outputTables = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
+                    entries = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
                     outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
+                    blockIntervals = listOf(meta.versions[meta.targetVersions[identifier]]!!.blockInterval),
+                    enableds = listOf(meta.versions[meta.targetVersions[identifier]]!!.enabled),
                     extraInfos = listOf("")
                 )
             }
             if (meta.disabled[identifier]!!) {
-                if (!meta.remotes[identifier]!!.disabled) Core.current!!.batchDisableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
+                if (meta.remotes[identifier]!!.enabled) Core.current!!.batchDisableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
             }
-            else if (meta.remotes[identifier]!!.disabled) Core.current!!.batchEnableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
+            else if (!meta.remotes[identifier]!!.enabled) Core.current!!.batchEnableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
 
         }
         else {
             RecipeManagementPlugin.loadedRecipes.values.forEach { meta ->
                 Core.current!!.getProfile()
-                if (meta.remotes.containsKey(identifier)) {
-                    if (SemVer.from(MetaRecipe.version(meta.remotes[identifier]!!)) <
-                        SemVer.from(meta.targetVersions[identifier]!!)) {
-                        Core.current!!.batchUpdateRecipe(
-                            ids = listOf(meta.ids[identifier]!!),
-                            cookbooks = listOf(meta.versions[meta.targetVersions[identifier]]!!.cookbookId),
-                            names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
-                            descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
-                            blockIntervals = listOf(meta.versions[meta.targetVersions[identifier]]!!.blockInterval),
-                            coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
-                            itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
-                            outputTables = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
-                            outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
-                            extraInfos = listOf("")
-                        )
-                    }
-                    if (meta.disabled[identifier]!!) {
-                        if (!meta.remotes[identifier]!!.disabled) Core.current!!.batchDisableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
-                    }
-                    else if (meta.remotes[identifier]!!.disabled) Core.current!!.batchEnableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
-                }
-                else {
-                    Core.current!!.batchCreateRecipe(
-                        cookbooks = listOf(meta.versions[meta.targetVersions[identifier]]!!.cookbookId),
-                        names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
-                        descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
-                        blockIntervals = listOf(meta.versions[meta.targetVersions[identifier]]!!.blockInterval),
-                        coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
-                        itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
-                        outputTables = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
-                        outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
-                        extraInfos = listOf("")
-                    )
-                }
+//                if (meta.remotes.containsKey(identifier)) {
+//                    if (SemVer.from(MetaRecipe.version(meta.remotes[identifier]!!)) <
+//                        SemVer.from(meta.targetVersions[identifier]!!)) {
+//                        Core.current!!.batchUpdateRecipe(
+//                            cookbookIds = listOf(meta.versions[meta.targetVersions[identifier]]!!.cookbookId),
+//                            ids = listOf(meta.ids[identifier]!!),
+//                            names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
+//                            descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
+//                            versions = listOf(meta.versions[meta.targetVersions[identifier]]!!.version),
+//                            coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
+//                            itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
+//                            entries = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
+//                            outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
+//                            blockIntervals = listOf(meta.versions[meta.targetVersions[identifier]]!!.blockInterval),
+//                            enableds = listOf(meta.versions[meta.targetVersions[identifier]]!!.enabled),
+//                            extraInfos = listOf("")
+//                        )
+//                    }
+//                    if (meta.disabled[identifier]!!) {
+//                        if (!meta.remotes[identifier]!!.disabled) Core.current!!.batchDisableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
+//                    }
+//                    else if (meta.remotes[identifier]!!.disabled) Core.current!!.batchEnableRecipe(listOf(meta.versions[meta.targetVersions[identifier]]!!.id))
+//                }
+//                else {
+//                    Core.current!!.batchCreateRecipe(
+//                        cookbooks = listOf(meta.versions[meta.targetVersions[identifier]]!!.cookbookId),
+//                        names = listOf(meta.versions[meta.targetVersions[identifier]]!!.name),
+//                        descriptions = listOf(meta.versions[meta.targetVersions[identifier]]!!.description),
+//                        blockIntervals = listOf(meta.versions[meta.targetVersions[identifier]]!!.blockInterval),
+//                        coinInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.coinInputs)),
+//                        itemInputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.itemInputs)),
+//                        outputTables = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.entries)),
+//                        outputs = listOf(klaxon.toJsonString(meta.versions[meta.targetVersions[identifier]]!!.outputs)),
+//                        extraInfos = listOf("")
+//                    )
+//                }
             }
         }
     }

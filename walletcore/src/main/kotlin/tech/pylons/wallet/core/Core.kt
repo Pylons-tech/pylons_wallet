@@ -1,5 +1,6 @@
 package tech.pylons.wallet.core
 
+import Pylonstech.pylons.pylons.TradeOuterClass
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
@@ -30,6 +31,7 @@ import org.apache.tuweni.bytes.Bytes32
 import org.spongycastle.util.encoders.Base64
 import org.spongycastle.util.encoders.Hex
 import tech.pylons.lib.types.tx.msg.CreateRecipe
+import tech.pylons.lib.types.tx.trade.ItemRef
 import java.io.StringReader
 
 /**
@@ -269,58 +271,54 @@ class Core(val config : Config) : ICore {
         }
     }
 
-    override fun applyRecipe (recipe : String, cookbook : String, itemInputs : List<String>, paymentId: String) : Transaction {
+    override fun applyRecipe (creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction {
         // HACK: list recipes, then search to find ours
         val arr = engine.listRecipes()
         var r : String? = null
         arr.forEach {
-            if (it.cookbookId == cookbook && it.name == recipe) {
+            if (it.cookbookId == cookbookID && it.name == id) {
                 r = it.id
             }
         }
-        if (r == null) throw java.lang.Exception("Recipe $cookbook/$recipe does not exist")
-        return engine.applyRecipe(r!!, itemInputs, paymentId).submit()
+        if (r == null) throw java.lang.Exception("Recipe $cookbookID/$id does not exist")
+        return engine.applyRecipe(creator!!, cookbookID!!, r!!, coinInputsIndex!!, itemIds!!).submit()
     }
 
-    override fun batchCreateCookbook (ids : List<String>, names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                                  supportEmails : List<String>, costsPerBlock : List<Long>) : List<Transaction> {
+    override fun batchCreateCookbook (creators : List<String>, ids : List<String>, names : List<String>, descriptions : List<String>, developers : List<String>,
+                                      versions : List<String>, supportEmails : List<String>, costsPerBlock : List<Coin>, enableds : List<Boolean>) : List<Transaction> {
         val txs = engine.createCookbooks(
+            creators = creators,
             ids = ids,
             names = names,
-            developers = developers,
             descriptions = descriptions,
+            developers = developers,
             versions = versions,
             supportEmails = supportEmails,
-            costsPerBlock = costsPerBlock
+            costsPerBlocks = costsPerBlock,
+            enableds = enableds
         ).toMutableList()
         return txs.submitAll()
     }
 
-    override fun batchCreateRecipe (names : List<String>, cookbooks : List<String>, descriptions : List<String>,
-                                blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction> {
+    override fun batchCreateRecipe (creators: List<String>, cookbooks : List<String>, ids : List<String>, names : List<String>, descriptions : List<String>, versions : List<String>,
+                                    coinInputs: List<List<CoinInput>>, itemInputs : List<List<ItemInput>>, outputTables : List<EntriesList>, outputs : List<List<WeightedOutput>>,
+                                    blockIntervals : List<Long>, enableds : List<Boolean>, extraInfos: List<String>) : List<Transaction> {
         // klaxon.parse<JsonArray<JsonObject>>
-        val mItemInputs = mutableListOf<List<ItemInput>>()
-        itemInputs.forEach { mItemInputs.add(klaxon.parseArray(it)?: JsonArray()) }
-        val mCoinInputs = mutableListOf<List<CoinInput>>()
-        coinInputs.forEach { mCoinInputs.add(klaxon.parseArray(it)?: JsonArray()) }
-        val mOutputTables = mutableListOf<EntriesList>()
-        outputTables.forEach { mOutputTables.add(klaxon.parse(it)?: EntriesList(listOf(), listOf(), listOf())) }
-        val mOutputs = mutableListOf<List<WeightedOutput>>()
-        outputs.forEach {
-            val arr = klaxon.parseArray<WeightedOutput>(it) ?: JsonArray()
-            mOutputs.add(arr.toList())
-        }
-        val mExtraInfos = mutableListOf<String>()
+
+
         val txs =  engine.createRecipes(
-            names = names,
+            creators = creators,
             cookbookIds = cookbooks,
+            ids = ids,
+            names = names,
             descriptions = descriptions,
+            versions = versions,
+            coinInputs = coinInputs,
+            itemInputs = itemInputs,
+            entries = outputTables,
+            outputs = outputs,
             blockIntervals = blockIntervals,
-            coinInputs = mCoinInputs,
-            itemInputs = mItemInputs,
-            entries = mOutputTables,
-            outputs = mOutputs,
+            enableds = enableds,
             extraInfos = extraInfos
         ).toMutableList()
         return txs.submitAll()
@@ -340,40 +338,47 @@ class Core(val config : Config) : ICore {
         return txs.submitAll()
     }
 
-    override fun batchUpdateCookbook (names : List<String>, developers : List<String>, descriptions : List<String>, versions : List<String>,
-                                  supportEmails : List<String>, ids : List<String>) : List<Transaction> {
+    override fun batchUpdateCookbook (creators : List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, developers: List<String>,
+                                      versions : List<String>, supportEmails: List<String>, costPerBlocks: List<Coin>, enableds: List<Boolean>) : List<Transaction> {
         val txs = engine.updateCookbooks(
+            creators = creators,
             ids = ids,
             names = names,
-            developers = developers,
             descriptions = descriptions,
+            developers = developers,
             versions = versions,
-            supportEmails = supportEmails
+            supportEmails = supportEmails,
+            costPerBlocks = costPerBlocks,
+            enableds = enableds
         ).toMutableList()
         return txs.submitAll()
     }
 
-    override fun batchUpdateRecipe (ids : List<String>, names : List<String>, cookbooks : List<String>, descriptions : List<String>,
-                                blockIntervals : List<Long>, coinInputs: List<String>, itemInputs : List<String>,
-                                outputTables : List<String>, outputs : List<String>, extraInfos: List<String>) : List<Transaction> {
+    override fun batchUpdateRecipe (creators: List<String>, cookbookIds: List<String>, ids: List<String>, names : List<String>, descriptions: List<String>,
+                                    versions: List<String>, coinInputs : List<String>, itemInputs : List<String>,
+                                    entries : List<String>, outputs: List<String>, blockIntervals : List<Long>,
+                                    enableds: List<Boolean>, extraInfos: List<String>) : List<Transaction> {
         val mItemInputs = mutableListOf<List<ItemInput>>()
         itemInputs.forEach { mItemInputs.add(klaxon.parseArray<ItemInput>(it)?: JsonArray()) }
         val mCoinInputs = mutableListOf<List<CoinInput>>()
         coinInputs.forEach { mCoinInputs.add(CoinInput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
         val mOutputTables = mutableListOf<EntriesList>()
-        outputTables.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
+        entries.forEach { mOutputTables.add(EntriesList.fromJson(klaxon.parse<JsonObject>(it))!!) }
         val mOutputs = mutableListOf<List<WeightedOutput>>()
         outputs.forEach { mOutputs.add(WeightedOutput.listFromJson(klaxon.parse<JsonArray<JsonObject>>(it))) }
         val txs = engine.updateRecipes(
+            creators = creators,
+            cookbookIds = cookbookIds,
             ids = ids,
             names = names,
-            cookbookIds = cookbooks,
             descriptions = descriptions,
-            blockIntervals = blockIntervals,
+            versions = versions,
             coinInputs = mCoinInputs,
             itemInputs = mItemInputs,
             entries = mOutputTables,
             outputs = mOutputs,
+            blockIntervals = blockIntervals,
+            enableds = enableds,
             extraInfos = extraInfos
         ).toMutableList()
         return txs.submitAll()
@@ -384,30 +389,35 @@ class Core(val config : Config) : ICore {
     override fun checkExecution(id : String, payForCompletion : Boolean) =
         engine.checkExecution(id, payForCompletion).submit()
 
-    override fun createTrade (coinInputs: List<String>, itemInputs : List<String>,
-                          coinOutputs : List<String>, itemOutputs : List<String>,
-                          extraInfo : String) : Transaction {
-        val mItemInputs = mutableListOf<TradeItemInput>()
-        itemInputs.forEach {
-            mItemInputs.add(TradeItemInput.fromJson(klaxon.parseJsonObject(StringReader(it)))) }
-        val mCoinInputs = mutableListOf<CoinInput>()
-        coinInputs.forEach { mCoinInputs.add(CoinInput.fromJson(klaxon.parseJsonObject(StringReader(it))))
-        }
-        val mCoinOutputs = mutableListOf<Coin>()
-        coinOutputs.forEach { mCoinOutputs.add(Coin.fromJson(klaxon.parseJsonObject(StringReader(it)))) }
-        val mItemOutputs = mutableListOf<Item>()
-        itemOutputs.forEach { mItemOutputs.add(Item.fromJsonOpt(klaxon.parseJsonObject(StringReader(it)))) }
-        return engine.createTrade(mCoinInputs, mItemInputs, mCoinOutputs, mItemOutputs, extraInfo).submit()
+    override fun createTrade (creator: String, coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+                              coinOutputs : List<Coin>, itemOutputs : List<ItemRef>,
+                              ExtraInfo : String) : Transaction {
+//        val mItemInputs = mutableListOf<ItemInput>()
+//        itemInputs.forEach {
+//            mItemInputs.add(ItemInput.fromJson(klaxon.parseJsonObject(StringReader(it))))
+//        }
+//        val mCoinInputs = mutableListOf<CoinInput>()
+//        coinInputs.forEach {
+//            mCoinInputs.add(CoinInput.fromJson(klaxon.parseJsonObject(StringReader(it))))
+//        }
+//        val mCoinOutputs = mutableListOf<Coin>()
+//        coinOutputs.forEach {
+//            mCoinOutputs.add(Coin.fromJson(klaxon.parseJsonObject(StringReader(it))))
+//        }
+//        val mItemOutputs = mutableListOf<ItemRef>()
+//        itemOutputs.forEach {
+//            mItemOutputs.add(ItemRef.fromJson(klaxon.parseJsonObject(StringReader(it))))
+//        }
+        return engine.createTrade(creator, coinInputs, itemInputs, coinOutputs, itemOutputs, ExtraInfo).submit()
     }
-
-    override fun fulfillTrade(tradeId : String, itemIds : List<String>, paymentId: String) : Transaction =
-        engine.fulfillTrade(tradeId, itemIds, paymentId).submit()
+    override fun fulfillTrade(creator: String, ID : String, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction =
+        engine.fulfillTrade(creator, ID, CoinInputsIndex, itemIds).submit()
 
     override fun getCookbooks () : List<Cookbook> = engine.listCookbooks()
 
-    override fun getPendingExecutions () : List<Execution> = engine.getPendingExecutions()
+    override fun getPylons(amount : Long, creator: String)  :  Boolean = engine.getPylons(amount, creator)
 
-    override fun getPylons (q : Long) : Transaction = engine.getPylons(q).submit()
+    override fun getPendingExecutions () : List<Execution> = engine.getPendingExecutions()
 
     override fun getRecipes () : List<Recipe> = engine.listRecipes()
 
@@ -424,13 +434,8 @@ class Core(val config : Config) : ICore {
         return engine.registerNewProfile(name, kp).submit()
     }
 
-    override fun sendCoins (coins : String, receiver : String) : Transaction =
-        engine.sendCoins(
-            Coin.listFromJson(klaxon.parseJsonArray(StringReader(coins)) as JsonArray<JsonObject>),
-            receiver).submit()
-
-    override fun setItemString (itemId : String, field : String, value : String) =
-        engine.setItemFieldString(itemId, field, value).submit()
+    override fun setItemString (itemId : ItemRef, field : String, value : String) =
+        engine.setItemFieldString(itemId.itemID, field, value).submit()
 
     override fun walletServiceTest(string: String): String = "Wallet service test OK input $string"
 
@@ -441,8 +446,8 @@ class Core(val config : Config) : ICore {
         TODO("Not yet implemented")
     }
 
-    override fun listTrades(): List<Trade> {
-        return engine.listTrades()
+    override fun listTrades(creator: String): List<Trade> {
+        return engine.listTrades(creator)
     }
 
     override fun wipeUserData () {

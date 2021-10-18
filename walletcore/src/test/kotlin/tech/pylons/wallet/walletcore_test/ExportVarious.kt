@@ -7,7 +7,6 @@ import tech.pylons.wallet.core.engine.TxPylonsDevEngine
 import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import tech.pylons.lib.types.*
 import tech.pylons.lib.types.tx.Coin
-import tech.pylons.lib.types.tx.msg.GetPylons
 import tech.pylons.wallet.core.internal.HttpWire
 import tech.pylons.wallet.core.internal.InternalPrivKeyStore
 import org.spongycastle.util.encoders.Hex
@@ -53,10 +52,5 @@ class ExportVarious {
         println("compressed pubkey: ${PubKeyUtil.getCompressedPubkey(engine.cryptoCosmos.keyPair!!.publicKey()!!).toHexString()}")
         println("status: ${core.statusBlock.toJson()}")
 
-        val msg = GetPylons(listOf(Coin("pylon", 500)), core.userProfile!!.credentials.address)
-        println("STRUCT")
-        println(msg.toSignStruct())
-        println("SIGNED")
-        println(msg.toSignedTx())
     }
 }

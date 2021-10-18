@@ -1,318 +1,238 @@
 syntax = "proto3";
-package pylons;
+package Pylonstech.pylons.pylons;
 
-import "pylons/pylons.proto";
-import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+// this line is used by starport scaffolding # 1
+import "pylons/accounts.proto";
+import "pylons/trade.proto";
+import "pylons/google_iap_order.proto";
+import "pylons/execution.proto";
+import "pylons/item.proto";
+import "pylons/recipe.proto";
+import "pylons/cookbook.proto";
 
 option go_package = "github.com/Pylons-tech/pylons/x/pylons/types";
 
+// Query defines the gRPC querier service.
 service Query {
-  // AddrFromPubKey returns a bech32 public address from the public key
-  rpc AddrFromPubKey(AddrFromPubKeyRequest) returns (AddrFromPubKeyResponse){
-    option (google.api.http).get = "/custom/pylons/addr_from_pub_key/{hex_pub_key}";
-  }
+	// this line is used by starport scaffolding # 2
 
-  // CheckGoogleIAPOrder check if google iap order is given to user with purchase token
-  rpc CheckGoogleIAPOrder(CheckGoogleIAPOrderRequest) returns (CheckGoogleIAPOrderResponse){
-    option (google.api.http).get = "/custom/pylons/check_google_iap_order/{purchaseToken}";
-  }
+	// Queries a list of getAccountByAddress items.
+	rpc UsernameByAddress(QueryGetUsernameByAddressRequest) returns (QueryGetUsernameByAddressResponse) {
+		option (google.api.http).get = "/pylons/account/address/{address}";
+	}
 
-  // GetCookbook returns a cookbook based on the cookbook id
-  rpc GetCookbook(GetCookbookRequest) returns (GetCookbookResponse){
-    option (google.api.http).get = "/custom/pylons/get_cookbook/{cookbookID}";
-  }
+	// Queries a username by account.
+	rpc AddressByUsername(QueryGetAddressByUsernameRequest) returns (QueryGetAddressByUsernameResponse) {
+		option (google.api.http).get = "/pylons/account/username/{username}";
+	}
 
-  // GetExecution returns an execution based on the execution id
-  rpc GetExecution(GetExecutionRequest) returns (GetExecutionResponse){
-    option (google.api.http).get = "/custom/pylons/get_execution/{executionID}";
-  }
+	// Queries a trade by id.
+	rpc Trade(QueryGetTradeRequest) returns (QueryGetTradeResponse) {
+		option (google.api.http).get = "/pylons/trade/{ID}";
+	}
 
-  // GetItem returns a item based on the item id
-  rpc GetItem(GetItemRequest) returns (GetItemResponse){
-    option (google.api.http).get = "/custom/pylons/get_item/{itemID}";
-  }
+	// Queries a list of listItemByOwner items.
+	rpc ListItemByOwner(QueryListItemByOwnerRequest) returns (QueryListItemByOwnerResponse) {
+		option (google.api.http).get = "/pylons/items/{owner}";
+	}
 
-  // GetRecipe returns a recipe based on the recipe id
-  rpc GetRecipe(GetRecipeRequest) returns (GetRecipeResponse){
-    option (google.api.http).get = "/custom/pylons/get_recipe/{recipeID}";
-  }
+	// Queries a googleIAPOrder by PurchaseToken.
+	rpc GoogleInAppPurchaseOrder(QueryGetGoogleInAppPurchaseOrderRequest) returns (QueryGetGoogleInAppPurchaseOrderResponse) {
+		option (google.api.http).get = "/pylons/iap/{PurchaseToken}";
+	}
 
-  // GetTrade returns a trade based on the trade id
-  rpc GetTrade(GetTradeRequest) returns (GetTradeResponse){
-    option (google.api.http).get = "/custom/pylons/get_trade/{tradeID}";
-  }
+	// Queries a list of listExecutionsByItem items.
+	rpc ListExecutionsByItem(QueryListExecutionsByItemRequest) returns (QueryListExecutionsByItemResponse) {
+		option (google.api.http).get = "/pylons/executions/item/{CookbookID}/{ItemID}";
+	}
 
-  // ItemsByCookbook returns a cookbook based on the cookbook id
-  rpc ItemsByCookbook(ItemsByCookbookRequest) returns (ItemsByCookbookResponse){
-    option (google.api.http).get = "/custom/pylons/items_by_cookbook/{cookbookID}";
-  }
+	// Queries a list of listExecutionsByRecipe items.
+	rpc ListExecutionsByRecipe(QueryListExecutionsByRecipeRequest) returns (QueryListExecutionsByRecipeResponse) {
+		option (google.api.http).get = "/pylons/executions/recipe/{CookbookID}/{RecipeID}";
+	}
 
-  // ItemsBySender returns all items based on the sender address
-  rpc ItemsBySender(ItemsBySenderRequest) returns (ItemsBySenderResponse){
-    option (google.api.http).get = "/custom/pylons/items_by_sender/{sender}";
-  }
+	// Queries a execution by id.
+	rpc Execution(QueryGetExecutionRequest) returns (QueryGetExecutionResponse) {
+		option (google.api.http).get = "/pylons/execution/{ID}";
+	}
 
-  // ListCookbook returns a cookbook based on the cookbook id
-  rpc ListCookbook(ListCookbookRequest) returns (ListCookbookResponse){
-    option (google.api.http).get = "/custom/pylons/list_cookbook/{address}";
-  }
+	// Queries a list of listRecipesByCookbook items.
+	rpc ListRecipesByCookbook(QueryListRecipesByCookbookRequest) returns (QueryListRecipesByCookbookResponse) {
+		option (google.api.http).get = "/pylons/recipes/{CookbookID}";
+	}
 
-  // ListExecutions lists all the executions based on the sender address
-  rpc ListExecutions(ListExecutionsRequest) returns (ListExecutionsResponse){
-    option (google.api.http).get = "/custom/pylons/list_executions/{sender}";
-  }
+	// Queries a item by ID.
+	rpc Item(QueryGetItemRequest) returns (QueryGetItemResponse) {
+		option (google.api.http).get = "/pylons/item/{CookbookID}/{ID}";
+	}
 
-  // GetLockedCoins returns locked coins based on user
-  rpc GetLockedCoins(GetLockedCoinsRequest) returns (GetLockedCoinsResponse){
-    option (google.api.http).get = "/custom/pylons/get_locked_coins/{address}";
-  }
+	// Retrieves a recipe by ID.
+	rpc Recipe(QueryGetRecipeRequest) returns (QueryGetRecipeResponse) {
+		option (google.api.http).get = "/pylons/recipe/{CookbookID}/{ID}";
+	}
 
-  // GetLockedCoinDetails returns locked coins with details based on user
-  rpc GetLockedCoinDetails(GetLockedCoinDetailsRequest) returns (GetLockedCoinDetailsResponse){
-    option (google.api.http).get = "/custom/pylons/get_locked_coin_details/{address}";
-  }
+	// Retrieves the list of cookbooks owned by an address
+	rpc ListCookbooksByCreator(QueryListCookbooksByCreatorRequest) returns (QueryListCookbooksByCreatorResponse) {
+		option (google.api.http).get = "/pylons/cookbooks/{creator}";
+	}
 
-  // ListRecipe returns a recipe based on the recipe id
-  rpc ListRecipe(ListRecipeRequest) returns (ListRecipeResponse){
-    option (google.api.http).get = "/custom/pylons/list_recipe/{address}";
-  }
-
-  // ListRecipeByCookbook returns a recipe based on the recipe id
-  rpc ListRecipeByCookbook(ListRecipeByCookbookRequest) returns (ListRecipeByCookbookResponse){
-    option (google.api.http).get = "/custom/pylons/list_recipe_by_cookbook/{cookbookID}";
-  }
-
-  // ListShortenRecipe returns a recipe based on the recipe id
-  rpc ListShortenRecipe(ListShortenRecipeRequest) returns (ListShortenRecipeResponse){
-    option (google.api.http).get = "/custom/pylons/list_shorten_recipe/{address}";
-  }
-
-  // ListShortenRecipeByCookbook returns a recipe based on the recipe id
-  rpc ListShortenRecipeByCookbook(ListShortenRecipeByCookbookRequest) returns (ListShortenRecipeByCookbookResponse){
-    option (google.api.http).get = "/custom/pylons/list_shorten_recipe_by_cookbook/{cookbookID}";
-  }
-
-  // ListTrade returns a trade based on the trade id
-  rpc ListTrade(ListTradeRequest) returns (ListTradeResponse){
-    option (google.api.http).get = "/custom/pylons/list_trade/{address}";
-  }
-
-  // PylonsBalance provides balances in pylons
-  rpc PylonsBalance(PylonsBalanceRequest) returns (PylonsBalanceResponse){
-    option (google.api.http).get = "/custom/pylons/balance/{address}";
-  }
+	// Retrieves a cookbook by ID.
+	rpc Cookbook(QueryGetCookbookRequest) returns (QueryGetCookbookResponse) {
+		option (google.api.http).get = "/pylons/cookbook/{ID}";
+	}
 }
 
-message AddrFromPubKeyRequest {
-  string hex_pub_key = 1;
-}
-
-message AddrFromPubKeyResponse {
-  string Bech32Addr = 1;
-}
-
-message CheckGoogleIAPOrderRequest {
-  string purchaseToken = 1;
-}
-
-message CheckGoogleIAPOrderResponse {
-  string purchaseToken = 1;
-  bool exist = 2;
-}
-
-message GetCookbookRequest {
-  string cookbookID = 1;
-}
-
-message GetCookbookResponse {
-  string NodeVersion = 1;
-  string ID = 2;
-  string Name = 3;
-  string Description = 4;
-  string Version = 5;
-  string Developer = 6;
-  int64 Level = 7;
-  string SupportEmail = 8;
-  int64 CostPerBlock = 9;
-  string Sender = 10;
-}
-
-
-message GetExecutionRequest {
-  string executionID = 1;
-}
-
-message GetExecutionResponse {
-  string NodeVersion = 1;
-  string ID = 2;
-  string RecipeID = 3;
-  string CookbookID = 4;
-  repeated cosmos.base.v1beta1.Coin CoinsInput = 5 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
-  repeated Item ItemInputs = 6 [(gogoproto.nullable) = false];
-  int64 BlockHeight = 7;
-  string Sender = 8;
-  bool Completed = 9;
-}
-
-
-message GetItemRequest {
-  string itemID = 1;
-}
-
-message GetItemResponse {
-  Item item = 1 [(gogoproto.nullable) = false];
-}
-
-
-message GetRecipeRequest {
-  string recipeID = 1;
-}
-
-message GetRecipeResponse {
-  string NodeVersion = 1;
-  string ID = 2;
-  string CookbookID = 3;
-  string Name = 4;
-  repeated CoinInput CoinInputs = 5 [(gogoproto.nullable) = false];
-  repeated ItemInput ItemInputs = 6 [(gogoproto.nullable) = false];
-  EntriesList Entries = 7 [(gogoproto.nullable) = false];
-  repeated WeightedOutputs Outputs = 8 [(gogoproto.nullable) = false];
-  string Description = 9;
-  int64 BlockInterval = 10;
-  string Sender = 11;
-  bool Disabled = 12;
-}
-
-
-message GetTradeRequest {
-  string tradeID = 1;
-}
-
-message GetTradeResponse {
-  string NodeVersion = 1;
-  string ID = 2;
-  repeated CoinInput CoinInputs = 3 [(gogoproto.nullable) = false];
-  repeated TradeItemInput ItemInputs = 4 [(gogoproto.nullable) = false];
-  repeated cosmos.base.v1beta1.Coin CoinOutputs = 5 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
-  repeated Item ItemOutputs = 6 [(gogoproto.nullable) = false];
-  string ExtraInfo = 7;
-  string Sender = 8;
-  string FulFiller = 9;
-  bool Disabled = 10;
-  bool Completed = 11;
-}
-
-
-message ItemsByCookbookRequest {
-  string cookbookID = 1;
-}
-
-message ItemsByCookbookResponse {
-  repeated Item Items = 1 [(gogoproto.nullable) = false];
-}
-
-
-message ItemsBySenderRequest {
-  string sender = 1;
-}
-
-message ItemsBySenderResponse {
-  repeated Item Items = 1 [(gogoproto.nullable) = false];
-}
-
-
-message ListCookbookRequest {
+// this line is used by starport scaffolding # 3
+message QueryGetUsernameByAddressRequest {
   string address = 1;
 }
 
-message ListCookbookResponse {
+message QueryGetAddressByUsernameRequest {
+	string username = 1;
+}
+
+message QueryGetUsernameByAddressResponse {
+	Username username = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetAddressByUsernameResponse {
+	AccountAddr address = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetTradeRequest {
+	uint64 ID = 1;
+}
+
+message QueryGetTradeResponse {
+	Trade Trade = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryListItemByOwnerRequest {
+  string owner = 1;
+
+	// pagination defines an optional pagination for the request.
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryListItemByOwnerResponse {
+	option (gogoproto.equal)           = false;
+	option (gogoproto.goproto_getters) = false;
+	repeated Item Items = 1 [(gogoproto.nullable) = false];
+
+	// pagination defines the pagination in the response.
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetGoogleInAppPurchaseOrderRequest {
+	string PurchaseToken = 1;
+}
+
+message QueryGetGoogleInAppPurchaseOrderResponse {
+	GoogleInAppPurchaseOrder Order = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryListExecutionsByItemRequest {
+	option (gogoproto.equal)           = false;
+	option (gogoproto.goproto_getters) = false;
+
+	string CookbookID = 1;
+	string ItemID = 2;
+
+	// pagination defines an optional pagination for the request.
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryListExecutionsByItemResponse {
+	repeated Execution CompletedExecutions = 1 [(gogoproto.nullable) = false];
+	repeated Execution PendingExecutions = 2 [(gogoproto.nullable) = false];
+
+	// pagination defines the pagination in the response.
+	cosmos.base.query.v1beta1.PageResponse pagination = 3;
+}
+
+message QueryListExecutionsByRecipeRequest {
+	option (gogoproto.equal)           = false;
+	option (gogoproto.goproto_getters) = false;
+
+	string CookbookID = 1;
+	string RecipeID = 2;
+
+	// pagination defines an optional pagination for the request.
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryListExecutionsByRecipeResponse {
+	repeated Execution CompletedExecutions = 1 [(gogoproto.nullable) = false];
+	repeated Execution PendingExecutions = 2 [(gogoproto.nullable) = false];
+
+	// pagination defines the pagination in the response.
+	cosmos.base.query.v1beta1.PageResponse pagination = 3;
+}
+
+message QueryGetExecutionRequest {
+	string ID = 1;
+}
+
+message QueryGetExecutionResponse {
+	Execution Execution = 1 [(gogoproto.nullable) = false];
+	bool Completed = 2;
+}
+
+message QueryListRecipesByCookbookRequest {
+  string CookbookID = 1;
+
+	// pagination defines an optional pagination for the request.
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryListRecipesByCookbookResponse {
+	repeated Recipe Recipes = 1 [(gogoproto.nullable) = false];
+
+	// pagination defines the pagination in the response.
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetItemRequest {
+	string CookbookID = 1;
+	string ID = 3;
+}
+
+message QueryGetItemResponse {
+	Item Item = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetRecipeRequest {
+	string CookbookID = 1;
+	string ID = 2;
+}
+
+message QueryGetRecipeResponse {
+	Recipe Recipe = 1 [(gogoproto.nullable) = false];
+}
+
+
+message QueryListCookbooksByCreatorRequest {
+  string creator = 1;
+
+	// pagination defines an optional pagination for the request.
+	cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryListCookbooksByCreatorResponse {
   repeated Cookbook Cookbooks = 1 [(gogoproto.nullable) = false];
+
+	// pagination defines the pagination in the response.
+	cosmos.base.query.v1beta1.PageResponse pagination = 3;
 }
 
-
-message ListExecutionsRequest {
-  string sender = 1;
+message QueryGetCookbookRequest {
+	string ID = 1;
 }
 
-message ListExecutionsResponse {
-  repeated Execution Executions = 1 [(gogoproto.nullable) = false];
+message QueryGetCookbookResponse {
+	Cookbook Cookbook = 1 [(gogoproto.nullable) = false];
 }
 
-
-message GetLockedCoinsRequest {
-  string address = 1;
-}
-
-message GetLockedCoinsResponse {
-  string NodeVersion = 1;
-  string Sender = 2;
-  repeated cosmos.base.v1beta1.Coin Amount = 3 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
-}
-
-
-message GetLockedCoinDetailsRequest {
-  string address = 1;
-}
-
-message GetLockedCoinDetailsResponse {
-  string sender = 1;
-  repeated cosmos.base.v1beta1.Coin Amount = 2 [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
-  repeated LockedCoinDescribe LockCoinTrades = 3 [(gogoproto.nullable) = false];
-  repeated LockedCoinDescribe LockCoinExecs = 4 [(gogoproto.nullable) = false];
-}
-
-
-message ListRecipeRequest {
-  string address = 1;
-}
-
-message ListRecipeResponse {
-  repeated Recipe recipes = 1 [(gogoproto.nullable) = false];
-}
-
-
-message ListRecipeByCookbookRequest {
-  string cookbookID = 1;
-}
-
-message ListRecipeByCookbookResponse {
-  repeated Recipe recipes = 1 [(gogoproto.nullable) = false];
-}
-
-
-message ListShortenRecipeRequest {
-  string address = 1;
-}
-
-message ListShortenRecipeResponse {
-  repeated ShortenRecipe recipes = 1 [(gogoproto.nullable) = false];
-}
-
-
-message ListShortenRecipeByCookbookRequest {
-  string cookbookID = 1;
-}
-
-message ListShortenRecipeByCookbookResponse {
-  repeated ShortenRecipe recipes = 1 [(gogoproto.nullable) = false];
-}
-
-
-message ListTradeRequest {
-  string address = 1;
-}
-
-message ListTradeResponse {
-  repeated Trade trades = 1 [(gogoproto.nullable) = false];
-}
-
-
-message PylonsBalanceRequest {
-  string address = 1;
-}
-
-message PylonsBalanceResponse {
-  int64 balance = 1;
-}

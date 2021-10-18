@@ -1,5 +1,6 @@
 package tech.pylons.wallet.core.engine
 
+import tech.pylons.lib.BigIntUtil
 import tech.pylons.lib.core.ICryptoHandler
 import tech.pylons.lib.core.IEngine
 import tech.pylons.lib.types.*
@@ -8,6 +9,7 @@ import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.Trade
 import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.recipe.*
+import tech.pylons.lib.types.tx.trade.ItemRef
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 import tech.pylons.wallet.core.Core
 
@@ -53,40 +55,65 @@ abstract class Engine(val core : Core) : IEngine {
     }
 
     /** Execute-recipe message */
-    abstract override fun applyRecipe(id : String, itemIds : List<String>, paymentId: String) : Transaction
+    abstract override fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction
 
     /** Check-execution message */
     abstract override fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
     /** Create-trade message */
-    abstract override fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                                      coinOutputs : List<Coin>, itemOutputs : List<Item>,
-                                      ExtraInfo : String) : Transaction
+    abstract override fun createTrade(creator: String, coinInputs: List<CoinInput>, itemInputs : List<ItemInput>,
+                                      coinOutputs : List<Coin>, itemOutputs : List<ItemRef>,
+                                      extraInfo : String) : Transaction
 
     /** Create-recipe message */
-    abstract override fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
+    abstract override fun createRecipe(creator : String, cookbookId : String, id : String, name : String, description: String, version: String,
                                        coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                                       outputs : List<WeightedOutput>, extraInfo: String) : Transaction
+                                       outputs : List<WeightedOutput>, blockInterval : Long, enabled : Boolean, extraInfo: String) : Transaction
 
     /** Batch create-recipe message */
-    override fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
-                      blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
-                      itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
-                      outputs: List<List<WeightedOutput>>, extraInfos: List<String>) : List<Transaction> {
+    override fun createRecipes(creators : List<String>, cookbookIds : List<String>, ids : List<String>, names : List<String>,
+                               descriptions: List<String>, versions: List<String>, coinInputs : List<List<CoinInput>>,
+                               itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
+                               outputs: List<List<WeightedOutput>>, blockIntervals : List<Long>,
+                               enableds : List<Boolean>, extraInfos: List<String>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0  until count) {
+            var biItemInputs = mutableListOf<ItemInput>()
+            var biItemModifyOutputs = mutableListOf<ItemModifyOutput>()
+            var biItemOutputs = mutableListOf<ItemOutput>()
+
+            itemInputs[i].forEach {
+                biItemInputs.add( BigIntUtil.toItemInput(it) )
+            }
+            entries[i].itemModifyOutputs?.forEach {
+                biItemModifyOutputs.add(BigIntUtil.toItemModifyOutput(it))
+            }
+            entries[i].itemOutputs.forEach {
+                biItemOutputs.add(BigIntUtil.toItemOutput(it))
+            }
+
+            var bi_outputTable = EntriesList(
+                coinOutputs = entries[i].coinOutputs,
+                itemModifyOutputs = biItemModifyOutputs.toList(),
+                itemOutputs = biItemOutputs.toList()
+            )
+
             txs.add(
                     createRecipe(
-                            name = names[i],
-                            cookbookId = cookbookIds[i],
-                            description = descriptions[i],
-                            blockInterval = blockIntervals[i],
-                            coinInputs = coinInputs[i],
-                            itemInputs = itemInputs[i],
-                            entries = entries[i],
-                            outputs = outputs[i],
-                            extraInfo = extraInfos[i]
+                        creator = creators[i],
+                        cookbookId = cookbookIds[i],
+                        id = ids[i],
+                        name = names[i],
+                        description = descriptions[i],
+                        version = versions[i],
+                        coinInputs = coinInputs[i],
+                        itemInputs = biItemInputs,
+                        entries = bi_outputTable,
+                        outputs = outputs[i],
+                        blockInterval = blockIntervals[i],
+                        enabled = enableds[i],
+                        extraInfo = extraInfos[i]
                     )
             )
         }
@@ -94,26 +121,28 @@ abstract class Engine(val core : Core) : IEngine {
     }
 
     /** Create-cookbook message */
-    abstract override fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
-                                          supportEmail : String, costPerBlock : Long) : Transaction
+    abstract override fun createCookbook (creator: String, id : String, name : String, description : String, developer : String, version : String,
+                                          supportEmail : String, costPerBlock : Coin, enabled : Boolean) : Transaction
 
     /** Batch create-cookbook message */
-    override fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
+    override fun createCookbooks(creators: List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, developers: List<String>,
                         versions : List<String>, supportEmails: List<String>,
-                        costsPerBlock : List<Long>) : List<Transaction> {
+                        costsPerBlocks : List<Coin>, enableds: List<Boolean>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0 until count) {
             txs.add(
-                    createCookbook(
-                            id = ids[i],
-                            name = names[i],
-                            developer = developers[i],
-                            description = descriptions[i],
-                            version = versions[i],
-                            supportEmail = supportEmails[i],
-                            costPerBlock = costsPerBlock[i]
-                    )
+                createCookbook(
+                creator = creators[i],
+                id = ids[i],
+                name = names[i],
+                description = descriptions[i],
+                developer = developers[i],
+                version = versions[i],
+                supportEmail = supportEmails[i],
+                costPerBlock = costsPerBlocks[i],
+                enabled = enableds[i]
+                )
             )
         }
         return txs
@@ -126,7 +155,7 @@ abstract class Engine(val core : Core) : IEngine {
      */
     abstract override fun dumpCredentials (credentials: ICredentials)
 
-    abstract override fun fulfillTrade (tradeId : String, itemIds : List<String>, paymentId: String) : Transaction
+    abstract override fun fulfillTrade (creator: String, ID : String, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction
 
     abstract override fun cancelTrade (tradeId : String) : Transaction
     /**
@@ -170,10 +199,7 @@ abstract class Engine(val core : Core) : IEngine {
     /** Registers a new profile under given name. */
     abstract override fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
 
-    abstract override fun createChainAccount () : Transaction
-
-    /** Calls non-IAP get pylons endpoint. Shouldn't work against production nodes. */
-    abstract override fun getPylons (q : Long) : Transaction
+    abstract override fun createChainAccount (name : String) : Transaction
 
     /** Calls Google IAP get pylons endpoint. */
     abstract override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
@@ -183,26 +209,35 @@ abstract class Engine(val core : Core) : IEngine {
     /** Gets initial userdata tables for the engine type. */
     abstract override fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
 
-    /** Calls send pylons endpoint. */
-    abstract override fun sendCoins (coins : List<Coin>, receiver : String) : Transaction
 
     /** Update-cookbook message */
-    abstract override fun updateCookbook (id : String, developer : String, description : String, version : String,
-                                          supportEmail : String) : Transaction
+    abstract override fun updateCookbook (Creator: String,
+                                          ID: String,
+                                          Name: String,
+                                          Description: String,
+                                          Developer: String,
+                                          Version: String,
+                                          SupportEmail : String,
+                                          CostPerBlock: Coin,
+                                          Enabled: Boolean) : Transaction
 
     /** Batch update-cookbook message */
-    override fun updateCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
-                        versions : List<String>, supportEmails: List<String>) : List<Transaction> {
+    override fun updateCookbooks(creators : List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, developers: List<String>,
+                                 versions : List<String>, supportEmails: List<String>, costPerBlocks: List<Coin>, enableds: List<Boolean>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0  until count) {
             txs.add(
                     updateCookbook(
-                            id = ids[i],
-                            developer = developers[i],
-                            description = descriptions[i],
-                            version = versions[i],
-                            supportEmail = supportEmails[i]
+                        Creator = creators[i],
+                        ID = ids[i],
+                        Name = names[i],
+                        Description = descriptions[i],
+                        Developer = developers[i],
+                        Version = versions[i],
+                        SupportEmail = supportEmails[i],
+                        CostPerBlock = costPerBlocks[i],
+                        Enabled = enableds[i]
                     )
             )
         }
@@ -210,28 +245,32 @@ abstract class Engine(val core : Core) : IEngine {
     }
 
     /** Update-recipe message */
-    abstract override fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                                       coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String) : Transaction
+    abstract override fun updateRecipe(Creator: String, CookbookID : String, ID : String, Name : String, Description: String,
+                                       Version: String, CoinInputs : List<CoinInput>, ItemInputs : List<ItemInput>,
+                                       Entries : EntriesList, Outputs: List<WeightedOutput>, BlockInterval : Long, Enabled: Boolean, ExtraInfo: String) : Transaction
 
     /** Batch update-recipe message */
-    override fun updateRecipes (ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
-                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
-                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>,extraInfos: List<String>) : List<Transaction> {
+    override fun updateRecipes (creators: List<String>, cookbookIds: List<String>, ids: List<String>, names : List<String>, descriptions: List<String>,
+                                Versions: List<String>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
+                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>,blockIntervals : List<Long>,  enableds: List<Boolean>, extraInfos: List<String>) : List<Transaction> {
         val count = names.size
         val txs = mutableListOf<Transaction>()
         for (i in 0  until count) {
             txs.add(
                     updateRecipe(
-                            id = ids[i],
-                            name = names[i],
-                            cookbookId = cookbookIds[i],
-                            description = descriptions[i],
-                            blockInterval = blockIntervals[i],
-                            coinInputs = coinInputs[i],
-                            itemInputs = itemInputs[i],
-                            entries = entries[i],
-                            outputs = outputs[i],
-                            extraInfo = extraInfos[i]
+                        Creator = creators[i],
+                        CookbookID = cookbookIds[i],
+                        ID = ids[i],
+                        Name = names[i],
+                        Description = descriptions[i],
+                        Version = Versions[i],
+                        CoinInputs = coinInputs[i],
+                        ItemInputs = itemInputs[i],
+                        Entries = entries[i],
+                        Outputs = outputs[i],
+                        BlockInterval = blockIntervals[i],
+                        Enabled = enableds[i],
+                        ExtraInfo = extraInfos[i]
                     )
             )
         }
@@ -244,15 +283,13 @@ abstract class Engine(val core : Core) : IEngine {
     /** List cookbooks query */
     abstract override fun listCookbooks () : List<Cookbook>
 
+    abstract override fun getPylons(amount : Long, creator: String) : Boolean
+
     abstract override fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
 
-    abstract override fun listTrades () : List<Trade>
+    abstract override fun listTrades (creator: String) : List<Trade>
 
     abstract override fun sendItems(receiver: String, itemIds: List<String>) : Transaction
-
-    abstract override fun getLockedCoins () : LockedCoin
-
-    abstract override fun getLockedCoinDetails () : LockedCoinDetails
 
     abstract override fun getCompletedExecutions(): List<Execution>
 

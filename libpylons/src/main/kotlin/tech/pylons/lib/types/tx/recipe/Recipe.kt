@@ -7,31 +7,31 @@ import tech.pylons.lib.internal.fuzzyLong
 import java.lang.StringBuilder
 
 data class Recipe(
-    @property:[Json(name = "NodeVersion")]
-        val nodeVersion : String,
+    @property:[Json(name = "cookbookID")]
+    val cookbookId : String,
     @property:[Json(name = "ID")]
-        val id : String,
-    @property:[Json(name = "Sender")]
-        val sender : String,
-    @property:[Json(name = "Disabled")]
-        val disabled : Boolean,
-    @property:[Json(name = "Name")]
-        val name : String,
-    @property:[Json(name = "CookbookID")]
-        val cookbookId : String,
-    @property:[Json(name = "Description")]
-        val description : String,
-    @property:[Json(name = "BlockInterval")]
-        val blockInterval : Long,
-    @property:[Json(name = "CoinInputs")]
-        val coinInputs : List<CoinInput>,
-    @property:[Json(name = "ItemInputs")]
-        val itemInputs : List<ItemInput>,
-    @property:[Json(name = "Entries")]
-        val entries : EntriesList,
-    @property:[Json(name = "Outputs")]
-        val outputs : List<WeightedOutput>,
-    @property:[Json(name = "ExtraInfo")]
+    val id : String,
+    @property:[Json(name = "nodeVersion")]
+    val nodeVersion : String,
+    @property:[Json(name = "name")]
+    val name : String,
+    @property:[Json(name = "description")]
+    val description : String,
+    @property:[Json(name = "version")]
+    val version : String,
+    @property:[Json(name = "coinInputs")]
+    val coinInputs : List<CoinInput>,
+    @property:[Json(name = "itemInputs")]
+    val itemInputs : List<ItemInput>,
+    @property:[Json(name = "entries")]
+    val entries : EntriesList,
+    @property:[Json(name = "outputs")]
+    val outputs : List<WeightedOutput>,
+    @property:[Json(name = "blockInterval")]
+    val blockInterval : Long,
+    @property:[Json(name = "enabled")]
+    val enabled : Boolean,
+    @property:[Json(name = "extraInfo")]
         val extraInfo: String
 ) {
     companion object {
@@ -42,19 +42,19 @@ data class Recipe(
             jsonArray.forEach {
                 list.add(
                         Recipe(
-                                nodeVersion = it.string("NodeVersion")!!,
-                                cookbookId = it.string("CookbookID")!!,
-                                name = it.string("Name")!!,
-                                id = it.string("ID")!!,
-                                description = it.string("Description")!!,
-                                sender = it.string("Sender")!!,
-                                blockInterval = it.fuzzyLong("BlockInterval"),
-                                disabled = it.boolean("Disabled")!!,
-                                coinInputs = CoinInput.listFromJson(it.array("CoinInputs")),
-                                itemInputs = ItemInput.listFromJson(it.array("ItemInputs")),
-                                entries = EntriesList.fromJson(it.obj("Entries"))!!,
-                                outputs = WeightedOutput.listFromJson(it.array("Outputs")),
-                                extraInfo = it.string("ExtraInfo")!!
+                            cookbookId = it.string("cookbookID")!!,
+                            id = it.string("ID")!!,
+                                nodeVersion = it.string("nodeVersion")!!,
+                                name = it.string("name")!!,
+                                description = it.string("description")!!,
+                                version = it.string("version")!!,
+                                coinInputs = CoinInput.listFromJson(it.array("coinInputs")),
+                                itemInputs = ItemInput.listFromJson(it.array("itemInputs")),
+                                entries = EntriesList.fromJson(it.obj("entries"))!!,
+                                outputs = WeightedOutput.listFromJson(it.array("outputs")),
+                                blockInterval = it.fuzzyLong("blockInterval"),
+                                enabled = it.boolean("enabled")!!,
+                                extraInfo = it.string("extraInfo")!!
                         )
                 )
             }

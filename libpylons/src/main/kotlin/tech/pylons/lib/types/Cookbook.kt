@@ -4,27 +4,30 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import tech.pylons.lib.internal.fuzzyLong
+import tech.pylons.lib.types.tx.Coin
 import java.lang.StringBuilder
 
 data class Cookbook (
-        @property:[Json(name = "NodeVersion")]
-        val nodeVersion : String,
+        @property:[Json(name = "creator")]
+        val Creator : String,
         @property:[Json(name = "ID")]
         val id : String,
-        @property:[Json(name = "Name")]
+        @property:[Json(name = "nodeVersion")]
+        val nodeVersion : String,
+        @property:[Json(name = "name")]
         val name : String,
-        @property:[Json(name = "Description")]
+        @property:[Json(name = "description")]
         val description : String,
-        @property:[Json(name = "Version")]
-        val version : String,
-        @property:[Json(name = "Developer")]
+        @property:[Json(name = "developer")]
         val developer : String,
-        @property:[Json(name = "Sender")]
-        val sender : String,
-        @property:[Json(name = "SupportEmail")]
+        @property:[Json(name = "version")]
+        val version : String,
+        @property:[Json(name = "supportEmail")]
         val supportEmail : String,
-        @property:[Json(name ="CostPerBlock")]
-        val costPerBlock : Long
+        @property:[Json(name ="costPerBlock")]
+        val costPerBlock : Coin,
+        @property:[Json(name ="enabled")]
+        val Enabled : Boolean
 ) {
     companion object {
         fun getListFromJson(json : String) : List<Cookbook> {
@@ -35,15 +38,16 @@ data class Cookbook (
                 val obj = jsonArray[i]
                 list.add(
                         Cookbook(
-                                nodeVersion = obj.string("NodeVersion")!!,
+                            Creator = obj.string("creator")!!,
                                 id = obj.string("ID")!!,
-                                name = obj.string("Name")!!,
-                                description = obj.string("Description")!!,
-                                version = obj.string("Version")!!,
-                                developer = obj.string("Developer")!!,
-                            sender = obj.string("Sender")!!,
-                                supportEmail = obj.string("SupportEmail")!!,
-                                costPerBlock = obj.fuzzyLong("CostPerBlock")
+                                name = obj.string("name")!!,
+                                nodeVersion = obj.string("nodeVersion")!!,
+                                description = obj.string("description")!!,
+                                version = obj.string("version")!!,
+                                developer = obj.string("developer")!!,
+                                supportEmail = obj.string("supportEmail")!!,
+                                costPerBlock = Coin.fromJson(obj.obj("costPerBlock")!!),
+                                Enabled = obj.boolean("enabled")!!
                         )
                 )
             }
@@ -55,15 +59,16 @@ data class Cookbook (
                 try {
                     val obj = Parser.default().parse(StringBuilder(json)) as JsonObject
                     return Cookbook(
-                        nodeVersion = obj.string("NodeVersion")!!,
+                        Creator = obj.string("creator")!!,
                         id = obj.string("ID")!!,
-                        name = obj.string("Name")!!,
-                        description = obj.string("Description")!!,
-                        version = obj.string("Version")!!,
-                        developer = obj.string("Developer")!!,
-                        sender = obj.string("Sender")!!,
-                        supportEmail = obj.string("SupportEmail")!!,
-                        costPerBlock = obj.fuzzyLong("CostPerBlock")
+                        name = obj.string("name")!!,
+                        nodeVersion = obj.string("nodeVersion")!!,
+                        description = obj.string("description")!!,
+                        version = obj.string("version")!!,
+                        developer = obj.string("developer")!!,
+                        supportEmail = obj.string("supportEmail")!!,
+                        costPerBlock = Coin.fromJson(obj.obj("costPerBlock")!!),
+                        Enabled = obj.boolean("enabled")!!
                     )
                 }catch(e: Error){
                 }

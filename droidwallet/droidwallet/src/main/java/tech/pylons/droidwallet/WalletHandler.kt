@@ -2,6 +2,7 @@ package tech.pylons.droidwallet
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -13,8 +14,17 @@ import tech.pylons.lib.types.Cookbook
 import tech.pylons.lib.types.Profile
 import tech.pylons.lib.types.Transaction
 import tech.pylons.lib.types.tx.recipe.*
+<<<<<<< Updated upstream
+=======
+import tech.pylons.lib.types.tx.Coin
+>>>>>>> Stashed changes
 import java.lang.ref.WeakReference
 import java.math.BigDecimal
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class WalletHandler {
 
@@ -64,6 +74,25 @@ class WalletHandler {
             false
         }
 
+        fun generateString(): String {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val current = LocalDateTime.now()
+<<<<<<< Updated upstream
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                return current.format(formatter)
+            } else {
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+=======
+                val formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss")
+                return current.format(formatter)
+            } else {
+                val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
+>>>>>>> Stashed changes
+                val currentDate = sdf.format(Date())
+                return currentDate
+            }
+
+        }
         /**
          * Getter for the wallet instance
          */
@@ -255,7 +284,7 @@ class WalletHandler {
 
                     if (cookbooks.isNotEmpty()) {
                         cookbook = cookbooks.find { cb ->
-                            cb.sender == getUserProfile()?.address && cb.id.startsWith(
+                            cb.Creator == getUserProfile()?.address && cb.id.startsWith(
                                 appName,
                                 true
                             )
@@ -279,7 +308,7 @@ class WalletHandler {
                 if (cookbooks.isNotEmpty()) {
                     Companion.userCookbooks.clear()
                     cookbooks.forEach {
-                        if (it.sender == Companion.userProfile?.address)
+                        if (it.Creator == Companion.userProfile?.address)
                             Companion.userCookbooks.add(it)
                     }
                 }
@@ -317,8 +346,18 @@ class WalletHandler {
                         if (nfts.isNotEmpty()) {
                             userNfts.clear()
                             nfts.forEach { rcp ->
-                                if (rcp.sender == getUserProfile()?.address)
-                                    userNfts.add(rcp)
+                                wallet?.listCookbooks { cookbooks ->
+                                    if(cookbooks.isNotEmpty()){
+                                        cookbooks.forEach{
+                                            if(it.Creator == getUserProfile()?.address){
+                                                if (rcp.cookbookId == it.id){
+                                                    userNfts.add(rcp)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                             }
                         }
 
@@ -379,23 +418,39 @@ class WalletHandler {
                 launch {
                     //this creation is wrong
                     wallet?.createRecipe(
+                        creator = getUserCookbook()?.Creator!!,
+                        version = getUserCookbook()?.version!!,
+<<<<<<< Updated upstream
+                        id = getUserCookbook()?.Creator!! + "-" + generateString(),
+=======
+                        id = getUserCookbook()?.Creator!! + "_" + generateString(),
+>>>>>>> Stashed changes
                         name = name,
                         itemInputs = listOf(),          // this field is not necessary in NFT creation
                         cookbook = getUserCookbook()?.id!!,  //NFT creator's Cookbook ID
                         description = description,      //NFT_recipe_description,      //NFT Recipe Description
-                        blockInterval = 0,
                         coinInputs = listOf(
                             CoinInput(
+<<<<<<< Updated upstream
                                 coin = currency, //"pylon, usd",
                                 count = if (currency == "USD") {
                                     (price.toDouble() * 100).toLong() //support cent
                                 } else {
                                     price.toDouble().toLong() //remove .value
                                 }
+=======
+                                listOf(
+                                    Coin(currency, if (currency == "USD") {
+                                        (price.toDouble() * 100).toLong() //support cent
+                                    } else {
+                                        price.toDouble().toLong() //remove .value
+                                    })
+                                )
+>>>>>>> Stashed changes
                             )
                         ), // NFT price definition
 
-                        outputTable = EntriesList(
+                        entries = EntriesList(
                             coinOutputs = listOf(),         //in NFT creation, coinOutput is inavailable
                             itemModifyOutputs = listOf(),   //in NFT creation, itemModifyOutputs is unecessary
                             itemOutputs = listOf(           //NFT definition
@@ -406,9 +461,15 @@ class WalletHandler {
                                         //Residual% definition
                                         //Pls confirm if this is the right place for Residual defintion
                                         DoubleParam(
+<<<<<<< Updated upstream
                                             key = "Residual%", //this should be reserved keyword for NFT
                                             program = "",
                                             rate = "1.0",
+=======
+                                            key = "Residual", //this should be reserved keyword for NFT
+                                            program = "1",
+                                            rate = "1",
+>>>>>>> Stashed changes
                                             weightRanges = listOf(
                                                 DoubleWeightRange(
                                                     upper = royalty, //"${royalty}000000000000000000",  //20%
@@ -423,29 +484,48 @@ class WalletHandler {
                                         //Pls confirm if this is the right place for NFT Quantity defintion
                                         LongParam(
                                             key = "Quantity",
+<<<<<<< Updated upstream
                                             program = "",
                                             rate = "1.0",
                                             weightRanges = listOf(
                                                 LongWeightRange(
                                                     upper = quantity.toString(), //quantity 10 copies
                                                     lower = quantity.toString(),
+=======
+                                            program = "1",
+                                            rate = "1",
+                                            weightRanges = listOf(
+                                                IntWeightRange(
+                                                    upper = quantity, //quantity 10 copies
+                                                    lower = quantity,
+>>>>>>> Stashed changes
                                                     weight = 1
                                                 )
                                             )
                                         ),
                                         LongParam(
+<<<<<<< Updated upstream
                                             rate = "1.0",
                                             key = "Width",
                                             weightRanges = listOf(
                                                 LongWeightRange(
                                                     upper = imageWidth.toString(),
                                                     lower =imageWidth.toString(),
+=======
+                                            rate = "1",
+                                            key = "Width",
+                                            weightRanges = listOf(
+                                                IntWeightRange(
+                                                    upper = imageWidth,
+                                                    lower =imageWidth,
+>>>>>>> Stashed changes
                                                     weight = 1
                                                 )
                                             ),
                                             program = ""
                                         ),
                                         LongParam(
+<<<<<<< Updated upstream
                                             rate = "1.0",
                                             key = "Height",
                                             weightRanges = listOf(
@@ -456,12 +536,28 @@ class WalletHandler {
                                                 )
                                             ),
                                             program = ""
+=======
+                                            rate = "1",
+                                            key = "Height",
+                                            weightRanges = listOf(
+                                                IntWeightRange(
+                                                    upper = imageHeight,
+                                                    lower =imageHeight,
+                                                    weight = 1
+                                                )
+                                            ),
+                                            program = "1"
+>>>>>>> Stashed changes
                                         )
                                     ),
                                     strings = listOf(
                                         //pls confirm this field
                                         StringParam(
+<<<<<<< Updated upstream
                                             rate = "1.0",
+=======
+                                            rate = "1",
+>>>>>>> Stashed changes
                                             key = "Name",
                                             value = name,
                                             program = ""
@@ -473,19 +569,31 @@ class WalletHandler {
                                             program = ""
                                         ),
                                         StringParam(
+<<<<<<< Updated upstream
                                             rate = "1.0",
+=======
+                                            rate = "1",
+>>>>>>> Stashed changes
                                             key = "Description",
                                             value = description,
                                             program = ""
                                         ),
                                         StringParam(
+<<<<<<< Updated upstream
                                             rate = "1.0",
+=======
+                                            rate = "1",
+>>>>>>> Stashed changes
                                             key = "Currency",
                                             value = currency,
                                             program = ""
                                         ),
                                         StringParam(
+<<<<<<< Updated upstream
                                             rate = "1.0",
+=======
+                                            rate = "1",
+>>>>>>> Stashed changes
                                             key = "Price",
                                             value = if (currency == "USD") {
                                                 (price.toDouble() * 100).toLong()
@@ -493,10 +601,22 @@ class WalletHandler {
                                             } else {
                                                 price.toDouble().toLong().toString() //remove .value
                                             },
+<<<<<<< Updated upstream
                                             program = ""
                                         )
                                     ),
                                     transferFee = 0 //transfer Fee should be defined in NFT creation, currently set to 0
+=======
+                                            program = "1"
+                                        )
+                                    ),
+                                    mutableStrings = listOf(),
+                                    transferFee = listOf(), //transfer Fee should be defined in NFT creation, currently set to 0
+                                    tradePercentage = "1",
+                                    quantity = quantity,
+                                    amountMinted = 2,
+                                    tradeable = true
+>>>>>>> Stashed changes
                                 ) // NFT entry
                             )
                         ),
@@ -505,10 +625,19 @@ class WalletHandler {
                                 entryIds = listOf(
                                     NFT_id
                                 ),
+<<<<<<< Updated upstream
                                 weight = "1"
                             )
                         ),
-                        extraInfo = listOf()
+                        blockInterval = 0,
+=======
+                                weight = 1
+                            )
+                        ),
+                        blockInterval = 1,
+>>>>>>> Stashed changes
+                        enabled = true,
+                        extraInfo = ""
                     ) {
                         val transaction = it
                         var ret = false
@@ -628,12 +757,34 @@ class WalletHandler {
             callback: (Transaction?) -> Unit
         ) {
             CoroutineScope(Dispatchers.IO).launch {
+                var creator = ""
+                wallet?.listCookbooks {
+
+                    val cookbooks = it
+                    var cookbook: Cookbook? = null
+
+                    if (cookbooks.isNotEmpty()) {
+                        cookbook = cookbooks.find { cb ->
+                            cb.Creator == getUserProfile()?.address && cb.id.startsWith(
+                                appName,
+                                true
+                            )
+                        }
+                        creator = cookbook?.Creator!!
+                    } else {
+                        cookbook = null
+                    }
+                }
+
                 wallet?.executeRecipe(
-                    recipe,
+                    creator,
                     cookbook,
+                    recipe,
+                    1,
                     itemInputs,
                     callback = callback
                 )
+
             }
         }
 
@@ -649,197 +800,198 @@ class WalletHandler {
          * 4. Create test NFT Recipe
          * 5. Execute test NFT Recipe
          */
-        fun testCreateNft(context: Context?) {
-
-            CoroutineScope(Dispatchers.IO).launch {
-                var profile: Profile? = null
-                var cookbooks = ArrayList<Cookbook>()
-                var cookbook: Cookbook? = null
-                var recipes = ArrayList<Recipe>()
-
-                // fetch profile
-                runBlocking {
-                    launch {
-                        getWallet().fetchProfile(null) {
-                            profile = it
-                        }
-                    }
-                }
-
-                if (profile == null) {
-                    return@launch
-                }
-
-                runBlocking {
-                    launch {
-                        getWallet().listCookbooks {
-                            it.forEach {
-                                //my cookbook
-                                if (it.sender == profile?.address)
-                                    cookbooks.add(it)
-                            }
-                        }
-                    }
-                }
-
-                if (cookbooks.isEmpty()) {
-                    //account has not cookbook
-                    //create cookbook
-                    runBlocking {
-                        launch {
-                            wallet?.createAutoCookbook(
-                                profile!!,
-                                appName
-                            ) {
-                                if (it != null) {
-
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (cookbooks.isEmpty()) {
-                    //something wrong with cookbook creation
-                    return@launch
-                }
-
-                cookbook = cookbooks.find {
-                    it.sender == profile?.address
-                }
-                if (cookbook == null) {
-                    //not yet created cookbook
-                    return@launch
-                }
-
-
-                runBlocking {
-                    launch {
-                        getWallet().listRecipes {
-                            it.forEach {
-                                recipes.add(it)
-                            }
-                        }
-                    }
-                }
-
-                val nftRecipe = recipes.find {
-                    it.name == "test NFT recipe"
-                }
-
-                if (nftRecipe == null) {
-                    //nft creation
-                    getWallet().createRecipe(
-                        name = "test NFT recipe",
-                        itemInputs = listOf(), // this field is not necessary in NFT creation
-                        cookbook = cookbook.id,
-                        description = "test recipe description for nft image",
-                        blockInterval = 0,
-                        coinInputs = listOf(
-                            CoinInput(
-                                coin = "pylon",
-                                count = 100
-                            )
-                        ), // NFT price
-                        outputTable = EntriesList(
-                            coinOutputs = listOf(),
-                            itemModifyOutputs = listOf(),
-                            itemOutputs = listOf(
-                                //NFT description
-                                ItemOutput(
-                                    id = "test_NFT_v1",
-                                    doubles = listOf(
-
-                                        DoubleParam(
-                                            key = "Residual%", //this should be reserved keyword for NFT
-                                            program = "",
-                                            rate = "1.0",
-                                            weightRanges = listOf(
-                                                DoubleWeightRange(
-                                                    upper = "20", //20%
-                                                    lower = "20",
-                                                    weight = 1
-                                                )
-                                            )
-                                        )
-                                    ),
-                                    longs = listOf(
-                                        LongParam(
-                                            key = "Quantity",
-                                            program = "",
-                                            rate = "1.0",
-                                            weightRanges = listOf(
-                                                LongWeightRange(
-                                                    upper = BigDecimal.valueOf(10).setScale(18)
-                                                        .toString(), //quantity 10 copies
-                                                    lower = BigDecimal.valueOf(10).setScale(18)
-                                                        .toString(),
-                                                    weight = 1
-                                                )
-                                            )
-                                        )
-                                    ),
-                                    strings = listOf(
-                                        //pls confirm this field
-                                        StringParam(
-                                            rate = "1.0",
-                                            key = "Name",
-                                            value = "NFT",
-                                            program = ""
-                                        ),
-                                        StringParam(
-                                            rate = "1.0",
-                                            key = "NFT_URL",
-                                            value = "http://127.0.0.1/test_nft.html",
-                                            program = ""
-                                        )
-                                    ),
-                                    transferFee = 0
-                                ) // NFT entry
-                            )
-                        ),
-                        outputs = listOf(
-                            WeightedOutput(
-                                entryIds = listOf(
-                                    "test_NFT_v1"
-                                ),
-                                weight = "1"
-                            )
-                        ),
-                        extraInfo = listOf()
-                    ) {
-                        val transaction = it
-
-                    }
-
-                    return@launch
-                }
-
-                //create NFT
-                runBlocking {
-                    launch {
-                        getWallet().executeRecipe(
-                            nftRecipe.name,
-                            nftRecipe.cookbookId,
-                            listOf()
-                        ) {
-                            if (it?.code == Transaction.ResponseCode.OK) {
-
-                            }
-                        }
-                    }
-                }
-
-                //check
-                runBlocking {
-                    launch {
-                        getWallet().fetchProfile(null) {
-                            profile = it
-                        }
-                    }
-                }
-            }
-        }
+//        fun testCreateNft(context: Context?) {
+//
+//            CoroutineScope(Dispatchers.IO).launch {
+//                var profile: Profile? = null
+//                var cookbooks = ArrayList<Cookbook>()
+//                var cookbook: Cookbook? = null
+//                var recipes = ArrayList<Recipe>()
+//
+//                // fetch profile
+//                runBlocking {
+//                    launch {
+//                        getWallet().fetchProfile(null) {
+//                            profile = it
+//                        }
+//                    }
+//                }
+//
+//                if (profile == null) {
+//                    return@launch
+//                }
+//
+//                runBlocking {
+//                    launch {
+//                        getWallet().listCookbooks {
+//                            it.forEach {
+//                                //my cookbook
+//                                if (it.Creator == profile?.address)
+//                                    cookbooks.add(it)
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                if (cookbooks.isEmpty()) {
+//                    //account has not cookbook
+//                    //create cookbook
+//                    runBlocking {
+//                        launch {
+//                            wallet?.createAutoCookbook(
+//                                profile!!,
+//                                appName
+//                            ) {
+//                                if (it != null) {
+//
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                if (cookbooks.isEmpty()) {
+//                    //something wrong with cookbook creation
+//                    return@launch
+//                }
+//
+//                cookbook = cookbooks.find {
+//                    it.Creator == profile?.address
+//                }
+//                if (cookbook == null) {
+//                    //not yet created cookbook
+//                    return@launch
+//                }
+//
+//
+//                runBlocking {
+//                    launch {
+//                        getWallet().listRecipes {
+//                            it.forEach {
+//                                recipes.add(it)
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                val nftRecipe = recipes.find {
+//                    it.name == "test NFT recipe"
+//                }
+//
+//                if (nftRecipe == null) {
+//                    //nft creation
+//                    getWallet().createRecipe(
+//                        name = "test NFT recipe",
+//                        itemInputs = listOf(), // this field is not necessary in NFT creation
+//                        cookbook = cookbook.id,
+//                        description = "test recipe description for nft image",
+//                        blockInterval = 0,
+//                        coinInputs = listOf(
+//                            CoinInput(
+//                                coin = "pylon",
+//                                count = 100
+//                            )
+//                        ), // NFT price
+//                        outputTable = EntriesList(
+//                            coinOutputs = listOf(),
+//                            itemModifyOutputs = listOf(),
+//                            itemOutputs = listOf(
+//                                //NFT description
+//                                ItemOutput(
+//                                    id = "test_NFT_v1",
+//                                    doubles = listOf(
+//
+//                                        DoubleParam(
+//                                            key = "Residual%", //this should be reserved keyword for NFT
+//                                            program = "",
+//                                            rate = "1.0",
+//                                            weightRanges = listOf(
+//                                                DoubleWeightRange(
+//                                                    upper = "20", //20%
+//                                                    lower = "20",
+//                                                    weight = 1
+//                                                )
+//                                            )
+//                                        )
+//                                    ),
+//                                    longs = listOf(
+//                                        LongParam(
+//                                            key = "Quantity",
+//                                            program = "",
+//                                            rate = "1.0",
+//                                            weightRanges = listOf(
+//                                                LongWeightRange(
+//                                                    upper = BigDecimal.valueOf(10).setScale(18)
+//                                                        .toString(), //quantity 10 copies
+//                                                    lower = BigDecimal.valueOf(10).setScale(18)
+//                                                        .toString(),
+//                                                    weight = 1
+//                                                )
+//                                            )
+//                                        )
+//                                    ),
+//                                    strings = listOf(
+//                                        //pls confirm this field
+//                                        StringParam(
+//                                            rate = "1.0",
+//                                            key = "Name",
+//                                            value = "NFT",
+//                                            program = ""
+//                                        ),
+//                                        StringParam(
+//                                            rate = "1.0",
+//                                            key = "NFT_URL",
+//                                            value = "http://127.0.0.1/test_nft.html",
+//                                            program = ""
+//                                        )
+//                                    ),
+//                                    transferFee = 0
+//                                ) // NFT entry
+//                            )
+//                        ),
+//                        outputs = listOf(
+//                            WeightedOutput(
+//                                entryIds = listOf(
+//                                    "test_NFT_v1"
+//                                ),
+//                                weight = "1"
+//                            )
+//                        ),
+//                        extraInfo = ""
+//                    ) {
+//                        val transaction = it
+//
+//                    }
+//
+//                    return@launch
+//                }
+//
+//                //create NFT
+//                runBlocking {
+//                    launch {
+//                        getWallet().executeRecipe(
+//                            nftRecipe.,
+//                            nftRecipe.name,
+//                            nftRecipe.cookbookId,
+//                            listOf()
+//                        ) {
+//                            if (it?.code == Transaction.ResponseCode.OK) {
+//
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                //check
+//                runBlocking {
+//                    launch {
+//                        getWallet().fetchProfile(null) {
+//                            profile = it
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**

@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import tech.pylons.lib.types.tx.Coin
 import java.lang.Exception
 
 class TransactionErrorTest {
@@ -53,7 +54,7 @@ class TransactionErrorTest {
     */
     @Test
     fun codeRawLogError() {
-        val tx = core.engine.createTrade(listOf(CoinInput("pylon", 5)), listOf(), listOf(), listOf(), "")
+        val tx = core.engine.createTrade("Creator", listOf(CoinInput(listOf(Coin("upylon", 5)))), listOf(), listOf(), listOf(), "")
         tx.submit()
 
         Assertions.assertEquals(null, tx.id)
@@ -67,7 +68,7 @@ class TransactionErrorTest {
     */
     @Test
     fun signatureVerificationError() {
-        val tx = core.engine.applyRecipe("", listOf())
+        val tx = core.engine.applyRecipe("creator", "cookbookId", "id", 1, listOf())
         tx.submit()
 
         Assertions.assertEquals(null, tx.id)
@@ -84,7 +85,7 @@ class TransactionErrorTest {
     fun acceptedTXError() {
         runBlocking {
             core.engine.getMyProfileState()
-            val tx = core.engine.applyRecipe("", listOf())
+            val tx = core.engine.applyRecipe("creator", "cookbookId", "id", 1, listOf())
             tx.submit()
             println("waiting for tx to resolve")
             while (true) {

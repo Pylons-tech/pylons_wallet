@@ -11,11 +11,16 @@ val basicItemOutput = ItemOutput(
         ),
         longs = listOf(
                 LongParam("1.0", "Level", listOf(
-                        LongWeightRange("100", "1", 1)
+                        IntWeightRange(1, 100, 1)
                 ), "")
         ),
         strings = listOf(
                 StringParam("1.0", "Name", "fooBar", "")
         ),
-        transferFee = 0
+        mutableStrings = listOf(),
+        transferFee = listOf(),
+        tradePercentage = "",
+        quantity = 1,
+        amountMinted = 1,
+        tradeable = true
 )

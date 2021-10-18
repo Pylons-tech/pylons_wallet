@@ -18,7 +18,7 @@ class ExecutionTest {
                 "CookbookID": "-124015487",
                 "CoinInputs": [
                   {
-                    "denom": "pylon",
+                    "denom": "upylon",
                     "amount": "10"
                   }
                 ],
@@ -41,7 +41,7 @@ class ExecutionTest {
                 cookbookId = "-124015487",
                 coinInputs = listOf(
                         Coin(
-                                denom = "pylon",
+                                denom = "upylon",
                                 amount = 10
                         )
                 ),

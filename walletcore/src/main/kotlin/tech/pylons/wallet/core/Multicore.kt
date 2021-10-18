@@ -28,7 +28,6 @@ object Multicore : IMulticore {
         core.userProfile = MyProfile(
                 core = core,
                 credentials = credentials,
-                lockedCoinDetails = LockedCoinDetails.default,
                 strings = mapOf(),
                 items = listOf(),
                 coins = listOf()

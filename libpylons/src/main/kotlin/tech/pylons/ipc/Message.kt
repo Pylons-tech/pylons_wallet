@@ -13,6 +13,12 @@ import tech.pylons.lib.types.Profile
 import tech.pylons.lib.types.PylonsSECP256K1
 import tech.pylons.lib.types.credentials.CosmosCredentials
 import tech.pylons.lib.types.tx.Coin
+import tech.pylons.lib.types.tx.item.Item
+import tech.pylons.lib.types.tx.recipe.CoinInput
+import tech.pylons.lib.types.tx.recipe.EntriesList
+import tech.pylons.lib.types.tx.recipe.ItemInput
+import tech.pylons.lib.types.tx.recipe.WeightedOutput
+import tech.pylons.lib.types.tx.trade.ItemRef
 import java.io.StringReader
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -48,67 +54,64 @@ sealed class Message {
         // we need structured exec data but we can't do it atm
     }
 
-    class CreateCookbooks(
-        var ids: List<String>? = null,
-        var names: List<String>? = null,
-        var developers: List<String>? = null,
-        var descriptions: List<String>? = null,
-        var versions: List<String>? = null,
-        var supportEmails: List<String>? = null,
-        var costsPerBlock: List<Long>? = null
+    class CreateCookbooks( 
+        var creators : List<String>? = null,
+        var ids : List<String>? = null,
+        var names : List<String>? = null,
+        var descriptions : List<String>? = null,
+        var developers : List<String>? = null,
+        var versions : List<String>? = null,
+        var supportEmails : List<String>? = null,
+        var costsPerBlocks : List<Coin>? = null,
+        var enableds : List<Boolean>? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<CreateCookbooks>(json)
         }
-
-        override fun resolve() = Response.emit(
-            this, true,
-            txs = core!!.batchCreateCookbook(
-                ids!!, names!!, developers!!,
-                descriptions!!, versions!!, supportEmails!!, costsPerBlock!!
-            )
-        )
+ 
+        override fun resolve() = Response.emit(this, true,
+            txs = core!!.batchCreateCookbook(creators!!, ids!!, names!!, descriptions!!, developers!!,
+            versions!!, supportEmails!!, costsPerBlocks!!, enableds!!))
     }
 
     class CreateRecipes(
-        var names: List<String>? = null,
-        var cookbooks: List<String>? = null,
-        var descriptions: List<String>? = null,
-        var blockIntervals: List<Long>? = null,
-        var coinInputs: List<String>? = null,
-        var itemInputs: List<String>? = null,
-        var outputTables: List<String>? = null,
-        var outputs: List<String>? = null,
-        var extraInfos: List<String>? = null
+        var creators : List<String>? = null,
+        var cookbooks : List<String>? = null,
+        var ids : List<String>? = null,
+        var names : List<String>? = null,
+        var descriptions : List<String>? = null,
+        var versions: List<String>? = null,
+        var coinInputs : List<CoinInput>? = null,
+        var itemInputs: List<ItemInput>? = null,
+        var outputTables : EntriesList? = null,
+        var outputs : List<WeightedOutput>? = null,
+        var blockIntervals : List<Long>? = null,
+        var enabled : List<Boolean>? = null,
+        var extraInfos : List<String>? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<CreateRecipes>(json)
         }
-
-        override fun resolve() = Response.emit(
-            this, true, txs = core!!.batchCreateRecipe(
-                names!!, cookbooks!!,
-                descriptions!!, blockIntervals!!, coinInputs!!, itemInputs!!, outputTables!!, outputs!!, extraInfos!!
-            ),
-            cookbooksIn = cookbooks!!
-        )
+ 
+        override fun resolve() = Response.emit(this, true, txs = core!!.batchCreateRecipe(creators!!, cookbooks!!, ids!!, names!!,
+            descriptions!!, versions!!,  listOf(coinInputs!!), listOf(itemInputs!!), listOf(outputTables!!), listOf(outputs!!), blockIntervals!!, enabled!!, extraInfos!!),
+            cookbooksIn = cookbooks!!)
     }
 
-    class CreateTrade(
-        var coinInputs: List<String>? = null,
-        var itemInputs: List<String>? = null,
-        var coinOutputs: List<String>? = null,
-        var itemOutputs: List<String>? = null,
-        var extraInfo: String? = null
+    class CreateTrade (
+        var creator : String? = null,
+        var coinInputs : List<CoinInput>? = null,
+        var itemInputs: List<ItemInput>? = null,
+        var coinOutputs: List<Coin>? = null,
+        var itemOutputs : List<ItemRef>? = null,
+        var extraInfo : String? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<CreateTrade>(json)
         }
-
-        override fun resolve() = Response.emit(
-            this, true,
-            txs = listOf(core!!.createTrade(coinInputs!!, itemInputs!!, coinOutputs!!, itemOutputs!!, extraInfo!!))
-        )
+ 
+        override fun resolve() = Response.emit(this, true,
+            txs = listOf(core!!.createTrade(creator!!, coinInputs!!, itemInputs!!, coinOutputs!!, itemOutputs!!, extraInfo!!))) 
         // this feels like it should have some structured input data but i'm not sure atm, need to look at how trades
         // work on the node some more
     }
@@ -139,37 +142,35 @@ sealed class Message {
         )
     }
 
-    class ExecuteRecipe(
-        var recipe: String? = null,
-        var cookbook: String? = null,
-        var itemInputs: List<String>? = null
+    class ExecuteRecipe( 
+            var creator : String? = null,
+            var cookbookID : String? = null,
+            var id : String? = null,
+            var coinInputsIndex: Long? = null,
+            var itemIds : List<String>? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<ExecuteRecipe>(json)
-        }
-
-        override fun resolve() = Response.emit(
-            this, true,
-            txs = listOf(core!!.applyRecipe(recipe!!, cookbook!!, itemInputs!!)),
-            recipesIn = listOf(recipe!!), cookbooksIn = listOf(cookbook!!),
-            itemsIn = itemInputs!!
-        )
+        } 
+        override fun resolve() = Response.emit(this, true,
+            txs = listOf(core!!.applyRecipe(creator!!, cookbookID!!, id!!, coinInputsIndex!!, itemIds!!)),
+            recipesIn = listOf(id!!), cookbooksIn = listOf(cookbookID!!),
+            itemsIn = itemIds!!)
     }
 
     class FulfillTrade(
-        var tradeId: String? = null,
-        var itemIds: List<String>? = null,
-        var paymentId: String? = null
+        var creator : String? = null,
+        var ID : String? = null,
+        var CoinInputsIndex :Long? = null,
+        var Items : List<ItemRef>? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<FulfillTrade>(json)
         }
-
-        override fun resolve() = Response.emit(
-            this, true,
-            txs = listOf(core!!.fulfillTrade(tradeId!!, itemIds!!)),
-            tradesIn = listOf(tradeId!!), itemsIn = itemIds!!
-        )
+ 
+        override fun resolve() = Response.emit(this, true,
+            txs = listOf(core!!.fulfillTrade(creator!!, ID!!, CoinInputsIndex!!, Items!!)),
+            tradesIn = listOf(ID!!), itemsIn = ItemRef.listFromString(Items!!)) 
     }
 
     class GetCookbooks : Message() {
@@ -195,14 +196,13 @@ sealed class Message {
     }
 
     class GetTrades : Message() {
+        var creator : String? = null
         companion object {
             fun deserialize(json: String) = klaxon.parse<GetTrades>(json)
         }
-
-        override fun resolve() = Response.emit(
-            this, true,
-            tradesOut = core!!.listTrades()
-        )
+ 
+        override fun resolve() = Response.emit(this, true,
+        tradesOut = core!!.listTrades(creator!!)) 
     }
 
     class GetProfile(
@@ -228,20 +228,7 @@ sealed class Message {
             return Response.emit(this, true, profilesOut = ls)
         }
     }
-
-    class GetPylons(
-        var count: Long? = null
-    ) : Message() {
-        companion object {
-            fun deserialize(json: String) = klaxon.parse<GetPylons>(json)
-        }
-
-        override fun resolve() = Response.emit(
-            this, true,
-            txs = listOf(core!!.getPylons(count!!))
-        )
-    }
-
+ 
     class GetRecipes : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<GetRecipes>(json)
@@ -311,81 +298,65 @@ sealed class Message {
             return Response.emit(this, true, txs = listOf(tx))
         }
     }
-
-    class SendCoins(
-        var coins: String?,
-        var receiver: String?
-    ) : Message() {
-        companion object {
-            fun deserialize(json: String) = klaxon.parse<SendCoins>(json)
-        }
-
-        override fun resolve() = Response.emit(
-            this, true, txs = listOf(core!!.sendCoins(coins!!, receiver!!)),
-            coinsIn = Coin.listFromJson(klaxon.parseJsonArray(StringReader(coins)) as JsonArray<JsonObject>)
-        )
-    }
-
+ 
     class SetItemString(
-        var itemId: String? = null,
-        var field: String? = null,
-        var value: String? = null
+            var itemId : ItemRef? = null,
+            var field : String? = null,
+            var value : String? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<SetItemString>(json)
         }
-
-        override fun resolve() = Response.emit(
-            this, true, txs = listOf(core!!.setItemString(itemId!!, field!!, value!!)),
-            itemsIn = listOf(itemId!!)
-        )
+ 
+        override fun resolve() = Response.emit(this, true, txs = listOf(core!!.setItemString(itemId!!, field!!, value!!)),
+        itemsIn = ItemRef.listFromString(listOf(itemId!!)))
     }
 
     class UpdateCookbooks(
-        var ids: List<String>? = null,
-        var names: List<String>? = null,
-        var developers: List<String>? = null,
-        var descriptions: List<String>? = null,
-        var versions: List<String>? = null,
-        var supportEmails: List<String>? = null
+        var creators : List<String>? = null,
+        var ids : List<String>? = null,
+        var names : List<String>? = null,
+        var descriptions : List<String>? = null,
+        var developers : List<String>? = null,
+        var versions : List<String>? = null,
+        var supportEmails : List<String>? = null,
+        var costPerBlocks : List<Coin>? = null,
+        var enableds : List<Boolean>? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<UpdateCookbooks>(json)
         }
-
-        override fun resolve() = Response.emit(
-            this, true, txs =
-            core!!.batchUpdateCookbook(names!!, developers!!, descriptions!!, versions!!, supportEmails!!, ids!!),
-            cookbooksIn = ids!!
-        )
+ 
+        override fun resolve() = Response.emit(this, true, txs =
+            core!!.batchUpdateCookbook(creators!!, ids!!, names!!, descriptions!!, developers!!, versions!!, supportEmails!!, costPerBlocks!!, enableds!!),
+            cookbooksIn = ids!!) 
 
     }
 
-    class UpdateRecipes(
-        var ids: List<String>? = null,
-        var names: List<String>? = null,
-        var cookbooks: List<String>? = null,
-        var descriptions: List<String>? = null,
-        var blockIntervals: List<Long>? = null,
-        var coinInputs: List<String>? = null,
+    class UpdateRecipes( 
+        var creators : List<String>? = null,
+        var cookbooks : List<String>? = null,
+        var ids : List<String>? = null,
+        var names : List<String>? = null,
+        var descriptions : List<String>? = null,
+        var versions : List<String>? = null,
+        var coinInputs : List<String>? = null,
         var itemInputs: List<String>? = null,
-        var outputTables: List<String>? = null,
-        var outputs: List<String>? = null,
+        var entries : List<String>? = null,
+        var outputs : List<String>? = null,
+        var blockIntervals : List<Long>? = null,
+        var enableds : List<Boolean>? = null, 
         var extraInfos: List<String>? = null
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<UpdateRecipes>(json)
         }
-
-        override fun resolve(): Response =
-            Response.emit(
-                this, true, txs = core!!.batchUpdateRecipe(
-                    ids!!, names!!, cookbooks!!,
-                    descriptions!!, blockIntervals!!, coinInputs!!, itemInputs!!, outputTables!!,
-                    outputs!!, extraInfos!!
-                ),
-                recipesIn = ids!!, cookbooksIn = cookbooks!!
-            )
+ 
+        override fun resolve() : Response =
+            Response.emit(this, true, txs = core!!.batchUpdateRecipe(creators!!, cookbooks!!,ids!!, names!!,
+                descriptions!!, versions!!, coinInputs!!, itemInputs!!, entries!!,
+                outputs!!, blockIntervals!!, enableds!!, extraInfos!!),
+            recipesIn = ids!!, cookbooksIn = cookbooks!!) 
     }
 
     class WalletServiceTest(

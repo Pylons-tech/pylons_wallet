@@ -1,5 +1,5 @@
-package tech.pylons.wallet.core.internal
-
+package tech.pylons.wallet.core.internal 
+import Pylonstech.pylons.pylons.Tx.* 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.google.protobuf.*
@@ -7,7 +7,7 @@ import com.google.protobuf.util.JsonFormat
 import tech.pylons.lib.core.ICryptoHandler
 import tech.pylons.lib.types.hexToAscii
 import cosmos.tx.v1beta1.TxOuterClass
-import pylons.*
+//import pylons.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import org.spongycastle.util.encoders.Base64
@@ -25,45 +25,45 @@ object ProtoJsonUtil {
         .add(cosmos.base.v1beta1.CoinOuterClass.IntProto.getDescriptor())
         //register pylons Msg Type
         .add(MsgCreateAccount.getDescriptor())
-        .add(MsgCheckExecution.getDescriptor())
+        //.add(MsgCheckExecution.getDescriptor())
         .add(MsgCreateCookbook.getDescriptor())
         .add(MsgCreateRecipe.getDescriptor())
         .add(MsgCreateTrade.getDescriptor())
-        .add(MsgDisableRecipe.getDescriptor())
-        .add(MsgDisableTrade.getDescriptor())
-        .add(MsgEnableRecipe.getDescriptor())
-        .add(MsgEnableTrade.getDescriptor())
-        .add(MsgGetPylons.getDescriptor())
-        .add(MsgSendCoins.getDescriptor())
+        //.add(MsgDisableRecipe.getDescriptor())
+        //.add(MsgDisableTrade.getDescriptor())
+        //.add(MsgEnableRecipe.getDescriptor())
+        //.add(MsgEnableTrade.getDescriptor())
+        //.add(MsgGetPylons.getDescriptor())
+        //.add(MsgSendCoins.getDescriptor())
         .add(MsgExecuteRecipe.getDescriptor())
         .add(MsgFulfillTrade.getDescriptor())
-        .add(MsgGoogleIAPGetPylons.getDescriptor())
+        //.add(MsgGoogleIAPGetPylons.getDescriptor())
         .add(MsgSendItems.getDescriptor())
         .add(MsgUpdateCookbook.getDescriptor())
-        .add(MsgUpdateItemString.getDescriptor())
+        //.add(MsgUpdateItemString.getDescriptor())
         .add(MsgUpdateRecipe.getDescriptor())
         //response type
-        .add(MsgCreateExecutionResponse.getDescriptor())
-        .add(MsgCheckExecutionResponse.getDescriptor())
+        .add(MsgCreateAccountResponse.getDescriptor())
+        //.add(MsgCheckExecutionResponse.getDescriptor())
         .add(MsgCreateCookbookResponse.getDescriptor())
         .add(MsgCreateRecipeResponse.getDescriptor())
         .add(MsgCreateTradeResponse.getDescriptor())
-        .add(MsgDisableRecipeResponse.getDescriptor())
-        .add(MsgDisableTradeResponse.getDescriptor())
-        .add(MsgEnableRecipeResponse.getDescriptor())
-        .add(MsgEnableTradeResponse.getDescriptor())
-        .add(MsgGetPylonsResponse.getDescriptor())
-        .add(MsgSendCoinsResponse.getDescriptor())
+        //.add(MsgDisableRecipeResponse.getDescriptor())
+        //.add(MsgDisableTradeResponse.getDescriptor())
+        //.add(MsgEnableRecipeResponse.getDescriptor())
+        //.add(MsgEnableTradeResponse.getDescriptor())
+        //.add(MsgGetPylonsResponse.getDescriptor())
+        //.add(MsgSendCoinsResponse.getDescriptor())
         .add(MsgExecuteRecipeResponse.getDescriptor())
         .add(MsgFulfillTradeResponse.getDescriptor())
-        .add(MsgGoogleIAPGetPylonsResponse.getDescriptor())
+        //.add(MsgGoogleIAPGetPylonsResponse.getDescriptor())
         .add(MsgSendItemsResponse.getDescriptor())
         .add(MsgUpdateCookbookResponse.getDescriptor())
-        .add(MsgUpdateItemStringResponse.getDescriptor())
+        //.add(MsgUpdateItemStringResponse.getDescriptor())
         .add(MsgUpdateRecipeResponse.getDescriptor())
 
         //newly added type
-        .add(MsgFiatItem.getDescriptor())
+        //.add(MsgFiatItem.getDescriptor())
         .build()
     val jsonProtoPrinter = JsonFormat.printer().usingTypeRegistry(jsonProtoRegistry)
     val jsonProtoParser = JsonFormat.parser().usingTypeRegistry(jsonProtoRegistry)
@@ -83,22 +83,23 @@ object ProtoJsonUtil {
     //Tierre; hard coded every msg here but we should find design pattern for it
     fun findTxProtoMatch(type: String): Message? {
         when(type) {
+            "/Pylonstech.pylons.pylons.MsgCreateAccount"->{ return MsgCreateAccount.getDefaultInstance() }
             "/pylons.MsgCreateAccount"->{ return MsgCreateAccount.getDefaultInstance() }
-            "/pylons.MsgCheckExecution"->{ return MsgCheckExecution.getDefaultInstance() }
+            //"/pylons.MsgCheckExecution"->{ return MsgCheckExecution.getDefaultInstance() }
             "/pylons.MsgCreateCookbook"->{ return MsgCreateCookbook.getDefaultInstance() }
             "/pylons.MsgCreateRecipe"->{ return MsgCreateRecipe.getDefaultInstance() }
             "/pylons.MsgCreateTrade"->{ return MsgCreateTrade.getDefaultInstance() }
-            "/pylons.MsgDisableRecipe"->{ return MsgDisableRecipe.getDefaultInstance() }
-            "/pylons.MsgDisableTrade"->{ return MsgDisableTrade.getDefaultInstance() }
-            "/pylons.MsgEnableRecipe"->{ return MsgEnableRecipe.getDefaultInstance() }
+            //"/pylons.MsgDisableRecipe"->{ return MsgDisableRecipe.getDefaultInstance() }
+            //"/pylons.MsgDisableTrade"->{ return MsgDisableTrade.getDefaultInstance() }
+            //"/pylons.MsgEnableRecipe"->{ return MsgEnableRecipe.getDefaultInstance() }
             "/pylons.MsgExecuteRecipe"->{ return MsgExecuteRecipe.getDefaultInstance() }
-            "/pylons.MsgEnableTrade"->{ return MsgEnableTrade.getDefaultInstance() }
-            "/pylons.MsgFiatItem"->{ return MsgFiatItem.getDefaultInstance() }
+            //"/pylons.MsgEnableTrade"->{ return MsgEnableTrade.getDefaultInstance() }
+            //"/pylons.MsgFiatItem"->{ return MsgFiatItem.getDefaultInstance() }
             "/pylons.MsgFulfillTrade"->{ return MsgFulfillTrade.getDefaultInstance() }
-            "/pylons.MsgGetPylons"->{ return MsgGetPylons.getDefaultInstance() }
-            "/pylons.MsgGoogleIAPGetPylons"->{ return MsgGoogleIAPGetPylons.getDefaultInstance() }
-            "/pylons.MsgSendCoins"->{ return MsgSendCoins.getDefaultInstance() }
-            "/pylons.MsgUpdateItemString"->{ return MsgUpdateItemString.getDefaultInstance() }
+            //"/pylons.MsgGetPylons"->{ return MsgGetPylons.getDefaultInstance() }
+            //"/pylons.MsgGoogleIAPGetPylons"->{ return MsgGoogleIAPGetPylons.getDefaultInstance() }
+            //"/pylons.MsgSendCoins"->{ return MsgSendCoins.getDefaultInstance() }
+            //"/pylons.MsgUpdateItemString"->{ return MsgUpdateItemString.getDefaultInstance() }
             "/pylons.MsgUpdateCookbook"->{ return MsgUpdateCookbook.getDefaultInstance() }
             "/pylons.MsgUpdateRecipe"->{ return MsgUpdateRecipe.getDefaultInstance() }
             ""->{return null }

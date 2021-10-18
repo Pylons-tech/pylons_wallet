@@ -35,6 +35,7 @@ data class MetaRecipe (
      * from a chain, if available, but chain-dependent parameters will still sometimes
      * be inconsistent between entries. This is fine.
      */
+    var creators : MutableMap<String, Recipe> = mutableMapOf(),
     var versions : MutableMap<String, Recipe> = mutableMapOf(),
     /**
      * Map of all remotes the recipe exists on to the current state of the recipe on that
@@ -83,7 +84,7 @@ data class MetaRecipe (
         if (SemVer.from(version(r)) > SemVer.from(latestVersion)) latestVersion = version(r)
         if (SemVer.from(version(r)) >=
             SemVer.from(targetVersions[RecipeManagementPlugin.currentRemote.identifier()]!!)) {
-            disabled[RecipeManagementPlugin.currentRemote.identifier()] = r.disabled
+            disabled[RecipeManagementPlugin.currentRemote.identifier()] = r.enabled
         }
         ids[RecipeManagementPlugin.currentRemote.identifier()] = r.id
     }
