@@ -115,6 +115,8 @@ interface ICore {
 
     fun getRecipesBySender() : List<Recipe>
 
+    fun queryListRecipesByCookbookRequest(cookbookID: String) : List<Recipe>
+
     fun getTrade(tradeId: String) : Trade?
 
     fun getItem(itemId: String): Item?

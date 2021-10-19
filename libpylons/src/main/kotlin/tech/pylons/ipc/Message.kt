@@ -251,6 +251,18 @@ sealed class Message {
         )
     }
 
+    class QueryListRecipesByCookbookRequest(
+        var cookbookID : String? = null
+    ) : Message() {
+        companion object {
+            fun deserialize(json: String) = klaxon.parse<QueryListRecipesByCookbookRequest>(json)
+        }
+
+        override fun resolve() = Response.emit(this, true,
+            recipesOut = core!!.queryListRecipesByCookbookRequest(cookbookID!!))
+    }
+
+
     class GoogleIapGetPylons(
         var productId: String? = null,
         var purchaseToken: String? = null,

@@ -169,6 +169,8 @@ interface IEngine {
 
     fun listRecipesBySender() : List<Recipe>
 
+    fun queryListRecipesByCookbookRequest(cookbookID: String) : List<Recipe>
+
     fun getRecipe(recipeId: String) : Recipe?
 
     fun listRecipesByCookbookId(cookbookId: String) : List<Recipe>

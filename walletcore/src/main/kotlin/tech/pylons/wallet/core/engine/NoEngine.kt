@@ -100,6 +100,9 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun listRecipesBySender() : List<Recipe> =
             throw NoEngineException()
 
+    override fun queryListRecipesByCookbookRequest(cookbookID: String) : List<Recipe> =
+        throw NoEngineException()
+
     override fun listCookbooks(): List<Cookbook> =
             throw NoEngineException()
 

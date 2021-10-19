@@ -376,6 +376,11 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         return Recipe.listFromJson(json)
     }
 
+    override fun queryListRecipesByCookbookRequest(cookbookID: String): List<Recipe> {
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe}${cookbookID}")
+        return Recipe.listFromJson(json)
+    }
+
     override fun listTrades(creator: String): List<Trade> {
         val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_trade}${creator}")
         return Trade.listFromJson(json)

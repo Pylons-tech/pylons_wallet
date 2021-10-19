@@ -423,6 +423,9 @@ class Core(val config : Config) : ICore {
 
     override fun getRecipesBySender() : List<Recipe> = engine.listRecipesBySender()
 
+    override fun queryListRecipesByCookbookRequest(cookbookID: String) : List<Recipe> = engine.queryListRecipesByCookbookRequest(cookbookID)
+
+
     override fun getTransaction(txHash : String): Transaction = engine.getTransaction(txHash)
 
     override fun googleIapGetPylons (productId: String, purchaseToken : String, receiptData : String,

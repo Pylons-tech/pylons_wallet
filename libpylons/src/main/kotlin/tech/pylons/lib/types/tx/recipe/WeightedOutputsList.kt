@@ -3,6 +3,7 @@ package tech.pylons.lib.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
+import tech.pylons.lib.internal.fuzzyLong
 
 data class WeightedOutput(
         @property:[Json(name = "entryIDs")]
@@ -14,7 +15,7 @@ data class WeightedOutput(
         fun fromJson (jsonObject: JsonObject) : WeightedOutput =
                 WeightedOutput (
                         entryIds = jsonObject.array<String>("entryIDs")!!.toList(),
-                        weight = jsonObject.long("weight")!!
+                        weight = jsonObject.fuzzyLong("weight") ?: 0
                 )
 
         fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<WeightedOutput> {

@@ -5,6 +5,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import tech.pylons.lib.NeverQuoteWrap
 import tech.pylons.lib.internal.fuzzyInt
+import tech.pylons.lib.internal.fuzzyLong
 
 data class IntWeightRange(
         @property:[NeverQuoteWrap Json(name = "lower")]
@@ -17,9 +18,9 @@ data class IntWeightRange(
         companion object {
                 fun fromJson (jsonObject: JsonObject) : IntWeightRange =
                         IntWeightRange (
-                                lower = jsonObject.long("lower")!!,
-                                upper = jsonObject.long("upper")!!,
-                                weight = jsonObject.long("weight")!!
+                                lower = jsonObject.fuzzyLong("lower")!!,
+                                upper = jsonObject.fuzzyLong("upper")!!,
+                                weight = jsonObject.fuzzyLong("weight")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<IntWeightRange> {

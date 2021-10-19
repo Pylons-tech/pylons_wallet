@@ -34,11 +34,11 @@ class MulticoreTest {
 
     private val config = Config(
             Backend.MANUAL,
-            //"pylons-devtestnet",
-        "pylons",
+            "pylons-devtestnet",
+        //"pylons",
             true,
-        listOf("http://192.168.1.121:1317"),
-        //listOf("https://api.devtestnet.pylons.tech")
+        //listOf("http://192.168.1.121:1317"),
+        listOf("https://api.devtestnet.pylons.tech")
     )
 
     private val testKeys =
@@ -133,7 +133,7 @@ class MulticoreTest {
         //Core.current?.getPylons(4000, profile!!.address)
         var ssdsds  = Core.current?.batchCreateCookbook(
             creators = mutableListOf(profile!!.address),
-            ids = mutableListOf("Easel_autocookbook_" + profile!!.address),
+            ids = mutableListOf("Easel_autocookbooks_" + profile!!.address),
             names = mutableListOf("tst_cookbook_name"),
             developers = mutableListOf("addghjkllsdfdggdgjkkk"),
             descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
@@ -145,7 +145,7 @@ class MulticoreTest {
         val cookbooks = Core.current?.engine?.listCookbooks()
         val trades = Core.current?.engine?.listTrades(profile!!.address)
 
-
+        val recipesss = Core.current?.engine?.listRecipes()
 
         val transaction_recipe = Core.current?.batchCreateRecipe(
             creators = listOf(profile!!.address),

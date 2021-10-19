@@ -296,6 +296,22 @@ abstract class Wallet {
         }
     }
 
+
+    /**
+     * queryListRecipesByCookbookRequest
+     * retrieve all recipe list
+     *
+     *  @return List<Recipe>
+     */
+    fun queryListRecipesByCookbookRequest(cookbookID: String, callback: (List<Recipe>)->Unit) {
+        sendMessage(Recipe::class, Message.QueryListRecipesByCookbookRequest(cookbookID)) {
+
+            val response = it as Response
+            println("listRecipes ${response.recipesOut.count()}")
+            callback(response.recipesOut)
+        }
+    }
+
     /**
      * listRecipesBySender
      * retrieve all recipe list

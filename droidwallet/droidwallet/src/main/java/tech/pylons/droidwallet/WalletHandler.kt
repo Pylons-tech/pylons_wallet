@@ -14,10 +14,7 @@ import tech.pylons.lib.types.Cookbook
 import tech.pylons.lib.types.Profile
 import tech.pylons.lib.types.Transaction
 import tech.pylons.lib.types.tx.recipe.*
-<<<<<<< Updated upstream
-=======
 import tech.pylons.lib.types.tx.Coin
->>>>>>> Stashed changes
 import java.lang.ref.WeakReference
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
@@ -77,17 +74,10 @@ class WalletHandler {
         fun generateString(): String {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val current = LocalDateTime.now()
-<<<<<<< Updated upstream
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                return current.format(formatter)
-            } else {
-                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-=======
                 val formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss")
                 return current.format(formatter)
             } else {
                 val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
->>>>>>> Stashed changes
                 val currentDate = sdf.format(Date())
                 return currentDate
             }
@@ -342,7 +332,7 @@ class WalletHandler {
             // recipes
             runBlocking {
                 launch {
-                    wallet?.listRecipesBySender { nfts ->
+                    wallet?.listRecipes { nfts ->
                         if (nfts.isNotEmpty()) {
                             userNfts.clear()
                             nfts.forEach { rcp ->
@@ -420,25 +410,13 @@ class WalletHandler {
                     wallet?.createRecipe(
                         creator = getUserCookbook()?.Creator!!,
                         version = getUserCookbook()?.version!!,
-<<<<<<< Updated upstream
-                        id = getUserCookbook()?.Creator!! + "-" + generateString(),
-=======
                         id = getUserCookbook()?.Creator!! + "_" + generateString(),
->>>>>>> Stashed changes
                         name = name,
                         itemInputs = listOf(),          // this field is not necessary in NFT creation
                         cookbook = getUserCookbook()?.id!!,  //NFT creator's Cookbook ID
                         description = description,      //NFT_recipe_description,      //NFT Recipe Description
                         coinInputs = listOf(
                             CoinInput(
-<<<<<<< Updated upstream
-                                coin = currency, //"pylon, usd",
-                                count = if (currency == "USD") {
-                                    (price.toDouble() * 100).toLong() //support cent
-                                } else {
-                                    price.toDouble().toLong() //remove .value
-                                }
-=======
                                 listOf(
                                     Coin(currency, if (currency == "USD") {
                                         (price.toDouble() * 100).toLong() //support cent
@@ -446,7 +424,6 @@ class WalletHandler {
                                         price.toDouble().toLong() //remove .value
                                     })
                                 )
->>>>>>> Stashed changes
                             )
                         ), // NFT price definition
 
@@ -461,15 +438,9 @@ class WalletHandler {
                                         //Residual% definition
                                         //Pls confirm if this is the right place for Residual defintion
                                         DoubleParam(
-<<<<<<< Updated upstream
-                                            key = "Residual%", //this should be reserved keyword for NFT
-                                            program = "",
-                                            rate = "1.0",
-=======
                                             key = "Residual", //this should be reserved keyword for NFT
                                             program = "1",
                                             rate = "1",
->>>>>>> Stashed changes
                                             weightRanges = listOf(
                                                 DoubleWeightRange(
                                                     upper = royalty, //"${royalty}000000000000000000",  //20%
@@ -484,59 +455,29 @@ class WalletHandler {
                                         //Pls confirm if this is the right place for NFT Quantity defintion
                                         LongParam(
                                             key = "Quantity",
-<<<<<<< Updated upstream
-                                            program = "",
-                                            rate = "1.0",
-                                            weightRanges = listOf(
-                                                LongWeightRange(
-                                                    upper = quantity.toString(), //quantity 10 copies
-                                                    lower = quantity.toString(),
-=======
                                             program = "1",
                                             rate = "1",
                                             weightRanges = listOf(
                                                 IntWeightRange(
                                                     upper = quantity, //quantity 10 copies
                                                     lower = quantity,
->>>>>>> Stashed changes
                                                     weight = 1
                                                 )
                                             )
                                         ),
                                         LongParam(
-<<<<<<< Updated upstream
-                                            rate = "1.0",
-                                            key = "Width",
-                                            weightRanges = listOf(
-                                                LongWeightRange(
-                                                    upper = imageWidth.toString(),
-                                                    lower =imageWidth.toString(),
-=======
                                             rate = "1",
                                             key = "Width",
                                             weightRanges = listOf(
                                                 IntWeightRange(
                                                     upper = imageWidth,
                                                     lower =imageWidth,
->>>>>>> Stashed changes
                                                     weight = 1
                                                 )
                                             ),
                                             program = ""
                                         ),
                                         LongParam(
-<<<<<<< Updated upstream
-                                            rate = "1.0",
-                                            key = "Height",
-                                            weightRanges = listOf(
-                                                LongWeightRange(
-                                                    upper = imageHeight.toString(),
-                                                    lower =imageHeight.toString(),
-                                                    weight = 1
-                                                )
-                                            ),
-                                            program = ""
-=======
                                             rate = "1",
                                             key = "Height",
                                             weightRanges = listOf(
@@ -547,53 +488,36 @@ class WalletHandler {
                                                 )
                                             ),
                                             program = "1"
->>>>>>> Stashed changes
                                         )
                                     ),
                                     strings = listOf(
                                         //pls confirm this field
                                         StringParam(
-<<<<<<< Updated upstream
-                                            rate = "1.0",
-=======
                                             rate = "1",
->>>>>>> Stashed changes
                                             key = "Name",
                                             value = name,
                                             program = ""
                                         ),
                                         StringParam(
-                                            rate = "1.0",
+                                            rate = "1",
                                             key = "NFT_URL",
                                             value = url,
                                             program = ""
                                         ),
                                         StringParam(
-<<<<<<< Updated upstream
-                                            rate = "1.0",
-=======
                                             rate = "1",
->>>>>>> Stashed changes
                                             key = "Description",
                                             value = description,
                                             program = ""
                                         ),
                                         StringParam(
-<<<<<<< Updated upstream
-                                            rate = "1.0",
-=======
                                             rate = "1",
->>>>>>> Stashed changes
                                             key = "Currency",
                                             value = currency,
                                             program = ""
                                         ),
                                         StringParam(
-<<<<<<< Updated upstream
-                                            rate = "1.0",
-=======
                                             rate = "1",
->>>>>>> Stashed changes
                                             key = "Price",
                                             value = if (currency == "USD") {
                                                 (price.toDouble() * 100).toLong()
@@ -601,12 +525,6 @@ class WalletHandler {
                                             } else {
                                                 price.toDouble().toLong().toString() //remove .value
                                             },
-<<<<<<< Updated upstream
-                                            program = ""
-                                        )
-                                    ),
-                                    transferFee = 0 //transfer Fee should be defined in NFT creation, currently set to 0
-=======
                                             program = "1"
                                         )
                                     ),
@@ -616,7 +534,6 @@ class WalletHandler {
                                     quantity = quantity,
                                     amountMinted = 2,
                                     tradeable = true
->>>>>>> Stashed changes
                                 ) // NFT entry
                             )
                         ),
@@ -625,17 +542,10 @@ class WalletHandler {
                                 entryIds = listOf(
                                     NFT_id
                                 ),
-<<<<<<< Updated upstream
-                                weight = "1"
-                            )
-                        ),
-                        blockInterval = 0,
-=======
                                 weight = 1
                             )
                         ),
                         blockInterval = 1,
->>>>>>> Stashed changes
                         enabled = true,
                         extraInfo = ""
                     ) {

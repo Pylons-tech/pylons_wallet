@@ -5,6 +5,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import org.apache.tuweni.units.bigints.UInt64
 import tech.pylons.lib.NeverQuoteWrap
+import tech.pylons.lib.internal.fuzzyLong
 import tech.pylons.lib.types.tx.Coin
 
 data class ItemOutput(
@@ -40,8 +41,8 @@ data class ItemOutput(
                                 mutableStrings = StringKeyValue.listFromJson(jsonObject.array("mutableStrings")),
                                 transferFee = Coin.listFromJson(jsonObject.array("transferFee")),
                                 tradePercentage = jsonObject.string("tradePercentage")!!,
-                                quantity = jsonObject.long("quantity") ?: 0,
-                                amountMinted = jsonObject.long("amountMinted") ?: 0,
+                                quantity = jsonObject.fuzzyLong("quantity") ?: 0,
+                                amountMinted = jsonObject.fuzzyLong("amountMinted") ?: 0,
                                 tradeable = jsonObject.boolean("tradeable") ?: false
                                 // TODO: hard coded empty list?
 

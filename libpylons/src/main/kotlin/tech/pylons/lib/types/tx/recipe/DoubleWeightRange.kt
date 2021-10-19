@@ -4,6 +4,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import tech.pylons.lib.NeverQuoteWrap
+import tech.pylons.lib.internal.fuzzyInt
 
 data class DoubleWeightRange(
         @property:[Json(name = "lower")]
@@ -18,7 +19,7 @@ data class DoubleWeightRange(
                         DoubleWeightRange (
                                 lower = jsonObject.string("lower")!!,
                                 upper = jsonObject.string("upper")!!,
-                                weight = jsonObject.int("weight")!!
+                                weight = jsonObject.fuzzyInt("weight")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>) : List<DoubleWeightRange> {

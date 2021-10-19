@@ -16,10 +16,10 @@ data class LongParam (
         companion object {
                 fun fromJson (jsonObject: JsonObject) : LongParam =
                         LongParam (
-                            key = jsonObject.string("key")!!,
-                            rate = jsonObject.string("rate")!!,
+                            key = jsonObject.string("key").orEmpty(),
+                            rate = jsonObject.string("rate").orEmpty(),
                                 weightRanges = IntWeightRange.listFromJson(jsonObject.array("weightRanges")!!),
-                                program = jsonObject.string("program")!!
+                                program = jsonObject.string("program").orEmpty()
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<LongParam> {
