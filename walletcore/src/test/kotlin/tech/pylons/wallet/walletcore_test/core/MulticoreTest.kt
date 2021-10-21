@@ -130,9 +130,9 @@ class MulticoreTest {
 
         val profile = Core.current?.getProfile()
         Core.current?.getPylons(4000, profile!!.address)
-        /*Core.current?.getTransaction("84911BCC9106777BEAF0BFCA3AA23AC61191949820E1DD9481F443C90F1EB05B")
+        Core.current?.getTransaction("7A3BD67C41640DB810191613F5B7C3EC33130390DF81E02298F2A58FA8F8642E")
 
-        var item_one = Core.current?.getItem("31R5AgpvJDD", "Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
+        var item_one = Core.current?.getItem("5rLWQQkJdm1", "Easel_autocookbook_pylo1tlkyrc7ek0lsuv4wtchmd4et8rwcgs4plkxceh")
 
         var items = Core.current?.listItemsBySender("pylo14c5yepsgtvrtsk9dz3yzvl6jgv3gxzltl83cas")
 
@@ -150,13 +150,13 @@ class MulticoreTest {
             costsPerBlock = mutableListOf(Coin("upylon", 1)),
             enableds = mutableListOf(true)
         )
-        val cookbooks = Core.current?.engine?.listCookbooks()
-        val trades = Core.current?.engine?.listTrades(profile!!.address)
-        val cookbook = Core.current?.engine?.getCookbook("Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
-        val recipesss = Core.current?.engine?.getRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v_2021_10_19_17_00_32")
-*/
-        val trades = Core.current?.engine?.listTrades("pylo1zxa6az4kc0254ppmjfk0fyrc5sf2m4c36umtmr")
-        val trade = Core.current?.engine?.getTrade("0")
+//        val cookbooks = Core.current?.engine?.listCookbooks()
+//        val trades = Core.current?.engine?.listTrades(profile!!.address)
+//        val cookbook = Core.current?.engine?.getCookbook("Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
+//        val recipesss = Core.current?.engine?.getRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v_2021_10_19_17_00_32")
+//
+//        val trades = Core.current?.engine?.listTrades("pylo1zxa6az4kc0254ppmjfk0fyrc5sf2m4c36umtmr")
+//        val trade = Core.current?.engine?.getTrade("0")
 
 
         Core.current?.createTrade(

@@ -384,7 +384,7 @@ class Core(val config : Config) : ICore {
         return txs.submitAll()
     }
 
-    override fun cancelTrade(tradeId : String) = engine.cancelTrade(tradeId).submit()
+    override fun cancelTrade(creator : String, ID: Long) = engine.cancelTrade(creator, ID).submit()
 
     override fun checkExecution(id : String, payForCompletion : Boolean) =
         engine.checkExecution(id, payForCompletion).submit()
@@ -410,7 +410,7 @@ class Core(val config : Config) : ICore {
 //        }
         return engine.createTrade(creator, coinInputs, itemInputs, coinOutputs, itemOutputs, ExtraInfo).submit()
     }
-    override fun fulfillTrade(creator: String, ID : String, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction =
+    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction =
         engine.fulfillTrade(creator, ID, CoinInputsIndex, itemIds).submit()
 
     override fun getCookbooks () : List<Cookbook> = engine.listCookbooks()

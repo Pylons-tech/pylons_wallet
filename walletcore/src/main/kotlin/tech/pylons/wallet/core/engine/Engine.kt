@@ -155,9 +155,9 @@ abstract class Engine(val core : Core) : IEngine {
      */
     abstract override fun dumpCredentials (credentials: ICredentials)
 
-    abstract override fun fulfillTrade (creator: String, ID : String, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction
+    abstract override fun fulfillTrade (creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction
 
-    abstract override fun cancelTrade (tradeId : String) : Transaction
+    abstract override fun cancelTrade (creator : String, ID: Long) : Transaction
     /**
      * Generates a new Credentials object appropriate for our engine
      * type from the given mnemonic.

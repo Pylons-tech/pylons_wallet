@@ -173,9 +173,9 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         core.userData.dataSets["__CRYPTO_COSMOS__"]!!["key"] =
             cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
-    }
- 
-    override fun fulfillTrade(creator: String, ID : String, CoinInputsIndex: Long, Items : List<ItemRef>)   =
+    } 
+
+    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, Items : List<ItemRef>)   = 
             handleTx{
                 FulfillTrade(
                     Creator = creator,
@@ -185,11 +185,11 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                 ).toSignedTx()
             }
 
-    override fun cancelTrade(tradeId : String)   =
+    override fun cancelTrade(creator : String, ID: Long)   =
             handleTx{
                 CancelTrade(
-                    Creator = "Creator",
-                    ID = tradeId,
+                    Creator = creator,
+                    ID = ID,
                 ).toSignedTx()
             } 
 
@@ -248,12 +248,30 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                 }
                 val coins = listOf(Coin("upylon", amount )) 
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject)
-                val items = Item.listFromJson(valueItems.array("Items"))
+                //val items = Item.listFromJson(valueItems.array("Items"))
+                val items = mutableListOf<Item>()
+                val trades = listTrades(core.userProfile!!.credentials.address)
+                trades.forEach {
+                    if(it.ItemOutputs.isNotEmpty()){
+                        val itemID = it.ItemOutputs?.get(0).itemID
+                        val cookbookID = it.ItemOutputs?.get(0).cookbookID
+                        val item = getItem(itemID, cookbookID)!!
+                        if(item != null){
+                            items.add(item)
+                        }
+                    }
+                }
+                if(trades.isEmpty()){
+                    core.userProfile?.items = Item.listFromJson(valueItems.array("Items"))
+                }
+                else{
+                    core.userProfile?.items = items
+                }
+
                 val credentials = core.userProfile!!.credentials as CosmosCredentials
                 credentials.accountNumber = accountNumber
                 credentials.sequence = sequence
                 core.userProfile?.coins = coins
-                core.userProfile?.items = items
                 //core.userProfile?.lockedCoinDetails = lockedCoinDetails
                 return core.userProfile
             }
@@ -264,6 +282,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         val prfJson = HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/$addr")
         // this seems really wrong
         val itemsJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}$addr")
+
         // retrieve balance
         val balanceJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}$addr")
 
@@ -281,7 +300,28 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                 }
                 val coins = listOf(Coin("upylon", amount )) 
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject).obj("result")!!
-                val items = Item.listFromJson(valueItems.array("Items"))
+                //val items = Item.listFromJson(valueItems.array("Items"))
+                val items = mutableListOf<Item>()
+                val trades = listTrades(addr)
+                trades.forEach {
+                    if(it.ItemOutputs.isNotEmpty()){
+                        val itemID = it.ItemOutputs?.get(0).itemID
+                        val cookbookID = it.ItemOutputs?.get(0).cookbookID
+                        val item = getItem(itemID, cookbookID)!!
+                        if(item != null){
+                            items.add(item)
+                        }
+                    }
+                }
+                if(trades.isEmpty()){
+                    return Profile(
+                        address = addr,
+                        strings = mapOf(),
+                        coins = coins,
+                        items = Item.listFromJson(valueItems.array("Items"))
+                    )
+                }
+
                 return Profile(
                     address = addr,
                     strings = mapOf(),
@@ -313,7 +353,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     override fun getItem(itemId: String): Item? {
 
         val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item}${itemId}")
-        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject) 
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val obj = itemObj.obj("Item")
         if(obj != null){
             return Item.fromJson(obj)
@@ -322,9 +362,9 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     }
 
     override fun getItem(itemId: String, cookbookId: String): Item? {
-        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item_id}${cookbookId}${"/"}${itemId}")
-        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject) 
-        val obj = itemObj.obj("Item") 
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item_id}${cookbookId}${"/"}${itemId}") 
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
+        val obj = itemObj.obj("Item")
         if(obj != null){ 
             return Item.fromJson(obj)
         }

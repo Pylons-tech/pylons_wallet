@@ -452,7 +452,7 @@ class TradeTest {
     fun getTradeList() {
         val expected = listOf(
                 Trade(
-                    ID = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e6050971e5d-7349-43a1-ab78-8a5e11a45988",
+                    ID = 123,
                     CoinInputs = listOf(),
                     ItemInputs = listOf(
                         ItemInput(
@@ -470,7 +470,7 @@ class TradeTest {
                     Receiver = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60"
                 ),
                 Trade(
-                    ID = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs401401a9-eb2f-41df-9480-1b3017dcd7f3",
+                    ID = 123,
                     CoinInputs = listOf(CoinInput(listOf(Coin("upylon", 40000)))),
                     ItemInputs = listOf(
                         ItemInput(

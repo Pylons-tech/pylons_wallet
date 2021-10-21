@@ -56,10 +56,10 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun enableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun fulfillTrade(creator: String, ID : String, CoinInputsIndex: Long, itemIds : List<ItemRef>): Transaction =
+    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>): Transaction =
             throw NoEngineException()
 
-    override fun cancelTrade(tradeId: String): Transaction =
+    override fun cancelTrade(creator : String, ID: Long): Transaction =
             throw NoEngineException()
 
     override fun generateCredentialsFromKeys(): CosmosCredentials =
