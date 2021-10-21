@@ -144,6 +144,9 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun getItem(itemId: String): Item? =
         throw NoEngineException()
 
+    override fun getItem(itemId: String, cookbookId: String): Item? =
+        throw NoEngineException()
+
     override fun listItems(): List<Item> =
         throw NoEngineException()
 

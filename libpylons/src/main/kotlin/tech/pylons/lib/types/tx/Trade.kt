@@ -11,23 +11,23 @@ import tech.pylons.lib.types.tx.trade.TradeItemInput
 import java.lang.StringBuilder
 
 data class Trade(
-    @property:[Json(name = "Creator")]
+    @property:[Json(name = "creator")]
         val Creator : String,
     @property:[Json(name = "ID")]
         val ID : String,
-    @property:[Json(name = "CoinInputs")]
+    @property:[Json(name = "coinInputs")]
         val CoinInputs : List<CoinInput>,
-    @property:[Json(name = "ItemInputs")]
+    @property:[Json(name = "itemInputs")]
         val ItemInputs : List<ItemInput>,
-    @property:[Json(name = "CoinOutputs")]
+    @property:[Json(name = "coinOutputs")]
         val CoinOutputs : List<Coin>,
-    @property:[Json(name = "ItemOutputs")]
+    @property:[Json(name = "itemOutputs")]
         val ItemOutputs: List<ItemRef>,
-    @property:[Json(name = "ExtraInfo")]
+    @property:[Json(name = "extraInfo")]
         val ExtraInfo : String,
-    @property:[Json(name = "Receiver")]
+    @property:[Json(name = "receiver")]
         val Receiver : String,
-    @property:[Json(name = "TradedItemInputs")]
+    @property:[Json(name = "tradedItemInputs")]
         val TradedItemInputs : List<ItemRef>
 
 ) {
@@ -36,23 +36,38 @@ data class Trade(
             val jsonObj = Parser.default().parse(StringBuilder(json)) as JsonObject
             if (jsonObj != null){
                 return Trade(
-                    Creator = jsonObj.string("Creator")!!,
+                    Creator = jsonObj.string("creator")!!,
                     ID = jsonObj.string("ID")!!,
-                    CoinInputs = CoinInput.listFromJson(jsonObj.array("CoinInputs")),
-                    ItemInputs = ItemInput.listFromJson(jsonObj.array("ItemInputs")),
-                    CoinOutputs = Coin.listFromJson(jsonObj.array("CoinOutputs")),
-                    ItemOutputs = ItemRef.listFromJson(jsonObj.array("ItemOutputs")),
-                    ExtraInfo = jsonObj.string("ExtraInfo").orEmpty(),
-                    Receiver = jsonObj.string("Receiver")!!,
-                    TradedItemInputs = ItemRef.listFromJson(jsonObj.array("TradedItemInputs"))
+                    CoinInputs = CoinInput.listFromJson(jsonObj.array("coinInputs")),
+                    ItemInputs = ItemInput.listFromJson(jsonObj.array("itemInputs")),
+                    CoinOutputs = Coin.listFromJson(jsonObj.array("coinOutputs")),
+                    ItemOutputs = ItemRef.listFromJson(jsonObj.array("itemOutputs")),
+                    ExtraInfo = jsonObj.string("extraInfo").orEmpty(),
+                    Receiver = jsonObj.string("receiver")!!,
+                    TradedItemInputs = ItemRef.listFromJson(jsonObj.array("tradedItemInputs"))
                 )
 
             }
             return null
         }
 
+        fun fromObj(jsonObj: JsonObject): Trade? {
+            return Trade(
+                Creator =  jsonObj.string("creator")!!,
+                ID = jsonObj.string("ID")!!,
+                CoinInputs = CoinInput.listFromJson(jsonObj.array("coinInputs")),
+                ItemInputs = ItemInput.listFromJson(jsonObj.array("itemInputs")),
+                CoinOutputs = Coin.listFromJson(jsonObj.array("coinOutputs")),
+                ItemOutputs = ItemRef.listFromJson(jsonObj.array("itemOutputs")),
+                ExtraInfo = jsonObj.string("extraInfo").orEmpty(),
+                Receiver = jsonObj.string("receiver")!!,
+                TradedItemInputs = ItemRef.listFromJson(jsonObj.array("tradedItemInputs"))
+            )
+            return null
+        }
+
         fun listFromJson (json : String) : List<Trade> {
-            val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("trades").orEmpty()
+            val jsonArray = (Parser.default().parse(StringBuilder(json)) as JsonObject).array<JsonObject>("Trades").orEmpty()
             val list = mutableListOf<Trade>()
             jsonArray.forEach {
                 list.add(

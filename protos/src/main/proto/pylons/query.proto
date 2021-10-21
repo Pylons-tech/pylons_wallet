@@ -71,7 +71,7 @@ service Query {
 
 	// Retrieves a recipe by ID.
 	rpc Recipe(QueryGetRecipeRequest) returns (QueryGetRecipeResponse) {
-		option (google.api.http).get = "/pylons/recipe/{CookbookID}/{ID}";
+		option (google.api.http).get = "/pylons/recipes/{CookbookID}/{ID}";
 	}
 
 	// Retrieves the list of cookbooks owned by an address

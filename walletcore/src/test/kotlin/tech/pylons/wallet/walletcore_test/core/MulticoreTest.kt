@@ -18,6 +18,7 @@ import tech.pylons.ipc.Message
 import tech.pylons.lib.klaxon
 import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.item.Item
+import tech.pylons.lib.types.tx.trade.ItemRef
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 import java.io.StringReader
 import java.security.Security
@@ -42,7 +43,7 @@ class MulticoreTest {
     )
 
     private val testKeys =
-            PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(InternalPrivKeyStore.NODE_GENERATED_PRIVKEY)))
+            PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(InternalPrivKeyStore.BANK_TEST_KEY)))
     private val altTestKeys =
             PylonsSECP256K1.KeyPair.fromSecretKey(PylonsSECP256K1.SecretKey.fromBytes(Bytes32.fromHexString(
                 InternalPrivKeyStore.TUWENI_FIXTURES_SECRET)))
@@ -125,10 +126,17 @@ class MulticoreTest {
         // todo: this should actually take a keypair as an argument
         Multicore.enable(config)
         val c = Multicore.addCore(null)
-        val prof = Core.current?.newProfile("sol3", testKeys)
+        val prof = Core.current?.newProfile("ddddd", testKeys)
 
         val profile = Core.current?.getProfile()
+        Core.current?.getPylons(4000, profile!!.address)
+        /*Core.current?.getTransaction("84911BCC9106777BEAF0BFCA3AA23AC61191949820E1DD9481F443C90F1EB05B")
 
+        var item_one = Core.current?.getItem("31R5AgpvJDD", "Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
+
+        var items = Core.current?.listItemsBySender("pylo14c5yepsgtvrtsk9dz3yzvl6jgv3gxzltl83cas")
+
+        var item = Core.current?.getItem("pylo14c5yepsgtvrtsk9dz3yzvl6jgv3gxzltl83cas")
 
         //Core.current?.getPylons(4000, profile!!.address)
         var ssdsds  = Core.current?.batchCreateCookbook(
@@ -144,9 +152,32 @@ class MulticoreTest {
         )
         val cookbooks = Core.current?.engine?.listCookbooks()
         val trades = Core.current?.engine?.listTrades(profile!!.address)
+        val cookbook = Core.current?.engine?.getCookbook("Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
+        val recipesss = Core.current?.engine?.getRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v_2021_10_19_17_00_32")
+*/
+        val trades = Core.current?.engine?.listTrades("pylo1zxa6az4kc0254ppmjfk0fyrc5sf2m4c36umtmr")
+        val trade = Core.current?.engine?.getTrade("0")
 
-        val recipesss = Core.current?.engine?.listRecipes()
 
+        Core.current?.createTrade(
+            profile!!.address,
+            listOf(
+                CoinInput(listOf(Coin("upylon", 66)))
+            ),
+            mutableListOf(),
+            mutableListOf(),
+            mutableListOf(
+                ItemRef(
+                    cookbookID = "Easel_autocookbook_pylo1zchw46gccslpj6ffznn3cm9r33jdv36ua39v3q",
+                    itemID = "4M2TH9NsAMM"
+                )
+            ),
+            "")
+
+//        Core.current?.engine?.applyRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v", recipesss?.cookbookId!!,
+//            recipesss?.name, 0, listOf())
+
+        return
         val transaction_recipe = Core.current?.batchCreateRecipe(
             creators = listOf(profile!!.address),
             cookbooks = listOf("Easel_autocookbook_" + profile!!.address),

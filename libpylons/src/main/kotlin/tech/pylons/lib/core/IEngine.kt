@@ -179,6 +179,8 @@ interface IEngine {
 
     fun getItem(itemId: String): Item?
 
+    fun getItem(itemId: String, cookbookId: String): Item?
+
     fun listItems() : List<Item>
 
     fun listItemsBySender(sender: String?) : List<Item>

@@ -295,6 +295,8 @@ abstract class Engine(val core : Core) : IEngine {
 
     abstract override fun getItem(itemId: String): Item?
 
+    abstract override fun getItem(itemId: String, cookbookId: String): Item?
+
     abstract override fun listItems(): List<Item>
 
     abstract override fun listItemsByCookbookId(cookbookId: String?): List<Item>

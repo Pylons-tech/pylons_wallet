@@ -528,8 +528,8 @@ class WalletHandler {
                                             program = "1"
                                         )
                                     ),
-                                    mutableStrings = listOf(),
-                                    transferFee = listOf(), //transfer Fee should be defined in NFT creation, currently set to 0
+                                    mutableStrings = listOf(), 
+                                    transferFee = listOf(Coin("upylon", 0)), //transfer Fee should be defined in NFT creation, currently set to 0 
                                     tradePercentage = "1",
                                     quantity = quantity,
                                     amountMinted = 2,
@@ -662,7 +662,8 @@ class WalletHandler {
         fun executeRecipe(
             context: Context?,
             recipe: String,
-            cookbook: String,
+            cookbook: String, 
+            coinInputIndex: Long, 
             itemInputs: List<String>,
             callback: (Transaction?) -> Unit
         ) {
@@ -671,8 +672,7 @@ class WalletHandler {
                 wallet?.listCookbooks {
 
                     val cookbooks = it
-                    var cookbook: Cookbook? = null
-
+                    var cookbook: Cookbook? = null 
                     if (cookbooks.isNotEmpty()) {
                         cookbook = cookbooks.find { cb ->
                             cb.Creator == getUserProfile()?.address && cb.id.startsWith(
@@ -689,8 +689,8 @@ class WalletHandler {
                 wallet?.executeRecipe(
                     creator,
                     cookbook,
-                    recipe,
-                    1,
+                    recipe,  
+                    coinInputIndex, 
                     itemInputs,
                     callback = callback
                 )

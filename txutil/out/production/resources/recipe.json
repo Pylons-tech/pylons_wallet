@@ -1,3 +1,0 @@
-This file should be found when enumerating recipes, but it's obviously not a recipe.
-Or even valid JSON.
-So there should be an error.

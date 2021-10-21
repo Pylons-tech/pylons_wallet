@@ -19,7 +19,7 @@ data class Coin(
         fun fromJson (jsonObject: JsonObject) : Coin =
                 Coin (
                         denom = jsonObject.string("denom")!!,
-                        amount = jsonObject.fuzzyLong("amount")
+                        amount = jsonObject.fuzzyLong("amount") ?: 0
                 )
 
         fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<Coin> {

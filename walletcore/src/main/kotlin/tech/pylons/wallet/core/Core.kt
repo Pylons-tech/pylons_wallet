@@ -466,6 +466,10 @@ class Core(val config : Config) : ICore {
         return engine.getItem(itemId)
     }
 
+    override fun getItem(itemId: String, cookbookId: String): Item? {
+        return engine.getItem(itemId, cookbookId)
+    }
+
     override fun listItems(): List<Item> {
         return engine.listItems()
     }

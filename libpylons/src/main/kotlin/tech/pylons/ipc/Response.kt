@@ -217,7 +217,7 @@ class Response (
                             val msg = it as UpdateCookbook
                             // we can't get cookbook name/level from updatecookbook, but it'll be in mCookbooksIn
                             mCookbooksOut.add(
-                                Cookbook("", mCookbooksIn.first().id, "v0.1.3", mCookbooksIn.first().name, mCookbooksIn.first().description,
+                                Cookbook(mCookbooksIn.first().Creator, mCookbooksIn.first().id, mCookbooksIn.first().nodeVersion, mCookbooksIn.first().name, mCookbooksIn.first().description,
                                     mCookbooksIn.first().developer, mCookbooksIn.first().version, mCookbooksIn.first().supportEmail,
                                     mCookbooksIn.first().costPerBlock, mCookbooksIn.first().Enabled)
                             )
@@ -231,14 +231,14 @@ class Response (
                                     baseItem = it
                             }
                             if (baseItem != null) {
-                                val mItemStrings = baseItem!!.strings.toMutableMap()
-                                mItemStrings[msg.field] = msg.value
+//                                val mItemStrings = baseItem!!.strings
+//                                mItemStrings[msg.field] = msg.value
                                 // lastupdate will always be wrong here tho, and there's no way to get that correct
                                 // w/o querying the item again...
-                                mItemsOut.add(Item(baseItem!!.nodeVersion, baseItem!!.id, baseItem!!.cookbookId,
-                                baseItem!!.sender, baseItem!!.ownerRecipeID, baseItem!!.ownerTradeID, baseItem!!.tradable,
-                                0, baseItem!!.doubles, baseItem!!.longs, mItemStrings,
-                                baseItem!!.transferFee))
+                                mItemsOut.add(Item(baseItem!!.owner, baseItem!!.cookbookId, baseItem!!.id,
+                                    baseItem!!.nodeVersion, baseItem!!.doubles, baseItem!!.longs,
+                                baseItem!!.strings, baseItem!!.MutableStrings, baseItem!!.tradable, baseItem!!.lastUpdate,
+                                  baseItem!!.transferFee))
                             }
                         }
                         UpdateRecipe::javaClass -> {

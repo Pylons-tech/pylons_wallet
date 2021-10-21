@@ -57,19 +57,22 @@ data class Cookbook (
         fun parseFromJson(json: String?) : Cookbook? {
             if (json != null) {
                 try {
-                    val obj = Parser.default().parse(StringBuilder(json)) as JsonObject
-                    return Cookbook(
-                        Creator = obj.string("creator")!!,
-                        id = obj.string("ID")!!,
-                        name = obj.string("name")!!,
-                        nodeVersion = obj.string("nodeVersion")!!,
-                        description = obj.string("description")!!,
-                        version = obj.string("version")!!,
-                        developer = obj.string("developer")!!,
-                        supportEmail = obj.string("supportEmail")!!,
-                        costPerBlock = Coin.fromJson(obj.obj("costPerBlock")!!),
-                        Enabled = obj.boolean("enabled")!!
-                    )
+                    val obj = (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("Cookbook")
+                    if(obj != null){
+                        return Cookbook(
+                            Creator = obj.string("creator")!!,
+                            id = obj.string("ID")!!,
+                            name = obj.string("name")!!,
+                            nodeVersion = obj.string("nodeVersion")!!,
+                            description = obj.string("description")!!,
+                            version = obj.string("version")!!,
+                            developer = obj.string("developer")!!,
+                            supportEmail = obj.string("supportEmail")!!,
+                            costPerBlock = Coin.fromJson(obj.obj("costPerBlock")!!),
+                            Enabled = obj.boolean("enabled")!!
+                        )
+                    }
+
                 }catch(e: Error){
                 }
             }

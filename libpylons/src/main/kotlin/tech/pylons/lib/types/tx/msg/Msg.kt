@@ -5,6 +5,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.Parser
 import tech.pylons.lib.*
 import tech.pylons.lib.core.ICore
+import tech.pylons.lib.internal.fuzzyLong
 import tech.pylons.lib.types.credentials.CosmosCredentials
 import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.item.Item
@@ -172,13 +173,13 @@ data class CreateCookbook (
             return CreateCookbook(
                 creator = jsonObject.string("creator")!!,
                     ID = jsonObject.string("ID")!!,
-                    name = jsonObject.string("Name")!!,
+                    name = jsonObject.string("name")!!,
                     description = jsonObject.string("description")!!,
                     developer = jsonObject.string("developer")!!,
                     version = jsonObject.string("version")!!,
                     supportEmail = jsonObject.string("supportEmail")!!,
                     costPerBlock = Coin.fromJson(jsonObject.obj("costPerBlock")!!),
-                    enabled = jsonObject.string("enabled")!!.toBoolean()
+                    enabled = jsonObject.boolean("enabled") ?: false
             )
         }
     }
@@ -240,7 +241,7 @@ data class CreateRecipe (
                 entries = EntriesList.fromJson(jsonObject.obj("entries"))?:EntriesList(listOf(), listOf(), listOf()),
                 outputs = WeightedOutput.listFromJson(jsonObject.array("outputs")),
                 blockInterval = blockInterval,
-                enabled = jsonObject.boolean("enabled")!!,
+                enabled = jsonObject.boolean("enabled") ?: false,
                 extraInfo = jsonObject.string("extraInfo").orEmpty()
 
             )
@@ -251,17 +252,17 @@ data class CreateRecipe (
 @MsgType("/Pylonstech.pylons.pylons.MsgCreateTrade")
 @MsgResType("pylons/CreateTrade")
 data class CreateTrade (
-    @property:[Json(name = "Creator")]
+    @property:[Json(name = "creator")]
         val Creator : String,
-    @property:[Json(name = "CoinInputs")]
+    @property:[Json(name = "coinInputs")]
         val CoinInputs : List<CoinInput>,
-    @property:[Json(name = "ItemInputs")]
+    @property:[Json(name = "itemInputs")]
         val ItemInputs: List<ItemInput>,
-    @property:[Json(name = "CoinOutputs") EmptyArray]
+    @property:[Json(name = "coinOutputs") EmptyArray]
         val CoinOutputs : List<Coin>,
-    @property:[Json(name = "ItemOutputs")]
+    @property:[Json(name = "itemOutputs")]
         val ItemOutputs: List<ItemRef>,
-    @property:[Json(name = "ExtraInfo")]
+    @property:[Json(name = "extraInfo")]
         val ExtraInfo : String
 ): Msg() {
 
@@ -271,12 +272,12 @@ data class CreateTrade (
         @MsgParser
         fun parse (jsonObject: JsonObject) : CreateTrade {
             return CreateTrade(
-                Creator = jsonObject.string("Creator")!!,
-                CoinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs")),
-                ItemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs")),
-                CoinOutputs = Coin.listFromJson(jsonObject.array("CoinOutputs")),
-                ItemOutputs = ItemRef.listFromJson(jsonObject.array("ItemOutputs")),
-                ExtraInfo = jsonObject.string("ExtraInfo") ?: ""
+                Creator = jsonObject.string("creator")!!,
+                CoinInputs = CoinInput.listFromJson(jsonObject.array("coinInputs")),
+                ItemInputs = ItemInput.listFromJson(jsonObject.array("itemInputs")),
+                CoinOutputs = Coin.listFromJson(jsonObject.array("coinOutputs")),
+                ItemOutputs = ItemRef.listFromJson(jsonObject.array("itemOutputs")),
+                ExtraInfo = jsonObject.string("extraInfo") ?: ""
 
             )
         }
@@ -328,15 +329,15 @@ data class EnableRecipe(
 @MsgType("/Pylonstech.pylons.pylons.MsgExecuteRecipe")
 @MsgResType("pylons/ExecuteRecipe")
 data class ExecuteRecipe(
-    @property:[Json(name = "Creator")]
+    @property:[Json(name = "creator")]
         val Creator : String,
-    @property:[Json(name = "CookbookID")]
+    @property:[Json(name = "cookbookID")]
         val CookbookID : String,
-    @property:[Json(name = "RecipeID")]
+    @property:[Json(name = "recipeID")]
         val RecipeID : String,
-    @property:[Json(name = "CoinInputsIndex")]
+    @property:[Json(name = "coinInputsIndex")]
         val CoinInputsIndex : Long,
-    @property:[Json(name = "ItemIDs")]
+    @property:[Json(name = "itemIDs")]
         val ItemIDs : List<String>,
 //        @property:[Json(name = "PaymentId")]
 //        val paymentId: String = "",
@@ -349,11 +350,11 @@ data class ExecuteRecipe(
         @MsgParser
         fun parse (jsonObject: JsonObject) : ExecuteRecipe {
             return ExecuteRecipe(
-                Creator = jsonObject.string("Creator")!!,
-                CookbookID = jsonObject.string("CookbookID")!!,
-                RecipeID = jsonObject.string("RecipeID")!!,
-                CoinInputsIndex = jsonObject.long("CoinInputsIndex")!!,
-                ItemIDs = jsonObject.array("ItemIDs")?: listOf()
+                Creator = jsonObject.string("creator")!!,
+                CookbookID = jsonObject.string("cookbookID")!!,
+                RecipeID = jsonObject.string("recipeID")!!,
+                CoinInputsIndex = jsonObject.long("coinInputsIndex")?: 0,
+                ItemIDs = jsonObject.array("itemIDs")?: listOf()
 //                    paymentId = jsonObject.string("PaymentId")?: "",
 //                    paymentMethod = jsonObject.string("PaymentMethod")?: ""
             )
@@ -428,7 +429,7 @@ data class FiatItem(
                 longs = mmLongs,
                 strings = mmStrings,
                 sender = jsonObject.string("Sender")!!,
-                transferFee = jsonObject.long("TransferFee")!!
+                transferFee = jsonObject.fuzzyLong("TransferFee")
             )
         }
     }
@@ -456,7 +457,7 @@ data class FulfillTrade (
             return FulfillTrade(
                 Creator = jsonObject.string("Creator")!!,
                 ID = jsonObject.string("ID")!!,
-                CoinInputsIndex = jsonObject.long("CoinInputsIndex")!!,
+                CoinInputsIndex = jsonObject.long("CoinInputsIndex")?: 0,
                 Items = ItemRef.listFromJson(jsonObject.array("Items"))
                 //paymentId = jsonObject.string("PaymentId").orEmpty()
             )

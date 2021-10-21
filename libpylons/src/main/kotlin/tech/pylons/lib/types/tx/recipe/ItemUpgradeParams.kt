@@ -3,6 +3,7 @@ package tech.pylons.lib.types.tx.recipe
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import tech.pylons.lib.NeverQuoteWrap
+import tech.pylons.lib.internal.fuzzyLong
 
 data class ItemUpgradeParams(
     @property:[Json(name = "Doubles")]
@@ -20,7 +21,7 @@ data class ItemUpgradeParams(
                         doubles = DoubleInputParam.listFromJson(jsonObject.array("Doubles")),
                         longs = LongInputParam.listFromJson(jsonObject.array("Long")),
                         strings = StringInputParam.listFromJson(jsonObject.array("Strings")),
-                        transferFee = jsonObject.long("TransferFee")!!
+                        transferFee = jsonObject.fuzzyLong("TransferFee")
                 )
         }
 }

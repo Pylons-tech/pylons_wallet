@@ -310,12 +310,22 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         return Execution.parseFromJson(json)
     }
 
-
     override fun getItem(itemId: String): Item? {
+
         val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item}${itemId}")
-        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
-        val obj = itemObj.obj("item")
-        if (obj != null) {
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject) 
+        val obj = itemObj.obj("Item")
+        if(obj != null){
+            return Item.fromJson(obj)
+        }
+        return null
+    }
+
+    override fun getItem(itemId: String, cookbookId: String): Item? {
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item_id}${cookbookId}${"/"}${itemId}")
+        val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject) 
+        val obj = itemObj.obj("Item") 
+        if(obj != null){ 
             return Item.fromJson(obj)
         }
         return null
@@ -497,24 +507,30 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
  
 
     override fun getRecipe(recipeId: String): Recipe? {
-        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_recipe}$recipeId")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_recipe}")
 
         val jsonObject = (Parser.default().parse(StringBuilder(json)) as JsonObject)
-        return Recipe(
-            cookbookId = jsonObject.string("CookbookID")!!,
-            id = jsonObject.string("ID")!!,
-            nodeVersion = jsonObject.string("NodeVersion")!!,
-            name = jsonObject.string("Name")!!,
-            description = jsonObject.string("Description")!!,
-            version = jsonObject.string("Version")!!,
-            coinInputs = CoinInput.listFromJson(jsonObject.array("CoinInputs"))!!,
-            itemInputs = ItemInput.listFromJson(jsonObject.array("ItemInputs"))!!,
-            entries = EntriesList.fromJson(jsonObject.obj("Entries"))!!,
-            outputs = WeightedOutput.listFromJson(jsonObject.array("Outputs"))!!,
-            blockInterval = jsonObject.fuzzyLong("BlockInterval"),
-            enabled = jsonObject.boolean("Enabled")!!,
-            extraInfo = jsonObject.string("ExtraInfo")!!
-        )
+        val recipes = jsonObject?.get("Recipes") as JsonArray<JsonObject>
+        recipes.forEach{
+            if (it.string("ID") == recipeId){
+                return Recipe(
+                    cookbookId = it.string("cookbookID")!!,
+                    id = it.string("ID")!!,
+                    nodeVersion = it.string("nodeVersion")!!,
+                    name = it.string("name")!!,
+                    description = it.string("description")!!,
+                    version = it.string("version")!!,
+                    coinInputs = CoinInput.listFromJson(it.array("coinInputs"))!!,
+                    itemInputs = ItemInput.listFromJson(it.array("itemInputs"))!!,
+                    entries = EntriesList.fromJson(it.obj("entries"))!!,
+                    outputs = WeightedOutput.listFromJson(it.array("outputs"))!!,
+                    blockInterval = it.fuzzyLong("blockInterval"),
+                    enabled = it.boolean("enabled")!!,
+                    extraInfo = it.string("extraInfo")!!
+                )
+            }
+        }
+        return null
     }
 
     override fun listRecipesByCookbookId(cookbookId: String): List<Recipe> {
@@ -525,7 +541,8 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
 
     override fun getTrade(tradeId: String): Trade? {
         val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_trade}$tradeId")
-        return Trade.fromJson(json)
+        val jsonObj = (Parser.default().parse(StringBuilder(json)) as JsonObject).obj("Trade")
+        return Trade.fromObj(jsonObj!!)
     }
 
 
