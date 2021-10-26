@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import tech.pylons.lib.types.tx.Coin
+import tech.pylons.lib.types.tx.recipe.PaymentInfo
 import java.lang.Exception
 
 class TransactionErrorTest {
@@ -68,7 +69,8 @@ class TransactionErrorTest {
     */
     @Test
     fun signatureVerificationError() {
-        val tx = core.engine.applyRecipe("creator", "cookbookId", "id", 1, listOf())
+        val tx = core.engine.applyRecipe("creator", "cookbookId", "id", 1, listOf(), PaymentInfo("purchaseID", "processorName", "payerAddr", 1, "id", "signature")
+        )
         tx.submit()
 
         Assertions.assertEquals(null, tx.id)
@@ -85,7 +87,8 @@ class TransactionErrorTest {
     fun acceptedTXError() {
         runBlocking {
             core.engine.getMyProfileState()
-            val tx = core.engine.applyRecipe("creator", "cookbookId", "id", 1, listOf())
+            val tx = core.engine.applyRecipe("creator", "cookbookId", "id", 1, listOf(), PaymentInfo("purchaseID", "processorName", "payerAddr", 1, "id", "signature")
+            )
             tx.submit()
             println("waiting for tx to resolve")
             while (true) {

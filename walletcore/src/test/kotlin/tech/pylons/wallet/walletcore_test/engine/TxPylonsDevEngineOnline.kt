@@ -33,11 +33,9 @@ class TxPylonsDevEngineOnline {
     }
 
     private fun getExecutionIfOneExists (engine: TxPylonsDevEngine) : String {
-        val e = engine.getPendingExecutions().filter {
-            !it.completed
-        }
+        val e = engine.getPendingExecutions().filter  {true}
         return when (e.isNotEmpty()) {
-            true -> e[e.lastIndex].id
+            true -> e[e.lastIndex].ID
             false -> fail("No executions exist on chain belonging to current address. This test cannot continue.")
         }
     }
@@ -287,7 +285,7 @@ class TxPylonsDevEngineOnline {
     fun executesRecipe () {
         val name = exportedRecipeId ?: throw Exception("exportedRecipe should not be null")
         println("Using $exportedCookbook:$exportedRecipeId")
-        basicTxTestFlow { it.applyRecipe("", "", name, 1, listOf()) }
+        //basicTxTestFlow { it.applyRecipe("", "", name, 1, listOf(), ) }
     }
 
     @Order(13)

@@ -72,16 +72,9 @@ class WalletHandler {
         }
 
         fun generateString(): String {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val current = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss")
-                return current.format(formatter)
-            } else {
-                val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
-                val currentDate = sdf.format(Date())
-                return currentDate
-            }
-
+            val sdf = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss")
+            val currentDate = sdf.format(Date())
+            return currentDate
         }
         /**
          * Getter for the wallet instance
@@ -410,6 +403,7 @@ class WalletHandler {
                     wallet?.createRecipe(
                         creator = getUserCookbook()?.Creator!!,
                         version = getUserCookbook()?.version!!,
+
                         id = getUserCookbook()?.Creator!! + "_" + generateString(),
                         name = name,
                         itemInputs = listOf(),          // this field is not necessary in NFT creation
@@ -528,8 +522,8 @@ class WalletHandler {
                                             program = "1"
                                         )
                                     ),
-                                    mutableStrings = listOf(), 
-                                    transferFee = listOf(Coin("upylon", 0)), //transfer Fee should be defined in NFT creation, currently set to 0 
+                                    mutableStrings = listOf(),
+                                    transferFee = listOf(Coin("upylon", 0)), //transfer Fee should be defined in NFT creation, currently set to 0
                                     tradePercentage = "1",
                                     quantity = quantity,
                                     amountMinted = 2,
@@ -662,9 +656,10 @@ class WalletHandler {
         fun executeRecipe(
             context: Context?,
             recipe: String,
-            cookbook: String, 
-            coinInputIndex: Long, 
+            cookbook: String,
+            coinInputIndex: Long,
             itemInputs: List<String>,
+            paymentInfos: PaymentInfo,
             callback: (Transaction?) -> Unit
         ) {
             CoroutineScope(Dispatchers.IO).launch {
@@ -672,7 +667,7 @@ class WalletHandler {
                 wallet?.listCookbooks {
 
                     val cookbooks = it
-                    var cookbook: Cookbook? = null 
+                    var cookbook: Cookbook? = null
                     if (cookbooks.isNotEmpty()) {
                         cookbook = cookbooks.find { cb ->
                             cb.Creator == getUserProfile()?.address && cb.id.startsWith(
@@ -689,9 +684,10 @@ class WalletHandler {
                 wallet?.executeRecipe(
                     creator,
                     cookbook,
-                    recipe,  
-                    coinInputIndex, 
+                    recipe,
+                    coinInputIndex,
                     itemInputs,
+                    paymentInfos,
                     callback = callback
                 )
 

@@ -49,7 +49,7 @@ interface ICore {
 
     fun getProfile (addr : String?) : Profile?
 
-    fun applyRecipe (creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction
+    fun applyRecipe (creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos : PaymentInfo?) : Transaction
 
     fun batchCreateCookbook (creators: List<String>, ids : List<String>, names : List<String>, descriptions : List<String>, developers : List<String>, versions : List<String>,
                              supportEmails : List<String>, costsPerBlocks : List<Coin>, enableds : List<Boolean>) : List<Transaction>
@@ -70,7 +70,7 @@ interface ICore {
                            entries : List<String>, outputs: List<String>, blockIntervals : List<Long>,
                            enableds: List<Boolean>, extraInfos: List<String>) : List<Transaction>
 
-    fun cancelTrade(tradeId : String) : Transaction
+    fun cancelTrade(creator : String, ID: Long) : Transaction
 
     fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
@@ -78,7 +78,7 @@ interface ICore {
                      coinOutputs : List<Coin>, itemOutputs : List<ItemRef>,
                      extraInfo : String) : Transaction
 
-    fun fulfillTrade(creator: String, ID : String, CoinInputsIndex: Long, Items : List<ItemRef>) : Transaction
+    fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, Items : List<ItemRef>, paymentInfo: PaymentInfo?) : Transaction
 
     fun getCookbooks () : List<Cookbook>
 

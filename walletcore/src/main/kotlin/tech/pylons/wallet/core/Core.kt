@@ -271,7 +271,7 @@ class Core(val config : Config) : ICore {
         }
     }
 
-    override fun applyRecipe (creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction {
+    override fun applyRecipe (creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos: PaymentInfo?) : Transaction {
         // HACK: list recipes, then search to find ours
         val arr = engine.listRecipes()
         var r : String? = null
@@ -281,7 +281,7 @@ class Core(val config : Config) : ICore {
             }
         }
         if (r == null) throw java.lang.Exception("Recipe $cookbookID/$id does not exist")
-        return engine.applyRecipe(creator!!, cookbookID!!, r!!, coinInputsIndex!!, itemIds!!).submit()
+        return engine.applyRecipe(creator!!, cookbookID!!, r!!, coinInputsIndex!!, itemIds!!, paymentInfos).submit()
     }
 
     override fun batchCreateCookbook (creators : List<String>, ids : List<String>, names : List<String>, descriptions : List<String>, developers : List<String>,
@@ -410,8 +410,8 @@ class Core(val config : Config) : ICore {
 //        }
         return engine.createTrade(creator, coinInputs, itemInputs, coinOutputs, itemOutputs, ExtraInfo).submit()
     }
-    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction =
-        engine.fulfillTrade(creator, ID, CoinInputsIndex, itemIds).submit()
+    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>, paymentInfos: PaymentInfo?) : Transaction =
+        engine.fulfillTrade(creator, ID, CoinInputsIndex, itemIds, paymentInfos).submit()
 
     override fun getCookbooks () : List<Cookbook> = engine.listCookbooks()
 

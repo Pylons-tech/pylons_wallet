@@ -147,7 +147,7 @@ abstract class Wallet {
      * @return Transaction?
      */
     fun buyItem (trade : Trade, paymentId: String?=null, callback: (Transaction?) -> Unit) {
-        sendMessage(Transaction::class, Message.FulfillTrade("creator", ID = trade.ID, CoinInputsIndex = null, Items = null)) {
+        sendMessage(Transaction::class, Message.FulfillTrade(trade.Creator, ID = trade.ID, coinInputsIndex = 0, items = null)) {
             val response = it as Response
             var tx:Transaction? = null
             if (response.txs.isNotEmpty()) {
@@ -338,8 +338,8 @@ abstract class Wallet {
      * @return return transaction of the recipe execution when success, else return null.
      *
      */
-    fun executeRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, callback: (Transaction?)->Unit) {
-        sendMessage(Transaction::class, Message.ExecuteRecipe(creator, cookbookID, id, coinInputsIndex, itemIds)){
+    fun executeRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos: PaymentInfo, callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.ExecuteRecipe(creator, cookbookID, id, coinInputsIndex, itemIds, null/*paymentInfos*/)){
             val response = it as Response
             var tx: Transaction? = null
             if(response.txs.isNotEmpty()) {

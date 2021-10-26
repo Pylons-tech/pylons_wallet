@@ -27,7 +27,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
 
     class NoEngineException : Exception("Core.engine is set to NoEngine. Initialize engine before calling engine methods.")
 
-    override fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction =
+    override fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos: PaymentInfo?) : Transaction =
             throw NoEngineException()
 
     override fun checkExecution(id: String, payForCompletion : Boolean): Transaction =
@@ -56,7 +56,7 @@ internal class NoEngine(core : Core) : Engine(core), IEngine {
     override fun enableRecipe(id: String): Transaction  =
             throw NoEngineException()
 
-    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>): Transaction =
+    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>, paymentInfo: PaymentInfo?): Transaction =
             throw NoEngineException()
 
     override fun cancelTrade(creator : String, ID: Long): Transaction =

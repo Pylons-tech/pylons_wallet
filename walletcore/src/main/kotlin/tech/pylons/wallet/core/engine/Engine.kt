@@ -55,7 +55,7 @@ abstract class Engine(val core : Core) : IEngine {
     }
 
     /** Execute-recipe message */
-    abstract override fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction
+    abstract override fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos: PaymentInfo?) : Transaction
 
     /** Check-execution message */
     abstract override fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
@@ -155,7 +155,7 @@ abstract class Engine(val core : Core) : IEngine {
      */
     abstract override fun dumpCredentials (credentials: ICredentials)
 
-    abstract override fun fulfillTrade (creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction
+    abstract override fun fulfillTrade (creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>, paymentInfo: PaymentInfo?) : Transaction
 
     abstract override fun cancelTrade (creator : String, ID: Long) : Transaction
     /**

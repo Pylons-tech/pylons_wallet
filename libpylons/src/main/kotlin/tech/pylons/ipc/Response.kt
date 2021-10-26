@@ -56,7 +56,7 @@ class Response (
                  itemsIn : List<String> = listOf(), itemsOut : List<Item> = listOf(),
                  profilesIn: List<String> = listOf(), profilesOut: List<Profile> = listOf(),
                  recipesIn: List<String> = listOf(), recipesOut: List<Recipe> = listOf(),
-                 tradesIn : List<String> = listOf(), tradesOut: List<Trade> = listOf(),
+                 tradesIn : List<Long> = listOf(), tradesOut: List<Trade> = listOf(),
                  unstructured: List<String> = listOf(), txs : List<Transaction> = listOf()) : Response {
 
 
@@ -88,7 +88,7 @@ class Response (
                 executionsIn.forEach {
                     val id = it
                     execs.forEach {
-                        if (it.id == id) mExecutionsIn.add(it)
+                        if (it.ID == id) mExecutionsIn.add(it)
                     }
                 }
             }

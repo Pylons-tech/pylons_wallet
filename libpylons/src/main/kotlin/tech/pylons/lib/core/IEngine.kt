@@ -43,7 +43,7 @@ interface IEngine {
     fun disableRecipes(recipes : List<String>) : List<Transaction>
 
     /** Execute-recipe message */
-    fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>) : Transaction
+    fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos: PaymentInfo?) : Transaction
 
     /** Check-execution message */
     fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
@@ -80,9 +80,9 @@ interface IEngine {
      */
     fun dumpCredentials (credentials: ICredentials)
 
-    fun fulfillTrade (creator: String, ID : String, CoinInputsIndex: Long, itemIds : List<ItemRef>) : Transaction
+    fun fulfillTrade (creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>, paymentInfos: PaymentInfo?) : Transaction
 
-    fun cancelTrade (tradeId : String) : Transaction
+    fun cancelTrade (creator : String, ID: Long) : Transaction
     /**
      * Generates a new Credentials object appropriate for our engine
      * type from the given mnemonic.

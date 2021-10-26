@@ -50,9 +50,9 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     val cryptoCosmos get() = cryptoHandler as CryptoCosmos
 
     companion object {
-        private val local = """http://127.0.0.1:1317"""
- 
-        fun getAddressString (addr : ByteArray) : String {
+        private val local = """http://127.0.0.1:1317""" 
+
+        fun getAddressString(addr: ByteArray): String {
             return Bech32Cosmos.convertAndEncode("pylo", AminoCompat.accAddress(addr)) 
         }
     }
@@ -134,18 +134,41 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         return response
     }
 
-    // Engine methods
- 
-    override fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>): Transaction =
-            handleTx {
-                ExecuteRecipe(
-                    Creator = creator,
-                    CookbookID = cookbookID,
-                    RecipeID = id,
-                    CoinInputsIndex = coinInputsIndex,
-                    ItemIDs = itemIds,
-                ).toSignedTx()
-            } 
+    // Engine methods 
+
+    override fun applyRecipe(
+        creator: String,
+        cookbookID: String,
+        id: String,
+        coinInputsIndex: Long,
+        itemIds: List<String>,
+        paymentInfos: PaymentInfo?
+    ): Transaction {
+        var execution = ExecuteRecipe(
+            Creator = creator,
+            CookbookID = cookbookID,
+            RecipeID = id,
+            CoinInputsIndex = coinInputsIndex,
+            ItemIDs = itemIds,
+        )
+        if (paymentInfos != null) {
+            execution.paymentInfos = paymentInfos
+        }
+
+        return handleTx {
+            execution.toSignedTx()
+            /*
+                    ExecuteRecipe(
+                        Creator = creator,
+                        CookbookID = cookbookID,
+                        RecipeID = id,
+                        CoinInputsIndex = coinInputsIndex,
+                        ItemIDs = itemIds,
+                        paymentInfos = paymentInfos
+                    ).toSignedTx()
+                 */
+        }
+    } 
 
     override fun checkExecution(id: String, payForCompletion: Boolean): Transaction =
         handleTx {
@@ -154,36 +177,62 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                 sender = it.address,
                 payToComplete = payForCompletion
             ).toSignedTx()
+        } 
+
+    override fun createTrade(
+        creator: String, coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+        coinOutputs: List<Coin>, itemOutputs: List<ItemRef>,
+        extraInfo: String
+    ) =
+        handleTx {
+            CreateTrade(
+                Creator = creator,
+                CoinInputs = coinInputs,
+                ItemInputs = itemInputs,
+                CoinOutputs = coinOutputs,
+                ItemOutputs = itemOutputs,
+                ExtraInfo = extraInfo
+            ).toSignedTx()
         }
  
-    override fun createTrade(creator: String, coinInputs: List<CoinInput>, itemInputs : List<ItemInput>,
-                             coinOutputs : List<Coin>, itemOutputs : List<ItemRef>,
-                             extraInfo : String) =
-            handleTx{
-                CreateTrade(
-                    Creator = creator,
-                    CoinInputs = coinInputs,
-                    ItemInputs = itemInputs,
-                    CoinOutputs = coinOutputs,
-                    ItemOutputs = itemOutputs,
-                    ExtraInfo = extraInfo
-                ).toSignedTx()
-            } 
     override fun dumpCredentials(credentials: ICredentials) {
         core.userData.dataSets["__CRYPTO_COSMOS__"]!!["key"] =
             cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
     } 
+ 
+    override fun fulfillTrade(
+        creator: String,
+        ID: Long,
+        CoinInputsIndex: Long,
+        Items: List<ItemRef>,
+        paymentInfos: PaymentInfo?
+    ) : Transaction {
 
-    override fun fulfillTrade(creator: String, ID : Long, CoinInputsIndex: Long, Items : List<ItemRef>)   = 
-            handleTx{
+        var execution = FulfillTrade(
+            Creator = creator,
+            ID = ID,
+            CoinInputsIndex = CoinInputsIndex,
+            Items = Items,
+        )
+        if(paymentInfos != null)
+        {
+            execution.paymentInfos = paymentInfos
+        }
+
+        return handleTx {
+            execution.toSignedTx()
+            /* 
                 FulfillTrade(
-                    Creator = creator,
-                    ID = ID,
-                    CoinInputsIndex = CoinInputsIndex,
-                    Items = Items
-                ).toSignedTx()
-            }
+                        Creator = creator,
+                        ID = ID,
+                        CoinInputsIndex = CoinInputsIndex,
+                        Items = Items,
+                        paymentInfos
+                    ).toSignedTx()
+             */
+        }
+    }
 
     override fun cancelTrade(creator : String, ID: Long)   =
             handleTx{

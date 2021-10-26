@@ -14,10 +14,7 @@ import tech.pylons.lib.types.PylonsSECP256K1
 import tech.pylons.lib.types.credentials.CosmosCredentials
 import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.item.Item
-import tech.pylons.lib.types.tx.recipe.CoinInput
-import tech.pylons.lib.types.tx.recipe.EntriesList
-import tech.pylons.lib.types.tx.recipe.ItemInput
-import tech.pylons.lib.types.tx.recipe.WeightedOutput
+import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.ItemRef
 import java.io.StringReader
 import kotlin.reflect.full.companionObject
@@ -25,18 +22,17 @@ import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.functions
 
 sealed class Message {
-
-    class CancelTrade(
-        var tradeId: String? = null
+    
+    class CancelTrade (
+            var creator : String? = null,
+            var ID : Long? = null
     ) : Message() {
         companion object {
-            fun deserialize(json: String) = klaxon.parse<CancelTrade>(json)
+            fun deserialize(json : String) = klaxon.parse<CancelTrade>(json)
         }
 
-        override fun resolve() = Response.emit(
-            this, true,
-            txs = listOf(core!!.cancelTrade(tradeId!!)), tradesIn = listOf(tradeId!!)
-        )
+        override fun resolve() = Response.emit(this, true,
+            txs = listOf(core!!.cancelTrade(creator!!, ID!!)), tradesIn = listOf(ID!!))
     }
 
     class CheckExecution(
@@ -146,31 +142,33 @@ sealed class Message {
             var creator : String? = null,
             var cookbookID : String? = null,
             var id : String? = null,
-            var coinInputsIndex: Long? = null,
-            var itemIds : List<String>? = null 
+            var coinInputsIndex: Long? = null, 
+            var itemIds : List<String>? = null,
+            var paymentInfo: PaymentInfo? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<ExecuteRecipe>(json)
         } 
         override fun resolve() = Response.emit(this, true,
-            txs = listOf(core!!.applyRecipe(creator!!, cookbookID!!, id!!, coinInputsIndex!!, itemIds!!)),
+            txs = listOf(core!!.applyRecipe(creator!!, cookbookID!!, id!!, coinInputsIndex!!, itemIds!!, paymentInfo!!)),
             recipesIn = listOf(id!!), cookbooksIn = listOf(cookbookID!!),
             itemsIn = itemIds!!)
     }
 
     class FulfillTrade(
-        var creator : String? = null,
-        var ID : String? = null,
-        var CoinInputsIndex :Long? = null,
-        var Items : List<ItemRef>? = null 
+        var creator : String? = null, 
+        var ID : Long? = null,
+        var coinInputsIndex :Long? = null,
+        var items : List<ItemRef>? = null,
+        var paymentInfos: PaymentInfo? = null 
     ) : Message() {
         companion object {
             fun deserialize(json: String) = klaxon.parse<FulfillTrade>(json)
         }
  
-        override fun resolve() = Response.emit(this, true,
-            txs = listOf(core!!.fulfillTrade(creator!!, ID!!, CoinInputsIndex!!, Items!!)),
-            tradesIn = listOf(ID!!), itemsIn = ItemRef.listFromString(Items!!)) 
+        override fun resolve() = Response.emit(this, true, 
+            txs = listOf(core!!.fulfillTrade(creator!!, ID!!, coinInputsIndex!!, items!!, paymentInfos!!)),
+            tradesIn = listOf(ID!!), itemsIn = ItemRef.listFromString(items!!)) 
     }
 
     class GetCookbooks : Message() {

@@ -35,11 +35,11 @@ class MulticoreTest {
 
     private val config = Config(
             Backend.MANUAL,
-            "pylons-devtestnet",
-        //"pylons",
+         //   "pylons-devtestnet",
+        "pylons",
             true,
-        //listOf("http://192.168.1.121:1317"),
-        listOf("https://api.devtestnet.pylons.tech")
+        listOf("http://192.168.1.121:1317"),
+        //listOf("https://api.devtestnet.pylons.tech")
     )
 
     private val testKeys =
@@ -130,54 +130,72 @@ class MulticoreTest {
 
         val profile = Core.current?.getProfile()
         Core.current?.getPylons(4000, profile!!.address)
+
+        var jsonString = """{"address":"${profile!!.address}"}""";
+        val response = HttpWire.post("https://faucet.devtestnet.pylons.tech", jsonString)
+
+        var listRecipes = Core.current?.getRecipes();
+
+//        var txs = Core.current?.applyRecipe(profile!!.address,
+//            "Easel_autocookbook_pylo193mypfkful8qguz7f4xn99meupgmpzypkz3vl5",
+//            "yyyyyyyyyyyy",
+//            0,
+//            listOf(),
+//            null
+//        );
+//        val itemRef = ItemRef("Easel_autocookbook_pylo193mypfkful8qguz7f4xn99meupgmpzypkz3vl5", "11111111")
+//        var tx = Core.current?.fulfillTrade(profile!!.address, 0,
+//            0, listOf(), null)
+//        println(tx)
+
+
         Core.current?.getTransaction("7A3BD67C41640DB810191613F5B7C3EC33130390DF81E02298F2A58FA8F8642E")
-
-        var item_one = Core.current?.getItem("5rLWQQkJdm1", "Easel_autocookbook_pylo1tlkyrc7ek0lsuv4wtchmd4et8rwcgs4plkxceh")
-
-        var items = Core.current?.listItemsBySender("pylo14c5yepsgtvrtsk9dz3yzvl6jgv3gxzltl83cas")
-
-        var item = Core.current?.getItem("pylo14c5yepsgtvrtsk9dz3yzvl6jgv3gxzltl83cas")
-
-        //Core.current?.getPylons(4000, profile!!.address)
-        var ssdsds  = Core.current?.batchCreateCookbook(
-            creators = mutableListOf(profile!!.address),
-            ids = mutableListOf("Easel_autocookbooks_" + profile!!.address),
-            names = mutableListOf("tst_cookbook_name"),
-            developers = mutableListOf("addghjkllsdfdggdgjkkk"),
-            descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
-            versions = mutableListOf("v1.0.0"),
-            supportEmails = mutableListOf("a@example.com"),
-            costsPerBlock = mutableListOf(Coin("upylon", 1)),
-            enableds = mutableListOf(true)
-        )
-//        val cookbooks = Core.current?.engine?.listCookbooks()
-//        val trades = Core.current?.engine?.listTrades(profile!!.address)
-//        val cookbook = Core.current?.engine?.getCookbook("Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
-//        val recipesss = Core.current?.engine?.getRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v_2021_10_19_17_00_32")
 //
-//        val trades = Core.current?.engine?.listTrades("pylo1zxa6az4kc0254ppmjfk0fyrc5sf2m4c36umtmr")
-//        val trade = Core.current?.engine?.getTrade("0")
+//        var item_one = Core.current?.getItem("5rLWQQkJdm1", "Easel_autocookbook_pylo1tlkyrc7ek0lsuv4wtchmd4et8rwcgs4plkxceh")
+//
+//        var items = Core.current?.listItemsBySender("pylo14c5yepsgtvrtsk9dz3yzvl6jgv3gxzltl83cas")
+//
+//        var item = Core.current?.getItem("pylo14c5yepsgtvrtsk9dz3yzvl6jgv3gxzltl83cas")
+//
+//        //Core.current?.getPylons(4000, profile!!.address)
+//        var ssdsds  = Core.current?.batchCreateCookbook(
+//            creators = mutableListOf(profile!!.address),
+//            ids = mutableListOf("Easel_autocookbooks_" + profile!!.address),
+//            names = mutableListOf("tst_cookbook_name"),
+//            developers = mutableListOf("addghjkllsdfdggdgjkkk"),
+//            descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
+//            versions = mutableListOf("v1.0.0"),
+//            supportEmails = mutableListOf("a@example.com"),
+//            costsPerBlock = mutableListOf(Coin("upylon", 1)),
+//            enableds = mutableListOf(true)
+//        )
+////        val cookbooks = Core.current?.engine?.listCookbooks()
+////        val trades = Core.current?.engine?.listTrades(profile!!.address)
+////        val cookbook = Core.current?.engine?.getCookbook("Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
+////        val recipesss = Core.current?.engine?.getRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v_2021_10_19_17_00_32")
+////
+////        val trades = Core.current?.engine?.listTrades("pylo1zxa6az4kc0254ppmjfk0fyrc5sf2m4c36umtmr")
+////        val trade = Core.current?.engine?.getTrade("0")
+//
+//
+//        Core.current?.createTrade(
+//            profile!!.address,
+//            listOf(
+//                CoinInput(listOf(Coin("upylon", 66)))
+//            ),
+//            mutableListOf(),
+//            mutableListOf(),
+//            mutableListOf(
+//                ItemRef(
+//                    cookbookID = "Easel_autocookbook_pylo1zchw46gccslpj6ffznn3cm9r33jdv36ua39v3q",
+//                    itemID = "4M2TH9NsAMM"
+//                )
+//            ),
+//            "")
+//
+////        Core.current?.engine?.applyRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v", recipesss?.cookbookId!!,
+////            recipesss?.name, 0, listOf())
 
-
-        Core.current?.createTrade(
-            profile!!.address,
-            listOf(
-                CoinInput(listOf(Coin("upylon", 66)))
-            ),
-            mutableListOf(),
-            mutableListOf(),
-            mutableListOf(
-                ItemRef(
-                    cookbookID = "Easel_autocookbook_pylo1zchw46gccslpj6ffznn3cm9r33jdv36ua39v3q",
-                    itemID = "4M2TH9NsAMM"
-                )
-            ),
-            "")
-
-//        Core.current?.engine?.applyRecipe("pylo149haucpqld30pksrzqyff67prswul9vmmle27v", recipesss?.cookbookId!!,
-//            recipesss?.name, 0, listOf())
-
-        return
         val transaction_recipe = Core.current?.batchCreateRecipe(
             creators = listOf(profile!!.address),
             cookbooks = listOf("Easel_autocookbook_" + profile!!.address),

@@ -339,10 +339,8 @@ data class ExecuteRecipe(
         val CoinInputsIndex : Long,
     @property:[Json(name = "itemIDs")]
         val ItemIDs : List<String>,
-//        @property:[Json(name = "PaymentId")]
-//        val paymentId: String = "",
-//        @property:[Json(name = "PaymentMethod")]
-//        val paymentMethod: String = ""
+    @property:[Json(name = "paymentInfos", ignored = true)]
+        var paymentInfos : PaymentInfo? = null
 ) : Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -354,9 +352,9 @@ data class ExecuteRecipe(
                 CookbookID = jsonObject.string("cookbookID")!!,
                 RecipeID = jsonObject.string("recipeID")!!,
                 CoinInputsIndex = jsonObject.long("coinInputsIndex")?: 0,
-                ItemIDs = jsonObject.array("itemIDs")?: listOf()
-//                    paymentId = jsonObject.string("PaymentId")?: "",
-//                    paymentMethod = jsonObject.string("PaymentMethod")?: ""
+                ItemIDs = jsonObject.array("itemIDs")?: listOf(),
+                //this can be null
+                //paymentInfos = PaymentInfo.fromJson(jsonObject.obj("paymentInfos")!!)
             )
         }
     }
@@ -438,16 +436,16 @@ data class FiatItem(
 @MsgType("/Pylonstech.pylons.pylons.MsgFulfillTrade")
 @MsgResType("pylons/FulfillTrade")
 data class FulfillTrade (
-    @property:[Json(name = "Creator")]
+    @property:[Json(name = "creator")]
         val Creator : String,
     @property:[Json(name = "ID")]
-        val ID : String,
-    @property:[Json(name = "CoinInputsIndex")]
+        val ID : Long,
+    @property:[Json(name = "coinInputsIndex")]
         val CoinInputsIndex : Long,
-    @property:[Json(name = "Items")]
-        val Items: List<ItemRef>
-//        @property:[Json(name = "PaymentId")]
-//        val paymentId: String
+    @property:[Json(name = "items")]
+        val Items: List<ItemRef>,
+    @property:[Json(name = "paymentInfos", ignored = true)]
+        var paymentInfos : PaymentInfo? = null
 ): Msg() {
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
 
@@ -455,23 +453,24 @@ data class FulfillTrade (
         @MsgParser
         fun parse (jsonObject: JsonObject) : FulfillTrade {
             return FulfillTrade(
-                Creator = jsonObject.string("Creator")!!,
-                ID = jsonObject.string("ID")!!,
-                CoinInputsIndex = jsonObject.long("CoinInputsIndex")?: 0,
-                Items = ItemRef.listFromJson(jsonObject.array("Items"))
-                //paymentId = jsonObject.string("PaymentId").orEmpty()
+                Creator = jsonObject.string("creator")!!,
+                ID = jsonObject.long("ID") ?: 0,
+                CoinInputsIndex = jsonObject.long("coinInputsIndex") ?: 0,
+                Items = ItemRef.listFromJson(jsonObject.array("items")),
+                //this can be null
+                //paymentInfos = PaymentInfo.fromJson(jsonObject.obj("paymentInfos")!!)
             )
         }
     }
 }
 
 @MsgType("/Pylonstech.pylons.pylons.MsgCancelTrade")
-@MsgResType("pylons/DisableTrade")
+@MsgResType("pylons/CancelTrade")
 data class CancelTrade (
-        @property:[Json(name = "Creator")]
+        @property:[Json(name = "creator")]
         val Creator : String,
         @property:[Json(name = "ID")]
-        val ID : String
+        val ID : Long
 ): Msg() {
 
     override fun serializeForIpc(): String = klaxon.toJsonString(this)
@@ -480,8 +479,8 @@ data class CancelTrade (
         @MsgParser
         fun parse (jsonObject: JsonObject) : CancelTrade {
             return CancelTrade(
-                Creator = jsonObject.string("Creator")!!,
-                ID = jsonObject.string("ID")!!
+                Creator = jsonObject.string("creator")!!,
+                ID = jsonObject.string("ID")?.toLong() ?: 0
 
             )
         }

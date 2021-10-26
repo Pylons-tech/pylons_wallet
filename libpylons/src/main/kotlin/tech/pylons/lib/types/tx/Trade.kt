@@ -3,6 +3,7 @@ package tech.pylons.lib.types.tx
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import tech.pylons.lib.internal.fuzzyLong
 import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.recipe.CoinInput
 import tech.pylons.lib.types.tx.recipe.ItemInput
@@ -14,7 +15,7 @@ data class Trade(
     @property:[Json(name = "creator")]
         val Creator : String,
     @property:[Json(name = "ID")]
-        val ID : String,
+        val ID : Long,
     @property:[Json(name = "coinInputs")]
         val CoinInputs : List<CoinInput>,
     @property:[Json(name = "itemInputs")]
@@ -37,7 +38,7 @@ data class Trade(
             if (jsonObj != null){
                 return Trade(
                     Creator = jsonObj.string("creator")!!,
-                    ID = jsonObj.string("ID")!!,
+                    ID = jsonObj.fuzzyLong("ID") ?: 0,
                     CoinInputs = CoinInput.listFromJson(jsonObj.array("coinInputs")),
                     ItemInputs = ItemInput.listFromJson(jsonObj.array("itemInputs")),
                     CoinOutputs = Coin.listFromJson(jsonObj.array("coinOutputs")),
@@ -54,7 +55,7 @@ data class Trade(
         fun fromObj(jsonObj: JsonObject): Trade? {
             return Trade(
                 Creator =  jsonObj.string("creator")!!,
-                ID = jsonObj.string("ID")!!,
+                ID = jsonObj.fuzzyLong("ID") ?: 0,
                 CoinInputs = CoinInput.listFromJson(jsonObj.array("coinInputs")),
                 ItemInputs = ItemInput.listFromJson(jsonObj.array("itemInputs")),
                 CoinOutputs = Coin.listFromJson(jsonObj.array("coinOutputs")),
@@ -73,7 +74,7 @@ data class Trade(
                 list.add(
                     Trade(
                         Creator = it.string("creator")!!,
-                        ID = it.string("ID")!!,
+                        ID = it.fuzzyLong("ID") ?: 0,
                         CoinInputs = CoinInput.listFromJson(it.array("coinInputs")),
                         ItemInputs = ItemInput.listFromJson(it.array("itemInputs")),
                         CoinOutputs = Coin.listFromJson(it.array("coinOutputs")),
