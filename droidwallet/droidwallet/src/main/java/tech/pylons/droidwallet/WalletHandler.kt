@@ -434,7 +434,6 @@ class WalletHandler {
                                         DoubleParam(
                                             key = "Residual", //this should be reserved keyword for NFT
                                             program = "1",
-                                            rate = "1",
                                             weightRanges = listOf(
                                                 DoubleWeightRange(
                                                     upper = royalty, //"${royalty}000000000000000000",  //20%
@@ -450,7 +449,6 @@ class WalletHandler {
                                         LongParam(
                                             key = "Quantity",
                                             program = "1",
-                                            rate = "1",
                                             weightRanges = listOf(
                                                 IntWeightRange(
                                                     upper = quantity, //quantity 10 copies
@@ -460,7 +458,6 @@ class WalletHandler {
                                             )
                                         ),
                                         LongParam(
-                                            rate = "1",
                                             key = "Width",
                                             weightRanges = listOf(
                                                 IntWeightRange(
@@ -472,7 +469,6 @@ class WalletHandler {
                                             program = ""
                                         ),
                                         LongParam(
-                                            rate = "1",
                                             key = "Height",
                                             weightRanges = listOf(
                                                 IntWeightRange(
@@ -481,37 +477,32 @@ class WalletHandler {
                                                     weight = 1
                                                 )
                                             ),
-                                            program = "1"
+                                            program = ""
                                         )
                                     ),
                                     strings = listOf(
                                         //pls confirm this field
                                         StringParam(
-                                            rate = "1",
                                             key = "Name",
                                             value = name,
                                             program = ""
                                         ),
                                         StringParam(
-                                            rate = "1",
                                             key = "NFT_URL",
                                             value = url,
                                             program = ""
                                         ),
                                         StringParam(
-                                            rate = "1",
                                             key = "Description",
                                             value = description,
                                             program = ""
                                         ),
                                         StringParam(
-                                            rate = "1",
                                             key = "Currency",
                                             value = currency,
                                             program = ""
                                         ),
                                         StringParam(
-                                            rate = "1",
                                             key = "Price",
                                             value = if (currency == "USD") {
                                                 (price.toDouble() * 100).toLong()
@@ -519,14 +510,14 @@ class WalletHandler {
                                             } else {
                                                 price.toDouble().toLong().toString() //remove .value
                                             },
-                                            program = "1"
+                                            program = ""
                                         )
                                     ),
                                     mutableStrings = listOf(),
                                     transferFee = listOf(Coin("upylon", 0)), //transfer Fee should be defined in NFT creation, currently set to 0
                                     tradePercentage = "1",
                                     quantity = quantity,
-                                    amountMinted = 2,
+                                    amountMinted = 1,
                                     tradeable = true
                                 ) // NFT entry
                             )

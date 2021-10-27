@@ -25,7 +25,6 @@ object BigIntUtil {
         }
 
         return DoubleParam(
-            rate = doubleParam.rate,//long2bigInt(doubleParam.rate),
             key= doubleParam.key,
             weightRanges = weightRanges.toList(),
             program = doubleParam.program
@@ -42,7 +41,6 @@ object BigIntUtil {
 
     fun toLongParam(longParam: LongParam): LongParam {
         return LongParam(
-            rate = longParam.rate,//long2bigInt(longParam.rate),
             key= longParam.key,
             weightRanges = longParam.weightRanges,
             program = longParam.program
@@ -52,7 +50,6 @@ object BigIntUtil {
 
     fun toStringParam(stringParam: StringParam): StringParam {
         return StringParam(
-            rate = stringParam.rate,//long2bigInt(stringParam.rate),
             key = stringParam.key,
             value = stringParam.value,
             program = stringParam.program

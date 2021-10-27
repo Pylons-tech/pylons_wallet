@@ -7,8 +7,6 @@ import com.beust.klaxon.JsonObject
 data class DoubleParam (
     @property:[Json(name = "key")]
         val key : String,
-    @property:[Json(name = "rate")]
-        val rate : String,
     @property:[Json(name = "weightRanges")]
         val weightRanges : List<DoubleWeightRange>,
     @property:[Json(name = "program")]
@@ -17,7 +15,6 @@ data class DoubleParam (
                 fun fromJson (jsonObject: JsonObject) : DoubleParam =
                         DoubleParam (
                             key = jsonObject.string("key")!!,
-                            rate = jsonObject.string("rate")!!,
                                 weightRanges = DoubleWeightRange.listFromJson(jsonObject.array("weightRanges")!!),
                                 program = jsonObject.string("program").orEmpty()
                         )

@@ -24,7 +24,6 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                                 id = "itemEarth",
                                 doubles = listOf(
                                         DoubleParam(
-                                                rate = "1",
                                                 key = "Mass",
                                                 weightRanges = listOf(
                                                         DoubleWeightRange("200", "100", 1)
@@ -35,7 +34,6 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                                 longs = listOf(),
                                 strings = listOf(
                                         StringParam(
-                                                rate = "1",
                                                 key = "Name",
                                                 value = "Earth",
                                                 program = ""

@@ -95,7 +95,6 @@ class RecipeTest {
                                 ItemOutput(
                                         id = "itemMars",
                                         doubles = listOf(DoubleParam(
-                                                rate = "1",
                                                 key = "Mass",
                                                 weightRanges = listOf(DoubleWeightRange(
                                                         lower = "50",
@@ -106,7 +105,6 @@ class RecipeTest {
                                         )),
                                         longs = listOf(),
                                         strings = listOf(StringParam(
-                                                rate = "1",
                                                 key = "Name",
                                                 value = "Mars",
                                                 program = ""

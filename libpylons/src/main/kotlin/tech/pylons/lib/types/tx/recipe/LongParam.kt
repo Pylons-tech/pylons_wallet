@@ -7,8 +7,6 @@ import com.beust.klaxon.JsonObject
 data class LongParam (
     @property:[Json(name = "key")]
         val key : String,
-    @property:[Json(name = "rate")]
-        val rate : String,
     @property:[Json(name = "weightRanges")]
         val weightRanges : List<IntWeightRange>,
     @property:[Json(name = "program")]
@@ -17,7 +15,6 @@ data class LongParam (
                 fun fromJson (jsonObject: JsonObject) : LongParam =
                         LongParam (
                             key = jsonObject.string("key").orEmpty(),
-                            rate = jsonObject.string("rate").orEmpty(),
                                 weightRanges = IntWeightRange.listFromJson(jsonObject.array("weightRanges")!!),
                                 program = jsonObject.string("program").orEmpty()
                         )

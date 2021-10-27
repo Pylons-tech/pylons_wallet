@@ -21,7 +21,6 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                                 id = "itemMars",
                                 doubles = listOf(
                                         DoubleParam(
-                                                rate = "1",
                                                 key = "Mass",
                                                 weightRanges = listOf(
                                                         DoubleWeightRange("100", "50", 1)
@@ -32,7 +31,6 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                                 longs = listOf(),
                                 strings = listOf(
                                         StringParam(
-                                                rate = "1",
                                                 key = "Name",
                                                 value = "Mars",
                                                 program = ""
@@ -45,9 +43,9 @@ fun emitCreateRecipe (engine : TxPylonsDevEngine, name : String, cbId : String, 
                                         ),
                                 ),
                                 transferFee = listOf(Coin("upylon", 1)),
-                                tradePercentage = "10%",
+                                tradePercentage = "1000000000000000000",
                                 quantity = 10,
-                                amountMinted = 2,
+                                amountMinted = 0,
                                 tradeable = true
                         )
                 )

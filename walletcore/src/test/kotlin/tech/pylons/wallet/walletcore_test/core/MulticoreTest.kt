@@ -35,7 +35,7 @@ class MulticoreTest {
 
     private val config = Config(
             Backend.MANUAL,
-         //   "pylons-devtestnet",
+            //"pylons-devtestnet",
         "pylons",
             true,
         listOf("http://192.168.1.121:1317"),
@@ -126,15 +126,15 @@ class MulticoreTest {
         // todo: this should actually take a keypair as an argument
         Multicore.enable(config)
         val c = Multicore.addCore(null)
-        val prof = Core.current?.newProfile("ddddd", testKeys)
+        val prof = Core.current?.newProfile("abcde", null)
 
         val profile = Core.current?.getProfile()
         Core.current?.getPylons(4000, profile!!.address)
+        Core.current?.getProfile()
 
         var jsonString = """{"address":"${profile!!.address}"}""";
-        val response = HttpWire.post("https://faucet.devtestnet.pylons.tech", jsonString)
-
-        var listRecipes = Core.current?.getRecipes();
+        val response = HttpWire.post("https://faucet.testnet.pylons.tech", jsonString)
+        //var listRecipes = Core.current?.getRecipes();
 
 //        var txs = Core.current?.applyRecipe(profile!!.address,
 //            "Easel_autocookbook_pylo193mypfkful8qguz7f4xn99meupgmpzypkz3vl5",
@@ -149,7 +149,7 @@ class MulticoreTest {
 //        println(tx)
 
 
-        Core.current?.getTransaction("7A3BD67C41640DB810191613F5B7C3EC33130390DF81E02298F2A58FA8F8642E")
+        //Core.current?.getTransaction("7A3BD67C41640DB810191613F5B7C3EC33130390DF81E02298F2A58FA8F8642E")
 //
 //        var item_one = Core.current?.getItem("5rLWQQkJdm1", "Easel_autocookbook_pylo1tlkyrc7ek0lsuv4wtchmd4et8rwcgs4plkxceh")
 //
@@ -169,6 +169,8 @@ class MulticoreTest {
 //            costsPerBlock = mutableListOf(Coin("upylon", 1)),
 //            enableds = mutableListOf(true)
 //        )
+     //   Core.current?.getProfile()
+
 ////        val cookbooks = Core.current?.engine?.listCookbooks()
 ////        val trades = Core.current?.engine?.listTrades(profile!!.address)
 ////        val cookbook = Core.current?.engine?.getCookbook("Easel_autocookbook_pylo149haucpqld30pksrzqyff67prswul9vmmle27v")
@@ -198,8 +200,8 @@ class MulticoreTest {
 
         val transaction_recipe = Core.current?.batchCreateRecipe(
             creators = listOf(profile!!.address),
-            cookbooks = listOf("Easel_autocookbook_" + profile!!.address),
-            ids = listOf("Easel_autorecipe_" + profile!!.address),
+            cookbooks = listOf("Easel_autocookbook_pylo189792fx5af0prf93gqqhhj6sfy7gj3pmfvfmtw"),
+            ids = listOf("Easel_autorecipe_3_" + profile!!.address),
             names = listOf("xxxxxxxxxxxxxx"),
             descriptions = listOf("yyyyyyyyydsfdsdfsd fsdfsdyyyyyy"),
             versions = listOf("v1.0.0"),
@@ -218,7 +220,6 @@ class MulticoreTest {
                             DoubleParam(
                                 key="Residual",
                                 program = "1",
-                                rate = "1",
                                 weightRanges = listOf(
                                     DoubleWeightRange(
                                         upper="20",
@@ -232,7 +233,6 @@ class MulticoreTest {
                             LongParam(
                                 key="Quantity",
                                 program = "1",
-                                rate = "1",
                                 weightRanges = listOf(
                                     IntWeightRange(
                                         upper = 10,
@@ -244,19 +244,16 @@ class MulticoreTest {
                         ),
                         strings = listOf(
                             StringParam(
-                                rate = "1",
                                 key = "Name",
                                 value="nft_2",
                                 program = "1"
                             ),
                             StringParam(
-                                rate = "1",
                                 key = "NFT_URL",
                                 value="http://192.168.1.1",
                                 program = "1"
                             ),
                             StringParam(
-                                rate = "1",
                                 key = "Description",
                                 value = "nft description description",
                                 program = "1"

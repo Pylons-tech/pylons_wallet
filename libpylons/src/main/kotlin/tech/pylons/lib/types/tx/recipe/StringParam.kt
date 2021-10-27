@@ -7,8 +7,6 @@ import com.beust.klaxon.JsonObject
 data class StringParam (
         @property:[Json(name = "key")]
         val key : String,
-        @property:[Json(name = "rate")]
-        val rate : String,
         @property:[Json(name = "value")]
         val value : String,
         @property:[Json(name = "program")]
@@ -17,7 +15,6 @@ data class StringParam (
                 fun fromJson (jsonObject: JsonObject) : StringParam =
                         StringParam (
                                 key = jsonObject.string("key")!!,
-                                rate = jsonObject.string("rate")!!,
                                 value = jsonObject.string("value")!!,
                                 program = jsonObject.string("program").orEmpty()
                         )

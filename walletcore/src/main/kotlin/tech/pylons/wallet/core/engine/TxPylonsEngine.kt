@@ -493,7 +493,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     override fun getPylons(amount : Long, creator : String): Boolean {
         var strAmount = amount.toString() + "upylon"
         var jsonString = """{"address":"$creator","coins":["$strAmount"]}""";
-        val response = HttpWire.post("https://faucet.devtestnet.pylons.tech", jsonString)
+        val response = HttpWire.post("https://faucet.testnet.pylons.tech", jsonString)
         val transfers = klaxon.parseJsonObject(StringReader(response)).array<String>("transfers")
         if(transfers?.size != 0){
             if(transfers?.get("status")!!.value[0].toString() == "ok"){

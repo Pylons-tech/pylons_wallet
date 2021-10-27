@@ -19,7 +19,7 @@ val createRecipeSignable = CreateRecipe(
                 itemOutputs = listOf(
                         ItemOutput(
                                 id = "Raichu",
-                                doubles = listOf(DoubleParam("1.0", "endurance",
+                                doubles = listOf(DoubleParam("1.0",
                                         listOf(
                                                 DoubleWeightRange("500.00", "100.00", 6),
                                                 DoubleWeightRange("800.00", "501.00", 2)
@@ -27,7 +27,7 @@ val createRecipeSignable = CreateRecipe(
                                 )
                                 ),
                                 longs = listOf(
-                                        LongParam("", "HP",
+                                        LongParam("",
                                                 listOf(
                                                         IntWeightRange(100, 500, 6),
                                                         IntWeightRange(100, 501, 2)
@@ -35,7 +35,7 @@ val createRecipeSignable = CreateRecipe(
                                         )
                                 ),
                                 strings = listOf(
-                                        StringParam("1.0", "Name", "Raichu", "")
+                                        StringParam("1.0", "Name", "Raichu")
                                 ),
                                 mutableStrings = listOf(
                                         StringKeyValue(
