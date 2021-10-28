@@ -9,6 +9,7 @@ import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.Trade
 import tech.pylons.lib.types.tx.recipe.*
+import tech.pylons.lib.types.tx.trade.ItemRef
 import kotlin.reflect.KClass
 
 /**
@@ -110,10 +111,9 @@ abstract class Wallet {
      * @param price:Long    wish price in pylons
      * @return Transaction?
      */
-    fun placeForSale (item : Item, price : Long, callback: (Transaction?) -> Unit) {
-        sendMessage(Transaction::class, Message.CreateTrade(listOf(
-            klaxon.toJsonString(Coin("pylon", price))),
-            listOf(), listOf(), listOf(item.id))) {
+    fun placeForSale (item : ItemRef, price : Long, callback: (Transaction?) -> Unit) {
+        sendMessage(Transaction::class, Message.CreateTrade("", listOf(),
+            listOf(), listOf(), listOf(item))) {
             val response = it as Response
             var tx:Transaction? = null
             if (response.txs.isNotEmpty()) {
@@ -130,7 +130,7 @@ abstract class Wallet {
      *
      * @return List<Trade>
      */
-    fun getTrades(callback: (List<Trade>) -> Unit) {
+    fun getTrades(creator:String, callback: (List<Trade>) -> Unit) {
         sendMessage(List::class, Message.GetTrades()) {
             val response = it as Response
             val trades = response.tradesOut
@@ -147,7 +147,7 @@ abstract class Wallet {
      * @return Transaction?
      */
     fun buyItem (trade : Trade, paymentId: String?=null, callback: (Transaction?) -> Unit) {
-        sendMessage(Transaction::class, Message.FulfillTrade(tradeId = trade.id, itemIds = null, paymentId = paymentId)) {
+        sendMessage(Transaction::class, Message.FulfillTrade(trade.Creator, ID = trade.ID, coinInputsIndex = 0, items = null)) {
             val response = it as Response
             var tx:Transaction? = null
             if (response.txs.isNotEmpty()) {
@@ -173,22 +173,20 @@ abstract class Wallet {
      * @param costsPerBlock
      * @return List<Cookbook>
      */
-    fun createCookbooks(ids : List<String>,
-                       names : List<String>,
-                       developers : List<String>,
-                       descriptions : List<String>,
-                       versions : List<String>,
-                       supportEmails : List<String>,
-                       costsPerBlock : List<Long>,
+    fun createCookbooks(creators: List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, developers: List<String>,
+                        versions : List<String>, supportEmails: List<String>,
+                        costsPerBlocks : List<Coin>, enableds: List<Boolean>,
                        callback: (List<Transaction>)->Unit) {
         sendMessage(Transaction::class, Message.CreateCookbooks(
+            creators = creators,
             ids = ids,
             names = names,
-            developers = developers,
             descriptions = descriptions,
+            developers = developers,
             versions = versions,
             supportEmails = supportEmails,
-            costsPerBlock = costsPerBlock
+            costsPerBlocks = costsPerBlocks,
+            enableds = enableds
         )){
             val response = it as Response
             callback(response.txs)
@@ -206,15 +204,15 @@ abstract class Wallet {
     fun createAutoCookbook(profile: Profile, appName:String, callback: (Transaction?) -> Unit) {
         sendMessage(
             Transaction::class, Message.CreateCookbooks(
-                //listOf("${appName}_autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
-                //listOf("${appName}_autocookbook_${profile.address}_${Instant.now().toEpochMilli()}"),
+                listOf("${profile.address}"),
                 listOf("${appName}_autocookbook_${profile.address}"),
                 listOf("${appName}_autocookbook_${profile.address}"),
                 listOf("${appName}_autocookbook_${profile.address}"),
                 listOf("${appName} autocookbook for use by managed appliations"),
-                listOf("1.0.0"),
+                listOf("v1.0.0"),
                 listOf("support@pylons.tech"),
-                listOf(1)
+                listOf(Coin("upylon", 1)),
+                listOf(true)
             )
         ) {
             val response =  it as Response
@@ -245,10 +243,10 @@ abstract class Wallet {
      *
      * @return Transaction?
      */
-    fun createRecipe(name : String, cookbook : String, description : String,
-                     blockInterval : Long, coinInputs : List<CoinInput>,
-                     itemInputs: List<ItemInput>, outputTable : EntriesList,
-                     outputs : List<WeightedOutput>, extraInfo: List<String>, callback: (Transaction?) -> Unit) {
+    fun createRecipe(creator : String, cookbook : String, id: String, name : String, description : String,
+                     version : String, coinInputs : List<CoinInput>, itemInputs: List<ItemInput>, entries : EntriesList,
+                     outputs : List<WeightedOutput>, blockInterval : Long, enabled : Boolean, extraInfo: String, callback: (Transaction?) -> Unit) {
+
 
         var biItemInputs = mutableListOf<ItemInput>()
         var biItemModifyOutputs = mutableListOf<ItemModifyOutput>()
@@ -257,22 +255,22 @@ abstract class Wallet {
         itemInputs.forEach {
             biItemInputs.add( BigIntUtil.toItemInput(it) )
         }
-        outputTable.itemModifyOutputs?.forEach {
+        entries.itemModifyOutputs?.forEach {
             biItemModifyOutputs.add(BigIntUtil.toItemModifyOutput(it))
         }
-        outputTable.itemOutputs.forEach {
+        entries.itemOutputs.forEach {
             biItemOutputs.add(BigIntUtil.toItemOutput(it))
         }
 
         var bi_outputTable = EntriesList(
-            coinOutputs = outputTable.coinOutputs,
+            coinOutputs = entries.coinOutputs,
             itemModifyOutputs = biItemModifyOutputs.toList(),
             itemOutputs = biItemOutputs.toList()
         )
 
-        sendMessage(Transaction::class, Message.CreateRecipes(listOf(name), listOf(cookbook), listOf(description),
-            listOf(blockInterval), listOf(klaxon.toJsonString(coinInputs)), listOf(klaxon.toJsonString(biItemInputs)),
-            listOf(klaxon.toJsonString(bi_outputTable)), listOf(klaxon.toJsonString(outputs)), listOf(klaxon.toJsonString(extraInfo)))) {
+        sendMessage(Transaction::class, Message.CreateRecipes(listOf(creator), listOf(cookbook), listOf(id), listOf(name), listOf(description), listOf(version),
+            coinInputs, biItemInputs,
+            bi_outputTable, outputs, listOf(blockInterval), listOf(enabled), listOf(klaxon.toJsonString(extraInfo)))) {
             val response = it as Response
             var tx:Transaction? = null
             if (response.txs.isNotEmpty()) {
@@ -294,6 +292,22 @@ abstract class Wallet {
             val response = it as Response
             println("listRecipes ${response.recipesOut.count()}")
 
+            callback(response.recipesOut)
+        }
+    }
+
+
+    /**
+     * queryListRecipesByCookbookRequest
+     * retrieve all recipe list
+     *
+     *  @return List<Recipe>
+     */
+    fun queryListRecipesByCookbookRequest(cookbookID: String, callback: (List<Recipe>)->Unit) {
+        sendMessage(Recipe::class, Message.QueryListRecipesByCookbookRequest(cookbookID)) {
+
+            val response = it as Response
+            println("listRecipes ${response.recipesOut.count()}")
             callback(response.recipesOut)
         }
     }
@@ -324,8 +338,8 @@ abstract class Wallet {
      * @return return transaction of the recipe execution when success, else return null.
      *
      */
-    fun executeRecipe(recipe: String, cookbook: String, itemInputs: List<String>, callback: (Transaction?)->Unit) {
-        sendMessage(Transaction::class, Message.ExecuteRecipe(recipe, cookbook, itemInputs)){
+    fun executeRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos: PaymentInfo, callback: (Transaction?)->Unit) {
+        sendMessage(Transaction::class, Message.ExecuteRecipe(creator, cookbookID, id, coinInputsIndex, itemIds, null/*paymentInfos*/)){
             val response = it as Response
             var tx: Transaction? = null
             if(response.txs.isNotEmpty()) {

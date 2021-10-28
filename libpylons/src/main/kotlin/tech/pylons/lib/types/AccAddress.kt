@@ -10,7 +10,7 @@ class AccAddress (val bytes : ByteArray = byteArrayOf()) {
         // AddrLen defines a valid address length
         const val addrLen = 20
         // Bech32PrefixAccAddr defines the Bech32 prefix of an account's address
-        const val bech32MainPrefix = "cosmos"
+        const val bech32MainPrefix = "pylo"
 
         // PrefixAccount is the prefix for account keys
         const val prefixAccount = "acc"

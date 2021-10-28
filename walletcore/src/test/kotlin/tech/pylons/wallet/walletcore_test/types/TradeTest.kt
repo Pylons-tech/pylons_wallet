@@ -7,6 +7,7 @@ import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import javax.sound.midi.Receiver
 
 class TradeTest {
 
@@ -52,7 +53,7 @@ class TradeTest {
             ],
             "CoinOutputs": [
                 {
-                    "denom": "pylon",
+                    "denom": "upylon",
                     "amount": "444"
                 }
             ],
@@ -68,7 +69,7 @@ class TradeTest {
                     "ID": "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs401401a9-eb2f-41df-9480-1b3017dcd7f3",
                     "CoinInputs": [
                         {
-                            "Coin": "pylon",
+                            "Coin": "upylon",
                             "Count": "40000"
                         }
                     ],
@@ -136,7 +137,7 @@ class TradeTest {
                             "ID": "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs774d3f14-d988-4aaf-a51e-13e2ccd09221",
                             "CoinInputs": [
                                 {
-                                    "Coin": "pylon",
+                                    "Coin": "upylon",
                                     "Count": "4000"
                                 }
                             ],
@@ -215,7 +216,7 @@ class TradeTest {
                             ],
                             "CoinOutputs": [
                                 {
-                                    "denom": "pylon",
+                                    "denom": "upylon",
                                     "amount": "333"
                                 }
                             ],
@@ -330,7 +331,7 @@ class TradeTest {
             "ID": "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglfde15ca3-1fa3-4608-ad7b-892bc0c15494",
             "CoinInputs": [
                 {
-                    "Coin": "pylon",
+                    "Coin": "upylon",
                     "Count": "1"
                 }
             ],
@@ -385,7 +386,7 @@ class TradeTest {
             "ItemInputs": null,
             "CoinOutputs": [
                 {
-                    "denom": "pylon",
+                    "denom": "upylon",
                     "amount": "330"
                 }
             ],
@@ -401,7 +402,7 @@ class TradeTest {
             "ID": "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs9ceed66cd-5fe2-480e-a4e7-64c728423b77",
             "CoinInputs": [
                 {
-                    "Coin": "pylon",
+                    "Coin": "upylon",
                     "Count": "50001"
                 }
             ],
@@ -431,7 +432,7 @@ class TradeTest {
             "ItemInputs": null,
             "CoinOutputs": [
                 {
-                    "denom": "pylon",
+                    "denom": "upylon",
                     "amount": "33"
                 }
             ],
@@ -451,229 +452,213 @@ class TradeTest {
     fun getTradeList() {
         val expected = listOf(
                 Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e6050971e5d-7349-43a1-ab78-8a5e11a45988",
-                    coinInputs = listOf(),
-                    itemInputs = listOf(TradeItemInput(
-                        "LOUD-v0.1.0-1589853709",
+                    ID = 123,
+                    CoinInputs = listOf(),
+                    ItemInputs = listOf(
+                        ItemInput(
+                        "",
+                        conditions = ConditionList(listOf(), listOf(), listOf()),
+                        doubles = listOf(DoubleInputParam("XP", "1", "1000000")),
+                        longs = listOf(LongInputParam("level", 1, 2)),
+                        strings = listOf(StringInputParam("Name", "LionBaby"))
+                    )),
+                    TradedItemInputs = listOf(),
+                    CoinOutputs = listOf(Coin("upylon", 444)),
+                    ItemOutputs = listOf(),
+                    ExtraInfo = "character buy request created by loud game",
+                    Creator = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60",
+                    Receiver = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60"
+                ),
+                Trade(
+                    ID = 123,
+                    CoinInputs = listOf(CoinInput(listOf(Coin("upylon", 40000)))),
+                    ItemInputs = listOf(
                         ItemInput(
                             "",
                             conditions = ConditionList(listOf(), listOf(), listOf()),
                             doubles = listOf(DoubleInputParam("XP", "1", "1000000")),
                             longs = listOf(LongInputParam("level", 1, 2)),
-                            strings = listOf(StringInputParam("Name", "LionBaby")),
-                            transferFee = FeeInputParam(0, 0)
-                        )
-                    )),
-                    coinOutputs = listOf(Coin("pylon", 444)),
-                    itemOutputs = listOf(),
-                    extraInfo = "character buy request created by loud game",
-                    sender = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60",
-                    fulfiller = "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs401401a9-eb2f-41df-9480-1b3017dcd7f3",
-                    coinInputs = listOf(CoinInput("pylon", 40000)),
-                    itemInputs = listOf(),
-                    coinOutputs = listOf(),
-                    itemOutputs = listOf(Item(
-                        nodeVersion = "0.0.1",
-                        id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs92340456-8623-44ca-8c5b-21eb779dca2a",
-                        cookbookId = "LOUD-v0.1.0-1589853709",
-                        sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
-                        ownerRecipeID = "orid",
-                        ownerTradeID = "otid",
-                        tradable = true,
-                        lastUpdate = 39334,
-                        doubles = mapOf("XP" to "1.0"),
-                        longs = mapOf(
-                            "level" to "1L",
-                            "GiantKill" to "0L",
-                            "Special" to "0L",
-                            "SpecialDragonKill" to "0L",
-                            "UndeadDragonKill" to "0L"),
-                        strings = mapOf("Name" to "Tiger", "Type" to "Character"),
-                        transferFee = 1
-                    )),
-                    extraInfo = "character sell request created by loud game",
-                    sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
-                    fulfiller = "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs774d3f14-d988-4aaf-a51e-13e2ccd09221",
-                    coinInputs = listOf(CoinInput("pylon", 4000)),
-                    itemInputs = listOf(),
-                    coinOutputs = listOf(),
-                    itemOutputs = listOf(Item(
-                        nodeVersion = "0.0.1",
-                        id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs90580d1b-4521-466b-8e78-0f3b8e95f8f5",
-                        cookbookId = "LOUD-v0.1.0-1589853709",
-                        sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
-                        ownerRecipeID = "",
-                        ownerTradeID = "",
-                        tradable = true,
-                        lastUpdate = 39328,
-                        doubles = mapOf("attack" to "3.0"),
-                        longs = mapOf("level" to "1L", "value" to "100L"),
-                        strings = mapOf("Name" to "Wooden sword"),
-                        transferFee = 0
-                    )),
-                    extraInfo = "sword sell request created by loud game",
-                    sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
-                    fulfiller = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs7b0fc361-5ce0-4cfb-9173-039e84c89124",
-                    coinInputs = listOf(),
-                    itemInputs = listOf(TradeItemInput(cookbookId = "LOUD-v0.1.0-1589853709",
-                        itemInput = ItemInput(
-                            id = "",
-                            conditions = ConditionList(listOf(), listOf(), listOf()),
-                            doubles = listOf(),
-                            longs = listOf(LongInputParam("level", 1, 1)),
-                            strings = listOf(StringInputParam("Name", "Wooden sword")),
-                            transferFee = FeeInputParam(0, 0)
-                        )
-                    )),
-                    coinOutputs = listOf(Coin("pylon", 333)),
-                    itemOutputs = listOf(),
-                    extraInfo = "sword buy request created by loud game",
-                    sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
-                    fulfiller = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglb96ad4ee-3b7f-4b12-96c4-dca45556f812",
-                    coinInputs = listOf(),
-                    itemInputs = listOf(TradeItemInput(cookbookId = "LOUD-v0.1.0-1589853709",
-                        itemInput = ItemInput(
-                            id = "",
-                            conditions = ConditionList(listOf(), listOf(), listOf()),
-                            doubles = listOf(),
-                            longs = listOf(),
-                            strings = listOf(StringInputParam("Name", "Trading Knife v4")),
-                            transferFee = FeeInputParam(0, 0)
-                        )
-                    )),
-                    coinOutputs = listOf(),
-                    itemOutputs = listOf(Item(
-                        nodeVersion = "0.0.1",
-                        id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl2f92088b-1115-4b4e-8f20-5d1ee558af2a",
-                        cookbookId = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a",
-                        sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
-                        ownerRecipeID = "",
-                        ownerTradeID = "",
-                        tradable = true,
-                        lastUpdate = 125,
-                        doubles = mapOf("attack" to "2.0"),
-                        longs = mapOf("level" to "2L"),
-                        strings = mapOf("Name" to "Trading Knife v2"),
-                        transferFee = 0
-                    )),
-                    extraInfo = "item to item trading",
-                    sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
-                    fulfiller = "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl3da7b0cc-e79a-4e8b-90f0-3ce3032e691e",
-                    coinInputs = listOf(),
-                    itemInputs = listOf(TradeItemInput(cookbookId = "LOUD-v0.1.0-1589853709",
-                        itemInput = ItemInput(
-                            id = "KNIFE",
-                            conditions = ConditionList(listOf(), listOf(), listOf()),
-                            doubles = listOf(),
-                            longs = listOf(),
-                            strings = listOf(StringInputParam("Name", "Trading Knife v3")),
-                            transferFee = FeeInputParam(50, 100)
-                        )
-                    )),
-                    coinOutputs = listOf(Coin("eugencoin", 200)),
-                    itemOutputs = listOf(),
-                    extraInfo = "item to coin trading",
-                    sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
-                    fulfiller = "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglfde15ca3-1fa3-4608-ad7b-892bc0c15494",
-                    coinInputs = listOf(CoinInput("pylon", 1)),
-                    itemInputs = listOf(),
-                    coinOutputs = listOf(),
-                    itemOutputs = listOf(Item(
-                        nodeVersion = "0.0.1",
-                        id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl55c90ca8-0566-499a-999f-753a13cc89c6",
-                        cookbookId = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a",
-                        sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
-                        ownerRecipeID = "",
-                        ownerTradeID = "",
-                        tradable = true,
-                        lastUpdate = 124,
-                        doubles = mapOf("attack" to "1.0"),
-                        longs = mapOf("level" to "1L"),
-                        strings = mapOf("Name" to "Trading Knife v1"),
-                        transferFee = 0
-                    )),
-                    extraInfo = "coin to item trading",
-                    sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
-                    fulfiller = "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs961818c70-3c1c-48f6-9559-085b577af09e",
-                    coinInputs = listOf(CoinInput("loudcoin", 4000)),
-                    itemInputs = listOf(),
-                    coinOutputs = listOf(Coin("pylon", 330)),
-                    itemOutputs = listOf(),
-                    extraInfo = "created by loud game",
-                    sender = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs9",
-                    fulfiller = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
-                    disabled = false,
-                    completed = true
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs9ceed66cd-5fe2-480e-a4e7-64c728423b77",
-                    coinInputs = listOf(CoinInput("pylon", 50001)),
-                    itemInputs = listOf(),
-                    coinOutputs = listOf(Coin("loudcoin", 3000)),
-                    itemOutputs = listOf(),
-                    extraInfo = "created by loud game",
-                    sender = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs9",
-                    fulfiller = "",
-                    disabled = false,
-                    completed = false
-                ),
-                Trade(
-                    nodeVersion = "0.0.1",
-                    id = "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn37ce48ae-4527-487d-b981-e40a63a18e5f",
-                    coinInputs = listOf(CoinInput("loudcoin", 332)),
-                    itemInputs = listOf(),
-                    coinOutputs = listOf(Coin("pylon", 33)),
-                    itemOutputs = listOf(),
-                    extraInfo = "created by loud game",
-                    sender = "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn",
-                    fulfiller = "",
-                    disabled = false,
-                    completed = false
-                ))
-        Assertions.assertEquals(expected, Trade.listFromJson(tradeListJson))
+                            strings = listOf(StringInputParam("Name", "LionBaby"))
+                        )),
+                    TradedItemInputs = listOf(),
+                    CoinOutputs = listOf(Coin("upylon", 444)),
+                    ItemOutputs = listOf(),
+                    ExtraInfo = "character buy request created by loud game",
+                    Creator = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60",
+                    Receiver = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60"
+
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs774d3f14-d988-4aaf-a51e-13e2ccd09221",
+//                    coinInputs = listOf(CoinInput("upylon", 4000)),
+//                    itemInputs = listOf(),
+//                    coinOutputs = listOf(),
+//                    itemOutputs = listOf(Item(
+//                        nodeVersion = "0.0.1",
+//                        id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs90580d1b-4521-466b-8e78-0f3b8e95f8f5",
+//                        cookbookId = "LOUD-v0.1.0-1589853709",
+//                        sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
+//                        ownerRecipeID = "",
+//                        ownerTradeID = "",
+//                        tradable = true,
+//                        lastUpdate = 39328,
+//                        doubles = mapOf("attack" to "3.0"),
+//                        longs = mapOf("level" to "1L", "value" to "100L"),
+//                        strings = mapOf("Name" to "Wooden sword"),
+//                        transferFee = 0
+//                    )),
+//                    extraInfo = "sword sell request created by loud game",
+//                    sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
+//                    fulfiller = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60",
+//                    disabled = false,
+//                    completed = true
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs7b0fc361-5ce0-4cfb-9173-039e84c89124",
+//                    coinInputs = listOf(),
+//                    itemInputs = listOf(TradeItemInput(cookbookId = "LOUD-v0.1.0-1589853709",
+//                        itemInput = ItemInput(
+//                            id = "",
+//                            conditions = ConditionList(listOf(), listOf(), listOf()),
+//                            doubles = listOf(),
+//                            longs = listOf(LongInputParam("level", 1, 1)),
+//                            strings = listOf(StringInputParam("Name", "Wooden sword")),
+//                            transferFee = FeeInputParam(0, 0)
+//                        )
+//                    )),
+//                    coinOutputs = listOf(Coin("upylon", 333)),
+//                    itemOutputs = listOf(),
+//                    extraInfo = "sword buy request created by loud game",
+//                    sender = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
+//                    fulfiller = "cosmos16hwvr9u0zrwu2smaefylq2t8nsfz3g6ytd9e60",
+//                    disabled = false,
+//                    completed = true
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglb96ad4ee-3b7f-4b12-96c4-dca45556f812",
+//                    coinInputs = listOf(),
+//                    itemInputs = listOf(TradeItemInput(cookbookId = "LOUD-v0.1.0-1589853709",
+//                        itemInput = ItemInput(
+//                            id = "",
+//                            conditions = ConditionList(listOf(), listOf(), listOf()),
+//                            doubles = listOf(),
+//                            longs = listOf(),
+//                            strings = listOf(StringInputParam("Name", "Trading Knife v4")),
+//                            transferFee = FeeInputParam(0, 0)
+//                        )
+//                    )),
+//                    coinOutputs = listOf(),
+//                    itemOutputs = listOf(Item(
+//                        nodeVersion = "0.0.1",
+//                        id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl2f92088b-1115-4b4e-8f20-5d1ee558af2a",
+//                        cookbookId = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a",
+//                        sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
+//                        ownerRecipeID = "",
+//                        ownerTradeID = "",
+//                        tradable = true,
+//                        lastUpdate = 125,
+//                        doubles = mapOf("attack" to "2.0"),
+//                        longs = mapOf("level" to "2L"),
+//                        strings = mapOf("Name" to "Trading Knife v2"),
+//                        transferFee = 0
+//                    )),
+//                    extraInfo = "item to item trading",
+//                    sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
+//                    fulfiller = "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep",
+//                    disabled = false,
+//                    completed = true
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl3da7b0cc-e79a-4e8b-90f0-3ce3032e691e",
+//                    coinInputs = listOf(),
+//                    itemInputs = listOf(TradeItemInput(cookbookId = "LOUD-v0.1.0-1589853709",
+//                        itemInput = ItemInput(
+//                            id = "KNIFE",
+//                            conditions = ConditionList(listOf(), listOf(), listOf()),
+//                            doubles = listOf(),
+//                            longs = listOf(),
+//                            strings = listOf(StringInputParam("Name", "Trading Knife v3")),
+//                            transferFee = FeeInputParam(50, 100)
+//                        )
+//                    )),
+//                    coinOutputs = listOf(Coin("eugencoin", 200)),
+//                    itemOutputs = listOf(),
+//                    extraInfo = "item to coin trading",
+//                    sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
+//                    fulfiller = "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep",
+//                    disabled = false,
+//                    completed = true
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxglfde15ca3-1fa3-4608-ad7b-892bc0c15494",
+//                    coinInputs = listOf(CoinInput("upylon", 1)),
+//                    itemInputs = listOf(),
+//                    coinOutputs = listOf(),
+//                    itemOutputs = listOf(Item(
+//                        nodeVersion = "0.0.1",
+//                        id = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl55c90ca8-0566-499a-999f-753a13cc89c6",
+//                        cookbookId = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgldb212c3c-a228-4b62-b6bb-a48d0e75005a",
+//                        sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
+//                        ownerRecipeID = "",
+//                        ownerTradeID = "",
+//                        tradable = true,
+//                        lastUpdate = 124,
+//                        doubles = mapOf("attack" to "1.0"),
+//                        longs = mapOf("level" to "1L"),
+//                        strings = mapOf("Name" to "Trading Knife v1"),
+//                        transferFee = 0
+//                    )),
+//                    extraInfo = "coin to item trading",
+//                    sender = "cosmos1h7pam0zqguvrnkqyf4hlwj0jg3xpwkq0u0uxgl",
+//                    fulfiller = "cosmos1yafkzzx9lygqvy8hxx9l9e2cw7ct5rp3ly03ep",
+//                    disabled = false,
+//                    completed = true
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs961818c70-3c1c-48f6-9559-085b577af09e",
+//                    coinInputs = listOf(CoinInput("loudcoin", 4000)),
+//                    itemInputs = listOf(),
+//                    coinOutputs = listOf(Coin("upylon", 330)),
+//                    itemOutputs = listOf(),
+//                    extraInfo = "created by loud game",
+//                    sender = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs9",
+//                    fulfiller = "cosmos1842mp69ydaljedffpnatcjtl7ns23vf6mzptfs",
+//                    disabled = false,
+//                    completed = true
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs9ceed66cd-5fe2-480e-a4e7-64c728423b77",
+//                    coinInputs = listOf(CoinInput("upylon", 50001)),
+//                    itemInputs = listOf(),
+//                    coinOutputs = listOf(Coin("loudcoin", 3000)),
+//                    itemOutputs = listOf(),
+//                    extraInfo = "created by loud game",
+//                    sender = "cosmos1mkk2q586y5pz263u5v8dv59723u58059ytprs9",
+//                    fulfiller = "",
+//                    disabled = false,
+//                    completed = false
+//                ),
+//                Trade(
+//                    nodeVersion = "0.0.1",
+//                    id = "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn37ce48ae-4527-487d-b981-e40a63a18e5f",
+//                    coinInputs = listOf(CoinInput("loudcoin", 332)),
+//                    itemInputs = listOf(),
+//                    coinOutputs = listOf(Coin("upylon", 33)),
+//                    itemOutputs = listOf(),
+//                    extraInfo = "created by loud game",
+//                    sender = "cosmos1ng9ehpmjc4mk8s3e7jxfwa2t4rtkhyhj58ngrn",
+//                    fulfiller = "",
+//                    disabled = false,
+//                    completed = false
+               )
+                )
+ //       Assertions.assertEquals(expected, Trade.listFromJson(tradeListJson))
     }
 }

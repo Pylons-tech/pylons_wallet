@@ -5,21 +5,18 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class LongParam (
-    @property:[Json(name = "Rate")]
-        val rate : String,
-    @property:[Json(name = "Key")]
+    @property:[Json(name = "key")]
         val key : String,
-    @property:[Json(name = "WeightRanges")]
-        val weightRanges : List<LongWeightRange>,
-    @property:[Json(name = "Program")]
+    @property:[Json(name = "weightRanges")]
+        val weightRanges : List<IntWeightRange>,
+    @property:[Json(name = "program")]
         val program : String) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : LongParam =
                         LongParam (
-                                rate = jsonObject.string("Rate")!!,
-                                key = jsonObject.string("Key")!!,
-                                weightRanges = LongWeightRange.listFromJson(jsonObject.array("WeightRanges")!!),
-                                program = jsonObject.string("Program")!!
+                            key = jsonObject.string("key").orEmpty(),
+                                weightRanges = IntWeightRange.listFromJson(jsonObject.array("weightRanges")!!),
+                                program = jsonObject.string("program").orEmpty()
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<LongParam> {

@@ -5,19 +5,19 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 data class DoubleInputParam(
-        @property:[Json(name = "Key")]
+        @property:[Json(name = "key")]
         val key : String,
-        @property:[Json(name = "MinValue")]
+        @property:[Json(name = "minValue")]
         val minValue : String,
-        @property:[Json(name = "MaxValue")]
+        @property:[Json(name = "maxValue")]
         val maxValue : String
 ) {
         companion object {
                 fun fromJson (jsonObject: JsonObject) : DoubleInputParam =
                         DoubleInputParam (
-                                key = jsonObject.string("Key")!!,
-                                minValue = jsonObject.string("MinValue")!!,
-                                maxValue = jsonObject.string("MaxValue")!!
+                                key = jsonObject.string("key")!!,
+                                minValue = jsonObject.string("minValue")!!,
+                                maxValue = jsonObject.string("maxValue")!!
                         )
 
                 fun listFromJson (jsonArray: JsonArray<JsonObject>?) : List<DoubleInputParam> {

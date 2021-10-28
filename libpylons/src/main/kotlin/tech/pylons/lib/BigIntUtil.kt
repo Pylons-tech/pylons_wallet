@@ -25,7 +25,6 @@ object BigIntUtil {
         }
 
         return DoubleParam(
-            rate = long2bigInt(doubleParam.rate),
             key= doubleParam.key,
             weightRanges = weightRanges.toList(),
             program = doubleParam.program
@@ -42,19 +41,25 @@ object BigIntUtil {
 
     fun toLongParam(longParam: LongParam): LongParam {
         return LongParam(
-            rate = long2bigInt(longParam.rate),
             key= longParam.key,
             weightRanges = longParam.weightRanges,
             program = longParam.program
         )
+
     }
 
     fun toStringParam(stringParam: StringParam): StringParam {
         return StringParam(
-            rate = long2bigInt(stringParam.rate),
             key = stringParam.key,
             value = stringParam.value,
             program = stringParam.program
+        )
+    }
+
+    fun toStringKeyValueParam(stringKeyValueParam: StringKeyValue): StringKeyValue {
+        return StringKeyValue(
+            Key = stringKeyValueParam.Key,
+            Value = stringKeyValueParam.Value
         )
     }
 
@@ -63,6 +68,7 @@ object BigIntUtil {
         var doubles = mutableListOf<DoubleParam>()
         var longs = mutableListOf<LongParam>()
         var strings = mutableListOf<StringParam>()
+        var mutableStrings = mutableListOf<StringKeyValue>()
 
         output.doubles.forEach { value->
             doubles.add(toDoubleParam(value))
@@ -75,12 +81,23 @@ object BigIntUtil {
         output.strings.forEach { value->
             strings.add(toStringParam(value))
         }
+
+        output.mutableStrings.forEach { value->
+            mutableStrings.add(toStringKeyValueParam(value))
+        }
+
         return ItemModifyOutput(
+            ID = output.ID,
             itemInputRef = output.itemInputRef,
+            doubles = doubles.toList(),
             longs = longs.toList(),
             strings = strings.toList(),
-            doubles = doubles.toList(),
-            transferFee = output.transferFee
+            mutableStrings = mutableStrings.toList(),
+            transferFee = output.transferFee,
+            tradePercentage = output.tradePercentage,
+            quantity = output.quantity,
+            amountMinted = output.amountMinted,
+            tradeable = output.tradeable
         )
     }
 
@@ -88,6 +105,8 @@ object BigIntUtil {
         var doubles = mutableListOf<DoubleParam>()
         var longs = mutableListOf<LongParam>()
         var strings = mutableListOf<StringParam>()
+        var mutableStrings = mutableListOf<StringKeyValue>()
+
         itemOutput.doubles.forEach { value->
             doubles.add(toDoubleParam(value))
         }
@@ -100,27 +119,40 @@ object BigIntUtil {
             strings.add(toStringParam(value))
         }
 
+        itemOutput.mutableStrings.forEach { value->
+            mutableStrings.add(toStringKeyValueParam(value))
+        }
+
         return ItemOutput(
-            id=itemOutput.id,
+            id = itemOutput.id,
             doubles = doubles.toList(),
             longs = longs.toList(),
             strings = strings.toList(),
-            transferFee = itemOutput.transferFee
+            mutableStrings = mutableStrings.toList(),
+            transferFee = itemOutput.transferFee,
+            tradePercentage = itemOutput.tradePercentage,
+            quantity = itemOutput.quantity,
+            amountMinted = itemOutput.amountMinted,
+            tradeable = itemOutput.tradeable
         )
     }
 
     fun toItemInput(itemInput: ItemInput): ItemInput {
         var doubles = mutableListOf<DoubleInputParam>()
+        var longs = mutableListOf<LongInputParam>()
         var conditionDoubles = mutableListOf<DoubleInputParam>()
+
         itemInput.conditions.doubles.forEach {
             conditionDoubles.add(toDoubleInputParam(it))
+        }
+
+        itemInput.longs.forEach {
+            longs.add(it)
         }
 
         itemInput.doubles.forEach {
             doubles.add(toDoubleInputParam(it))
         }
-
-
 
         return ItemInput(
             id = itemInput.id,
@@ -130,9 +162,8 @@ object BigIntUtil {
                 strings = itemInput.conditions.strings
             ),
             doubles = doubles,
-            longs = itemInput.longs,
-            strings = itemInput.strings,
-            transferFee = itemInput.transferFee
+            longs = longs,
+            strings = itemInput.strings
         )
     }
 }

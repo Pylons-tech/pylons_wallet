@@ -31,16 +31,26 @@ internal class IpcTest {
         return engine
     }
 
-    @Test
-    fun handleBatchCreateRecipe () {
-        engineSetup()
-        val weightedOutputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(tech.pylons.lib.klaxon.toJsonString(WeightedOutput(listOf(), "")))))
-        val coinInputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(CoinInput("foo", 0))))
-        val itemInputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(ItemInput("bar", ConditionList(listOf(), listOf(), listOf()), listOf(), listOf(), listOf(), FeeInputParam(0, 0)))))
-        Message.CreateRecipes(listOf("name"), listOf("foo"), listOf("descr"),
-        listOf(0), coinInputs, itemInputs,
-        listOf(tech.pylons.lib.klaxon.toJsonString(EntriesList(listOf(), listOf(), listOf()))),
-        weightedOutputs).resolve()
-        // this obv. won't work atm but i just wanna see how it deserializes
-    }
+//    @Test
+//    fun handleBatchCreateRecipe () {
+//        engineSetup()
+//        val weightedOutputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(tech.pylons.lib.klaxon.toJsonString(WeightedOutput(listOf(), "")))))
+//        val coinInputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(CoinInput("foo", 0))))
+//        val itemInputs = listOf(tech.pylons.lib.klaxon.toJsonString(listOf(ItemInput("bar", ConditionList(listOf(), listOf(), listOf()), listOf(), listOf(), listOf(), FeeInputParam(0, 0)))))
+//        Message.CreateRecipes(
+//            creators = listOf("creator"),
+//            cookbooks = listOf("Cookbook"),
+//            ids = listOf("id"),
+//            names = listOf("name"),
+//            versions = listOf("ver"),
+//            descriptions = listOf("descr"),
+//            coinInputs = coinInputs,
+//            itemInputs = itemInputs,
+//            outputTables =  listOf(tech.pylons.lib.klaxon.toJsonString(EntriesList(listOf(), listOf(), listOf()))),
+//            outputs =  weightedOutputs,
+//            blockIntervals = listOf(0),
+//            enabled = listOf(true),
+//            extraInfos = listOf("")).resolve()
+//        // this obv. won't work atm but i just wanna see how it deserializes
+//    }
 }

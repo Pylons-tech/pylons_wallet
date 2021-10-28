@@ -5,17 +5,22 @@ import tech.pylons.lib.types.tx.recipe.*
 val basicItemOutput = ItemOutput(
         id = "",
         doubles = listOf(
-                DoubleParam("1.0", "Heft", listOf(
-                        DoubleWeightRange("1.0", "0.1", 1)
+                DoubleParam("1.0", listOf(
+                        DoubleWeightRange("0.1", "1.0", 1)
                 ), "")
         ),
         longs = listOf(
-                LongParam("1.0", "Level", listOf(
-                        LongWeightRange("100", "1", 1)
+                LongParam("1.0", listOf(
+                        IntWeightRange(1, 100, 1)
                 ), "")
         ),
         strings = listOf(
-                StringParam("1.0", "Name", "fooBar", "")
+                StringParam("1.0", "Name", "fooBar")
         ),
-        transferFee = 0
+        mutableStrings = listOf(),
+        transferFee = listOf(),
+        tradePercentage = "",
+        quantity = 1,
+        amountMinted = 1,
+        tradeable = true
 )

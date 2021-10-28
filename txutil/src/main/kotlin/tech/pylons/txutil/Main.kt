@@ -10,6 +10,7 @@ import org.apache.tuweni.bytes.Bytes32
 import java.lang.Exception
 import java.util.*
 import tech.pylons.lib.klaxon
+import tech.pylons.lib.types.tx.Coin
 
 @ExperimentalUnsignedTypes
 object Main {
@@ -54,18 +55,20 @@ object Main {
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         Core.current!!.getProfile()
-        Core.current!!.getPylons(50000)
         println("Waiting 5 seconds to allow chain to catch up")
         Thread.sleep(5000)
         Core.current!!.getProfile()
         Core.current!!.batchCreateCookbook(
-                ids = mutableListOf(Calendar.getInstance().time.toInstant().toString()),
-                names = mutableListOf("tst_cookbook_name"),
-                developers = mutableListOf("addghjkllsdfdggdgjkkk"),
-                descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
-                versions = mutableListOf("1.0.0"),
-                supportEmails = mutableListOf("a@example.com"),
-                costsPerBlock = mutableListOf(5))
+            creators = mutableListOf("creators"),
+            ids = mutableListOf(Calendar.getInstance().time.toInstant().toString()),
+            names = mutableListOf("tst_cookbook_name"),
+            developers = mutableListOf("addghjkllsdfdggdgjkkk"),
+            descriptions = mutableListOf("asdfasdfasdfaaaaaaaaaaaaaaaaaaaaasssssssss"),
+            versions = mutableListOf("1.0.0"),
+            supportEmails = mutableListOf("a@example.com"),
+            costsPerBlock = mutableListOf(Coin("pylons", 5)),
+            enableds = mutableListOf(true)
+        )
     }
 
     private fun error (e : Exception, info : String) : String {

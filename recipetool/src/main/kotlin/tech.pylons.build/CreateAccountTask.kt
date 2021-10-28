@@ -18,6 +18,5 @@ abstract class CreateAccountTask : DefaultTask() {
             Core.current!!.newProfile("", RecipeManagementPlugin.shittyKeys())
         }
         Core.current!!.getProfile()
-        Core.current!!.getPylons(500000) // HACK: you need pylons, recipetool doesn't have a way to do that manually yet
     }
 }

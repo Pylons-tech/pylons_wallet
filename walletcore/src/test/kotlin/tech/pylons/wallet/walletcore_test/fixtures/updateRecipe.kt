@@ -1,18 +1,22 @@
 package tech.pylons.wallet.walletcore_test.fixtures
 
+import jdk.jfr.Enabled
+import junit.runner.Version
+import tech.pylons.lib.types.tx.Coin
 import tech.pylons.wallet.core.engine.TxPylonsDevEngine
 import tech.pylons.lib.types.tx.recipe.*
 
-fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, rId : String, sender : String) =
+fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, rId : String, creator : String) =
         engine.updateRecipe (
-        blockInterval = 1,
-        coinInputs = listOf(CoinInput(
-                coin = "pylon",
-                count = 10
+                Creator = creator,
+        BlockInterval = 1,
+        CoinInputs = listOf(CoinInput(
+                listOf(Coin("upylon", 10))
         )),
-        cookbookId = cbId,
-        description = "test recipe from test suite",
-        entries = EntriesList(
+        CookbookID = cbId,
+        Description = "test recipe from test suite",
+                Version = "v1.1.0",
+        Entries = EntriesList(
                 coinOutputs = listOf(),
                 itemModifyOutputs = listOf(),
                 itemOutputs = listOf(
@@ -20,7 +24,6 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                                 id = "itemEarth",
                                 doubles = listOf(
                                         DoubleParam(
-                                                rate = "1",
                                                 key = "Mass",
                                                 weightRanges = listOf(
                                                         DoubleWeightRange("200", "100", 1)
@@ -31,19 +34,29 @@ fun emitUpdateRecipe (engine: TxPylonsDevEngine, name : String, cbId : String, r
                                 longs = listOf(),
                                 strings = listOf(
                                         StringParam(
-                                                rate = "1",
                                                 key = "Name",
                                                 value = "Earth",
                                                 program = ""
                                         )
                                 ),
-                                transferFee = 0
+                                        mutableStrings = listOf(
+                                        StringKeyValue(
+                                                Key = "Name",
+                                                Value="nft_2"
+                                        ),
+                        ),
+                        transferFee = listOf(Coin("upylon", 1)),
+                        tradePercentage = "10%",
+                        quantity = 10,
+                        amountMinted = 2,
+                        tradeable = true
                         )
                 )
         ),
-        outputs = listOf(WeightedOutput(listOf("itemEarth"), "1")),
-        itemInputs = listOf(),
-        name = name,
-        id = rId,
-        extraInfo = ""
+        Outputs = listOf(WeightedOutput(listOf("itemEarth"), 1)),
+        ItemInputs = listOf(),
+        Name = name,
+        ID = rId,
+                Enabled = true,
+        ExtraInfo = ""
 )

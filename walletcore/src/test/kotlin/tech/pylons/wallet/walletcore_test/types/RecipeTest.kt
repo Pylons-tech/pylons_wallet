@@ -3,6 +3,7 @@ package tech.pylons.wallet.walletcore_test.types
 import tech.pylons.lib.types.tx.recipe.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import tech.pylons.lib.types.tx.Coin
 
 class RecipeTest {
 
@@ -18,7 +19,7 @@ class RecipeTest {
                 "Name": "RTEST_1596241180",
                 "CoinInputs": [
                   {
-                    "Coin": "pylon",
+                    "Coin": "upylon",
                     "Count": "1"
                   }
                 ],
@@ -83,8 +84,7 @@ class RecipeTest {
                 name = "RTEST_1596241180",
                 coinInputs = listOf(
                         CoinInput(
-                            coin = "pylon",
-                            count = 1
+                            listOf(Coin("upylon",1))
                         )
                 ),
                 itemInputs = listOf(),
@@ -95,7 +95,6 @@ class RecipeTest {
                                 ItemOutput(
                                         id = "itemMars",
                                         doubles = listOf(DoubleParam(
-                                                rate = "1",
                                                 key = "Mass",
                                                 weightRanges = listOf(DoubleWeightRange(
                                                         lower = "50",
@@ -106,23 +105,32 @@ class RecipeTest {
                                         )),
                                         longs = listOf(),
                                         strings = listOf(StringParam(
-                                                rate = "1",
                                                 key = "Name",
                                                 value = "Mars",
                                                 program = ""
                                         )),
-                                        transferFee = 0
+                                        mutableStrings = listOf(
+                                                StringKeyValue(
+                                                        Key = "Name",
+                                                        Value="nft_2"
+                                                ),
+                                        ),
+                                        transferFee = listOf(Coin("upylon", 1)),
+                                        tradePercentage = "10%",
+                                        quantity = 10,
+                                        amountMinted = 2,
+                                        tradeable = true
                                 )
                         )
                 ),
                 outputs = listOf(WeightedOutput(
                         entryIds = listOf("itemMars"),
-                        weight = "1"
+                        weight = 1
                 )),
                 description = "test recipe from test suite",
                 blockInterval = 0,
-                sender = "cosmos1y8vysg9hmvavkdxpvccv2ve3nssv5avm0kt337",
-                disabled = false,
+                enabled = true,
+                version = "v1.1.0",
                 extraInfo = ""
         ))
         assertEquals(expected, Recipe.listFromJson(sampleJson))

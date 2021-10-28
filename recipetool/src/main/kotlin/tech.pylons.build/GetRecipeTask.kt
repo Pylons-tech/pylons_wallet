@@ -23,13 +23,16 @@ abstract class GetRecipeTask : DefaultTask() {
                     if (RecipeManagementPlugin.loadedRecipes["${rcp.cookbookId}/${rcp.name}"] != null)
                         RecipeManagementPlugin.loadedRecipes["${rcp.cookbookId}/${rcp.name}"]!!.addRemoteState(rcp)
                     else {
-                        RecipeManagementPlugin.loadedRecipes["${rcp.cookbookId}/${rcp.name}"] = MetaRecipe(rcp.name, rcp.cookbookId,
-                            MetaRecipe.version(rcp),
-                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp.id),
+                        RecipeManagementPlugin.loadedRecipes["${rcp.cookbookId}/${rcp.name}"] = MetaRecipe(
+                            name = rcp.name,
+                            cookbook =  rcp.cookbookId,
+                            latestVersion = MetaRecipe.version(rcp),
+                            ids = mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp.id),
+                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp),
                             mutableMapOf(MetaRecipe.version(rcp) to rcp),
                             mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp),
                             mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to MetaRecipe.version(rcp)),
-                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp.disabled)
+                            mutableMapOf(RecipeManagementPlugin.currentRemote.identifier() to rcp.enabled)
                         )
                     }
                 }

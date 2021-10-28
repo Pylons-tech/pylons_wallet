@@ -4,20 +4,20 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonObject
 
 data class ConditionList(
-    @property:[Json(name = "Doubles")]
+    @property:[Json(name = "doubles")]
     val doubles : List<DoubleInputParam>,
-    @property:[Json(name = "Longs")]
+    @property:[Json(name = "longs")]
     val longs : List<LongInputParam>,
-    @property:[Json(name = "Strings")]
+    @property:[Json(name = "strings")]
     val strings : List<StringInputParam>
 ) {
     companion object {
         fun fromJson (jsonObject: JsonObject?) : ConditionList? = when (jsonObject) {
             null -> null
             else -> ConditionList (
-                doubles = DoubleInputParam.listFromJson(jsonObject.array("Doubles")),
-                longs = LongInputParam.listFromJson(jsonObject.array("Longs")),
-                strings = StringInputParam.listFromJson(jsonObject.array("Strings"))
+                doubles = DoubleInputParam.listFromJson(jsonObject.array("doubles")),
+                longs = LongInputParam.listFromJson(jsonObject.array("longs")),
+                strings = StringInputParam.listFromJson(jsonObject.array("strings"))
             )
         }
     }

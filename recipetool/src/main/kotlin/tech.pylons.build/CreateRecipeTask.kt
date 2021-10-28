@@ -11,14 +11,18 @@ abstract class CreateRecipeTask : DefaultTask() {
         val recipe = RecipeManagementPlugin.getRecipeFromPath(project.property("filepath") as String)
         Core.current!!.getProfile()
         Core.current!!.batchCreateRecipe(
-            names = listOf(recipe.name),
+            creators = listOf(recipe.id),
             cookbooks = listOf(recipe.cookbookId),
+            ids = listOf(recipe.id),
+            names = listOf(recipe.name),
             descriptions = listOf(recipe.description),
+            versions = listOf(recipe.version),
+            coinInputs = listOf(recipe.coinInputs),
+            itemInputs = listOf(recipe.itemInputs),
+            outputTables = listOf(recipe.entries),
+            outputs = listOf(recipe.outputs),
             blockIntervals = listOf(recipe.blockInterval),
-            coinInputs = listOf(klaxon.toJsonString(recipe.coinInputs)),
-            itemInputs = listOf(klaxon.toJsonString(recipe.itemInputs)),
-            outputTables = listOf(klaxon.toJsonString(recipe.entries)),
-            outputs = listOf(klaxon.toJsonString(recipe.outputs)),
+            enableds = listOf(recipe.enabled),
             extraInfos = listOf()
         )
     }

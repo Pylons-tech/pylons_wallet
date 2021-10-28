@@ -6,6 +6,7 @@ import tech.pylons.lib.types.tx.Coin
 import tech.pylons.lib.types.tx.Trade
 import tech.pylons.lib.types.tx.item.Item
 import tech.pylons.lib.types.tx.recipe.*
+import tech.pylons.lib.types.tx.trade.ItemRef
 import tech.pylons.lib.types.tx.trade.TradeItemInput
 
 /***
@@ -42,35 +43,35 @@ interface IEngine {
     fun disableRecipes(recipes : List<String>) : List<Transaction>
 
     /** Execute-recipe message */
-    fun applyRecipe(id : String, itemIds : List<String>, paymentId:String="") : Transaction
+    fun applyRecipe(creator: String , cookbookID: String, id: String, coinInputsIndex: Long, itemIds : List<String>, paymentInfos: PaymentInfo?) : Transaction
 
     /** Check-execution message */
     fun checkExecution(id : String, payForCompletion : Boolean) : Transaction
 
     /** Create-trade message */
-    fun createTrade(coinInputs: List<CoinInput>, itemInputs: List<TradeItemInput>,
-                    coinOutputs : List<Coin>, itemOutputs : List<Item>,
+    fun createTrade(creator: String, coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
+                    coinOutputs : List<Coin>, itemOutputs : List<ItemRef>,
                     ExtraInfo : String) : Transaction
 
     /** Create-recipe message */
-    fun createRecipe(name : String, cookbookId : String, description: String, blockInterval : Long,
+    fun createRecipe(creator : String, cookbookId : String, id : String, name : String, description: String, version: String,
                      coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
-                     outputs : List<WeightedOutput>, extraInfo: String) : Transaction
+                     outputs : List<WeightedOutput>, blockInterval : Long, enabled : Boolean, extraInfo: String) : Transaction
 
     /** Batch create-recipe message */
-    fun createRecipes(names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
-                      blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>,
+    fun createRecipes(creators : List<String>, cookbookIds : List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, versions: List<String>,
+                      coinInputs : List<List<CoinInput>>,
                       itemInputs : List<List<ItemInput>>, entries : List<EntriesList>,
-                      outputs: List<List<WeightedOutput>>, extraInfos: List<String>) : List<Transaction>
+                      outputs: List<List<WeightedOutput>>, blockIntervals : List<Long>, enableds : List<Boolean>, extraInfos: List<String>) : List<Transaction>
 
     /** Create-cookbook message */
-    fun createCookbook (id : String, name : String, developer : String, description : String, version : String,
-                                 supportEmail : String, costPerBlock : Long) : Transaction
+    fun createCookbook (creator: String, id : String, name : String, description : String, developer : String, version : String,
+                                 supportEmail : String, costPerBlock : Coin, enabled: Boolean) : Transaction
 
     /** Batch create-cookbook message */
-    fun createCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
+    fun createCookbooks(creators: List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, developers: List<String>,
                         versions : List<String>, supportEmails: List<String>,
-                        costsPerBlock : List<Long>) : List<Transaction>
+                        costsPerBlocks : List<Coin>, enableds: List<Boolean>) : List<Transaction>
 
     /**
      * Copies some data from profile's credentials object to userdata
@@ -79,9 +80,9 @@ interface IEngine {
      */
     fun dumpCredentials (credentials: ICredentials)
 
-    fun fulfillTrade (tradeId : String, itemIds : List<String>, paymentId: String = "") : Transaction
+    fun fulfillTrade (creator: String, ID : Long, CoinInputsIndex: Long, itemIds : List<ItemRef>, paymentInfos: PaymentInfo?) : Transaction
 
-    fun cancelTrade (tradeId : String) : Transaction
+    fun cancelTrade (creator : String, ID: Long) : Transaction
     /**
      * Generates a new Credentials object appropriate for our engine
      * type from the given mnemonic.
@@ -124,10 +125,7 @@ interface IEngine {
     /** Registers a new profile under given name. */
     fun registerNewProfile (name : String, kp : PylonsSECP256K1.KeyPair?) : Transaction
 
-    fun createChainAccount () : Transaction
-
-    /** Calls non-IAP get pylons endpoint. Shouldn't work against production nodes. */
-    fun getPylons (q : Long) : Transaction
+    fun createChainAccount (name : String) : Transaction
 
     /** Calls Google IAP get pylons endpoint. */
     fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction
@@ -137,25 +135,23 @@ interface IEngine {
     /** Gets initial userdata tables for the engine type. */
     fun getInitialDataSets () : MutableMap<String, MutableMap<String, String>>
 
-    /** Calls send pylons endpoint. */
-    fun sendCoins (coins : List<Coin>, receiver : String) : Transaction
 
     /** Update-cookbook message */
-    fun updateCookbook (id : String, developer : String, description : String, version : String,
-                                 supportEmail : String) : Transaction
+    fun updateCookbook (creator: String, id: String, name: String, description: String, developer: String, version: String, supportEmail: String, costPerBlock: Coin, enabled: Boolean) : Transaction
 
     /** Batch update-cookbook message */
-    fun updateCookbooks(ids : List<String>, names : List<String>, developers: List<String>, descriptions: List<String>,
-                        versions : List<String>, supportEmails: List<String>) : List<Transaction>
+    fun updateCookbooks(creators : List<String>, ids : List<String>, names : List<String>, descriptions: List<String>, developers: List<String>,
+                        versions : List<String>, supportEmails: List<String>, costPerBlocks: List<Coin>, enableds: List<Boolean>) : List<Transaction>
 
     /** Update-recipe message */
-    fun updateRecipe(id : String, name : String, cookbookId : String, description: String, blockInterval : Long,
-                              coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList, outputs: List<WeightedOutput>, extraInfo: String) : Transaction
+    fun updateRecipe(Creator: String, CookbookID : String, ID : String, Name : String, Description: String,
+                     Version: String, CoinInputs : List<CoinInput>, ItemInputs : List<ItemInput>,
+                     Entries : EntriesList, Outputs: List<WeightedOutput>, BlockInterval : Long, Enabled: Boolean, ExtraInfo: String) : Transaction
 
     /** Batch update-recipe message */
-    fun updateRecipes (ids: List<String>, names : List<String>, cookbookIds : List<String>, descriptions: List<String>,
-                       blockIntervals : List<Long>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
-                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>, extraInfos: List<String>) : List<Transaction>
+    fun updateRecipes (creators: List<String>, cookbookIds: List<String>, ids: List<String>, names : List<String>, descriptions: List<String>,
+                       versions: List<String>, coinInputs : List<List<CoinInput>>, itemInputs : List<List<ItemInput>>,
+                       entries : List<EntriesList>, outputs: List<List<WeightedOutput>>,blockIntervals : List<Long>,  enableds: List<Boolean>, extraInfos: List<String>): List<Transaction>
 
     /** List recipes query */
     fun listRecipes () : List<Recipe>
@@ -163,17 +159,17 @@ interface IEngine {
     /** List cookbooks query */
     fun listCookbooks () : List<Cookbook>
 
+    fun getPylons(amount : Long, creator: String) : Boolean
+
     fun setItemFieldString (itemId : String, field : String, value : String) : Transaction
 
-    fun listTrades () : List<Trade>
+    fun listTrades (creator: String) : List<Trade>
 
     fun sendItems(receiver: String, itemIds: List<String>) : Transaction
 
-    fun getLockedCoins () : LockedCoin
-
-    fun getLockedCoinDetails () : LockedCoinDetails
-
     fun listRecipesBySender() : List<Recipe>
+
+    fun queryListRecipesByCookbookRequest(cookbookID: String) : List<Recipe>
 
     fun getRecipe(recipeId: String) : Recipe?
 
@@ -182,6 +178,8 @@ interface IEngine {
     fun getTrade(tradeId: String) : Trade?
 
     fun getItem(itemId: String): Item?
+
+    fun getItem(itemId: String, cookbookId: String): Item?
 
     fun listItems() : List<Item>
 
