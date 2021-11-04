@@ -35,11 +35,11 @@ class MulticoreTest {
 
     private val config = Config(
             Backend.MANUAL,
-            //"pylons-devtestnet",
-        "pylons",
+            "pylons-testnet",
+        //"pylons",
             true,
-        listOf("http://192.168.1.121:1317"),
-        //listOf("https://api.devtestnet.pylons.tech")
+        //listOf("http://192.168.1.121:1317"),
+        listOf("https://api.testnet.pylons.tech")
     )
 
     private val testKeys =
@@ -169,7 +169,7 @@ class MulticoreTest {
 //            costsPerBlock = mutableListOf(Coin("upylon", 1)),
 //            enableds = mutableListOf(true)
 //        )
-     //   Core.current?.getProfile()
+        Core.current?.getProfile()
 
 ////        val cookbooks = Core.current?.engine?.listCookbooks()
 ////        val trades = Core.current?.engine?.listTrades(profile!!.address)

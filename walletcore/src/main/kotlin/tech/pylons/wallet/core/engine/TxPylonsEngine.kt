@@ -1,17 +1,26 @@
 package tech.pylons.wallet.core.engine
 
+import tech.pylons.wallet.core.Core
+import tech.pylons.lib.logging.Logger
+import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
 import com.beust.klaxon.*
-import org.spongycastle.jce.provider.BouncyCastleProvider
-import org.spongycastle.util.encoders.Base64
-import org.spongycastle.util.encoders.Hex
+import com.google.gson.Gson
 import tech.pylons.lib.*
 import tech.pylons.lib.constants.QueryConstants
 import tech.pylons.lib.core.ICryptoHandler
 import tech.pylons.lib.core.IEngine
 import tech.pylons.lib.internal.fuzzyLong
+import tech.pylons.wallet.core.VERSION_STRING
+import tech.pylons.wallet.core.internal.HttpWire
 import tech.pylons.lib.logging.LogEvent
 import tech.pylons.lib.logging.LogTag
-import tech.pylons.lib.logging.Logger
+import org.spongycastle.jce.provider.BouncyCastleProvider
+import org.spongycastle.util.encoders.Hex
+import java.io.FileNotFoundException
+import java.lang.Exception
+import java.lang.StringBuilder
+import java.security.Security
+import java.util.*
 import tech.pylons.lib.types.*
 import tech.pylons.lib.types.credentials.CosmosCredentials
 import tech.pylons.lib.types.credentials.ICredentials
@@ -23,21 +32,16 @@ import tech.pylons.lib.types.tx.msg.*
 import tech.pylons.lib.types.tx.recipe.*
 import tech.pylons.lib.types.tx.trade.ItemRef
 import tech.pylons.lib.types.tx.trade.TradeItemInput
-import tech.pylons.wallet.core.Core
 import tech.pylons.wallet.core.LowLevel
-import tech.pylons.wallet.core.VERSION_STRING
-import tech.pylons.wallet.core.engine.crypto.CryptoCosmos
-import tech.pylons.wallet.core.internal.HttpWire
 import tech.pylons.wallet.core.internal.ProtoJsonUtil
-import java.io.FileNotFoundException
 import java.io.StringReader
-import java.security.Security
 
 @ExperimentalUnsignedTypes
-open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
+open class TxPylonsEngine(core : Core) : Engine(core), IEngine {
     init {
         Security.removeProvider("BC")
         Security.addProvider(BouncyCastleProvider())
+
     }
 
     class AddressResponse {
@@ -50,10 +54,10 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     val cryptoCosmos get() = cryptoHandler as CryptoCosmos
 
     companion object {
-        private val local = """http://127.0.0.1:1317""" 
+        private val local = """http://127.0.0.1:1317"""
 
         fun getAddressString(addr: ByteArray): String {
-            return Bech32Cosmos.convertAndEncode("pylo", AminoCompat.accAddress(addr)) 
+            return Bech32Cosmos.convertAndEncode("pylo", AminoCompat.accAddress(addr))
         }
     }
 
@@ -134,7 +138,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         return response
     }
 
-    // Engine methods 
+    // Engine methods
 
     override fun applyRecipe(
         creator: String,
@@ -168,7 +172,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                     ).toSignedTx()
                  */
         }
-    } 
+    }
 
     override fun checkExecution(id: String, payForCompletion: Boolean): Transaction =
         handleTx {
@@ -177,7 +181,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                 sender = it.address,
                 payToComplete = payForCompletion
             ).toSignedTx()
-        } 
+        }
 
     override fun createTrade(
         creator: String, coinInputs: List<CoinInput>, itemInputs: List<ItemInput>,
@@ -194,13 +198,13 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                 ExtraInfo = extraInfo
             ).toSignedTx()
         }
- 
+
     override fun dumpCredentials(credentials: ICredentials) {
         core.userData.dataSets["__CRYPTO_COSMOS__"]!!["key"] =
             cryptoCosmos.keyPair!!.secretKey().bytes()!!.toHexString()
         println("Dumped credentials")
-    } 
- 
+    }
+
     override fun fulfillTrade(
         creator: String,
         ID: Long,
@@ -222,7 +226,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
 
         return handleTx {
             execution.toSignedTx()
-            /* 
+            /*
                 FulfillTrade(
                         Creator = creator,
                         ID = ID,
@@ -240,9 +244,9 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                     Creator = creator,
                     ID = ID,
                 ).toSignedTx()
-            } 
+            }
 
-    override fun generateCredentialsFromKeys(): ICredentials {
+    override fun generateCredentialsFromKeys() : ICredentials {
         val addrString = getAddressString(PubKeyUtil.getAddressFromKeyPair(cryptoCosmos.keyPair!!).toArray())
         return CosmosCredentials(addrString)
     }
@@ -273,12 +277,9 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     override fun getMyProfileState(): MyProfile? {
         println("myProfile path")
         println(core.userProfile)
-        val prfJson =
-            HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/${core.userProfile!!.credentials.address}")
-        val itemsJson =
-            HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
-        val balanceJson =
-            HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}${core.userProfile!!.credentials.address}")
+        val prfJson = HttpWire.get("${LowLevel.getUrlForQueries()}/auth/accounts/${core.userProfile!!.credentials.address}")
+        val itemsJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_items_by_sender}${core.userProfile!!.credentials.address}")
+        val balanceJson = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_balance}${core.userProfile!!.credentials.address}")
 
 
         //val lockedCoinDetails = getLockedCoinDetails()
@@ -289,13 +290,13 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
             null -> null //if profile not exists return null
             else -> {
                 val sequence = value.fuzzyLong("sequence")
-                val accountNumber = value.fuzzyLong("account_number") 
+                val accountNumber = value.fuzzyLong("account_number")
                 val balances = (Parser.default().parse(StringBuilder(balanceJson)) as JsonObject)!!.array<String>("balances")
                 var amount:Long = 0
                 if (balances?.size != 0 && balances?.value?.size != 0){
                     amount = (balances?.get("amount")!!.value[0] as String).toLong()
                 }
-                val coins = listOf(Coin("upylon", amount )) 
+                val coins = listOf(Coin("upylon", amount ))
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject)
                 //val items = Item.listFromJson(valueItems.array("Items"))
                 val items = mutableListOf<Item>()
@@ -341,13 +342,13 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
             "" -> null
             else -> {
                 val sequence = value.fuzzyLong("sequence")
-                val accountNumber = value.fuzzyLong("account_number") 
+                val accountNumber = value.fuzzyLong("account_number")
                 val balances = (Parser.default().parse(StringBuilder(balanceJson)) as JsonObject)!!.array<String>("balances")
                 var amount:Long = 0 //should be change 0
                 if (balances?.size != 0){
                     amount = balances.toString().toLong()
                 }
-                val coins = listOf(Coin("upylon", amount )) 
+                val coins = listOf(Coin("upylon", amount ))
                 val valueItems = (Parser.default().parse(StringBuilder(itemsJson)) as JsonObject).obj("result")!!
                 //val items = Item.listFromJson(valueItems.array("Items"))
                 val items = mutableListOf<Item>()
@@ -372,25 +373,23 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                 }
 
                 return Profile(
-                    address = addr,
-                    strings = mapOf(),
-                    coins = coins,
-                    items = items
+                        address = addr,
+                        strings = mapOf(),
+                        coins = coins,
+                        items = items
                 )
             }
         }
     }
 
     override fun getPendingExecutions(): List<Execution> {
-        val json =
-            HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
         return Execution.getListFromJson(json)
     }
 
     override fun getCompletedExecutions(): List<Execution> {
         // one of these should not work
-        val json =
-            HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_executions}${core.userProfile!!.credentials.address}")
         return Execution.getListFromJson(json)
     }
 
@@ -411,10 +410,10 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     }
 
     override fun getItem(itemId: String, cookbookId: String): Item? {
-        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item_id}${cookbookId}${"/"}${itemId}") 
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_item_id}${cookbookId}${"/"}${itemId}")
         val itemObj = (Parser.default().parse(StringBuilder(json)) as JsonObject)
         val obj = itemObj.obj("Item")
-        if(obj != null){ 
+        if(obj != null){
             return Item.fromJson(obj)
         }
         return null
@@ -440,7 +439,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         val items = Item.listFromJson(itemObj.array("Items"))
         return items
     }
- 
+
     override fun getStatusBlock(): StatusBlock {
         val response = HttpWire.get("${LowLevel.getUrlForTxs()}/blocks/latest")
         val jsonObject = (Parser.default().parse(StringBuilder(response)) as JsonObject)
@@ -456,11 +455,10 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
             val dataString = ProtoJsonUtil.TxProtoResponseParser(response)
             Transaction.parseTransactionResponse(id, response, dataString)
 
-        } catch (e: FileNotFoundException) {
+        } catch (e : FileNotFoundException) {
             Transaction(
                 TxData("", "", listOf()), null, null, null,
-                Transaction.State.TX_NOT_YET_COMMITTED, Transaction.ResponseCode.UNKNOWN_ERROR
-            )
+                    Transaction.State.TX_NOT_YET_COMMITTED, Transaction.ResponseCode.UNKNOWN_ERROR)
         }
     }
 
@@ -470,8 +468,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     }
 
     override fun listRecipesBySender(): List<Recipe> {
-        val json =
-            HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe}${core.userProfile!!.credentials.address}")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe}${core.userProfile!!.credentials.address}")
         return Recipe.listFromJson(json)
     }
 
@@ -485,15 +482,15 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
         return Trade.listFromJson(json)
     }
 
-    override fun listCookbooks(): List<Cookbook> { 
-        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_cookbook}${core.userProfile!!.address}") 
+    override fun listCookbooks(): List<Cookbook> {
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_cookbook}${core.userProfile!!.address}")
         return Cookbook.getListFromJson(json)
     }
 
     override fun getPylons(amount : Long, creator : String): Boolean {
         var strAmount = amount.toString() + "upylon"
         var jsonString = """{"address":"$creator","coins":["$strAmount"]}""";
-        val response = HttpWire.post("https://faucet.testnet.pylons.tech", jsonString)
+        val response = HttpWire.post("https://faucet.devtestnet.pylons.tech", jsonString)
         val transfers = klaxon.parseJsonObject(StringReader(response)).array<String>("transfers")
         if(transfers?.size != 0){
             if(transfers?.get("status")!!.value[0].toString() == "ok"){
@@ -509,9 +506,9 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     }
 
 
-    override fun registerNewProfile(name: String, kp: PylonsSECP256K1.KeyPair?): Transaction {
+    override fun registerNewProfile(name : String, kp : PylonsSECP256K1.KeyPair?): Transaction {
         if (kp == null) cryptoHandler.generateNewKeys()
-        else cryptoCosmos.keyPair = kp 
+        else cryptoCosmos.keyPair = kp
         core.userProfile = MyProfile(core = core, credentials = getNewCredentials(),
                 coins = listOf(), strings = mutableMapOf(), items = listOf())
         return createChainAccount(name)
@@ -523,40 +520,34 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                     creator = it.address,
                     username = name
                 ).toSignedTx()
-            } 
+            }
 
-    override fun googleIapGetPylons(
-        productId: String,
-        purchaseToken: String,
-        receiptData: String,
-        signature: String
-    ): Transaction =
-        handleTx {
-            GoogleIapGetPylons(
-                productId = productId,
-                purchaseToken = purchaseToken,
-                receiptDataBase64 = Base64.toBase64String(receiptData.toByteArray()),
-                signature = signature,
-                sender = it.address
-            ).toSignedTx()
-        }
+    override fun googleIapGetPylons(productId: String, purchaseToken: String, receiptData: String, signature: String): Transaction =
+            handleTx {
+                GoogleIapGetPylons(
+                        productId = productId,
+                        purchaseToken = purchaseToken,
+                        receiptDataBase64 = Base64.getEncoder().encodeToString(receiptData.toByteArray()),
+                        signature = signature,
+                        sender = it.address
+                ).toSignedTx()
+            }
 
     override fun checkGoogleIapOrder(purchaseToken: String): Boolean {
-        val response =
-            HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_check_google_iap_order}$purchaseToken")
+        val response = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_check_google_iap_order}$purchaseToken")
         return (Parser.default().parse(StringBuilder(response)) as JsonObject).obj("result")!!.boolean("exist")!!
     }
 
     override fun setItemFieldString(itemId: String, field: String, value: String): Transaction =
-        handleTx {
-            UpdateItemString(
-                itemId = itemId,
-                field = field,
-                value = value,
-                sender = it.address
-            ).toSignedTx()
-        }
- 
+            handleTx {
+                UpdateItemString(
+                        itemId = itemId,
+                        field = field,
+                        value = value,
+                        sender = it.address
+                ).toSignedTx()
+            }
+
 
     override fun sendItems(receiver: String, itemIds: List<String>): Transaction =
             handleTx {
@@ -573,12 +564,12 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     override fun createRecipe(creator : String, cookbookId : String, id : String, name : String, description: String, version: String,
                               coinInputs : List<CoinInput>, itemInputs : List<ItemInput>, entries : EntriesList,
                               outputs : List<WeightedOutput>, blockInterval : Long, enabled : Boolean, extraInfo: String) : Transaction =
-            throw Exception("Updating cookbooks is not allowed on non-dev tx engine") 
+            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun disableRecipe(id: String): Transaction =
-        throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
+            throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
-    override fun enableRecipe(id: String): Transaction = 
+    override fun enableRecipe(id: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
 
     override fun createCookbook(creator: String, id : String, name : String, description : String, developer : String, version : String,
@@ -593,7 +584,6 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
                               Version: String, CoinInputs : List<CoinInput>, ItemInputs : List<ItemInput>,
                               Entries : EntriesList, Outputs: List<WeightedOutput>, BlockInterval : Long, Enabled: Boolean, ExtraInfo: String): Transaction =
             throw Exception("Updating cookbooks is not allowed on non-dev tx engine")
- 
 
     override fun getRecipe(recipeId: String): Recipe? {
         val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_get_recipe}")
@@ -623,8 +613,7 @@ open class TxPylonsEngine(core: Core) : Engine(core), IEngine {
     }
 
     override fun listRecipesByCookbookId(cookbookId: String): List<Recipe> {
-        val json =
-            HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe_by_cookbook}$cookbookId")
+        val json = HttpWire.get("${LowLevel.getUrlForQueries()}${QueryConstants.URL_list_recipe_by_cookbook}$cookbookId")
         return Recipe.listFromJson(json)
     }
 
